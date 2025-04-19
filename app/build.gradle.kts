@@ -41,6 +41,7 @@ android {
 
 dependencies {
     implementation(libs.kotlinx.io.core)
+    testImplementation(libs.kotlin.test)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
