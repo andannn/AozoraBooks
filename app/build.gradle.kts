@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "me.andannn.aosora"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.kotlinx.io.core)
     testImplementation(libs.kotlin.test)
 
     implementation(libs.androidx.core.ktx)

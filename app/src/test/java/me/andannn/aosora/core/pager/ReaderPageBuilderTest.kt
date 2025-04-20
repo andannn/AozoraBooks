@@ -1,0 +1,219 @@
+package me.andannn.aosora.core.pager
+
+import androidx.compose.ui.geometry.Size
+import me.andannn.aosora.core.parser.AozoraBlock
+import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.BlockStyle
+import me.andannn.aosora.core.parser.BlockType
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class ReaderPageBuilderTest {
+    private lateinit var lineBuilder: ReaderLineBuilder
+    private lateinit var pageBuilder: ReaderPageBuilder
+
+    private val dummySizeOf: (AozoraElement) -> Size = {
+        when (it) {
+            is AozoraElement.Indent -> Size(50f, it.count * 10f)
+            else -> Size(50f, it.length * 10f)
+        }
+    }
+
+    @BeforeTest
+    fun setUp() {
+        lineBuilder = ReaderLineBuilder(
+            maxPx = 100,
+            measure = {
+                Size(30f, 30f)
+            },
+        )
+        pageBuilder = ReaderPageBuilder(
+            meta = PageMetaData(100, 100),
+        )
+
+    }
+
+    @Test
+    fun testReaderLineBuilder() {
+        val builder = lineBuilder
+        repeat(3) {
+            assertEquals(FillResult.FillContinue, builder.tryAdd(AozoraElement.Text("tes")))
+        }
+        assertEquals(
+            FillResult.Filled(AozoraElement.Text("es")),
+            builder.tryAdd(AozoraElement.Text("tes"))
+        )
+        assertEquals("testestest", builder.build().fullText)
+    }
+
+    @Test
+    fun testLinkBreak() {
+        val builder = lineBuilder
+        assertEquals(FillResult.FillContinue, builder.tryAdd(AozoraElement.Text("tes")))
+        assertEquals(FillResult.Filled(), builder.tryAdd(AozoraElement.LineBreak))
+    }
+
+    @Test
+    fun testRubyCanNotBeDivide() {
+        val builder = lineBuilder
+        repeat(3) {
+            assertEquals(FillResult.FillContinue, builder.tryAdd(AozoraElement.Text("tes")))
+        }
+        assertEquals(
+            FillResult.Filled(AozoraElement.Ruby("tes", "ruby")),
+            builder.tryAdd(AozoraElement.Ruby("tes", "ruby"))
+        )
+    }
+
+    @Test
+    fun testBuildPage() {
+        val builder = pageBuilder
+        repeat(20) {
+            assertEquals(
+                FillResult.FillContinue,
+                builder.tryAddElement(AozoraElement.Text("1"), 0, dummySizeOf)
+            )
+        }
+        assertEquals(
+            FillResult.Filled(AozoraElement.Text("A")),
+            builder.tryAddElement(AozoraElement.Text("A"), 0, dummySizeOf)
+        )
+        val page = builder.build()
+        assertEquals(2, page.lines.size)
+    }
+
+    @Test
+    fun testPageLineBreak() {
+        val builder = pageBuilder
+        repeat(5) {
+            assertEquals(
+                FillResult.FillContinue,
+                builder.tryAddElement(AozoraElement.Text("1"), 0, dummySizeOf)
+            )
+        }
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.LineBreak, 0, dummySizeOf)
+        )
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.LineBreak, 0, dummySizeOf)
+        )
+        assertEquals(
+            FillResult.Filled(AozoraElement.LineBreak),
+            builder.tryAddElement(AozoraElement.LineBreak, 0, dummySizeOf)
+        )
+    }
+
+    @Test
+    fun testPageBreak() {
+        val builder = pageBuilder
+        repeat(5) {
+            assertEquals(
+                FillResult.FillContinue,
+                builder.tryAddElement(AozoraElement.Text(it.toString()), 0, dummySizeOf)
+            )
+        }
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.PageBreak, 0, dummySizeOf)
+        )
+        assertEquals(
+            FillResult.Filled(AozoraElement.Text("a")),
+            builder.tryAddElement(AozoraElement.Text("a"), 0, dummySizeOf)
+        )
+    }
+
+    @Test
+    fun testRubyShowNoBeDivided() {
+        val builder = pageBuilder
+        repeat(9) {
+            assertEquals(
+                FillResult.FillContinue,
+                builder.tryAddElement(AozoraElement.Text(it.toString()), 0, dummySizeOf)
+            )
+        }
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.Ruby("tes", "ruby"), 0, dummySizeOf)
+        )
+        val page = builder.build()
+        assertEquals(2, page.lines.size)
+        assertEquals(AozoraElement.Ruby("tes", "ruby"), page.lines[1].elements[0])
+    }
+
+    @Test
+    fun testIndent() {
+        val builder = pageBuilder
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.Indent(5), 0, dummySizeOf)
+        )
+        repeat(5) {
+            assertEquals(
+                FillResult.FillContinue,
+                builder.tryAddElement(AozoraElement.Text(it.toString()), 0, dummySizeOf)
+            )
+        }
+        assertEquals(
+            FillResult.FillContinue,
+            builder.tryAddElement(AozoraElement.Text("1"), 0, dummySizeOf)
+        )
+        val page = builder.build()
+        assertEquals(2, page.lines.size)
+        assertEquals(5, (page.lines[0].elements[0] as AozoraElement.Indent).count)
+    }
+
+    @Test
+    fun testAddBlock() {
+        val builder = pageBuilder
+
+        val block = AozoraBlock(
+            elements = emptyList(),
+            style = BlockStyle(
+                fontSize = 10,
+                lineHeightMultiplier = 5f,
+                blockIndent = 0,
+            ),
+            blockType = BlockType.Text,
+        )
+        assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
+            repeat(20) {
+                add(AozoraElement.Text("1"))
+            }
+        })))
+        assertEquals(
+            AozoraElement.Text("a"),
+            (builder.tryAddBlock(block.copy(elements = listOf(AozoraElement.Text("a")))) as FillResult.Filled).remainBlock?.elements[0]
+        )
+        val page = builder.build()
+        assertEquals(2, page.lines.size)
+    }
+
+    @Test
+    fun testAddBlockWithIndent() {
+        val builder = pageBuilder
+
+        val block = AozoraBlock(
+            elements = emptyList(),
+            style = BlockStyle(
+                fontSize = 10,
+                lineHeightMultiplier = 5f,
+                blockIndent = 5,
+            ),
+            blockType = BlockType.Text,
+        )
+        assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
+            repeat(10) {
+                add(AozoraElement.Text("1"))
+            }
+        })))
+        assertEquals(
+            AozoraElement.Text("a"),
+            (builder.tryAddBlock(block.copy(elements = listOf(AozoraElement.Text("a")))) as FillResult.Filled).remainBlock?.elements[0]
+        )
+        val page = builder.build()
+        assertEquals(2, page.lines.size)
+    }
+}
