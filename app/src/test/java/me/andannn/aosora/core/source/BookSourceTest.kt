@@ -1,6 +1,6 @@
 package me.andannn.aosora.core.source
 
-import me.andannn.aosora.core.pager.PageMetaData
+import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.pager.fullText
 import java.nio.file.Paths
 import kotlin.test.BeforeTest
@@ -16,7 +16,7 @@ class BookSourceTest {
 
     @Test
     fun testBookSource() {
-        bookSource.pageSource(PageMetaData(1000, 1000)).forEach {
+        bookSource.pageSource(PageMetaData(1000f, 1000f)).forEach {
             println(it.fullText)
             println("------------------------------------------------------------------------")
         }

@@ -1,12 +1,19 @@
 package me.andannn.aosora.core.pager
 
 import androidx.compose.ui.geometry.Size
+import io.github.aakira.napier.Napier
+import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.measure.DefaultElementMeasurer
+import me.andannn.aosora.core.measure.ElementMeasurer
+import me.andannn.aosora.core.measure.MeasureResult
+import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.BlockType
 import me.andannn.aosora.core.parser.internal.util.divide
-import me.andannn.aosora.core.parser.size
 import org.jetbrains.annotations.VisibleForTesting
 
+private const val TAG = "ReaderPageBuilder"
 
 sealed interface FillResult {
     data class Filled(
@@ -17,14 +24,22 @@ sealed interface FillResult {
     data object FillContinue : FillResult
 }
 
-class ReaderPageBuilder(
+fun createDefaultReaderPageBuilder(
     meta: PageMetaData,
+) = ReaderPageBuilder(
+    fullWidth = meta.renderWidth,
+    fullHeight = meta.renderHeight,
+    measurer = DefaultElementMeasurer(meta),
+)
+
+class ReaderPageBuilder(
+    private val fullWidth: Float,
+    private val fullHeight: Float,
+    private val measurer: ElementMeasurer,
 ) {
-    private val fullWidth = meta.renderWidth
-    private val fullHeight = meta.renderHeight
     private val lines = mutableListOf<ReaderLine>()
 
-    private var currentWidth: Int = 0
+    private var currentWidth: Float = 0f
     private var lineBuilder: ReaderLineBuilder? = null
 
     private var isPageBreakAdded = false
@@ -36,8 +51,13 @@ class ReaderPageBuilder(
             val element = remainingElements.first()
             val result = tryAddElement(
                 element,
-                lineIndent = block.style.blockIndent,
-                sizeOf = { it.size(block.style) }
+                lineIndent = (block.blockType as? BlockType.TextType)?.indent ?: 0,
+                sizeOf = { element ->
+                    measurer.measure(
+                        element,
+                        (block.blockType as? BlockType.TextType)?.style
+                    )
+                }
             )
 
             when (result) {
@@ -64,8 +84,9 @@ class ReaderPageBuilder(
     fun tryAddElement(
         element: AozoraElement,
         lineIndent: Int,
-        sizeOf: (AozoraElement) -> Size
+        sizeOf: (AozoraElement) -> MeasureResult
     ): FillResult {
+        Napier.d(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
             return FillResult.Filled(element)
         }
@@ -76,8 +97,8 @@ class ReaderPageBuilder(
         }
 
         if (lineBuilder == null) {
-            val size = sizeOf(element)
-            if (currentWidth + size.width > fullWidth) {
+            val measureResult = sizeOf(element)
+            if (currentWidth + measureResult.size.width > fullWidth) {
                 return FillResult.Filled(element)
             }
         }
@@ -135,17 +156,19 @@ class ReaderPageBuilder(
         lines += line
         currentWidth += line.lineHeight
         lineBuilder = null
+        Napier.d(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }
     }
 }
 
 class ReaderLineBuilder(
-    private val maxPx: Int,
+    private val maxPx: Float,
     initialIndent: Int = 0,
-    private val measure: (AozoraElement) -> Size,
+    private val measure: (AozoraElement) -> MeasureResult,
 ) {
     private var currentHeight: Float = 0f
     private var maxWidth: Float = 0f
     private val elementList = mutableListOf<AozoraElement>()
+    private var currentFontStyle: FontStyle? = null
 
     init {
         if (initialIndent > 0) {
@@ -159,37 +182,31 @@ class ReaderLineBuilder(
             is AozoraElement.Text,
             is AozoraElement.Heading,
             is AozoraElement.Emphasis -> {
-                val size = measure(element)
-                if (currentHeight + size.height > maxPx) {
+                val measureResult = measure(element)
+                if (currentHeight + measureResult.size.height > maxPx) {
                     val remainLength = maxPx - currentHeight
-                    val singleTextHeight = size.height.div(element.length)
+                    val singleTextHeight = measureResult.size.height.div(element.length)
                     val remainSlot = remainLength.div(singleTextHeight).toInt()
                     if (remainSlot == 0) {
                         return FillResult.Filled(element)
                     } else {
                         element.divide(remainSlot)?.let {
                             val (left, right) = it
-                            val leftSize = measure(left)
+                            val leftResult = measure(left)
 
-                            elementList += left
-                            currentHeight += leftSize.height
-                            maxWidth = maxOf(maxWidth, leftSize.width)
+                            updateState(left, leftResult)
                             return FillResult.Filled(right)
                         } ?: return FillResult.Filled(element)
                     }
                 }
 
-                elementList += element
-                currentHeight += size.height
-                maxWidth = maxOf(maxWidth, size.width)
+                updateState(element, measureResult)
                 return FillResult.FillContinue
             }
 
             AozoraElement.LineBreak -> {
-                val size = measure(element)
-                elementList += element
-                currentHeight += size.height
-                maxWidth = maxOf(maxWidth, size.width)
+                val measureResult = measure(element)
+                updateState(element, measureResult)
                 return FillResult.Filled()
             }
 
@@ -202,9 +219,8 @@ class ReaderLineBuilder(
                 if (elementList.isNotEmpty()) {
                     error("indent, and image can only be add to new line")
                 } else {
-                    val size = measure(element)
-                    elementList += element
-                    currentHeight += size.height
+                    val measureResult = measure(element)
+                    updateState(element, measureResult)
                     return FillResult.FillContinue
                 }
             }
@@ -213,8 +229,16 @@ class ReaderLineBuilder(
 
     fun build(): ReaderLine {
         return ReaderLine(
-            lineHeight = maxWidth.toInt(),
-            elements = elementList.toList()
+            lineHeight = maxWidth,
+            elements = elementList.toList(),
+            fontStyle = currentFontStyle
         )
+    }
+
+    private fun updateState(element: AozoraElement, measureResult: MeasureResult) {
+        elementList += element
+        currentHeight += measureResult.size.height
+        maxWidth = maxOf(maxWidth, measureResult.size.width)
+        currentFontStyle = measureResult.fontStyle
     }
 }

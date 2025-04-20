@@ -1,9 +1,10 @@
 package me.andannn.aosora.core.pager
 
 import androidx.compose.ui.geometry.Size
+import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.measure.MeasureResult
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.BlockStyle
 import me.andannn.aosora.core.parser.BlockType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -12,26 +13,40 @@ import kotlin.test.assertEquals
 class ReaderPageBuilderTest {
     private lateinit var lineBuilder: ReaderLineBuilder
     private lateinit var pageBuilder: ReaderPageBuilder
+    private val fontStyle = FontStyle(16f, 16f, 1.5f)
 
-    private val dummySizeOf: (AozoraElement) -> Size = {
-        when (it) {
+    private val dummySizeOf: (AozoraElement) -> MeasureResult = {
+        val size = when (it) {
             is AozoraElement.Indent -> Size(50f, it.count * 10f)
             else -> Size(50f, it.length * 10f)
         }
+        MeasureResult(
+            size,
+            fontStyle,
+        )
     }
 
     @BeforeTest
     fun setUp() {
         lineBuilder = ReaderLineBuilder(
-            maxPx = 100,
+            maxPx = 100f,
             measure = {
-                Size(30f, 30f)
+                MeasureResult(
+                    Size(30f, 30f),
+                    fontStyle,
+                )
             },
         )
         pageBuilder = ReaderPageBuilder(
-            meta = PageMetaData(100, 100),
+            fullWidth = 100f,
+            fullHeight = 100f,
+            measurer = { element, style ->
+                MeasureResult(
+                    Size(50f, 10f * element.length),
+                    fontStyle,
+                )
+            }
         )
-
     }
 
     @Test
@@ -171,12 +186,7 @@ class ReaderPageBuilderTest {
 
         val block = AozoraBlock(
             elements = emptyList(),
-            style = BlockStyle(
-                fontSize = 10,
-                lineHeightMultiplier = 5f,
-                blockIndent = 0,
-            ),
-            blockType = BlockType.Text,
+            blockType = BlockType.Text(),
         )
         assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
             repeat(20) {
@@ -197,12 +207,7 @@ class ReaderPageBuilderTest {
 
         val block = AozoraBlock(
             elements = emptyList(),
-            style = BlockStyle(
-                fontSize = 10,
-                lineHeightMultiplier = 5f,
-                blockIndent = 5,
-            ),
-            blockType = BlockType.Text,
+            blockType = BlockType.Text(indent = 5),
         )
         assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
             repeat(10) {

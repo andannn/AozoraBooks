@@ -1,11 +1,8 @@
 package me.andannn.aosora.core.pager
 
+import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.parser.AozoraElement
-
-data class PageMetaData(
-    val renderHeight: Int,
-    val renderWidth: Int,
-)
 
 /**
  * Page of reader.
@@ -29,7 +26,12 @@ data class ReaderLine(
      * fontSize = 16
      * lineHeight = 24  (即 16 × 1.5)
      */
-    val lineHeight: Int,
+    val lineHeight: Float,
+
+    /**
+     * font style.
+     */
+    val fontStyle: FontStyle?,
 
     /**
      * elements in line.

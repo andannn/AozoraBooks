@@ -1,5 +1,6 @@
 package me.andannn.aosora.core.pager
 
+import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraParser
 
@@ -10,7 +11,7 @@ suspend fun SequenceScope<AozoraPage>.generatePageSequence(
     var pageBuilder: ReaderPageBuilder? = null
 
     suspend fun SequenceScope<AozoraPage>.tryAdd(block: AozoraBlock) {
-        val builder = pageBuilder ?: ReaderPageBuilder(meta)
+        val builder = pageBuilder ?: createDefaultReaderPageBuilder(meta)
             .also { pageBuilder = it }
 
         when (val result = builder.tryAddBlock(block)) {

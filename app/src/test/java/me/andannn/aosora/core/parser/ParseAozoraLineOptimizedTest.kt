@@ -53,6 +53,6 @@ class ParseAozoraLineOptimizedTest {
 ［＃４字下げ］第一　腹中《ふくちゅう》の新年［＃「第一　腹中の新年」は中見出し］
 """.trimIndent()
         val result = parseLineAsBlock(sampleString)
-        assertEquals(result.blockType, BlockType.Heading)
+        assertEquals(result.blockType, BlockType.Heading(indent = 4, style = AozoraTextStyle.HEADING_MEDIUM))
     }
 }
