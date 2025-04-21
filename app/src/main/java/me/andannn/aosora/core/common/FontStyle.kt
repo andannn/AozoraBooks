@@ -24,7 +24,7 @@ fun AozoraTextStyle.resolveFontStyle(
     lineSpacing: LineSpacing
 ): FontStyle {
     val scale = fontSizeLevel.fontScaleFactor
-    val base = 16f
+    val base = 24f
 
     fun buildFontStyle(factor: Float): FontStyle {
         val baseSize = base * scale * factor

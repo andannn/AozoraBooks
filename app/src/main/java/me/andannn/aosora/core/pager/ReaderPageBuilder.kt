@@ -2,6 +2,7 @@ package me.andannn.aosora.core.pager
 
 import androidx.compose.ui.geometry.Size
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.measure.DefaultElementMeasurer
 import me.andannn.aosora.core.measure.ElementMeasurer
@@ -146,8 +147,7 @@ class ReaderPageBuilder(
         }
 
         return AozoraPage(
-            meta = PageMetaData(renderHeight = fullHeight, renderWidth = fullWidth),
-            lines = lines
+            lines = lines.toImmutableList()
         )
     }
 
@@ -230,7 +230,7 @@ class ReaderLineBuilder(
     fun build(): ReaderLine {
         return ReaderLine(
             lineHeight = maxWidth,
-            elements = elementList.toList(),
+            elements = elementList.toImmutableList(),
             fontStyle = currentFontStyle
         )
     }
@@ -239,6 +239,8 @@ class ReaderLineBuilder(
         elementList += element
         currentHeight += measureResult.size.height
         maxWidth = maxOf(maxWidth, measureResult.size.width)
-        currentFontStyle = measureResult.fontStyle
+        if (measureResult.fontStyle != null) {
+            currentFontStyle = measureResult.fontStyle
+        }
     }
 }

@@ -54,7 +54,8 @@ class DefaultElementMeasurer(
                 // TODO: Link break element can be measured ?
                 val style = cachedStyle ?: resolveAndSave(AozoraTextStyle.PARAGRAPH)
                 return MeasureResult(
-                    Size(
+                    fontStyle = style,
+                    size = Size(
                         style.baseSize.toFloat() * style.lineHeightMultiplier,
                         0f
                     )

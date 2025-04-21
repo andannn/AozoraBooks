@@ -10,9 +10,12 @@ import androidx.compose.ui.platform.LocalContext
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
+import me.andannn.aosora.core.common.FontSizeLevel
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.source.BookSource
@@ -20,11 +23,11 @@ import me.andannn.aosora.core.source.BookSource
 @Composable
 fun rememberReaderPresenter(
     renderSize: Size
-) = remember( renderSize) {
-        ReaderPresenter(
-            renderSize = renderSize
-        )
-    }
+) = remember(renderSize) {
+    ReaderPresenter(
+        renderSize = renderSize
+    )
+}
 
 class ReaderPresenter(
     private val renderSize: Size
@@ -47,7 +50,13 @@ class ReaderPresenter(
             pages.clear()
 
             source
-                .pageSource(PageMetaData(renderSize.width, renderSize.height))
+                .pageSource(
+                    PageMetaData(
+                        renderHeight = renderSize.height,
+                        renderWidth = renderSize.width,
+                        fontSizeLevel = FontSizeLevel.Level_9
+                    )
+                )
                 .asFlow()
                 .flowOn(Dispatchers.IO)
                 .collect {
@@ -56,7 +65,7 @@ class ReaderPresenter(
         }
 
         return ReaderState(
-            pages = pages
+            pages = pages.toImmutableList()
         ) { eventSink ->
             when (eventSink) {
                 else -> {}
@@ -67,7 +76,7 @@ class ReaderPresenter(
 
 @Stable
 data class ReaderState(
-    val pages: List<AozoraPage>,
+    val pages: ImmutableList<AozoraPage>,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

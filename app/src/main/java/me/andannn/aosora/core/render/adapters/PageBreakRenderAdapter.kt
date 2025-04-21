@@ -8,9 +8,9 @@ import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.PaintProvider
 import me.andannn.aosora.ui.reader.DEBUG_RENDER
 
-class IndentRenderAdapter(
+class PageBreakRenderAdapter(
     private val paintProvider: PaintProvider
-) : ElementRenderAdapter {
+): ElementRenderAdapter {
     override fun draw(
         canvas: Canvas,
         x: Float,
@@ -18,22 +18,16 @@ class IndentRenderAdapter(
         element: AozoraElement,
         fontStyle: FontStyle?
     ): Size? {
-        element as? AozoraElement.Indent ?: return null
-        if (fontStyle == null) {
-            error("fontStyle must not be null")
-        }
-
-        val paint = paintProvider.getPaint(fontStyle)
-
+        element as? AozoraElement.PageBreak ?: return null
         if (DEBUG_RENDER) {
             canvas.drawLine(
-                x,
+                x-20f,
                 y,
-                x,
-                y + paint.textSize * element.count,
+                x + 20f,
+                y + 40,
                 paintProvider.getDebugPaint()
             )
         }
-        return Size(0f, paint.textSize * element.count)
+        return Size(0f, 0f)
     }
 }

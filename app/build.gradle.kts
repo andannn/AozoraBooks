@@ -43,6 +43,7 @@ android {
 dependencies {
     testImplementation(libs.kotlin.test)
 
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.napier)
     implementation(libs.circuit.foundation)
     implementation(libs.androidx.core.ktx)

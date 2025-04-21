@@ -6,8 +6,9 @@ import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.PaintProvider
+import me.andannn.aosora.ui.reader.DEBUG_RENDER
 
-open class BasicTextRenderAdapter(
+abstract class BasicTextRenderAdapter(
     private val paintProvider: PaintProvider
 ): ElementRenderAdapter {
     override fun draw(
@@ -16,10 +17,10 @@ open class BasicTextRenderAdapter(
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle?
-    ): Size {
-        element as AozoraElement.BaseText
+    ): Size? {
+        element as? AozoraElement.BaseText ?: return null
         if (fontStyle == null) {
-            error("fontStyle must not be null")
+            error("fontStyle must not be null $element")
         }
 
         val paint = paintProvider.getPaint(fontStyle)
@@ -33,6 +34,32 @@ open class BasicTextRenderAdapter(
             /* y = */ y,
             /* paint = */ paint
         )
+
+        if (DEBUG_RENDER) {
+            canvas.drawRect(
+                x - width / 2,
+                y,
+                x + width / 2,
+                y + height,
+                paintProvider.getDebugPaint()
+            )
+        }
+
         return Size(width, height)
+    }
+}
+
+class TextRenderAdapter(
+    paintProvider: PaintProvider
+): BasicTextRenderAdapter(paintProvider) {
+    override fun draw(
+        canvas: Canvas,
+        x: Float,
+        y: Float,
+        element: AozoraElement,
+        fontStyle: FontStyle?
+    ): Size? {
+        element as? AozoraElement.Text ?: return null
+        return super.draw(canvas, x, y, element, fontStyle)
     }
 }

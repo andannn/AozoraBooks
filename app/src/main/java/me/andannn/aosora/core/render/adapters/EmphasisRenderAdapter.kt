@@ -6,9 +6,9 @@ import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.render.PaintProvider
 
-class RubyRenderAdapter(
-    private val paintProvider: PaintProvider
-) : BasicTextRenderAdapter(paintProvider) {
+class EmphasisRenderAdapter(
+    paintProvider: PaintProvider
+): BasicTextRenderAdapter(paintProvider)  {
     override fun draw(
         canvas: Canvas,
         x: Float,
@@ -16,11 +16,10 @@ class RubyRenderAdapter(
         element: AozoraElement,
         fontStyle: FontStyle?
     ): Size? {
-        element as? AozoraElement.Ruby?: return null
+        element as? AozoraElement.Emphasis ?: return null
         if (fontStyle == null) {
-            error("Ruby element must have a font style")
+            error("fontStyle must not be null $element")
         }
-
         return super.draw(canvas, x, y, element, fontStyle)
     }
 }

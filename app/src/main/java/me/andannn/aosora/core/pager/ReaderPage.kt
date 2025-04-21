@@ -1,15 +1,14 @@
 package me.andannn.aosora.core.pager
 
+import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.FontStyle
-import me.andannn.aosora.core.measure.PageMetaData
 import me.andannn.aosora.core.parser.AozoraElement
 
 /**
  * Page of reader.
  */
 data class AozoraPage(
-    val meta: PageMetaData,
-    val lines: List<ReaderLine>
+    val lines: ImmutableList<ReaderLine>
 )
 
 val AozoraPage.fullText: String
@@ -17,7 +16,7 @@ val AozoraPage.fullText: String
         acc + line.fullText
     }
 
-data class ReaderLine(
+data class ReaderLine constructor(
     /**
      * 每一行的实际高度（像素）。
      * 常见设置：行高 = fontSize × 行距倍数（如 1.5）
@@ -36,7 +35,7 @@ data class ReaderLine(
     /**
      * elements in line.
      */
-    val elements: List<AozoraElement>,
+    val elements: ImmutableList<AozoraElement>,
 ) {
     val fullText: String
             by lazy {
