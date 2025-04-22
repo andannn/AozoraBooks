@@ -14,12 +14,13 @@ class EmphasisRenderAdapter(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
+        textColor: Int
     ): Size? {
         element as? AozoraElement.Emphasis ?: return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
-        return super.draw(canvas, x, y, element, fontStyle)
+        return super.draw(canvas, x, y, element, fontStyle, textColor)
     }
 }

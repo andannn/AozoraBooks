@@ -2,11 +2,17 @@ package me.andannn.aosora.core.render
 
 import android.graphics.Paint
 import android.graphics.Paint.VERTICAL_TEXT_FLAG
+import me.andannn.aosora.core.common.FontType
 import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.common.getTypeface
 import kotlin.random.Random
 
 interface PaintProvider {
-    fun getPaint(fontStyle: FontStyle, isNotation: Boolean = false): Paint
+    fun getPaint(
+        fontStyle: FontStyle,
+        isNotation: Boolean = false,
+        textColor: Int,
+    ): Paint
 
     fun getDebugPaint(): Paint
 }
@@ -16,16 +22,25 @@ class DefaultPaintProvider() : PaintProvider {
 
     override fun getPaint(
         fontStyle: FontStyle,
-        isNotation: Boolean
+        isNotation: Boolean,
+        textColor: Int,
     ): Paint {
         val fontSize = if (isNotation) fontStyle.notationSize else fontStyle.baseSize
-        val fontMeta = FontMeta(fontSize)
+        val fontType = fontStyle.fontType
+        val fontColor = textColor
+        val fontMeta = FontMeta(fontSize, fontStyle.fontType, fontColor)
 
         return paintCache[fontMeta]
             ?: Paint()
                 .apply {
                     textSize = fontMeta.fontSize
                     flags = flags or VERTICAL_TEXT_FLAG
+
+                    if (fontType != FontType.DEFAULT) {
+                        typeface = fontType.getTypeface()
+                    }
+
+                    color = fontMeta.fontColor
                 }
                 .also { paintCache[fontMeta] = it }
     }
@@ -45,6 +60,9 @@ class DefaultPaintProvider() : PaintProvider {
     }
 }
 
+
 private data class FontMeta(
-    val fontSize: Float
+    val fontSize: Float,
+    val fontType: FontType,
+    val fontColor: Int,
 )

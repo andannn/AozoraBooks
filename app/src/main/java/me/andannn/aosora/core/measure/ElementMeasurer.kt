@@ -2,6 +2,7 @@ package me.andannn.aosora.core.measure
 
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.common.PageMetaData
 import me.andannn.aosora.core.common.resolveFontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.AozoraTextStyle
@@ -27,7 +28,10 @@ class DefaultElementMeasurer(
         return sizeOf(element, style)
     }
 
-    private fun sizeOf(element: AozoraElement, aozoraStyle: AozoraTextStyle? = null): MeasureResult {
+    private fun sizeOf(
+        element: AozoraElement,
+        aozoraStyle: AozoraTextStyle? = null
+    ): MeasureResult {
         val cachedStyle = fontStyleCache[aozoraStyle]
         when (element) {
             is AozoraElement.BaseText -> {
@@ -77,7 +81,11 @@ class DefaultElementMeasurer(
     }
 
     private fun resolveAndSave(aozoraStyle: AozoraTextStyle): FontStyle {
-        return aozoraStyle.resolveFontStyle(meta.fontSizeLevel, meta.lineSpacing).also {
+        return aozoraStyle.resolveFontStyle(
+            fontSizeLevel = meta.fontSizeLevel,
+            lineSpacing = meta.lineSpacing,
+            fontType = meta.fontType,
+        ).also {
             fontStyleCache[aozoraStyle] = it
             return it
         }

@@ -16,14 +16,15 @@ abstract class BasicTextRenderAdapter(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
+        textColor: Int
     ): Size? {
         element as? AozoraElement.BaseText ?: return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
 
-        val paint = paintProvider.getPaint(fontStyle)
+        val paint = paintProvider.getPaint(fontStyle, textColor = textColor)
         val height = paint.measureText(element.text)
         val width = paint.textSize
         canvas.drawText(
@@ -57,9 +58,10 @@ class TextRenderAdapter(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
+        textColor: Int
     ): Size? {
         element as? AozoraElement.Text ?: return null
-        return super.draw(canvas, x, y, element, fontStyle)
+        return super.draw(canvas, x, y, element, fontStyle, textColor)
     }
 }

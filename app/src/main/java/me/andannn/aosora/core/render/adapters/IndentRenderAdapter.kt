@@ -16,14 +16,15 @@ class IndentRenderAdapter(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
+        textColor: Int
     ): Size? {
         element as? AozoraElement.Indent ?: return null
         if (fontStyle == null) {
             error("fontStyle must not be null")
         }
 
-        val paint = paintProvider.getPaint(fontStyle)
+        val paint = paintProvider.getPaint(fontStyle, textColor = textColor)
 
         if (DEBUG_RENDER) {
             canvas.drawLine(

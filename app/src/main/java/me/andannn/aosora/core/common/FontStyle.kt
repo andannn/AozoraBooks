@@ -4,6 +4,11 @@ import me.andannn.aosora.core.parser.AozoraTextStyle
 
 data class FontStyle(
     /**
+     * font type.
+     */
+    val fontType: FontType,
+
+    /**
      * base font size in pixels.
      */
     val baseSize: Float,
@@ -21,16 +26,21 @@ data class FontStyle(
 
 fun AozoraTextStyle.resolveFontStyle(
     fontSizeLevel: FontSizeLevel,
-    lineSpacing: LineSpacing
+    lineSpacing: LineSpacing,
+    fontType: FontType,
 ): FontStyle {
-    val scale = fontSizeLevel.fontScaleFactor
-    val base = 24f
+    val fontSize = fontSizeLevel.fontSize
 
     fun buildFontStyle(factor: Float): FontStyle {
-        val baseSize = base * scale * factor
-        val notationSize = baseSize * 0.6f
+        val baseSize = fontSize * factor
         val lineHeightMultiplier = lineSpacing.multiplier
-        return FontStyle(baseSize, notationSize, lineHeightMultiplier)
+        val notationSize = baseSize * (lineHeightMultiplier - 1).div(2)
+        return FontStyle(
+            baseSize = baseSize,
+            notationSize = notationSize,
+            lineHeightMultiplier = lineHeightMultiplier,
+            fontType = fontType,
+        )
     }
 
     return when (this) {

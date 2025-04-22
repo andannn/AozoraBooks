@@ -16,7 +16,8 @@ class PageBreakRenderAdapter(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
+        textColor: Int
     ): Size? {
         element as? AozoraElement.PageBreak ?: return null
         if (DEBUG_RENDER) {

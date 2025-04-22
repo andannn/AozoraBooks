@@ -2,6 +2,7 @@ package me.andannn.aosora.core.render
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.render.adapters.EmphasisRenderAdapter
@@ -19,6 +20,7 @@ interface ElementRenderAdapter {
      * @param y The y coordinate to draw the element at.
      * @param element The element to draw.
      * @param fontStyle The font style to use when drawing the element.
+     * @param textColor The color of the text to use when drawing the element.
      *
      * @return The size of the drawn element or null if the element cannot be drawn.
      */
@@ -27,7 +29,8 @@ interface ElementRenderAdapter {
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle? = null
+        fontStyle: FontStyle? = null,
+        textColor: Int
     ): Size?
 
     companion object {

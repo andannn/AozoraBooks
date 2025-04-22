@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -14,11 +13,13 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.common.FontType
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.pager.ReaderLine
 import me.andannn.aosora.core.parser.AozoraElement
@@ -28,12 +29,13 @@ import me.andannn.aosora.core.render.ElementRenderAdapter.Companion.DefaultAdapt
 
 private const val TAG = "PageView"
 
-const val DEBUG_RENDER = true
+const val DEBUG_RENDER = false
 
 @Composable
 fun PageView(
     modifier: Modifier = Modifier,
     page: AozoraPage,
+    textColor: Int,
 ) {
     Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
     val adapters = remember {
@@ -47,7 +49,7 @@ fun PageView(
                     var currentX = size.width
                     for (line in page.lines) {
                         currentX -= line.lineHeight / 2
-                        canvas.nativeCanvas.drawAozoraLine(currentX, line, adapters)
+                        canvas.nativeCanvas.drawAozoraLine(currentX, line, adapters, textColor)
                         currentX -= line.lineHeight / 2
                     }
                 }
@@ -56,13 +58,18 @@ fun PageView(
     )
 }
 
-fun Canvas.drawAozoraLine(x: Float, line: ReaderLine, adapters: List<ElementRenderAdapter>) {
+fun Canvas.drawAozoraLine(
+    x: Float,
+    line: ReaderLine,
+    adapters: List<ElementRenderAdapter>,
+    textColor: Int
+) {
     val fontStyle = line.fontStyle
     var currentY = 0f
     line.elements.forEach { element ->
         var drawSize: Size? = null
         for (adapter in adapters) {
-            val size = adapter.draw(this, x, currentY, element, fontStyle)
+            val size = adapter.draw(this, x, currentY, element, fontStyle, textColor)
             if (size != null) {
                 drawSize = size
                 break
@@ -96,7 +103,8 @@ private fun PageViewPreview() {
                 fontStyle = FontStyle(
                     baseSize = 32f,
                     notationSize = 12f,
-                    lineHeightMultiplier = 1.3f
+                    lineHeightMultiplier = 1.3f,
+                    fontType = FontType.DEFAULT,
                 ),
                 elements = listOf(
                     AozoraElement.Indent(count = 1),
@@ -114,7 +122,8 @@ private fun PageViewPreview() {
                 fontStyle = FontStyle(
                     baseSize = 32f,
                     notationSize = 12f,
-                    lineHeightMultiplier = 1.3f
+                    lineHeightMultiplier = 1.3f,
+                    fontType = FontType.DEFAULT,
                 ),
                 elements = listOf(
                     AozoraElement.LineBreak,
@@ -129,7 +138,8 @@ private fun PageViewPreview() {
     ) {
         PageView(
             modifier = Modifier.fillMaxSize(),
-            page = dummyPage
+            page = dummyPage,
+            textColor = Color.White.toArgb()
         )
     }
 }

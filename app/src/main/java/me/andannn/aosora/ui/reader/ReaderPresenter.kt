@@ -16,8 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import me.andannn.aosora.core.common.FontSizeLevel
+import me.andannn.aosora.core.common.FontType
 import me.andannn.aosora.core.pager.AozoraPage
-import me.andannn.aosora.core.measure.PageMetaData
+import me.andannn.aosora.core.common.PageMetaData
+import me.andannn.aosora.core.common.ReaderTheme
 import me.andannn.aosora.core.source.BookSource
 
 @Composable
@@ -54,7 +56,8 @@ class ReaderPresenter(
                     PageMetaData(
                         renderHeight = renderSize.height,
                         renderWidth = renderSize.width,
-                        fontSizeLevel = FontSizeLevel.Level_9
+                        fontSizeLevel = FontSizeLevel.Level_4,
+                        fontType = FontType.NOTO_SERIF,
                     )
                 )
                 .asFlow()
@@ -77,6 +80,7 @@ class ReaderPresenter(
 @Stable
 data class ReaderState(
     val pages: ImmutableList<AozoraPage>,
+    val theme: ReaderTheme = ReaderTheme.DYNAMIC,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

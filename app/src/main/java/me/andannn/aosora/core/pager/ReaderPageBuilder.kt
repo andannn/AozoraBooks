@@ -7,7 +7,7 @@ import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.measure.DefaultElementMeasurer
 import me.andannn.aosora.core.measure.ElementMeasurer
 import me.andannn.aosora.core.measure.MeasureResult
-import me.andannn.aosora.core.measure.PageMetaData
+import me.andannn.aosora.core.common.PageMetaData
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.BlockType
@@ -28,16 +28,16 @@ sealed interface FillResult {
 fun createDefaultReaderPageBuilder(
     meta: PageMetaData,
 ) = ReaderPageBuilder(
-    fullWidth = meta.renderWidth,
-    fullHeight = meta.renderHeight,
+    meta = meta,
     measurer = DefaultElementMeasurer(meta),
 )
 
 class ReaderPageBuilder(
-    private val fullWidth: Float,
-    private val fullHeight: Float,
+    private val meta: PageMetaData,
     private val measurer: ElementMeasurer,
 ) {
+    private val fullWidth: Float = meta.renderWidth
+    private val fullHeight: Float = meta.renderHeight
     private val lines = mutableListOf<ReaderLine>()
 
     private var currentWidth: Float = 0f
