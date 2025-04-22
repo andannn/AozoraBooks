@@ -1,7 +1,10 @@
 package me.andannn.aosora.core.pager
 
+import android.graphics.PointF
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.common.FontType
+import me.andannn.aosora.core.common.PaperLayout
 import me.andannn.aosora.core.measure.MeasureResult
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
@@ -13,7 +16,7 @@ import kotlin.test.assertEquals
 class ReaderPageBuilderTest {
     private lateinit var lineBuilder: ReaderLineBuilder
     private lateinit var pageBuilder: ReaderPageBuilder
-    private val fontStyle = FontStyle(16f, 16f, 1.5f)
+    private val fontStyle = FontStyle(FontType.DEFAULT, 16f, 16f, 1.5f)
 
     private val dummySizeOf: (AozoraElement) -> MeasureResult = {
         val size = when (it) {
@@ -24,6 +27,19 @@ class ReaderPageBuilderTest {
             size,
             fontStyle,
         )
+    }
+
+    private val dummyPaperLayout = object : PaperLayout {
+        override val originalHeight: Float
+            get() = 100f
+        override val originalWidth: Float
+            get() = 100f
+        override val renderHeight: Float
+            get() = 100f
+        override val renderWidth: Float
+            get() = 100f
+        override val offset: PointF
+            get() = PointF(0f, 0f)
     }
 
     @BeforeTest
@@ -38,8 +54,7 @@ class ReaderPageBuilderTest {
             },
         )
         pageBuilder = ReaderPageBuilder(
-            fullWidth = 100f,
-            fullHeight = 100f,
+            meta = dummyPaperLayout,
             measurer = { element, style ->
                 MeasureResult(
                     Size(50f, 10f * element.length),

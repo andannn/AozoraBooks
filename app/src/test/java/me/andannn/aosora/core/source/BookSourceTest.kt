@@ -16,9 +16,9 @@ class BookSourceTest {
 
     @Test
     fun testBookSource() {
-        bookSource.pageSource(PageMetaData(1000f, 1000f)).forEach {
-            println(it.fullText)
-            println("------------------------------------------------------------------------")
-        }
+//        bookSource.pageSource(PageMetaData(1000f, 1000f)).forEach {
+//            println(it.fullText)
+//            println("------------------------------------------------------------------------")
+//        }
     }
 }

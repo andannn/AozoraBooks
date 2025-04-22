@@ -45,6 +45,7 @@ dependencies {
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.napier)
+    implementation(libs.kotlinx.io.core)
     implementation(libs.circuit.foundation)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

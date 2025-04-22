@@ -2,45 +2,67 @@ package me.andannn.aosora.core.common
 
 import android.graphics.PointF
 
-/**
- * Meta data for a render page.
- */
-data class PageMetaData(
+interface PaperLayout {
     /**
      * The original height of the page in pixels.
      */
-    val originalHeight: Float,
+    val originalHeight: Float
 
     /**
      * The original width of the page in pixels.
      */
-    val originalWidth: Float,
+    val originalWidth: Float
 
     /**
-     * The top margin of the page.
+     * The render height of the page in pixels.
      */
-    val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
+    val renderHeight: Float
 
     /**
-     * The font type of the page.
+     * The render width of the page in pixels.
      */
-    val fontType: FontType = FontType.DEFAULT,
-
-    /**
-     * The line spacing of the page.
-     */
-    val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
-
-    /**
-     * The font size level of the page.
-     */
-    val fontSizeLevel: FontSizeLevel = FontSizeLevel.Level_4,
-) {
+    val renderWidth: Float
 
     /**
      * The offset from original view to render area.
      */
-    val offset: PointF by lazy {
+    val offset: PointF
+}
+
+interface RenderSetting {
+    /**
+     * The font size level of the page.
+     */
+    val fontSizeLevel: FontSizeLevel
+
+    /**
+     * The line spacing of the page.
+     */
+    val lineSpacing: LineSpacing
+
+    /**
+     * The font type of the page.
+     */
+    val fontType: FontType
+
+    /**
+     * The top margin of the page.
+     */
+    val additionalTopMargin: TopMargin
+}
+
+/**
+ * Meta data for a render page.
+ */
+data class PageMetaData(
+    override val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
+    override val fontType: FontType = FontType.DEFAULT,
+    override val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
+    override val fontSizeLevel: FontSizeLevel = FontSizeLevel.Level_4,
+    override val originalHeight: Float,
+    override val originalWidth: Float,
+) : PaperLayout, RenderSetting {
+    override val offset: PointF by lazy {
         PointF(
             /* x = */
             originalWidth * DEFAULT_HORIZONTAL_MARGIN_PERCENT / 2,
@@ -49,17 +71,11 @@ data class PageMetaData(
         )
     }
 
-    /**
-     * The render height of the page in pixels.
-     */
-    val renderHeight: Float by lazy {
+    override val renderHeight: Float by lazy {
         originalHeight * (1 - DEFAULT_VERTICAL_MARGIN_PERCENT) - additionalTopMargin.value
     }
 
-    /**
-     * The render width of the page in pixels.
-     */
-    val renderWidth: Float by lazy {
+    override val renderWidth: Float by lazy {
         originalWidth * (1 - DEFAULT_HORIZONTAL_MARGIN_PERCENT)
     }
 }

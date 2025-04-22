@@ -3,13 +3,14 @@ package me.andannn.aosora.core.pager
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.common.PageMetaData
+import me.andannn.aosora.core.common.PaperLayout
 import me.andannn.aosora.core.parser.AozoraElement
 
 /**
  * Page of reader.
  */
 data class AozoraPage(
-    val metaData: PageMetaData,
+    val metaData: PaperLayout,
     val lines: ImmutableList<ReaderLine>
 )
 

@@ -3,6 +3,7 @@ package me.andannn.aosora.core.measure
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.common.PageMetaData
+import me.andannn.aosora.core.common.RenderSetting
 import me.andannn.aosora.core.common.resolveFontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.AozoraTextStyle
@@ -17,7 +18,7 @@ fun interface ElementMeasurer {
 }
 
 class DefaultElementMeasurer(
-    private val meta: PageMetaData
+    private val meta: RenderSetting
 ) : ElementMeasurer {
     private val fontStyleCache = mutableMapOf<AozoraTextStyle, FontStyle>()
 
