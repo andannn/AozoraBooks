@@ -48,10 +48,10 @@ class DefaultPaintProvider() : PaintProvider {
     override fun getDebugPaint(): Paint {
         return Paint().apply {
             style = Paint.Style.FILL_AND_STROKE
-            strokeWidth = 3f
+            strokeWidth = 10f
             // random color
             setARGB(
-                256 / 3,
+                256 / 6,
                 Random.nextInt(256),
                 Random.nextInt(256),
                 Random.nextInt(256)

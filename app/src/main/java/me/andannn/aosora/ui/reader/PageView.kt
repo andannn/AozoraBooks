@@ -20,6 +20,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.common.FontType
+import me.andannn.aosora.core.common.PageMetaData
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.pager.ReaderLine
 import me.andannn.aosora.core.parser.AozoraElement
@@ -29,7 +30,7 @@ import me.andannn.aosora.core.render.ElementRenderAdapter.Companion.DefaultAdapt
 
 private const val TAG = "PageView"
 
-const val DEBUG_RENDER = false
+const val DEBUG_RENDER = true
 
 @Composable
 fun PageView(
@@ -46,12 +47,31 @@ fun PageView(
             .fillMaxSize()
             .drawWithContent {
                 drawIntoCanvas { canvas ->
-                    var currentX = size.width
+                    val renderWidth = page.metaData.renderWidth
+                    val renderHeight = page.metaData.renderHeight
+                    val offsetX = page.metaData.offset.x
+                    val offsetY = page.metaData.offset.y
+
+                    if (DEBUG_RENDER) {
+                        canvas.nativeCanvas.drawRect(
+                            offsetX,
+                            offsetY,
+                            offsetX + renderWidth,
+                            offsetY + renderHeight,
+                            DefaultPaintProvider().getDebugPaint()
+                        )
+                    }
+                    canvas.save()
+                    canvas.nativeCanvas.translate(offsetX, offsetY)
+
+                    var currentX = renderWidth
                     for (line in page.lines) {
                         currentX -= line.lineHeight / 2
                         canvas.nativeCanvas.drawAozoraLine(currentX, line, adapters, textColor)
                         currentX -= line.lineHeight / 2
                     }
+
+                    canvas.restore()
                 }
                 drawContent()
             }
@@ -96,7 +116,12 @@ fun Canvas.drawAozoraLine(
 @Preview
 @Composable
 private fun PageViewPreview() {
+    val dummyMetadata = PageMetaData(
+        originalHeight = 500f,
+        originalWidth = 300f,
+    )
     val dummyPage = AozoraPage(
+        metaData = dummyMetadata,
         lines = listOf(
             ReaderLine(
                 lineHeight = 100f,

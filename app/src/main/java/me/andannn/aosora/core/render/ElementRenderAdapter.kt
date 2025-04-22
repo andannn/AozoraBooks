@@ -2,12 +2,11 @@ package me.andannn.aosora.core.render
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import me.andannn.aosora.core.common.FontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.render.adapters.EmphasisRenderAdapter
 import me.andannn.aosora.core.render.adapters.IndentRenderAdapter
-import me.andannn.aosora.core.render.adapters.LinkBreakRenderAdapter
+import me.andannn.aosora.core.render.adapters.LineBreakRenderAdapter
 import me.andannn.aosora.core.render.adapters.PageBreakRenderAdapter
 import me.andannn.aosora.core.render.adapters.RubyRenderAdapter
 import me.andannn.aosora.core.render.adapters.TextRenderAdapter
@@ -41,10 +40,10 @@ interface ElementRenderAdapter {
 fun createAdapters(paintProvider: PaintProvider = DefaultPaintProvider()): List<ElementRenderAdapter> {
     return listOf(
         TextRenderAdapter(paintProvider),
-        IndentRenderAdapter(paintProvider),
-        LinkBreakRenderAdapter(paintProvider),
-        PageBreakRenderAdapter(paintProvider),
         RubyRenderAdapter(paintProvider),
+        LineBreakRenderAdapter(paintProvider),
         EmphasisRenderAdapter(paintProvider),
+        IndentRenderAdapter(paintProvider),
+        PageBreakRenderAdapter(paintProvider),
     )
 }

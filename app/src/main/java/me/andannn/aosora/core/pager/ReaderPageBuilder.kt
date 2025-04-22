@@ -147,6 +147,7 @@ class ReaderPageBuilder(
         }
 
         return AozoraPage(
+            metaData = meta,
             lines = lines.toImmutableList()
         )
     }

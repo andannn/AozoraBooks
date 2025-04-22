@@ -8,7 +8,7 @@ import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.PaintProvider
 import me.andannn.aosora.ui.reader.DEBUG_RENDER
 
-class LinkBreakRenderAdapter(
+class LineBreakRenderAdapter(
     private val paintProvider: PaintProvider
 ) : ElementRenderAdapter {
     override fun draw(

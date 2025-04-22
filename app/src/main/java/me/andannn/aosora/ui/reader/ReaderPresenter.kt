@@ -17,9 +17,11 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import me.andannn.aosora.core.common.FontSizeLevel
 import me.andannn.aosora.core.common.FontType
+import me.andannn.aosora.core.common.LineSpacing
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.common.PageMetaData
 import me.andannn.aosora.core.common.ReaderTheme
+import me.andannn.aosora.core.common.TopMargin
 import me.andannn.aosora.core.source.BookSource
 
 @Composable
@@ -54,10 +56,12 @@ class ReaderPresenter(
             source
                 .pageSource(
                     PageMetaData(
-                        renderHeight = renderSize.height,
-                        renderWidth = renderSize.width,
+                        originalHeight = renderSize.height,
+                        originalWidth = renderSize.width,
+                        additionalTopMargin = TopMargin.MEDIUM,
                         fontSizeLevel = FontSizeLevel.Level_4,
                         fontType = FontType.NOTO_SERIF,
+                        lineSpacing = LineSpacing.MEDIUM
                     )
                 )
                 .asFlow()

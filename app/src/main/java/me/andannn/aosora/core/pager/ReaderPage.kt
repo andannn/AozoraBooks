@@ -9,6 +9,7 @@ import me.andannn.aosora.core.parser.AozoraElement
  * Page of reader.
  */
 data class AozoraPage(
+    val metaData: PageMetaData,
     val lines: ImmutableList<ReaderLine>
 )
 

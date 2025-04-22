@@ -23,7 +23,7 @@ fun Home(state: HomeState, modifier: Modifier = Modifier) {
 @Composable
 fun HomeContent(modifier: Modifier = Modifier) {
     val localDensity = LocalDensity.current
-    BoxWithConstraints(modifier = modifier.padding(horizontal = 30.dp, vertical = 20.dp)) {
+    BoxWithConstraints(modifier = modifier) {
         val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }
         val maxWidth = with(localDensity) { maxWidth.toPx() }
         val presenter = rememberReaderPresenter(
