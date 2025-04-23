@@ -1,17 +1,11 @@
-package me.andannn.aosora.core.parser
+package me.andannn.aosora.core.parser.plaintext.parsers
 
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.EmphasisParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.HeadingParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.IllustrationNotionParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.IndentParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.LineBreakParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.PageBreakParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.RubyParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.SpecificRubyParser
-import kotlin.test.Test
+import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.AozoraTextStyle
+import org.junit.Test
 import kotlin.test.assertEquals
 
-class AozoraElementParserTest {
+class ParserTest {
 
     @Test
     fun testRubyParser() {

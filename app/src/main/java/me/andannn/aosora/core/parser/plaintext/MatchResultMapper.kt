@@ -1,7 +1,6 @@
-package me.andannn.aosora.core.parser.internal.plaintext.util
+package me.andannn.aosora.core.parser.plaintext
 
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.AozoraPainTextParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.TokenMatchResult
+import me.andannn.aosora.core.parser.plaintext.parsers.TokenMatchResult
 
 /**
  * group 1 of [MatchResult] will contains extra text before target, cut the start of the range and return.

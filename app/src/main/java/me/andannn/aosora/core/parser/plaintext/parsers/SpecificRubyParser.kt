@@ -1,6 +1,7 @@
-package me.andannn.aosora.core.parser.internal.plaintext.parsers
+package me.andannn.aosora.core.parser.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.plaintext.AozoraPainTextParser
 
 /**
  * ｜：ルビの付く文字列の始まりを特定する記号

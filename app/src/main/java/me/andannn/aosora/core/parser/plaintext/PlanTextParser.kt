@@ -1,58 +1,27 @@
-package me.andannn.aosora.core.parser.internal.plaintext
+package me.andannn.aosora.core.parser.plaintext
 
-import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.BlockType
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.AozoraPainTextParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.EmphasisParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.HeadingParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.IllustrationNotionParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.IndentParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.LineBreakParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.PageBreakParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.RubyParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.SpecificRubyParser
-import me.andannn.aosora.core.parser.internal.plaintext.parsers.TokenMatchResult
-import kotlin.collections.plus
+import me.andannn.aosora.core.parser.AozoraLineParser
+import me.andannn.aosora.core.parser.plaintext.parsers.EmphasisParser
+import me.andannn.aosora.core.parser.plaintext.parsers.HeadingParser
+import me.andannn.aosora.core.parser.plaintext.parsers.IllustrationNotionParser
+import me.andannn.aosora.core.parser.plaintext.parsers.IndentParser
+import me.andannn.aosora.core.parser.plaintext.parsers.LineBreakParser
+import me.andannn.aosora.core.parser.plaintext.parsers.PageBreakParser
+import me.andannn.aosora.core.parser.plaintext.parsers.RubyParser
+import me.andannn.aosora.core.parser.plaintext.parsers.SpecificRubyParser
+import me.andannn.aosora.core.parser.plaintext.parsers.TokenMatchResult
 import kotlin.collections.plusAssign
 
-object AozoraPlainTextParser {
-
-    /**
-     * parse line to block
-     */
-    fun parseLineAsBlock(
-        line: String,
-        parsers: List<AozoraPainTextParser> = Parsers
-    ): AozoraBlock {
-        val elements = parseLine(line, parsers)
-
-        var blockType: BlockType?
-        val blockElements: List<AozoraElement>
-        var indent = 0
-
-        if (elements.size == 1 && elements[0] is AozoraElement.Heading) {
-            val heading = (elements[0] as AozoraElement.Heading)
-            blockElements = heading.elements
-            blockType = BlockType.Heading(indent = heading.indent, style = heading.style)
-            indent = heading.indent
-        } else if (elements.size == 1 && elements[0] is AozoraElement.Illustration) {
-            blockType = BlockType.Image
-            blockElements = elements
-        } else {
-            blockType = BlockType.Text()
-            blockElements = elements
-        }
-        return AozoraBlock(
-            elements = blockElements + AozoraElement.LineBreak,
-            blockType = blockType,
-        )
+object PlainTextLineParser: AozoraLineParser {
+    override fun parseLine(line: String): List<AozoraElement> {
+        return parseLineInternal(line)
     }
 
     /**
      * parse line to elements
      */
-    fun parseLine(
+    fun parseLineInternal(
         line: String,
         parsers: List<AozoraPainTextParser> = Parsers
     ): List<AozoraElement> {

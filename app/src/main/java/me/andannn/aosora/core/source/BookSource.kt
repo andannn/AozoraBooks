@@ -3,6 +3,8 @@ package me.andannn.aosora.core.source
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.pager.generatePageSequence
+import me.andannn.aosora.core.parser.createBlockParser
+import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
@@ -18,10 +20,12 @@ class BookSource(
             .first { it.toString().endsWith(".txt") }
     }
 
-    fun pageSource(meta: PageMetaData) : Sequence<AozoraPage> = sequence {
+    private val parser = createBlockParser(PlainTextLineParser)
+
+    fun pageSource(meta: PageMetaData): Sequence<AozoraPage> = sequence {
         bookPath.useLines(
             charset = Charset.forName("Shift_JIS"),
-            block = { generatePageSequence(it, meta) }
+            block = { generatePageSequence(aozoraBlockParser = parser, lineSequence = it, meta = meta) }
         )
     }
 }

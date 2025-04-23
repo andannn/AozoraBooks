@@ -117,5 +117,8 @@ enum class EmphasisStyle {
     /**
      * 傍点
      */
-    Bouten
+    Bouten,
+
+    Strong,
+    ;
 }

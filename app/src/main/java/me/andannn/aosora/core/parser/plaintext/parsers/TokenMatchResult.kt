@@ -1,4 +1,6 @@
-package me.andannn.aosora.core.parser.internal.plaintext.parsers
+package me.andannn.aosora.core.parser.plaintext.parsers
+
+import me.andannn.aosora.core.parser.plaintext.AozoraPainTextParser
 
 data class TokenMatchResult(
     /**

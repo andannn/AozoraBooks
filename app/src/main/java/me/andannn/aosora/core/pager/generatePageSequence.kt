@@ -2,9 +2,10 @@ package me.andannn.aosora.core.pager
 
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.parser.AozoraBlock
-import me.andannn.aosora.core.parser.internal.plaintext.AozoraPlainTextParser
+import me.andannn.aosora.core.parser.AozoraBlockParser
 
 suspend fun SequenceScope<AozoraPage>.generatePageSequence(
+    aozoraBlockParser: AozoraBlockParser,
     lineSequence: Sequence<String>,
     meta: PageMetaData
 ) {
@@ -30,7 +31,7 @@ suspend fun SequenceScope<AozoraPage>.generatePageSequence(
     }
 
     for (line in lineSequence) {
-        val block = AozoraPlainTextParser.parseLineAsBlock(line)
+        val block = aozoraBlockParser.parseLineAsBlock(line)
         tryAdd(block)
     }
 

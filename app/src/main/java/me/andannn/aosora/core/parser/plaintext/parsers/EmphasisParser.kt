@@ -1,8 +1,9 @@
-package me.andannn.aosora.core.parser.internal.plaintext.parsers
+package me.andannn.aosora.core.parser.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.EmphasisStyle
-import me.andannn.aosora.core.parser.internal.plaintext.util.mapTokenMatchResultWitCutStart
+import me.andannn.aosora.core.parser.plaintext.AozoraPainTextParser
+import me.andannn.aosora.core.parser.plaintext.mapTokenMatchResultWitCutStart
 
 object EmphasisParser : AozoraPainTextParser {
     private val regex = Regex("""(.+?)［＃「(.+?)」に傍点］""")

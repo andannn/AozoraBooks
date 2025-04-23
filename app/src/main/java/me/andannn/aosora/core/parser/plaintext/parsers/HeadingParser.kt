@@ -1,9 +1,9 @@
-package me.andannn.aosora.core.parser.internal.plaintext.parsers
+package me.andannn.aosora.core.parser.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.internal.plaintext.AozoraPlainTextParser
 import me.andannn.aosora.core.parser.AozoraTextStyle
-
+import me.andannn.aosora.core.parser.plaintext.AozoraPainTextParser
+import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 
 object HeadingParser : AozoraPainTextParser {
     private val headingContentParser: List<AozoraPainTextParser> = listOf(
@@ -33,7 +33,7 @@ object HeadingParser : AozoraPainTextParser {
             else -> AozoraTextStyle.PARAGRAPH
         }
 
-        val elements = AozoraPlainTextParser.parseLine(content, headingContentParser)
+        val elements = PlainTextLineParser.parseLineInternal(content, headingContentParser)
 
         return AozoraElement.Heading(
             style = style,
