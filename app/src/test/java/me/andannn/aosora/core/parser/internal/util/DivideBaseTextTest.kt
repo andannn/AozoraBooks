@@ -1,8 +1,9 @@
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.internal.util.divide
-import kotlin.test.Test
+package me.andannn.aosora.core.parser.internal.util
 
-class AozoraElementTest {
+import me.andannn.aosora.core.parser.AozoraElement
+import org.junit.Test
+
+class DivideBaseTextTest {
     @Test
     fun testDivide() {
         val element = AozoraElement.Text("abcde")

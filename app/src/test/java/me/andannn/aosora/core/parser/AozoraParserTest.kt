@@ -5,7 +5,7 @@ import me.andannn.aosora.core.parser.AozoraParser.parseLineAsBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ParseAozoraLineOptimizedTest {
+class AozoraParserTest {
     @Test
     fun testParseAozoraLineOptimized() {
         val sampleString = """
@@ -54,5 +54,23 @@ class ParseAozoraLineOptimizedTest {
 """.trimIndent()
         val result = parseLineAsBlock(sampleString)
         assertEquals(result.blockType, BlockType.Heading(indent = 4, style = AozoraTextStyle.HEADING_MEDIUM))
+    }
+
+    @Test
+    fun testParseStringWithLinkBreak() {
+        val sampleString = """
+第
+一 腹中《ふくちゅう》の新
+年
+""".trimIndent()
+        println(sampleString)
+        val result = parseLine(sampleString)
+        assertEquals(AozoraElement.Text("第"), result[0])
+        assertEquals(AozoraElement.LineBreak, result[1])
+        assertEquals(AozoraElement.Text("一 "), result[2])
+        assertEquals(AozoraElement.Ruby("腹中", ruby = "ふくちゅう"), result[3])
+        assertEquals(AozoraElement.Text("の新"), result[4])
+        assertEquals(AozoraElement.LineBreak, result[5])
+        assertEquals(AozoraElement.Text("年"), result[6])
     }
 }

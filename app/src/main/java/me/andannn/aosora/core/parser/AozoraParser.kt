@@ -4,6 +4,7 @@ import me.andannn.aosora.core.parser.internal.parsers.EmphasisParser
 import me.andannn.aosora.core.parser.internal.parsers.HeadingParser
 import me.andannn.aosora.core.parser.internal.parsers.IllustrationNotionParser
 import me.andannn.aosora.core.parser.internal.parsers.IndentParser
+import me.andannn.aosora.core.parser.internal.parsers.LineBreakParser
 import me.andannn.aosora.core.parser.internal.parsers.PageBreakParser
 import me.andannn.aosora.core.parser.internal.parsers.RubyParser
 import me.andannn.aosora.core.parser.internal.parsers.SpecificRubyParser
@@ -135,6 +136,7 @@ private val Parsers = listOf(
     HeadingParser,
     SpecificRubyParser,
     RubyParser,
+    LineBreakParser,
     IllustrationNotionParser,
     EmphasisParser,
     IndentParser,

@@ -4,6 +4,7 @@ import me.andannn.aosora.core.parser.internal.parsers.EmphasisParser
 import me.andannn.aosora.core.parser.internal.parsers.HeadingParser
 import me.andannn.aosora.core.parser.internal.parsers.IllustrationNotionParser
 import me.andannn.aosora.core.parser.internal.parsers.IndentParser
+import me.andannn.aosora.core.parser.internal.parsers.LineBreakParser
 import me.andannn.aosora.core.parser.internal.parsers.PageBreakParser
 import me.andannn.aosora.core.parser.internal.parsers.RubyParser
 import me.andannn.aosora.core.parser.internal.parsers.SpecificRubyParser
@@ -107,5 +108,17 @@ class AozoraElementParserTest {
         assertEquals(AozoraElement.Text("第一　"), largeHeading.elements[0])
         assertEquals(AozoraElement.Ruby("腹中", ruby = "ふくちゅう"), largeHeading.elements[1])
         assertEquals(AozoraElement.Text("の新年"), largeHeading.elements[2])
+    }
+
+    @Test
+    fun testLineBreakParser() {
+        val matchResult = LineBreakParser.matchAll(
+            "abc\nd\nef"
+        ).toList()
+        assert(matchResult.size == 2)
+        assert(matchResult[0].range == 3..3)
+        assert(matchResult[1].range == 5..5)
+        val result = LineBreakParser.create(matchResult[0])
+        assert(result is AozoraElement.LineBreak)
     }
 }

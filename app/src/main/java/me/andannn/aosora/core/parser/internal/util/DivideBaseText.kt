@@ -34,10 +34,7 @@ fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText,
         }
 
         is AozoraElement.Heading -> {
-            // TODO: implement by divide
-            copy(
-            ) to copy(
-            )
+            error("Heading can not be divided")
         }
 
         else -> {
