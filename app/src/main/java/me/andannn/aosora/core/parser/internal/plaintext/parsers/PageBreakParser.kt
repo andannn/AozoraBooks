@@ -1,11 +1,8 @@
-package me.andannn.aosora.core.parser.internal.parsers
+package me.andannn.aosora.core.parser.internal.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraElementParser
-import me.andannn.aosora.core.parser.TokenMatchResult
-import me.andannn.aosora.core.parser.toTokenResult
 
-object PageBreakParser: AozoraElementParser {
+object PageBreakParser: AozoraPainTextParser {
     private val regex = Regex("""［＃改ページ］""")
 
     override fun matchAll(input: String): Sequence<TokenMatchResult>  {

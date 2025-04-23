@@ -11,7 +11,7 @@ import me.andannn.aosora.core.common.model.PaperLayout
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.BlockType
-import me.andannn.aosora.core.parser.internal.util.divide
+import me.andannn.aosora.core.parser.internal.plaintext.util.divide
 import org.jetbrains.annotations.VisibleForTesting
 
 private const val TAG = "ReaderPageBuilder"

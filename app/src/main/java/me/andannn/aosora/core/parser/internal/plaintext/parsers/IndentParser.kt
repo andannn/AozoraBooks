@@ -1,11 +1,8 @@
-package me.andannn.aosora.core.parser.internal.parsers
+package me.andannn.aosora.core.parser.internal.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraElementParser
-import me.andannn.aosora.core.parser.TokenMatchResult
-import me.andannn.aosora.core.parser.toTokenResult
 
-object IndentParser : AozoraElementParser {
+object IndentParser : AozoraPainTextParser {
     private val regex = Regex("""［＃([０-９]+)字下げ］""")
 
     override fun matchAll(input: String): Sequence<TokenMatchResult> =

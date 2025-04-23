@@ -1,7 +1,7 @@
 package me.andannn.aosora.core.parser
 
-import me.andannn.aosora.core.parser.AozoraParser.parseLine
-import me.andannn.aosora.core.parser.AozoraParser.parseLineAsBlock
+import me.andannn.aosora.core.parser.internal.plaintext.AozoraPlainTextParser.parseLine
+import me.andannn.aosora.core.parser.internal.plaintext.AozoraPlainTextParser.parseLineAsBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

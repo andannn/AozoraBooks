@@ -1,14 +1,14 @@
-package me.andannn.aosora.core.parser.internal.util
+package me.andannn.aosora.core.parser.internal.plaintext.util
 
-import me.andannn.aosora.core.parser.AozoraElementParser
-import me.andannn.aosora.core.parser.TokenMatchResult
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.AozoraPainTextParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.TokenMatchResult
 
 /**
  * group 1 of [MatchResult] will contains extra text before target, cut the start of the range and return.
  */
 fun MatchResult.mapTokenMatchResultWitCutStart(
     input: String,
-    parser: AozoraElementParser
+    parser: AozoraPainTextParser
 ): TokenMatchResult? {
     val match = this
     val base = match.groupValues[1]

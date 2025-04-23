@@ -1,6 +1,7 @@
 package me.andannn.aosora.core.parser.internal.util
 
 import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.internal.plaintext.util.divide
 import org.junit.Test
 
 class DivideBaseTextTest {

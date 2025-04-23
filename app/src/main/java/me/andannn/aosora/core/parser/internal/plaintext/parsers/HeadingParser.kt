@@ -1,15 +1,12 @@
-package me.andannn.aosora.core.parser.internal.parsers
+package me.andannn.aosora.core.parser.internal.plaintext.parsers
 
 import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraElementParser
-import me.andannn.aosora.core.parser.AozoraParser
+import me.andannn.aosora.core.parser.internal.plaintext.AozoraPlainTextParser
 import me.andannn.aosora.core.parser.AozoraTextStyle
-import me.andannn.aosora.core.parser.TokenMatchResult
-import me.andannn.aosora.core.parser.toTokenResult
 
 
-object HeadingParser : AozoraElementParser {
-    private val headingContentParser: List<AozoraElementParser> = listOf(
+object HeadingParser : AozoraPainTextParser {
+    private val headingContentParser: List<AozoraPainTextParser> = listOf(
         SpecificRubyParser,
         RubyParser,
         EmphasisParser,
@@ -36,7 +33,7 @@ object HeadingParser : AozoraElementParser {
             else -> AozoraTextStyle.PARAGRAPH
         }
 
-        val elements = AozoraParser.parseLine(content, headingContentParser)
+        val elements = AozoraPlainTextParser.parseLine(content, headingContentParser)
 
         return AozoraElement.Heading(
             style = style,

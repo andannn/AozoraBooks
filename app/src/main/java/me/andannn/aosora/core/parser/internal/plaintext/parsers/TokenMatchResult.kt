@@ -1,10 +1,10 @@
-package me.andannn.aosora.core.parser
+package me.andannn.aosora.core.parser.internal.plaintext.parsers
 
 data class TokenMatchResult(
     /**
      * The parser that matched the token.
      */
-    val parser: AozoraElementParser,
+    val parser: AozoraPainTextParser,
 
     /** The range of indices in the original string where match was captured. */
     val range: IntRange,
@@ -18,7 +18,7 @@ data class TokenMatchResult(
     val groups: List<MatchGroup>,
 )
 
-fun MatchResult.toTokenResult(parser: AozoraElementParser) = TokenMatchResult(
+fun MatchResult.toTokenResult(parser: AozoraPainTextParser) = TokenMatchResult(
     parser = parser,
     range = range,
     groups = groups.filterNotNull()

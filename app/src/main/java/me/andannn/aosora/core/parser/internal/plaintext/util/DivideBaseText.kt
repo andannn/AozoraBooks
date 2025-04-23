@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.parser.internal.util
+package me.andannn.aosora.core.parser.internal.plaintext.util
 
 import me.andannn.aosora.core.parser.AozoraElement
 

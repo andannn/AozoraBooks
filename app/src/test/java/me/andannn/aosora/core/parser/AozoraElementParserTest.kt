@@ -1,13 +1,13 @@
 package me.andannn.aosora.core.parser
 
-import me.andannn.aosora.core.parser.internal.parsers.EmphasisParser
-import me.andannn.aosora.core.parser.internal.parsers.HeadingParser
-import me.andannn.aosora.core.parser.internal.parsers.IllustrationNotionParser
-import me.andannn.aosora.core.parser.internal.parsers.IndentParser
-import me.andannn.aosora.core.parser.internal.parsers.LineBreakParser
-import me.andannn.aosora.core.parser.internal.parsers.PageBreakParser
-import me.andannn.aosora.core.parser.internal.parsers.RubyParser
-import me.andannn.aosora.core.parser.internal.parsers.SpecificRubyParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.EmphasisParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.HeadingParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.IllustrationNotionParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.IndentParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.LineBreakParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.PageBreakParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.RubyParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.SpecificRubyParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

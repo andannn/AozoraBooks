@@ -1,51 +1,29 @@
-package me.andannn.aosora.core.parser
+package me.andannn.aosora.core.parser.internal.plaintext
 
-import me.andannn.aosora.core.parser.internal.parsers.EmphasisParser
-import me.andannn.aosora.core.parser.internal.parsers.HeadingParser
-import me.andannn.aosora.core.parser.internal.parsers.IllustrationNotionParser
-import me.andannn.aosora.core.parser.internal.parsers.IndentParser
-import me.andannn.aosora.core.parser.internal.parsers.LineBreakParser
-import me.andannn.aosora.core.parser.internal.parsers.PageBreakParser
-import me.andannn.aosora.core.parser.internal.parsers.RubyParser
-import me.andannn.aosora.core.parser.internal.parsers.SpecificRubyParser
+import me.andannn.aosora.core.parser.AozoraBlock
+import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.parser.BlockType
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.AozoraPainTextParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.EmphasisParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.HeadingParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.IllustrationNotionParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.IndentParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.LineBreakParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.PageBreakParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.RubyParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.SpecificRubyParser
+import me.andannn.aosora.core.parser.internal.plaintext.parsers.TokenMatchResult
+import kotlin.collections.plus
+import kotlin.collections.plusAssign
 
-sealed interface BlockType {
-    /**
-     * text base block
-     *
-     * @property style text style
-     * @property indent indent
-     */
-    sealed class TextType(
-        open val style: AozoraTextStyle,
-        open val indent: Int
-    ) : BlockType
-
-    /**
-     * paragraph text block
-     */
-    data class Text(override val indent: Int = 0) : TextType(style = AozoraTextStyle.PARAGRAPH, indent)
-
-    /**
-     * heading text block
-     */
-    data class Heading(override val style: AozoraTextStyle, override val indent: Int) :
-        TextType(style, indent)
-
-    /**
-     * image block
-     */
-    data object Image : BlockType
-}
-
-object AozoraParser {
+object AozoraPlainTextParser {
 
     /**
      * parse line to block
      */
     fun parseLineAsBlock(
         line: String,
-        parsers: List<AozoraElementParser> = Parsers
+        parsers: List<AozoraPainTextParser> = Parsers
     ): AozoraBlock {
         val elements = parseLine(line, parsers)
 
@@ -76,7 +54,7 @@ object AozoraParser {
      */
     fun parseLine(
         line: String,
-        parsers: List<AozoraElementParser> = Parsers
+        parsers: List<AozoraPainTextParser> = Parsers
     ): List<AozoraElement> {
         val result = mutableListOf<AozoraElement>()
         val matches = collectMatches(line, parsers)
@@ -109,7 +87,7 @@ object AozoraParser {
 
     private fun collectMatches(
         line: String,
-        parsers: List<AozoraElementParser>
+        parsers: List<AozoraPainTextParser>
     ): List<TokenMatchResult> {
         val allMatches = parsers
             .flatMapIndexed { index, parser ->

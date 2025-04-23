@@ -10,7 +10,8 @@ package me.andannn.aosora.core.parser
  * ［＃ここで字詰め終わり］
  * ［＃ここで字下げ終わり］
  */
-data class AozoraBlock constructor(
+data class AozoraBlock(
     val elements: List<AozoraElement>,
     val blockType: BlockType,
+    val blockIndex: Int = -1
 )
