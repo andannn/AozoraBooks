@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import kotlinx.collections.immutable.ImmutableList
-import me.andannn.aosora.core.common.ReaderTheme
-import me.andannn.aosora.core.common.getBackgroundColor
-import me.andannn.aosora.core.common.getTextColor
+import me.andannn.aosora.core.common.model.ReaderTheme
+import me.andannn.aosora.core.common.model.getBackgroundColor
+import me.andannn.aosora.core.common.model.getTextColor
 import me.andannn.aosora.core.pager.AozoraPage
 
 @Composable

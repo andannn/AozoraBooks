@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.common
+package me.andannn.aosora.core.common.model
 
 enum class LineSpacing(val multiplier: Float) {
     SMALL(1.8f),

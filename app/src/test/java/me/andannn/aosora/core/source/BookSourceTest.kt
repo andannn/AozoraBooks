@@ -1,7 +1,5 @@
 package me.andannn.aosora.core.source
 
-import me.andannn.aosora.core.common.PageMetaData
-import me.andannn.aosora.core.pager.fullText
 import java.nio.file.Paths
 import kotlin.test.BeforeTest
 import kotlin.test.Test

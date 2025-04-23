@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.common
+package me.andannn.aosora.core.common.model
 
 import me.andannn.aosora.core.parser.AozoraTextStyle
 

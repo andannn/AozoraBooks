@@ -2,9 +2,9 @@ package me.andannn.aosora.core.pager
 
 import android.graphics.PointF
 import androidx.compose.ui.geometry.Size
-import me.andannn.aosora.core.common.FontStyle
-import me.andannn.aosora.core.common.FontType
-import me.andannn.aosora.core.common.PaperLayout
+import me.andannn.aosora.core.common.model.FontStyle
+import me.andannn.aosora.core.common.model.FontType
+import me.andannn.aosora.core.common.model.PaperLayout
 import me.andannn.aosora.core.measure.MeasureResult
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement

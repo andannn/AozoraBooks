@@ -15,13 +15,13 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
-import me.andannn.aosora.core.common.FontSizeLevel
-import me.andannn.aosora.core.common.FontType
-import me.andannn.aosora.core.common.LineSpacing
+import me.andannn.aosora.core.common.model.FontSizeLevel
+import me.andannn.aosora.core.common.model.FontType
+import me.andannn.aosora.core.common.model.LineSpacing
 import me.andannn.aosora.core.pager.AozoraPage
-import me.andannn.aosora.core.common.PageMetaData
-import me.andannn.aosora.core.common.ReaderTheme
-import me.andannn.aosora.core.common.TopMargin
+import me.andannn.aosora.core.common.model.PageMetaData
+import me.andannn.aosora.core.common.model.ReaderTheme
+import me.andannn.aosora.core.common.model.TopMargin
 import me.andannn.aosora.core.source.BookSource
 
 @Composable

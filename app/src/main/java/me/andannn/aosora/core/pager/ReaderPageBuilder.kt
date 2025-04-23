@@ -1,14 +1,13 @@
 package me.andannn.aosora.core.pager
 
-import androidx.compose.ui.geometry.Size
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aosora.core.common.FontStyle
+import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.measure.DefaultElementMeasurer
 import me.andannn.aosora.core.measure.ElementMeasurer
 import me.andannn.aosora.core.measure.MeasureResult
-import me.andannn.aosora.core.common.PageMetaData
-import me.andannn.aosora.core.common.PaperLayout
+import me.andannn.aosora.core.common.model.PageMetaData
+import me.andannn.aosora.core.common.model.PaperLayout
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.BlockType

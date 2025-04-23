@@ -18,9 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aosora.core.common.FontStyle
-import me.andannn.aosora.core.common.FontType
-import me.andannn.aosora.core.common.PageMetaData
+import me.andannn.aosora.core.common.model.FontStyle
+import me.andannn.aosora.core.common.model.FontType
+import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.pager.ReaderLine
 import me.andannn.aosora.core.parser.AozoraElement

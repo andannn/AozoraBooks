@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.common
+package me.andannn.aosora.core.common.model
 
 import android.graphics.PointF
 

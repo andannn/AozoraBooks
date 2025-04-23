@@ -1,7 +1,7 @@
 package me.andannn.aosora.core.source
 
 import me.andannn.aosora.core.pager.AozoraPage
-import me.andannn.aosora.core.common.PageMetaData
+import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.pager.generatePageSequence
 import java.nio.charset.Charset
 import java.nio.file.Files

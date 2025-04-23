@@ -2,9 +2,9 @@ package me.andannn.aosora.core.render
 
 import android.graphics.Paint
 import android.graphics.Paint.VERTICAL_TEXT_FLAG
-import me.andannn.aosora.core.common.FontType
-import me.andannn.aosora.core.common.FontStyle
-import me.andannn.aosora.core.common.getTypeface
+import me.andannn.aosora.core.common.model.FontType
+import me.andannn.aosora.core.common.model.FontStyle
+import me.andannn.aosora.core.common.model.getTypeface
 import kotlin.random.Random
 
 interface PaintProvider {

@@ -1,10 +1,9 @@
 package me.andannn.aosora.core.measure
 
 import androidx.compose.ui.geometry.Size
-import me.andannn.aosora.core.common.FontStyle
-import me.andannn.aosora.core.common.PageMetaData
-import me.andannn.aosora.core.common.RenderSetting
-import me.andannn.aosora.core.common.resolveFontStyle
+import me.andannn.aosora.core.common.model.FontStyle
+import me.andannn.aosora.core.common.model.RenderSetting
+import me.andannn.aosora.core.common.model.resolveFontStyle
 import me.andannn.aosora.core.parser.AozoraElement
 import me.andannn.aosora.core.parser.AozoraTextStyle
 

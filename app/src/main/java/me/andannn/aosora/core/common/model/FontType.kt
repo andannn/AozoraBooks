@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.common
+package me.andannn.aosora.core.common.model
 
 import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
