@@ -4,6 +4,9 @@ import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.parser.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraBlockParser
 
+/**
+ * TODO: comment
+ */
 suspend fun SequenceScope<AozoraPage>.generatePageSequence(
     aozoraBlockParser: AozoraBlockParser,
     lineSequence: Sequence<String>,

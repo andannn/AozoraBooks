@@ -88,6 +88,7 @@ private val Parsers = listOf(
     EmphasisParser,
     IndentParser,
     PageBreakParser,
+    LineBreakParser,
 )
 
 private data class PrioritizedMatch(

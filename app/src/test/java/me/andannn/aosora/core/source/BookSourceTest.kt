@@ -9,7 +9,7 @@ class BookSourceTest {
 
     @BeforeTest
     fun setUp() {
-        bookPageSource = BookPageSource(Paths.get("src/test/resources/49947_ruby_39182"))
+//        bookPageSource = BookPageSource(Paths.get("src/test/resources/49947_ruby_39182"))
     }
 
     @Test

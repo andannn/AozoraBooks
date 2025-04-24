@@ -33,7 +33,7 @@ class AozoraBlockParser(
             blockElements = elements
         }
         return AozoraBlock(
-            elements = blockElements + AozoraElement.LineBreak,
+            elements = blockElements,
             blockType = blockType,
         )
     }

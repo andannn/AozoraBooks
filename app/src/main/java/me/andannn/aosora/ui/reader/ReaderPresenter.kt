@@ -6,7 +6,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.platform.LocalContext
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -15,7 +14,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.io.files.Path
+import me.andannn.aosora.core.common.model.AozoraBookCard
 import me.andannn.aosora.core.common.model.FontSizeLevel
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.LineSpacing
@@ -23,7 +22,8 @@ import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.TopMargin
-import me.andannn.aosora.core.source.createBookSource
+import me.andannn.aosora.core.source.impl.createBookSource
+import me.andannn.aosora.core.source.impl.createDummyBookPageSource
 
 @Composable
 fun rememberReaderPresenter(
@@ -40,21 +40,22 @@ class ReaderPresenter(
 
     @Composable
     override fun present(): ReaderState {
-        val context = LocalContext.current
-        val source = rememberRetained {
-            createBookSource(Path(context.filesDir.toString()))
-        }
-
         val pages = rememberRetained {
             mutableStateListOf<AozoraPage>()
         }
-
         LaunchedEffect(
             Unit
         ) {
             pages.clear()
 
-            source
+//            createBookSource(
+//                AozoraBookCard(
+//                    id = "1",
+//                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
+//                    htmlUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_78314.html",
+//                )
+//            )
+            createDummyBookPageSource()
                 .pageSource(
                     PageMetaData(
                         originalHeight = renderSize.height,
