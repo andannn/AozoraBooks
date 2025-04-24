@@ -15,7 +15,7 @@ object HeadingMatcher : ElementMatcher {
 
         val className = node.attr("class")
         val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
-        val child = node.child(0) ?: return null
+        val child = node.children().getOrNull(0) ?: return null
         val styleName = child.attr("class") ?: return null
         val style = when (styleName) {
             "naka-midashi" -> AozoraTextStyle.HEADING_MEDIUM
