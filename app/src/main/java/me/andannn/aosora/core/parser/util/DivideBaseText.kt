@@ -1,6 +1,6 @@
 package me.andannn.aosora.core.parser.util
 
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement
 
 /**
  * Divide the element from [startIndex].

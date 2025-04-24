@@ -1,6 +1,6 @@
 package me.andannn.aosora.core.parser.plaintext
 
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.parser.AozoraLineParser
 import me.andannn.aosora.core.parser.plaintext.parsers.EmphasisParser
 import me.andannn.aosora.core.parser.plaintext.parsers.HeadingParser

@@ -1,6 +1,6 @@
 package me.andannn.aosora.core.parser.html
 
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.parser.html.matchers.EmphasisMatcher
 import me.andannn.aosora.core.parser.html.matchers.HeadingMatcher
 import me.andannn.aosora.core.parser.html.matchers.ImageMatcher

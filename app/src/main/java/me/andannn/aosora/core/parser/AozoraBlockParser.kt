@@ -1,17 +1,28 @@
 package me.andannn.aosora.core.parser
 
+import me.andannn.aosora.core.common.model.AozoraBlock
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.BlockType
 import me.andannn.aosora.core.parser.html.HtmlLineParser
 
-fun createBlockParser(parser: AozoraLineParser = HtmlLineParser) =
-    AozoraBlockParser(parser)
+/**
+ * Create block parser.
+ */
+fun createBlockParser(lineParser: AozoraLineParser = HtmlLineParser): AozoraBlockParser =
+    DefaultAozoraBlockParser(lineParser)
 
-class AozoraBlockParser(
-    val parser: AozoraLineParser
-) {
+interface AozoraBlockParser {
     /**
      * parse line to block
      */
-    fun parseLineAsBlock(
+    fun parseLineAsBlock(line: String): AozoraBlock
+}
+
+private class DefaultAozoraBlockParser(
+    val parser: AozoraLineParser
+) : AozoraBlockParser {
+
+    override fun parseLineAsBlock(
         line: String,
     ): AozoraBlock {
         val elements = parser.parseLine(line)

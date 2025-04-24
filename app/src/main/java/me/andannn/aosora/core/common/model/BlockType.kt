@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.parser
+package me.andannn.aosora.core.common.model
 
 sealed interface BlockType {
     /**
@@ -15,12 +15,16 @@ sealed interface BlockType {
     /**
      * paragraph text block
      */
-    data class Text(override val indent: Int = 0) : TextType(style = AozoraTextStyle.PARAGRAPH, indent)
+    data class Text(override val indent: Int = 0) :
+        TextType(style = AozoraTextStyle.PARAGRAPH, indent)
 
     /**
      * heading text block
      */
-    data class Heading(override val style: AozoraTextStyle, override val indent: Int) :
+    data class Heading(
+        override val style: AozoraTextStyle,
+        override val indent: Int
+    ) :
         TextType(style, indent)
 
     /**

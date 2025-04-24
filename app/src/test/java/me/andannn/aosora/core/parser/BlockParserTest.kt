@@ -1,5 +1,7 @@
 package me.andannn.aosora.core.parser
 
+import me.andannn.aosora.core.common.model.AozoraTextStyle
+import me.andannn.aosora.core.common.model.BlockType
 import me.andannn.aosora.core.parser.html.HtmlLineParser
 import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 import org.junit.Test

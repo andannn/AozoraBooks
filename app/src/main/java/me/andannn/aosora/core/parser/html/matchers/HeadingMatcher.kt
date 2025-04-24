@@ -1,8 +1,8 @@
 package me.andannn.aosora.core.parser.html.matchers
 
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraElement.Heading
-import me.andannn.aosora.core.parser.AozoraTextStyle
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement.Heading
+import me.andannn.aosora.core.common.model.AozoraTextStyle
 import me.andannn.aosora.core.parser.html.ElementMatcher
 import me.andannn.aosora.core.parser.html.parseAsAozoraElements
 import org.jsoup.nodes.Element

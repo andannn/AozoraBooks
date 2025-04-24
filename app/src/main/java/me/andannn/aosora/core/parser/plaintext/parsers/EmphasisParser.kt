@@ -1,7 +1,7 @@
 package me.andannn.aosora.core.parser.plaintext.parsers
 
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.EmphasisStyle
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.EmphasisStyle
 import me.andannn.aosora.core.parser.plaintext.AozoraPainTextParser
 import me.andannn.aosora.core.parser.plaintext.mapTokenMatchResultWitCutStart
 

@@ -3,7 +3,7 @@ package me.andannn.aosora.core.render
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.model.FontStyle
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.render.adapters.EmphasisRenderAdapter
 import me.andannn.aosora.core.render.adapters.IndentRenderAdapter
 import me.andannn.aosora.core.render.adapters.LineBreakRenderAdapter

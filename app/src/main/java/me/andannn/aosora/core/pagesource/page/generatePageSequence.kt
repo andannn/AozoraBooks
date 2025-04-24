@@ -1,7 +1,8 @@
-package me.andannn.aosora.core.pager
+package me.andannn.aosora.core.pagesource.page
 
+import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.parser.AozoraBlock
+import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.parser.AozoraBlockParser
 
 /**

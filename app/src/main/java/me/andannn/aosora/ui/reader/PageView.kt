@@ -21,9 +21,9 @@ import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.pager.AozoraPage
-import me.andannn.aosora.core.pager.ReaderLine
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.Line
+import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.render.DefaultPaintProvider
 import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.ElementRenderAdapter.Companion.DefaultAdapters
@@ -80,7 +80,7 @@ fun PageView(
 
 fun Canvas.drawAozoraLine(
     x: Float,
-    line: ReaderLine,
+    line: Line,
     adapters: List<ElementRenderAdapter>,
     textColor: Int
 ) {
@@ -123,7 +123,7 @@ private fun PageViewPreview() {
     val dummyPage = AozoraPage(
         metaData = dummyMetadata,
         lines = listOf(
-            ReaderLine(
+            Line(
                 lineHeight = 100f,
                 fontStyle = FontStyle(
                     baseSize = 32f,
@@ -142,7 +142,7 @@ private fun PageViewPreview() {
                     AozoraElement.PageBreak,
                 ).toImmutableList()
             ),
-            ReaderLine(
+            Line(
                 lineHeight = 100f,
                 fontStyle = FontStyle(
                     baseSize = 32f,

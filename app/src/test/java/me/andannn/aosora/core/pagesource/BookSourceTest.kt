@@ -1,6 +1,5 @@
-package me.andannn.aosora.core.source
+package me.andannn.aosora.core.pagesource
 
-import java.nio.file.Paths
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

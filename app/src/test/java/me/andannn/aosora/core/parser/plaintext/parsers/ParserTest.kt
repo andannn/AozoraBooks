@@ -1,7 +1,7 @@
 package me.andannn.aosora.core.parser.plaintext.parsers
 
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraTextStyle
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraTextStyle
 import org.junit.Test
 import kotlin.test.assertEquals
 

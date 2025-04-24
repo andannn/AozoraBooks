@@ -1,4 +1,4 @@
-package me.andannn.aosora.core.parser
+package me.andannn.aosora.core.common.model
 
 sealed interface AozoraElement {
 

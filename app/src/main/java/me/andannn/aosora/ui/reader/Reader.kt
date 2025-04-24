@@ -14,7 +14,7 @@ import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.getBackgroundColor
 import me.andannn.aosora.core.common.model.getTextColor
-import me.andannn.aosora.core.pager.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage
 
 @Composable
 fun Reader(state: ReaderState, modifier: Modifier = Modifier) {

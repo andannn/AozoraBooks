@@ -1,6 +1,6 @@
-package me.andannn.aosora.core.source
+package me.andannn.aosora.core.pagesource
 
-import me.andannn.aosora.core.pager.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 
 /**

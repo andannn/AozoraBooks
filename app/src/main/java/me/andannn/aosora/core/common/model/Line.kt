@@ -1,24 +1,8 @@
-package me.andannn.aosora.core.pager
+package me.andannn.aosora.core.common.model
 
 import kotlinx.collections.immutable.ImmutableList
-import me.andannn.aosora.core.common.model.FontStyle
-import me.andannn.aosora.core.common.model.PaperLayout
-import me.andannn.aosora.core.parser.AozoraElement
 
-/**
- * Page of reader.
- */
-data class AozoraPage(
-    val metaData: PaperLayout,
-    val lines: ImmutableList<ReaderLine>
-)
-
-val AozoraPage.fullText: String
-    get() = lines.fold("") { acc, line ->
-        acc + line.fullText
-    }
-
-data class ReaderLine constructor(
+data class Line(
     /**
      * 每一行的实际高度（像素）。
      * 常见设置：行高 = fontSize × 行距倍数（如 1.5）

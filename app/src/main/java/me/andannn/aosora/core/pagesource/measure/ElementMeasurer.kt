@@ -1,11 +1,12 @@
-package me.andannn.aosora.core.measure
+package me.andannn.aosora.core.pagesource.measure
 
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.RenderSetting
 import me.andannn.aosora.core.common.model.resolveFontStyle
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.AozoraTextStyle
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraTextStyle
+import kotlin.collections.get
 
 data class MeasureResult(
     val size: Size,

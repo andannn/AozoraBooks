@@ -1,20 +1,20 @@
-package me.andannn.aosora.core.pager
+package me.andannn.aosora.core.pagesource.page
 
 import android.graphics.PointF
 import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.PaperLayout
-import me.andannn.aosora.core.measure.MeasureResult
-import me.andannn.aosora.core.parser.AozoraBlock
-import me.andannn.aosora.core.parser.AozoraElement
-import me.andannn.aosora.core.parser.BlockType
+import me.andannn.aosora.core.pagesource.measure.MeasureResult
+import me.andannn.aosora.core.common.model.AozoraBlock
+import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.BlockType
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ReaderPageBuilderTest {
-    private lateinit var lineBuilder: ReaderLineBuilder
+    private lateinit var lineBuilder: LineBuilder
     private lateinit var pageBuilder: ReaderPageBuilder
     private val fontStyle = FontStyle(FontType.DEFAULT, 16f, 16f, 1.5f)
 
@@ -44,7 +44,7 @@ class ReaderPageBuilderTest {
 
     @BeforeTest
     fun setUp() {
-        lineBuilder = ReaderLineBuilder(
+        lineBuilder = LineBuilder(
             maxPx = 100f,
             measure = {
                 MeasureResult(

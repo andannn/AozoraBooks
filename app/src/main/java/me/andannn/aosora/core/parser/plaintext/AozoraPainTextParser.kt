@@ -1,6 +1,6 @@
 package me.andannn.aosora.core.parser.plaintext
 
-import me.andannn.aosora.core.parser.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.parser.plaintext.parsers.TokenMatchResult
 
 interface AozoraPainTextParser {
@@ -10,7 +10,7 @@ interface AozoraPainTextParser {
     fun matchAll(input: String): Sequence<TokenMatchResult>
 
     /**
-     * create [me.andannn.aosora.core.parser.AozoraElement] from [match]
+     * create [AozoraElement] from [match]
      */
     fun create(match: TokenMatchResult): AozoraElement
 }

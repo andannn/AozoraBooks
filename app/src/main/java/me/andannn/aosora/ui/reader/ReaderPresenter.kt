@@ -14,16 +14,14 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
-import me.andannn.aosora.core.common.model.AozoraBookCard
 import me.andannn.aosora.core.common.model.FontSizeLevel
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.LineSpacing
-import me.andannn.aosora.core.pager.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.TopMargin
-import me.andannn.aosora.core.source.impl.createBookSource
-import me.andannn.aosora.core.source.impl.createDummyBookPageSource
+import me.andannn.aosora.core.pagesource.createDummyBookPageSource
 
 @Composable
 fun rememberReaderPresenter(
