@@ -5,11 +5,11 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class BookSourceTest {
-    private lateinit var bookSource: BookSource
+    private lateinit var bookPageSource: BookPageSource
 
     @BeforeTest
     fun setUp() {
-        bookSource = BookSource(Paths.get("src/test/resources/49947_ruby_39182"))
+        bookPageSource = BookPageSource(Paths.get("src/test/resources/49947_ruby_39182"))
     }
 
     @Test

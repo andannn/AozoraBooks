@@ -3,8 +3,6 @@ package me.andannn.aosora.core
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import kotlinx.io.readString
-import me.andannn.aosora.core.source.BookSource
 import org.jsoup.Jsoup
 import kotlin.test.BeforeTest
 import kotlin.test.Test

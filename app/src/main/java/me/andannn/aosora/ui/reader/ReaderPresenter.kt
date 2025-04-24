@@ -15,6 +15,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.io.files.Path
 import me.andannn.aosora.core.common.model.FontSizeLevel
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.LineSpacing
@@ -22,7 +23,7 @@ import me.andannn.aosora.core.pager.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.TopMargin
-import me.andannn.aosora.core.source.BookSource
+import me.andannn.aosora.core.source.createBookSource
 
 @Composable
 fun rememberReaderPresenter(
@@ -41,7 +42,7 @@ class ReaderPresenter(
     override fun present(): ReaderState {
         val context = LocalContext.current
         val source = rememberRetained {
-            BookSource(context.filesDir.toPath())
+            createBookSource(Path(context.filesDir.toString()))
         }
 
         val pages = rememberRetained {

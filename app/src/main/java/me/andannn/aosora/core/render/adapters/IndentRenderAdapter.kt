@@ -27,13 +27,14 @@ class IndentRenderAdapter(
         val paint = paintProvider.getPaint(fontStyle, textColor = textColor)
 
         if (DEBUG_RENDER) {
-            canvas.drawLine(
-                x,
-                y,
-                x,
-                y + paint.textSize * element.count,
-                paintProvider.getDebugPaint()
-            )
+            repeat(element.count) {
+                canvas.drawCircle(
+                    x,
+                    y + paint.textSize / 2 + paint.textSize * it,
+                    paint.textSize / 2,
+                    paintProvider.getDebugPaint()
+                )
+            }
         }
         return Size(0f, paint.textSize * element.count)
     }
