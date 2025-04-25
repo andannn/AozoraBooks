@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.ReaderTheme
@@ -60,6 +61,7 @@ private fun ReaderContent(
     }
 }
 
+private const val TAG = "Reader1"
 /**
  * Creates a [PagerState] that can be re-initialized when initialPage changed.
  */
@@ -69,6 +71,7 @@ fun rememberRefreshablePagerState(
     pageCount: () -> Int
 ): PagerState {
     return rememberSaveable(initialPage, saver = DefaultPagerState.Saver) {
+        Napier.d(tag = TAG) { "create new pager state: initialPage: $initialPage" }
         DefaultPagerState(
             initialPage,
             pageCount

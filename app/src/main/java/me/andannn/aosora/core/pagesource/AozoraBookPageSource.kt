@@ -1,7 +1,9 @@
 package me.andannn.aosora.core.pagesource
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import me.andannn.aosora.core.common.model.AozoraBookCard
@@ -10,9 +12,6 @@ import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.pagesource.page.generatePageSequence
 import me.andannn.aosora.core.parser.AozoraBlockParser
-import me.andannn.aosora.core.parser.createBlockParser
-import me.andannn.aosora.core.parser.html.HtmlLineParser
-import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 import me.andannn.aosora.core.common.model.BookModel
 import java.nio.charset.Charset
 import java.nio.file.Paths
@@ -22,12 +21,16 @@ import kotlin.io.path.useLines
  * Create book source from [card].
  */
 suspend fun createBookSource(
+    scope: CoroutineScope,
+    settledPageFLow: Flow<AozoraPage?>,
     card: AozoraBookCard,
-): BookPageSource {
+): BookPageSource<AozoraPage> {
     val dictionary: Path = getCachedPatchById(card.id)
     val cachedBook = getCachedBookModel(dictionary)
     val bookModel = cachedBook ?: card.downloadBookTo(dictionary)
     return AozoraBookPageSource(
+        scope,
+        settledPageFLow,
         bookModel,
         useHtmlFirst = true,
     )
@@ -40,46 +43,48 @@ suspend fun createBookSource(
  * @property useHtmlFirst If true, use html first. Otherwise, use plain text.
  */
 private class AozoraBookPageSource(
+    scope: CoroutineScope,
+    settledPageFLow: Flow<AozoraPage?>,
     private val bookModel: BookModel,
     private val useHtmlFirst: Boolean = true,
-) : BookPageSource {
+) : LazyBookPageSource<AozoraPage>(scope, settledPageFLow) {
     init {
         if (bookModel.contentHtmlPath == null && bookModel.contentPlainTextPath == null) {
             throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
         }
     }
-
-    override fun pageSource(meta: PageMetaData): Sequence<AozoraPage> = sequence {
-        val parser: AozoraBlockParser
-        val filePath: Path
-        val isHtml: Boolean
-        if (useHtmlFirst) {
-            if (bookModel.contentHtmlPath != null) {
-                parser = createBlockParser(HtmlLineParser)
-                filePath = bookModel.contentHtmlPath
-                isHtml = true
-            } else if (bookModel.contentPlainTextPath != null) {
-                parser = createBlockParser(PlainTextLineParser)
-                filePath = bookModel.contentPlainTextPath
-                isHtml = false
-            } else {
-                throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-            }
-        } else {
-            if (bookModel.contentPlainTextPath != null) {
-                parser = createBlockParser(PlainTextLineParser)
-                filePath = bookModel.contentPlainTextPath
-                isHtml = false
-            } else if (bookModel.contentHtmlPath != null) {
-                parser = createBlockParser(HtmlLineParser)
-                filePath = bookModel.contentHtmlPath
-                isHtml = true
-            } else {
-                throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-            }
-        }
-        createSource(meta, parser, filePath, isHtml)
-    }
+//
+//    override fun pageSource(meta: PageMetaData): Sequence<AozoraPage> = sequence {
+//        val parser: AozoraBlockParser
+//        val filePath: Path
+//        val isHtml: Boolean
+//        if (useHtmlFirst) {
+//            if (bookModel.contentHtmlPath != null) {
+//                parser = createBlockParser(HtmlLineParser)
+//                filePath = bookModel.contentHtmlPath
+//                isHtml = true
+//            } else if (bookModel.contentPlainTextPath != null) {
+//                parser = createBlockParser(PlainTextLineParser)
+//                filePath = bookModel.contentPlainTextPath
+//                isHtml = false
+//            } else {
+//                throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
+//            }
+//        } else {
+//            if (bookModel.contentPlainTextPath != null) {
+//                parser = createBlockParser(PlainTextLineParser)
+//                filePath = bookModel.contentPlainTextPath
+//                isHtml = false
+//            } else if (bookModel.contentHtmlPath != null) {
+//                parser = createBlockParser(HtmlLineParser)
+//                filePath = bookModel.contentHtmlPath
+//                isHtml = true
+//            } else {
+//                throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
+//            }
+//        }
+//        createSource(meta, parser, filePath, isHtml)
+//    }
 
     private suspend fun SequenceScope<AozoraPage>.createSource(
         meta: PageMetaData,
@@ -99,8 +104,16 @@ private class AozoraBookPageSource(
         )
     }
 
-    fun Sequence<String>.mapLineAddTrillingT(trilling: String = "") = map {
+    private fun Sequence<String>.mapLineAddTrillingT(trilling: String = "") = map {
         it + trilling
+    }
+
+    override fun generatePageFlowBefore(): Flow<AozoraPage> {
+        TODO("Not yet implemented")
+    }
+
+    override fun generatePageFlowAfter(): Flow<AozoraPage> {
+        TODO("Not yet implemented")
     }
 }
 
