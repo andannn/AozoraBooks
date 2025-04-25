@@ -1,8 +1,10 @@
 package me.andannn.aosora.ui.reader
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Size
@@ -12,6 +14,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import me.andannn.aosora.core.common.model.FontSizeLevel
@@ -41,6 +44,16 @@ class ReaderPresenter(
         val pages = rememberRetained {
             mutableStateListOf<AozoraPage>()
         }
+        val initialPageIndex = remember {
+            mutableIntStateOf(0)
+        }
+
+        val pagerState = rememberRefreshablePagerState(
+            initialPageIndex.intValue
+        ) {
+            pages.size
+        }
+
         LaunchedEffect(
             Unit
         ) {
@@ -72,7 +85,8 @@ class ReaderPresenter(
         }
 
         return ReaderState(
-            pages = pages.toImmutableList()
+            pages = pages.toImmutableList(),
+            pagerState = pagerState
         ) { eventSink ->
             when (eventSink) {
                 else -> {}
@@ -85,6 +99,7 @@ class ReaderPresenter(
 data class ReaderState(
     val pages: ImmutableList<AozoraPage>,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
+    val pagerState: PagerState,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 
