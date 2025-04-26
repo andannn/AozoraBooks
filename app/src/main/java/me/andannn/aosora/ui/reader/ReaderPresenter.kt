@@ -5,21 +5,19 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Size
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import me.andannn.aosora.core.common.model.FontSizeLevel
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.LineSpacing
@@ -27,6 +25,8 @@ import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.TopMargin
+import me.andannn.aosora.core.pagesource.PagerSnapShot
+import me.andannn.aosora.core.pagesource.createDummyBufferedBookPageSource
 import me.andannn.aosora.core.pagesource.createDummyLazyBookPageSource
 
 @Composable
@@ -46,23 +46,17 @@ class ReaderPresenter(
 
     @Composable
     override fun present(): ReaderState {
-        val scope = rememberCoroutineScope()
-        val pages = rememberRetained {
-            mutableStateOf<List<AozoraPage>>(emptyList())
+        var snapshotState by remember {
+            mutableStateOf<PagerSnapShot<AozoraPage>?>(null)
         }
 
-        // trigger for refresh page. update this value only when need to reset initial page index.
-        val initialPageIndex = remember {
-            mutableIntStateOf(0)
-        }
-
-        val pagerState = rememberRefreshablePagerState(
-            initialPageIndex.intValue
-        ) {
-            pages.value.size
-        }
-
-        val settledPageIndex = rememberUpdatedState(pagerState.settledPage)
+        val pagerState =
+            rememberRefreshablePagerState(
+                initialPage = snapshotState?.initialIndex ?: 0,
+                version = snapshotState?.snapshotVersion
+            ) {
+                snapshotState?.pageList?.size ?: 0
+            }
 
         val meta = PageMetaData(
             originalHeight = renderSize.height,
@@ -73,30 +67,54 @@ class ReaderPresenter(
             lineSpacing = LineSpacing.MEDIUM
         )
 
-        val settledPageFlow = remember {
+        var settledPageState by remember {
+            mutableStateOf<AozoraPage?>(null)
+        }
+
+        val settledPage by rememberUpdatedState(pagerState.settledPage)
+
+        LaunchedEffect(Unit) {
+            var lastKnownVersion: Int = 0
+
             combine(
-                snapshotFlow { settledPageIndex.value },
-                snapshotFlow { pages.value }
-            ) { settledPageIndex, pages ->
-                pages.getOrNull(settledPageIndex)
-            }
+                snapshotFlow { settledPage },
+                snapshotFlow { snapshotState }.filterNotNull(),
+            ) { settledPageIndex, snapShot -> settledPageIndex to snapShot }
+                .collect { (settledPageIndex, snapShot) ->
+                    val snapShotVersion = snapShot.snapshotVersion
+                    if (snapShotVersion == 0) {
+                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
+                        return@collect
+                    }
+
+                    val changedByPageList = (lastKnownVersion != snapShotVersion)
+                    lastKnownVersion = snapShotVersion
+
+                    if (changedByPageList) {
+                        Napier.d(tag = TAG) { "SettledPage changed by pageList." }
+                    } else {
+                        Napier.d(tag = TAG) { "SettledPage changed by user gesture." }
+                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
+                    }
+                }
+        }
+
+        val settledPageFlow = remember {
+            snapshotFlow { settledPageState }.distinctUntilChanged()
         }
 
         LaunchedEffect(Unit) {
             settledPageFlow.collect {
-                Napier.d(tag = TAG) { "settled page $it" }
+                Napier.d(tag = TAG) { "presenter settled page ${it.hashCode()}" }
             }
         }
 
-        Napier.d(tag = TAG) { "pager state: initialPageIndex $initialPageIndex" }
+        Napier.d(tag = TAG) { "pager state: snapshotState version: ${snapshotState?.snapshotVersion} ${snapshotState?.pageList?.map { it.hashCode() }}" }
         Napier.d(tag = TAG) { "pager state: settledPage ${pagerState.settledPage}" }
-        Napier.d(tag = TAG) { "pager state: currentPage ${pagerState.currentPage}" }
-        Napier.d(tag = TAG) { "pager state: targetPage ${pagerState.targetPage}" }
+
         LaunchedEffect(
             Unit
         ) {
-            pages.value = emptyList<AozoraPage>()
-
 //            createBookSource(
 //                AozoraBookCard(
 //                    id = "1",
@@ -107,27 +125,30 @@ class ReaderPresenter(
 //            createSimpleDummyBookPageSource(
 //                meta
 //            )
-            createDummyLazyBookPageSource(
-                scope = scope,
-                settledPageFlow = settledPageFlow,
-                meta = meta
+//            createDummyLazyBookPageSource(
+//                scope = this,
+//                settledPageFlow = settledPageFlow,
+//                meta = meta
+//            )
+            createDummyBufferedBookPageSource(
+                meta = meta,
+                scope = this,
+                progress = 3876,
+                settledPageFlow = settledPageFlow
             )
                 .pagerSnapShotFlow
                 .distinctUntilChanged()
                 .collect {
                     Log.d(
                         TAG,
-                        "present: New snapshot emit. currentIndex ${it.initialIndex}, size ${it.pageList.size}"
+                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${it.pageList.map { it.hashCode() }}"
                     )
-                    pages.value = it.pageList
-                    if (it.initialIndex != null) {
-                        initialPageIndex.intValue = it.initialIndex
-                    }
+                    snapshotState = it
                 }
         }
 
         return ReaderState(
-            pages = pages.value.toImmutableList(),
+            pages = snapshotState?.pageList ?: emptyList(),
             pagerState = pagerState
         ) { eventSink ->
             when (eventSink) {
@@ -139,7 +160,7 @@ class ReaderPresenter(
 
 @Stable
 data class ReaderState(
-    val pages: ImmutableList<AozoraPage>,
+    val pages: List<AozoraPage>,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
     val pagerState: PagerState,
     val evenSink: (ReaderUiEvent) -> Unit = {},

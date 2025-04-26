@@ -2,7 +2,9 @@ package me.andannn.aosora.core.common.util
 
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
+import kotlinx.io.indexOf
 import kotlinx.io.readCodePointValue
+import kotlinx.io.readLine
 
 
 /**
@@ -22,6 +24,26 @@ fun Buffer.readUtf8ContinuationBytesTo(sink: Sink): Int {
             break
         }
     }
+    return count
+}
+
+fun Buffer.readBytesBeforeBreakLineTo(sink: Sink): Int {
+    if (indexOf('\n'.code.toByte()) == -1L) return 0
+
+    var count = 0
+    while (!exhausted()) {
+        val b = readByte()
+
+        if (b == '\n'.code.toByte()) {
+            sink.writeByte(b)
+            count++
+            break
+        } else {
+            sink.writeByte(b)
+            count++
+        }
+    }
+
     return count
 }
 

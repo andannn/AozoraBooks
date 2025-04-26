@@ -1,6 +1,8 @@
 package me.andannn.aosora.core.common.util
 
 import kotlinx.io.Buffer
+import kotlinx.io.readLine
+import kotlinx.io.readString
 import kotlinx.io.writeString
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -16,11 +18,26 @@ class Utf8UtilTest {
 
         buffer.skip(1)
 
-        val writeBuffer = Buffer()
-        val readSize = buffer.readUtf8ContinuationBytesTo(writeBuffer)
+        val sink = Buffer()
+        val readSize = buffer.readUtf8ContinuationBytesTo(sink)
         assert(readSize == 2)
-        assertEquals(byteArray[1], writeBuffer.readByte())
-        assertEquals(byteArray[2], writeBuffer.readByte())
+        assertEquals(byteArray[1], sink.readByte())
+        assertEquals(byteArray[2], sink.readByte())
+    }
+
+    @Test
+    fun testReadBytesBeforeBreakLineTest() {
+        val sample = "あい\nうえおかきくけこ"
+        val buffer = Buffer()
+        buffer.writeString(sample)
+
+        val remain = Buffer()
+
+        val size = buffer.readBytesBeforeBreakLineTo(remain)
+
+        assertEquals("あい\n", remain.readString())
+        assertEquals("うえおかきくけこ", buffer.readString())
+        assertEquals(7, size)
     }
 
     @Test

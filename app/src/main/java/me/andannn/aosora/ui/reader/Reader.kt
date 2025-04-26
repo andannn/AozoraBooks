@@ -38,15 +38,12 @@ fun Reader(state: ReaderState, modifier: Modifier = Modifier) {
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
-    pages: ImmutableList<AozoraPage>,
+    pages: List<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState
 ) {
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme).toArgb()
-    val state = remember {
-        mutableIntStateOf(0)
-    }
 
     HorizontalPager(
         modifier = Modifier.background(backgroundColor),
@@ -68,9 +65,10 @@ private const val TAG = "Reader1"
 @Composable
 fun rememberRefreshablePagerState(
     initialPage: Int = 0,
+    version: Int?,
     pageCount: () -> Int
 ): PagerState {
-    return rememberSaveable(initialPage, saver = DefaultPagerState.Saver) {
+    return rememberSaveable(initialPage, version, saver = DefaultPagerState.Saver) {
         Napier.d(tag = TAG) { "create new pager state: initialPage: $initialPage" }
         DefaultPagerState(
             initialPage,
