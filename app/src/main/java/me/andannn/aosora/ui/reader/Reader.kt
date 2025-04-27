@@ -8,20 +8,21 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.getBackgroundColor
 import me.andannn.aosora.core.common.model.getTextColor
+import me.andannn.aosora.core.pagesource.page.builder.layout
 
 @Composable
 fun Reader(state: ReaderState, modifier: Modifier = Modifier) {
@@ -38,24 +39,25 @@ fun Reader(state: ReaderState, modifier: Modifier = Modifier) {
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
-    pages: ImmutableList<AozoraPage>,
+    pages: List<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState
 ) {
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme).toArgb()
-    val state = remember {
-        mutableIntStateOf(0)
-    }
 
     HorizontalPager(
         modifier = Modifier.background(backgroundColor),
         state = pagerState,
         reverseLayout = true,
     ) { pageIndex ->
+        val page = rememberUpdatedState(pages[pageIndex])
+        val layoutPage = remember(page.value) {
+            page.value.layout()
+        }
         PageView(
             modifier = Modifier.fillMaxSize(),
-            page = pages[pageIndex],
+            page = layoutPage,
             textColor = textColor
         )
     }
@@ -68,9 +70,10 @@ private const val TAG = "Reader1"
 @Composable
 fun rememberRefreshablePagerState(
     initialPage: Int = 0,
+    version: Int?,
     pageCount: () -> Int
 ): PagerState {
-    return rememberSaveable(initialPage, saver = DefaultPagerState.Saver) {
+    return rememberSaveable(initialPage, version, saver = DefaultPagerState.Saver) {
         Napier.d(tag = TAG) { "create new pager state: initialPage: $initialPage" }
         DefaultPagerState(
             initialPage,

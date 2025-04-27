@@ -24,8 +24,7 @@ sealed interface BlockType {
     data class Heading(
         override val style: AozoraTextStyle,
         override val indent: Int
-    ) :
-        TextType(style, indent)
+    ) : TextType(style, indent)
 
     /**
      * image block

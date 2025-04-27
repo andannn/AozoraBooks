@@ -11,3 +11,8 @@ enum class FontSizeLevel(
     Level_6(60f),
     ;
 }
+
+fun FontSizeLevel.next(): FontSizeLevel {
+    val nextIndex = (this.ordinal + 1) % FontSizeLevel.entries.size
+    return FontSizeLevel.entries[nextIndex]
+}

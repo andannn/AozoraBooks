@@ -13,7 +13,6 @@ import com.slack.circuit.runtime.ui.Ui
 import me.andannn.aosora.app.screens.HomePresenterFactory
 import me.andannn.aosora.app.screens.HomeScreen
 import me.andannn.aosora.app.screens.HomeUiFactory
-import me.andannn.aosora.app.screens.ReaderPresenterFactory
 import me.andannn.aosora.app.screens.ReaderUiFactory
 
 @Composable
@@ -38,7 +37,6 @@ fun AozoraBooksApp(
 private fun buildCircuitMobile() = buildCircuit(
     presenterFactory = listOf(
         HomePresenterFactory,
-        ReaderPresenterFactory,
     ),
     uiFactory = listOf(
         HomeUiFactory,

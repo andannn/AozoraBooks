@@ -106,6 +106,16 @@ sealed interface AozoraElement {
         get() = (this as? BaseText)?.text?.length ?: (this as? Indent)?.count ?: 0
 }
 
+fun AozoraElement.debugText() = when (this) {
+    is AozoraElement.BaseText -> {
+        text
+    }
+    is AozoraElement.Illustration -> "[Image ${filename}]"
+    is AozoraElement.Indent -> "[Indent ${count}]"
+    AozoraElement.LineBreak -> "\n"
+    AozoraElement.PageBreak -> ""
+}
+
 enum class AozoraTextStyle {
     HEADING_LARGE,
     HEADING_MEDIUM,

@@ -1,8 +1,13 @@
 package me.andannn.aosora.core.common.util
 
 import kotlinx.io.Buffer
+import kotlinx.io.InternalIoApi
 import kotlinx.io.Sink
+import kotlinx.io.Source
+import kotlinx.io.indexOf
 import kotlinx.io.readCodePointValue
+import kotlinx.io.readString
+import kotlinx.io.writeString
 
 
 /**
@@ -22,6 +27,26 @@ fun Buffer.readUtf8ContinuationBytesTo(sink: Sink): Int {
             break
         }
     }
+    return count
+}
+
+fun Buffer.readBytesBeforeBreakLineTo(sink: Sink): Int {
+    if (indexOf('\n'.code.toByte()) == -1L) return 0
+
+    var count = 0
+    while (!exhausted()) {
+        val b = readByte()
+
+        if (b == '\n'.code.toByte()) {
+            sink.writeByte(b)
+            count++
+            break
+        } else {
+            sink.writeByte(b)
+            count++
+        }
+    }
+
     return count
 }
 
@@ -59,3 +84,75 @@ private fun Int.utf8Size(): Int = when (this) {
 
 private const val REPLACEMENT_CHARACTER: Char = '\ufffd'
 private const val REPLACEMENT_CODE_POINT: Int = REPLACEMENT_CHARACTER.code
+
+
+/**
+ * @property index start index of this line
+ * @property length read byte count
+ * @property content line content
+ */
+data class RawLine(
+    val index: Long,
+    val length: Long,
+    val content: String
+)
+
+/**
+ * create line sequence from source.
+ */
+@OptIn(InternalIoApi::class)
+fun Source.lineSequence() = sequence<RawLine> {
+    var currentIndex = 0L
+    while (!exhausted()) {
+        var lfIndex = indexOf('\n'.code.toByte())
+        when (lfIndex) {
+            -1L -> {
+                yield(
+                    RawLine(
+                        index = currentIndex,
+                        length = buffer.size,
+                        content = readString()
+                    )
+                )
+                currentIndex += buffer.size
+            } // buffer .size
+            0L -> {
+                skip(1) // empty readCount 1
+                yield(
+                    RawLine(
+                        index = currentIndex,
+                        length = 1,
+                        content = ""
+                    )
+                )
+                currentIndex += 1
+            }
+
+            else -> {
+                var skipBytes = 1
+                if (buffer[lfIndex - 1] == '\r'.code.toByte()) {
+                    lfIndex -= 1
+                    skipBytes += 1
+                }
+                val string = readString(lfIndex)
+                skip(skipBytes.toLong())  // read lfIndex + skipBytes
+
+                val consumed = lfIndex + skipBytes
+                yield(
+                    RawLine(
+                        index = currentIndex,
+                        length = consumed,
+                        content = string
+                    )
+                )
+                currentIndex += consumed
+            }
+        }
+    }
+}
+
+fun String.asSource(): Source {
+    val buffer = Buffer()
+    buffer.writeString(this)
+    return buffer
+}

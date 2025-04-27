@@ -1,6 +1,7 @@
 package me.andannn.aosora.core.parser.plaintext
 
 import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.util.RawLine
 import me.andannn.aosora.core.parser.AozoraLineParser
 import me.andannn.aosora.core.parser.plaintext.parsers.EmphasisParser
 import me.andannn.aosora.core.parser.plaintext.parsers.HeadingParser
@@ -14,8 +15,8 @@ import me.andannn.aosora.core.parser.plaintext.parsers.TokenMatchResult
 import kotlin.collections.plusAssign
 
 object PlainTextLineParser: AozoraLineParser {
-    override fun parseLine(line: String): List<AozoraElement> {
-        return parseLineInternal(line)
+    override fun parseLine(line: RawLine): List<AozoraElement> {
+        return parseLineInternal(line.content)
     }
 
     /**

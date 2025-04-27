@@ -17,6 +17,7 @@ kotlinxCoroutines = "1.10.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuitFoundation" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoupJsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

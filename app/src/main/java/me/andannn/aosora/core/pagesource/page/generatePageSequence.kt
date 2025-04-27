@@ -1,60 +1,23 @@
 package me.andannn.aosora.core.pagesource.page
 
-import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import me.andannn.aosora.core.common.model.AozoraPage
-import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.AozoraBlock
-import me.andannn.aosora.core.parser.AozoraBlockParser
+import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.pagesource.page.builder.FillResult
+import me.andannn.aosora.core.pagesource.page.builder.PageBuilder
 
 /**
- * TODO: comment
+ * create page flow from [blockSequenceFlow].
  */
-suspend fun SequenceScope<AozoraPage>.generatePageSequence(
-    aozoraBlockParser: AozoraBlockParser,
-    lineSequence: Sequence<String>,
-    meta: PageMetaData
-) {
-    var pageBuilder: ReaderPageBuilder? = null
-
-    suspend fun SequenceScope<AozoraPage>.tryAdd(block: AozoraBlock) {
-        val builder = pageBuilder ?: createDefaultReaderPageBuilder(meta)
-            .also { pageBuilder = it }
-
-        when (val result = builder.tryAddBlock(block)) {
-            FillResult.FillContinue -> return
-            is FillResult.Filled -> {
-                yield(builder.build())
-
-                pageBuilder = null
-
-                val remainBlock = result.remainBlock
-                if (remainBlock != null) {
-                    tryAdd(remainBlock)
-                }
-            }
-        }
-    }
-
-    for (line in lineSequence) {
-        val block = aozoraBlockParser.parseLineAsBlock(line)
-        tryAdd(block)
-    }
-
-    if (pageBuilder != null) {
-        yield(pageBuilder!!.build())
-    }
-}
-
-fun generatePageFlow(
-    aozoraBlockParser: AozoraBlockParser,
-    lineSequence: Sequence<String>,
-    meta: PageMetaData
+fun <T: AozoraPage> createPageFlowFromSequence(
+    blockSequenceFlow: Flow<AozoraBlock>,
+    builder: () -> PageBuilder<T>,
 ) = flow<AozoraPage> {
-    var pageBuilder: ReaderPageBuilder? = null
+    var pageBuilder: PageBuilder<T>? = null
 
-    suspend fun FlowCollector<AozoraPage>.tryAdd(block: AozoraBlock) {
-        val builder = pageBuilder ?: createDefaultReaderPageBuilder(meta)
+    suspend fun tryAdd(block: AozoraBlock) {
+        val builder = pageBuilder ?: builder()
             .also { pageBuilder = it }
 
         when (val result = builder.tryAddBlock(block)) {
@@ -72,8 +35,7 @@ fun generatePageFlow(
         }
     }
 
-    for (line in lineSequence) {
-        val block = aozoraBlockParser.parseLineAsBlock(line)
+    blockSequenceFlow.collect { block ->
         tryAdd(block)
     }
 
