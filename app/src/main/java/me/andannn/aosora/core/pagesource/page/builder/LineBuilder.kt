@@ -1,16 +1,16 @@
-package me.andannn.aosora.core.pagesource.page
+package me.andannn.aosora.core.pagesource.page.builder
 
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.model.FontStyle
-import me.andannn.aosora.core.pagesource.measure.MeasureResult
+import me.andannn.aosora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.Line
-import me.andannn.aosora.core.parser.util.divide
+import me.andannn.aosora.core.pagesource.util.divide
 
 class LineBuilder(
     private val maxPx: Float,
     initialIndent: Int = 0,
-    private val measure: (AozoraElement) -> MeasureResult,
+    private val measure: (AozoraElement) -> ElementMeasureResult,
 ) {
     private var currentHeight: Float = 0f
     private var maxWidth: Float = 0f
@@ -82,7 +82,7 @@ class LineBuilder(
         )
     }
 
-    private fun updateState(element: AozoraElement, measureResult: MeasureResult) {
+    private fun updateState(element: AozoraElement, measureResult: ElementMeasureResult) {
         elementList += element
         currentHeight += measureResult.size.height
         maxWidth = maxOf(maxWidth, measureResult.size.width)

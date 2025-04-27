@@ -5,31 +5,39 @@ import androidx.compose.ui.geometry.Size
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.PaperLayout
-import me.andannn.aosora.core.pagesource.measure.MeasureResult
+import me.andannn.aosora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.BlockType
+import me.andannn.aosora.core.common.model.FontSizeLevel
+import me.andannn.aosora.core.common.model.LineSpacing
+import me.andannn.aosora.core.common.model.PageMetaData
+import me.andannn.aosora.core.common.model.RenderSetting
+import me.andannn.aosora.core.common.model.TopMargin
+import me.andannn.aosora.core.pagesource.page.builder.FillResult
+import me.andannn.aosora.core.pagesource.page.builder.LayoutPageBuilder
+import me.andannn.aosora.core.pagesource.page.builder.LineBuilder
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ReaderPageBuilderTest {
     private lateinit var lineBuilder: LineBuilder
-    private lateinit var pageBuilder: ReaderPageBuilder
+    private lateinit var pageBuilder: LayoutPageBuilder
     private val fontStyle = FontStyle(FontType.DEFAULT, 16f, 16f, 1.5f)
 
-    private val dummySizeOf: (AozoraElement) -> MeasureResult = {
+    private val dummySizeOf: (AozoraElement) -> ElementMeasureResult = {
         val size = when (it) {
             is AozoraElement.Indent -> Size(50f, it.count * 10f)
             else -> Size(50f, it.length * 10f)
         }
-        MeasureResult(
+        ElementMeasureResult(
             size,
             fontStyle,
         )
     }
 
-    private val dummyPaperLayout = object : PaperLayout {
+    private val dummyPaperLayout = object : PageMetaData {
         override val originalHeight: Float
             get() = 100f
         override val originalWidth: Float
@@ -40,6 +48,14 @@ class ReaderPageBuilderTest {
             get() = 100f
         override val offset: PointF
             get() = PointF(0f, 0f)
+        override val fontSizeLevel: FontSizeLevel
+            get() = FontSizeLevel.Level_4
+        override val lineSpacing: LineSpacing
+            get() = LineSpacing.MEDIUM
+        override val fontType: FontType
+            get() = FontType.DEFAULT
+        override val additionalTopMargin: TopMargin
+            get() = TopMargin.MEDIUM
     }
 
     @BeforeTest
@@ -47,16 +63,16 @@ class ReaderPageBuilderTest {
         lineBuilder = LineBuilder(
             maxPx = 100f,
             measure = {
-                MeasureResult(
+                ElementMeasureResult(
                     Size(30f, 30f),
                     fontStyle,
                 )
             },
         )
-        pageBuilder = ReaderPageBuilder(
+        pageBuilder = LayoutPageBuilder(
             meta = dummyPaperLayout,
             measurer = { element, style ->
-                MeasureResult(
+                ElementMeasureResult(
                     Size(50f, 10f * element.length),
                     fontStyle,
                 )
@@ -202,6 +218,7 @@ class ReaderPageBuilderTest {
         val block = AozoraBlock(
             elements = emptyList(),
             blockType = BlockType.Text(),
+            byteRange = 0L..0L
         )
         assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
             repeat(20) {
@@ -223,6 +240,7 @@ class ReaderPageBuilderTest {
         val block = AozoraBlock(
             elements = emptyList(),
             blockType = BlockType.Text(indent = 5),
+            byteRange = 0L..0L
         )
         assertEquals(FillResult.FillContinue, builder.tryAddBlock(block.copy(elements = buildList {
             repeat(10) {

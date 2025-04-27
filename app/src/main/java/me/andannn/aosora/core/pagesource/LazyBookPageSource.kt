@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.PageContext
+import me.andannn.aosora.core.common.model.PageMetaData
 import kotlin.collections.plus
 
 private const val TAG = "LazyBookPageSource"
@@ -24,13 +27,16 @@ private const val TAG = "LazyBookPageSource"
 /**
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class LazyBookPageSource<T>(
+abstract class LazyBookPageSource<T: AozoraPage>(
     scope: CoroutineScope,
-    private val settledPageFlow: Flow<T?>
+    private val settledPageFlow: Flow<AozoraPage?>
 ) : BookPageSource<T>, CoroutineScope by scope {
     private val pageListFlow = MutableStateFlow<List<T>>(emptyList())
+    private val pagerSnapShotFlow = MutableSharedFlow<PagerSnapShot<T>>()
 
-    override val pagerSnapShotFlow = MutableSharedFlow<PagerSnapShot<T>>()
+    override fun getPagerSnapShotFlow(meta: PageMetaData, startProgress: Long): Flow<PagerSnapShot<AozoraPage>> {
+        return pagerSnapShotFlow
+    }
 
     private val beforePageCountFlow =
         combine(settledPageFlow, pageListFlow) { settledPage, pageList ->

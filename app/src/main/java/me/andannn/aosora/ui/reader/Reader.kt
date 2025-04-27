@@ -8,20 +8,21 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
 import me.andannn.aosora.core.common.model.ReaderTheme
 import me.andannn.aosora.core.common.model.getBackgroundColor
 import me.andannn.aosora.core.common.model.getTextColor
+import me.andannn.aosora.core.pagesource.page.builder.layout
 
 @Composable
 fun Reader(state: ReaderState, modifier: Modifier = Modifier) {
@@ -50,9 +51,13 @@ private fun ReaderContent(
         state = pagerState,
         reverseLayout = true,
     ) { pageIndex ->
+        val page = rememberUpdatedState(pages[pageIndex])
+        val layoutPage = remember(page.value) {
+            page.value.layout()
+        }
         PageView(
             modifier = Modifier.fillMaxSize(),
-            page = pages[pageIndex],
+            page = layoutPage,
             textColor = textColor
         )
     }

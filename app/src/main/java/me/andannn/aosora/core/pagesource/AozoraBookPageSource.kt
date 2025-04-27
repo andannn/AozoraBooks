@@ -7,24 +7,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import me.andannn.aosora.core.common.model.AozoraBookCard
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
 import me.andannn.aosora.core.common.model.BookMeta
-import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.common.model.AozoraPage
-import me.andannn.aosora.core.pagesource.page.generatePageSequence
-import me.andannn.aosora.core.parser.AozoraBlockParser
 import me.andannn.aosora.core.common.model.BookModel
-import java.nio.charset.Charset
-import java.nio.file.Paths
-import kotlin.io.path.useLines
 
 /**
  * Create book source from [card].
  */
 suspend fun createBookSource(
     scope: CoroutineScope,
-    settledPageFLow: Flow<AozoraPage?>,
+    settledPageFLow: Flow<AozoraLayoutPage?>,
     card: AozoraBookCard,
-): BookPageSource<AozoraPage> {
+): BookPageSource<AozoraLayoutPage> {
     val dictionary: Path = getCachedPatchById(card.id)
     val cachedBook = getCachedBookModel(dictionary)
     val bookModel = cachedBook ?: card.downloadBookTo(dictionary)
@@ -44,10 +38,10 @@ suspend fun createBookSource(
  */
 private class AozoraBookPageSource(
     scope: CoroutineScope,
-    settledPageFLow: Flow<AozoraPage?>,
+    settledPageFLow: Flow<AozoraLayoutPage?>,
     private val bookModel: BookModel,
     private val useHtmlFirst: Boolean = true,
-) : LazyBookPageSource<AozoraPage>(scope, settledPageFLow) {
+) : LazyBookPageSource<AozoraLayoutPage>(scope, settledPageFLow) {
     init {
         if (bookModel.contentHtmlPath == null && bookModel.contentPlainTextPath == null) {
             throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
@@ -86,33 +80,33 @@ private class AozoraBookPageSource(
 //        createSource(meta, parser, filePath, isHtml)
 //    }
 
-    private suspend fun SequenceScope<AozoraPage>.createSource(
-        meta: PageMetaData,
-        blockParser: AozoraBlockParser,
-        filePath: Path,
-        isHtml: Boolean
-    ) {
-        Paths.get(filePath.toString()).useLines(
-            charset = Charset.forName("Shift_JIS"),
-            block = {
-                generatePageSequence(
-                    aozoraBlockParser = blockParser,
-                    lineSequence = it.mapLineAddTrillingT(trilling = if (!isHtml) "\n" else ""),
-                    meta = meta
-                )
-            }
-        )
-    }
+//    private suspend fun SequenceScope<AozoraLayoutPage>.createSource(
+//        meta: PageMetaData,
+//        blockParser: AozoraBlockParser,
+//        filePath: Path,
+//        isHtml: Boolean
+//    ) {
+//        Paths.get(filePath.toString()).useLines(
+//            charset = Charset.forName("Shift_JIS"),
+//            block = {
+//                generatePageSequence(
+//                    aozoraBlockParser = blockParser,
+//                    lineSequence = it.mapLineAddTrillingT(trilling = if (!isHtml) "\n" else ""),
+//                    meta = meta
+//                )
+//            }
+//        )
+//    }
 
     private fun Sequence<String>.mapLineAddTrillingT(trilling: String = "") = map {
         it + trilling
     }
 
-    override fun generatePageFlowBefore(): Flow<AozoraPage> {
+    override fun generatePageFlowBefore(): Flow<AozoraLayoutPage> {
         TODO("Not yet implemented")
     }
 
-    override fun generatePageFlowAfter(): Flow<AozoraPage> {
+    override fun generatePageFlowAfter(): Flow<AozoraLayoutPage> {
         TODO("Not yet implemented")
     }
 }

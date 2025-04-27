@@ -2,6 +2,7 @@ package me.andannn.aosora.core.parser
 
 import me.andannn.aosora.core.common.model.AozoraTextStyle
 import me.andannn.aosora.core.common.model.BlockType
+import me.andannn.aosora.core.common.util.RawLine
 import me.andannn.aosora.core.parser.html.HtmlLineParser
 import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 import org.junit.Test
@@ -11,10 +12,11 @@ abstract class BlockParserTest {
     abstract val parser: AozoraBlockParser
 
     abstract val sampleString1: String
+    private fun String.asRawLine() = RawLine(0L, 0L, this)
 
     @Test
     fun testParseAozoraBlock() {
-        val result = parser.parseLineAsBlock(sampleString1)
+        val result = parser.parseLineAsBlock(sampleString1.asRawLine())
         assertEquals(result.blockType, BlockType.Heading(indent = 4, style = AozoraTextStyle.HEADING_MEDIUM))
     }
 }

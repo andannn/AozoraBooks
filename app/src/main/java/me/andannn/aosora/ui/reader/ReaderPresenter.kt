@@ -8,40 +8,39 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.geometry.Size
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import me.andannn.aosora.core.common.model.FontSizeLevel
-import me.andannn.aosora.core.common.model.FontType
-import me.andannn.aosora.core.common.model.LineSpacing
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
-import me.andannn.aosora.core.common.model.TopMargin
+import me.andannn.aosora.core.pagesource.BookPageSource
+import me.andannn.aosora.core.pagesource.DummySource
 import me.andannn.aosora.core.pagesource.PagerSnapShot
-import me.andannn.aosora.core.pagesource.createDummyBufferedBookPageSource
-import me.andannn.aosora.core.pagesource.createDummyLazyBookPageSource
 
 @Composable
 fun rememberReaderPresenter(
-    renderSize: Size
-) = remember(renderSize) {
+    initialProgress: Long,
+    pageMetadata: PageMetaData
+) = remember(initialProgress, pageMetadata) {
     ReaderPresenter(
-        renderSize = renderSize
+        initialProgress,
+        pageMetadata,
     )
 }
 
 private const val TAG = "ReaderPresenter"
 
 class ReaderPresenter(
-    private val renderSize: Size
+    private val initialProgress: Long,
+    private val pageMetadata: PageMetaData,
 ) : Presenter<ReaderState> {
 
     @Composable
@@ -57,15 +56,6 @@ class ReaderPresenter(
             ) {
                 snapshotState?.pageList?.size ?: 0
             }
-
-        val meta = PageMetaData(
-            originalHeight = renderSize.height,
-            originalWidth = renderSize.width,
-            additionalTopMargin = TopMargin.MEDIUM,
-            fontSizeLevel = FontSizeLevel.Level_4,
-            fontType = FontType.NOTO_SERIF,
-            lineSpacing = LineSpacing.MEDIUM
-        )
 
         var settledPageState by remember {
             mutableStateOf<AozoraPage?>(null)
@@ -112,31 +102,35 @@ class ReaderPresenter(
         Napier.d(tag = TAG) { "pager state: snapshotState version: ${snapshotState?.snapshotVersion} ${snapshotState?.pageList?.map { it.hashCode() }}" }
         Napier.d(tag = TAG) { "pager state: settledPage ${pagerState.settledPage}" }
 
-        LaunchedEffect(
-            Unit
-        ) {
-//            createBookSource(
+        val scope = rememberCoroutineScope()
+        val bookSource: BookPageSource<AozoraPage> = remember {
+            //            createBookSource(
 //                AozoraBookCard(
 //                    id = "1",
 //                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
 //                    htmlUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_78314.html",
 //                )
 //            )
-//            createSimpleDummyBookPageSource(
-//                meta
-//            )
-//            createDummyLazyBookPageSource(
+//            DummySource.createSimpleDummyBookPageSource()
+//            DummySource.createDummyLazyBookPageSource(
 //                scope = this,
 //                settledPageFlow = settledPageFlow,
 //                meta = meta
 //            )
-            createDummyBufferedBookPageSource(
-                meta = meta,
-                scope = this,
-                progress = 3876,
-                settledPageFlow = settledPageFlow
-            )
-                .pagerSnapShotFlow
+            DummySource.createDummySequenceCachedSource(scope = scope)
+//            DummySource.createDummyBufferedBookPageSource(
+//                meta = meta,
+//                scope = this,
+//                progress = 3876,
+//                settledPageFlow = settledPageFlow
+//            )
+        }
+        LaunchedEffect(
+            initialProgress,
+            pageMetadata
+        ) {
+            bookSource
+                .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
                 .distinctUntilChanged()
                 .collect {
                     Log.d(

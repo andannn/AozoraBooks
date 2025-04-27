@@ -1,41 +1,40 @@
-package me.andannn.aosora.core.pagesource.page
+package me.andannn.aosora.core.pagesource.page.builder
 
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aosora.core.pagesource.measure.DefaultElementMeasurer
 import me.andannn.aosora.core.pagesource.measure.ElementMeasurer
-import me.andannn.aosora.core.pagesource.measure.MeasureResult
-import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.common.model.PaperLayout
+import me.andannn.aosora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
 import me.andannn.aosora.core.common.model.Line
 import me.andannn.aosora.core.common.model.BlockType
+import me.andannn.aosora.core.common.model.PageContext
+import me.andannn.aosora.core.common.model.PageMetaData
+import me.andannn.aosora.core.pagesource.measure.DefaultMeasurer
 import org.jetbrains.annotations.VisibleForTesting
 
 private const val TAG = "ReaderPageBuilder"
 
-sealed interface FillResult {
-    data class Filled(
-        val remainElement: AozoraElement? = null,
-        val remainBlock: AozoraBlock? = null,
-    ) : FillResult
+fun AozoraPage.layout(): AozoraLayoutPage {
+    if (this is AozoraLayoutPage) {
+        return this
+    }
 
-    data object FillContinue : FillResult
+    val builder = LayoutPageBuilder(metaData, DefaultMeasurer(metaData), forceAddBlock = true)
+    (this as AozoraRoughPage).blocks.forEach {
+        builder.tryAddBlock(it)
+    }
+    return builder.build()
 }
 
-fun createDefaultReaderPageBuilder(
-    meta: PageMetaData,
-) = ReaderPageBuilder(
-    meta = meta,
-    measurer = DefaultElementMeasurer(meta),
-)
-
-class ReaderPageBuilder(
-    private val meta: PaperLayout,
+class LayoutPageBuilder(
+    private val meta: PageMetaData,
     private val measurer: ElementMeasurer,
-) {
+    private val forceAddBlock: Boolean = false
+) : PageBuilder<AozoraLayoutPage> {
     private val fullWidth: Float = meta.renderWidth
     private val fullHeight: Float = meta.renderHeight
 
@@ -46,7 +45,7 @@ class ReaderPageBuilder(
 
     private var isPageBreakAdded = false
 
-    fun tryAddBlock(block: AozoraBlock): FillResult {
+    override fun tryAddBlock(block: AozoraBlock): FillResult {
         val remainingElements = block.elements.toMutableList()
 
         while (remainingElements.isNotEmpty()) {
@@ -86,7 +85,7 @@ class ReaderPageBuilder(
     fun tryAddElement(
         element: AozoraElement,
         lineIndent: Int,
-        sizeOf: (AozoraElement) -> MeasureResult
+        sizeOf: (AozoraElement) -> ElementMeasureResult
     ): FillResult {
         Napier.d(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
@@ -98,7 +97,7 @@ class ReaderPageBuilder(
             return FillResult.FillContinue
         }
 
-        if (lineBuilder == null) {
+        if (!forceAddBlock && lineBuilder == null) {
             val measureResult = sizeOf(element)
             if (currentWidth + measureResult.size.width > fullWidth) {
                 return FillResult.Filled(element)
@@ -142,12 +141,12 @@ class ReaderPageBuilder(
         }
     }
 
-    fun build(): AozoraPage {
+    override fun build(): AozoraLayoutPage {
         if (lineBuilder != null) {
             buildNewLine()
         }
 
-        return AozoraPage(
+        return AozoraLayoutPage(
             metaData = meta,
             lines = lines.toImmutableList()
         )
@@ -161,4 +160,3 @@ class ReaderPageBuilder(
         Napier.d(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }
     }
 }
-

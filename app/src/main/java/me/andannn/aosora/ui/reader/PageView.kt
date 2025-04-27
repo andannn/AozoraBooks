@@ -20,22 +20,22 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.FontType
-import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.common.model.AozoraPage
+import me.andannn.aosora.core.common.model.PageContext
 import me.andannn.aosora.core.common.model.Line
 import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
 import me.andannn.aosora.core.render.DefaultPaintProvider
 import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.ElementRenderAdapter.Companion.DefaultAdapters
 
 private const val TAG = "PageView"
 
-const val DEBUG_RENDER = false
+const val DEBUG_RENDER = true
 
 @Composable
 fun PageView(
     modifier: Modifier = Modifier,
-    page: AozoraPage,
+    page: AozoraLayoutPage,
     textColor: Int,
 ) {
     Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
@@ -116,11 +116,11 @@ fun Canvas.drawAozoraLine(
 @Preview
 @Composable
 private fun PageViewPreview() {
-    val dummyMetadata = PageMetaData(
+    val dummyMetadata = PageContext(
         originalHeight = 500f,
         originalWidth = 300f,
     )
-    val dummyPage = AozoraPage(
+    val dummyPage = AozoraLayoutPage(
         metaData = dummyMetadata,
         lines = listOf(
             Line(

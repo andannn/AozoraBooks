@@ -1,168 +1,67 @@
-package me.andannn.aosora.core.pagesource
+package me.andannn.aosora.core.pagesource.page
 
-import android.util.Log
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.io.Buffer
-import kotlinx.io.Source
-import kotlinx.io.writeString
-import me.andannn.aosora.core.common.model.AozoraBlock
-import me.andannn.aosora.core.common.model.AozoraElement
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runTest
 import me.andannn.aosora.core.common.model.AozoraPage
-import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
-import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
-import me.andannn.aosora.core.common.model.FontStyle
-import me.andannn.aosora.core.common.model.FontType
-import me.andannn.aosora.core.common.model.Line
 import me.andannn.aosora.core.common.model.PageContext
-import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.util.asSource
 import me.andannn.aosora.core.common.util.lineSequence
 import me.andannn.aosora.core.pagesource.page.builder.createReaderPageBuilder
-import me.andannn.aosora.core.pagesource.page.createPageFlowFromSequence
-import me.andannn.aosora.core.parser.AozoraBlockParser
 import me.andannn.aosora.core.parser.createBlockParser
 import me.andannn.aosora.core.parser.html.HtmlLineParser
+import kotlin.test.Test
 
-object DummySource {
-    fun createSimpleDummyBookPageSource(): BookPageSource<AozoraPage> {
-        val pageList = mutableListOf<AozoraPage>()
-        return object : BookPageSource<AozoraRoughPage> {
-            override fun getPagerSnapShotFlow(
-                meta: PageMetaData,
-                startProgress: Long
-            ): Flow<PagerSnapShot<AozoraPage>> {
-                val aozoraBlockParser = createBlockParser(HtmlLineParser)
-                fun pageFlow() =
-                    createPageFlowFromSequence(
-                        blockSequenceFlow = dummyHtml.asSource().lineSequence()
-                            .map { aozoraBlockParser.parseLineAsBlock(it) }.asFlow(),
-                        builder = {
-                            createReaderPageBuilder<AozoraRoughPage>(meta)
-                        }
-                    )
-                return pageFlow().map {
-                    pageList.add(it)
-                    PagerSnapShot(
-                        pageList = pageList,
-                        initialIndex = 0,
-                        snapshotVersion = 0
+class GeneratePageSequenceTest {
+    val testScope = TestScope()
+    val aozoraBlockParser = createBlockParser(HtmlLineParser)
+
+    @Test
+    fun testGenerateRoughPage() = testScope.runTest {
+        repeat(100) {
+            createPageFlowFromSequence(
+                blockSequenceFlow = sampleString.asSource().lineSequence()
+                    .map { aozoraBlockParser.parseLineAsBlock(it) }.asFlow(),
+                builder = {
+                    createReaderPageBuilder<AozoraPage.AozoraRoughPage>(
+                        meta = PageContext(
+                            originalHeight = 1200f,
+                            originalWidth = 900f,
+                        )
                     )
                 }
+            ).collect {
+//            println(it)
+//            println("---------------------")
             }
         }
     }
 
-    fun createDummyLazyBookPageSource(
-        meta: PageContext,
-        scope: CoroutineScope,
-        settledPageFlow: Flow<AozoraPage?>,
-    ): LazyBookPageSource<AozoraPage> = DummyLazyBookPageSource(
-        meta,
-        scope,
-        settledPageFlow
-    )
-
-    fun createDummyBufferedBookPageSource(
-        meta: PageContext,
-        scope: CoroutineScope,
-        progress: Long,
-        settledPageFlow: Flow<AozoraPage?>,
-    ): BufferedLazyPageSource {
-        return DummyBufferedPageSource(
-            meta,
-            scope,
-            progress,
-            settledPageFlow
-        )
-    }
-
-    fun createDummySequenceCachedSource(
-        scope: CoroutineScope,
-    ) = object : CachedLinerPageSource(scope) {
-        override val rawSourceFlow: Flow<AozoraBlock>
-            get() = dummyHtml.asSource().lineSequence()
-                .map {
-                    createBlockParser(HtmlLineParser).parseLineAsBlock(it)
-                }.asFlow()
-    }
-}
-
-private class DummyLazyBookPageSource(
-    private val meta: PageContext,
-    scope: CoroutineScope,
-    settledPageFlow: Flow<AozoraPage?>,
-) : LazyBookPageSource<AozoraPage>(scope, settledPageFlow) {
-    override fun generatePageFlowBefore(): Flow<AozoraLayoutPage> {
-        return flow {
-            repeat(20) {
-                emit(
-                    AozoraLayoutPage(
-                        metaData = meta,
-                        lines = listOf(
-                            Line(
-                                lineHeight = 100f,
-                                fontStyle = FontStyle(
-                                    baseSize = 128f,
-                                    notationSize = 12f,
-                                    lineHeightMultiplier = 1.3f,
-                                    fontType = FontType.DEFAULT,
-                                ),
-                                elements = listOf(
-                                    AozoraElement.Text(
-                                        text = "Before $it                 ",
-                                    ),
-                                ).toImmutableList()
-                            ),
-                        ).toImmutableList()
+    @Test
+    fun testGenerateDetailPage() =testScope.runTest {
+        repeat(100) {
+            createPageFlowFromSequence(
+                blockSequenceFlow = sampleString.asSource().lineSequence()
+                    .map { aozoraBlockParser.parseLineAsBlock(it) }.asFlow(),
+                builder = {
+                    createReaderPageBuilder<AozoraPage.AozoraLayoutPage>(
+                        meta = PageContext(
+                            originalHeight = 1200f,
+                            originalWidth = 900f,
+                        )
                     )
-                )
+                }
+            ).collect() {
+//            println(it.fullText)
+//            println("---------------------")
             }
         }
     }
 
-    override fun generatePageFlowAfter(): Flow<AozoraPage> {
-        val parser = createBlockParser(HtmlLineParser)
-
-        return createPageFlowFromSequence(
-            blockSequenceFlow = dummyHtml.asSource().lineSequence().map { parser.parseLineAsBlock(it) }
-                .asFlow(),
-            builder = {
-                createReaderPageBuilder<AozoraLayoutPage>(meta)
-            }
-        )
-    }
-}
-
-
-private class DummyBufferedPageSource(
-    private val meta: PageContext,
-    scope: CoroutineScope,
-    private val progress: Long,
-    settledPageFlow: Flow<AozoraPage?>,
-) : BufferedLazyPageSource(meta, scope, progress, settledPageFlow) {
-    private val buffer = Buffer()
-
-    init {
-        buffer.writeString(dummyHtml)
-        dummyHtml.toByteArray().forEachIndexed { index, byte ->
-            if (byte == '\n'.code.toByte()) {
-                Log.d("JQN", ": index $index ")
-            }
-        }
-    }
-
-    override val bookSource: Source = buffer
-
-    override val parser: AozoraBlockParser = createBlockParser(HtmlLineParser)
-}
-
-private val dummyHtml: String
-    get() = """
+    private val sampleString = """
 <br />
 　時は現代。陰暦八月十五日のゆうぐれ。<br />
 　満州、大連市外の村はずれにある李中行の家。すべて農家の作りにて、家内の大部分は土間。正面には出入りの扉ありて、下のかたの壁には簑笠などをかけ、その下には<ruby><rb>鋤</rb><rp>（</rp><rt>すき</rt><rp>）</rp></ruby>またや<ruby><rb>鍬</rb><rp>（</rp><rt>くわ</rt><rp>）</rp></ruby>などの農具を置いてあり。その傍らには大いなる<ruby><rb>土竃</rb><rp>（</rp><rt>どがま</rt><rp>）</rp></ruby>ありて、棚には茶碗、小皿、鉢などの食器をのせ、竃のそばには焚物用の<ruby><rb>高粱</rb><rp>（</rp><rt>コーリャン</rt><rp>）</rp></ruby>を<span class="notes">［＃「<ruby><rb>高粱</rb><rp>（</rp><rt>コーリャン</rt><rp>）</rp></ruby>を」は底本では「<ruby><rb>高梁</rb><rp>（</rp><rt>コーリャン</rt><rp>）</rp></ruby>を」］</span>束ねたるを積み、水を入れたるバケツなどもあり。よきところに木卓を置き、おなじく三四脚の<ruby><rb>木榻</rb><rp>（</rp><rt>もくとう</rt><rp>）</rp></ruby>あり。下のかたには窓あり。上のかたは寝室のこころにて、ここにも出入りの扉あり。家の外には柳の大樹、その下に石の井戸あり。うしろは高粱の<span class="notes">［＃「高粱の」は底本では「高梁の」］</span>畑を隔てて、大連市街の灯が遠くみゆ。<br />
@@ -189,7 +88,6 @@ private val dummyHtml: String
 （阿香は上のかたの一室に入る。柳は竃の下を焚きつけている。表はだんだんに薄明るくなる。下のかたよりこの家のあるじ李中行、五十歳前後、肉と菓子とを入れたる袋を両脇にかかえて出づ。）<br />
 李中行　そろそろお月様がおあがりなさると見えて、東の空が明るくなって来た。<br />
 柳　（窓から覗く。）お父さんかえ。<br />
-<br />
 李中行　むむ。今帰ったよ。（正面の扉をあけて入る。）阿香はどうした。<br />
 柳　たった今、帰って来ましたよ。時に買い物は……。<br />
 李中行　（袋を卓の上に置く。）まあ、どうにか<ruby><rb>斯</rb><rp>（</rp><rt>こ</rt><rp>）</rp></ruby>うにか買うだけの品は買い<ruby><rb>調</rb><rp>（</rp><rt>ととの</rt><rp>）</rp></ruby>えて来たが、むかしと違って、一年増しに何でも値段が高くなるには<em class="sesame_dot">びっくり</em>するよ。<ruby><rb>月餅</rb><rp>（</rp><rt>げっぺい</rt><rp>）</rp></ruby>一つだって、うっかり買われやあしない。<br />
@@ -279,4 +177,5 @@ private val dummyHtml: String
 柳、ちょいと、お前さん……。<br />
 李中行　なんだ。<br />
 柳　どうも不思議なことがあるんですよ。<br />
-"""
+    """.trimIndent()
+}

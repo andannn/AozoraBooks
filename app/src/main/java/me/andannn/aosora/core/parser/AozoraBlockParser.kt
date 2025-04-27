@@ -3,6 +3,7 @@ package me.andannn.aosora.core.parser
 import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.BlockType
+import me.andannn.aosora.core.common.util.RawLine
 import me.andannn.aosora.core.parser.html.HtmlLineParser
 
 /**
@@ -15,7 +16,7 @@ interface AozoraBlockParser {
     /**
      * parse line to block
      */
-    fun parseLineAsBlock(line: String): AozoraBlock
+    fun parseLineAsBlock(line: RawLine): AozoraBlock
 }
 
 private class DefaultAozoraBlockParser(
@@ -23,7 +24,7 @@ private class DefaultAozoraBlockParser(
 ) : AozoraBlockParser {
 
     override fun parseLineAsBlock(
-        line: String,
+        line: RawLine,
     ): AozoraBlock {
         val elements = parser.parseLine(line)
 
@@ -46,6 +47,7 @@ private class DefaultAozoraBlockParser(
         return AozoraBlock(
             elements = blockElements,
             blockType = blockType,
+            byteRange = line.index..(line.index + line.length)
         )
     }
 }

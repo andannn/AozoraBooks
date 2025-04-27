@@ -20,7 +20,11 @@ data class FontStyle(
      * line height multiplier.
      */
     val lineHeightMultiplier: Float,
-)
+) {
+    val lineHeight by lazy {
+        baseSize * lineHeightMultiplier
+    }
+}
 
 fun AozoraTextStyle.resolveFontStyle(
     fontSizeLevel: FontSizeLevel,

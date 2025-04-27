@@ -51,17 +51,19 @@ interface RenderSetting {
     val additionalTopMargin: TopMargin
 }
 
+interface PageMetaData: PaperLayout, RenderSetting
+
 /**
  * Meta data for a render page.
  */
-data class PageMetaData(
+data class PageContext(
     override val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
     override val fontType: FontType = FontType.DEFAULT,
     override val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
     override val fontSizeLevel: FontSizeLevel = FontSizeLevel.Level_4,
     override val originalHeight: Float,
     override val originalWidth: Float,
-) : PaperLayout, RenderSetting {
+) : PageMetaData {
     override val offset: PointF by lazy {
         PointF(
             /* x = */

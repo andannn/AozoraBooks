@@ -1,6 +1,7 @@
 package me.andannn.aosora.core.parser
 
 import me.andannn.aosora.core.common.model.AozoraElement
+import me.andannn.aosora.core.common.util.RawLine
 import me.andannn.aosora.core.parser.html.HtmlLineParser
 import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 import org.junit.Test
@@ -13,11 +14,12 @@ abstract class AozoraSourceParserTest {
     abstract val sample2: String
     abstract val sample3: String
 
+    private fun String.asRawLine() = RawLine(0L, 0L, this)
 
     @Test
     fun testParseStringWithLinkBreak() {
         val sampleString = sample1
-        val result = parser.parseLine(sampleString)
+        val result = parser.parseLine(sampleString.asRawLine())
         assertEquals(AozoraElement.Text("小山の妻君は"), result[0])
         assertEquals(AozoraElement.LineBreak, result[1])
     }
@@ -25,7 +27,7 @@ abstract class AozoraSourceParserTest {
     @Test
     fun testParseAozoraLineOptimized() {
         val sampleString = sample2
-        val result = parser.parseLine(sampleString)
+        val result = parser.parseLine(sampleString.asRawLine())
         assertEquals(
             AozoraElement.Text("ふと気が付いて見ると書生はいない。たくさんおった兄弟が一"),
             result[0]
@@ -38,7 +40,7 @@ abstract class AozoraSourceParserTest {
     @Test
     fun testParseBouten2() {
         val sampleString = sample3
-        val result = parser.parseLine(sampleString)
+        val result = parser.parseLine(sampleString.asRawLine())
         assertEquals(AozoraElement.Text("藤吉は"), result[0])
         assert(result[1] is AozoraElement.Emphasis)
         assertEquals(AozoraElement.Text("起き上った。"), result[2])

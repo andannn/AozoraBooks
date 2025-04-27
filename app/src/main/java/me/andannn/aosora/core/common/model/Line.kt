@@ -26,15 +26,7 @@ data class Line(
     val fullText: String
             by lazy {
                 elements.fold("") { acc, element ->
-                    acc + when (element) {
-                        is AozoraElement.BaseText -> {
-                            element.text
-                        }
-                        is AozoraElement.Illustration -> "[Image ${element.filename}]"
-                        is AozoraElement.Indent -> "[Indent ${element.count}]"
-                        AozoraElement.LineBreak -> "\n"
-                        AozoraElement.PageBreak -> ""
-                    }
+                    acc + element.debugText()
                 }
             }
 }
