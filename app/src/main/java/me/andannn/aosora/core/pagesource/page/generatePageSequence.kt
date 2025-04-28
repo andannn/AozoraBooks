@@ -10,7 +10,7 @@ import me.andannn.aosora.core.pagesource.page.builder.PageBuilder
 /**
  * create page flow from [blockSequenceFlow].
  */
-fun <T: AozoraPage> createPageFlowFromSequence(
+fun <T : AozoraPage> createPageFlowFromSequence(
     blockSequenceFlow: Flow<AozoraBlock>,
     builderFactory: () -> PageBuilder<T>,
 ) = flow<T> {
@@ -36,7 +36,9 @@ fun <T: AozoraPage> createPageFlowFromSequence(
     }
 
     blockSequenceFlow.collect { block ->
-        tryAdd(block)
+        if (block.elements.isNotEmpty()) {
+            tryAdd(block)
+        }
     }
 
     if (pageBuilder != null) {

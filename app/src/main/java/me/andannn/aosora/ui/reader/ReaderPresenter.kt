@@ -18,11 +18,12 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import me.andannn.aosora.core.common.model.AozoraBookCard
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.model.ReaderTheme
+import me.andannn.aosora.core.pagesource.AozoraBookPageSource
 import me.andannn.aosora.core.pagesource.BookPageSource
-import me.andannn.aosora.core.pagesource.DummySource
 import me.andannn.aosora.core.pagesource.PagerSnapShot
 
 @Composable
@@ -104,6 +105,14 @@ class ReaderPresenter(
 
         val scope = rememberCoroutineScope()
         val bookSource: BookPageSource<AozoraPage> = remember {
+            AozoraBookPageSource<AozoraPage.AozoraRoughPage>(
+                AozoraBookCard(
+                    id = "1",
+                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
+                    htmlUrl = "https://www.aozora.gr.jp/cards/001095/files/45844_60119.html",
+                ),
+                scope = scope,
+            )
             //            createBookSource(
 //                AozoraBookCard(
 //                    id = "1",
@@ -117,7 +126,7 @@ class ReaderPresenter(
 //                settledPageFlow = settledPageFlow,
 //                meta = meta
 //            )
-            DummySource.createDummySequenceCachedSource(scope = scope)
+//            DummySource.createDummySequenceCachedSource(scope = scope)
 //            DummySource.createDummyBufferedBookPageSource(
 //                meta = meta,
 //                scope = this,

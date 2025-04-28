@@ -11,7 +11,7 @@ import me.andannn.aosora.core.pagesource.raw.RemoteOrCacheBookRawSource
  *
  * @property useHtmlFirst If true, use html first. Otherwise, use plain text.
  */
-private class AozoraBookPageSource<out T : AozoraPage>(
+class AozoraBookPageSource<out T : AozoraPage>(
     card: AozoraBookCard,
     scope: CoroutineScope,
     private val useHtmlFirst: Boolean = true,

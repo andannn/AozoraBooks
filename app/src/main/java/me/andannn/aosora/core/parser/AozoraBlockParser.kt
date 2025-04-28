@@ -1,5 +1,6 @@
 package me.andannn.aosora.core.parser
 
+import android.util.Log
 import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.BlockType
@@ -30,7 +31,6 @@ private class DefaultAozoraBlockParser(
         line: RawLine,
     ): AozoraBlock {
         val elements = parser.parseLine(line)
-
         var blockType: BlockType?
         val blockElements: List<AozoraElement>
         var indent = 0

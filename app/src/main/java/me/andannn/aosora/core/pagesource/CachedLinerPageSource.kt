@@ -43,6 +43,9 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
         val loadedPages = mutableListOf<T>()
         var initialPageIndex: Int? = null
 
+        var startMilliseconds = System.currentTimeMillis()
+        Napier.d(tag = TAG) { "start load page. " }
+
         pageFlow
             .onEach {
                 Napier.d(tag = TAG) { "page added ${(it as? AozoraRoughPage)?.progressRange}" }
@@ -50,6 +53,10 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
             .flowOn(Dispatchers.IO)
             .collectIndexed { index, page ->
                 loadedPages.add(page)
+                if (initialProgress == 0L && index == 0) {
+                    Napier.d(tag = TAG) { "hit first page" }
+                    initialPageIndex = 0
+                }
                 if (initialPageIndex == null && initialProgress in (page as AozoraRoughPage).progressRange) {
                     Napier.d(tag = TAG) { "hit initial. index: $index, range: ${page.progressRange}" }
                     initialPageIndex = index
@@ -59,7 +66,7 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
                 }
             }
 
-        Napier.d(tag = TAG) { "all page loaded. $loadedPages" }
+        Napier.d(tag = TAG) { "end load page. pages: ${loadedPages.size} in ${System.currentTimeMillis() - startMilliseconds}" }
     }
 
     /**

@@ -1,6 +1,7 @@
 package me.andannn.aosora.core.pagesource.raw
 
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -18,14 +19,21 @@ import kotlinx.io.Source
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.writeString
+import kotlinx.serialization.json.Json
+import me.andannn.aosora.AozoraApplication
 import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraBookCard
 import me.andannn.aosora.core.common.model.BookMeta
 import me.andannn.aosora.core.common.model.BookModel
 import me.andannn.aosora.core.common.util.downloadTo
 import me.andannn.aosora.core.common.util.lineSequence
+import me.andannn.aosora.core.common.util.readString
 import me.andannn.aosora.core.common.util.unzip
 import me.andannn.aosora.core.parser.createBlockParser
+import org.jsoup.Jsoup
+import java.io.File
+import java.nio.charset.Charset
 
 /**
  * Get source from local cached file or fetch from remote.
@@ -45,7 +53,8 @@ class RemoteOrCacheBookRawSource(
     init {
         scope.launch(dispatcher) {
             try {
-                bookModelStateFlow.value = SourceState.Success(createBookRawSource(card, cacheDictionary))
+                bookModelStateFlow.value =
+                    SourceState.Success(createBookRawSource(card, cacheDictionary))
             } catch (e: Exception) {
                 Napier.e { "Exception thrown when create book raw source. $e" }
                 bookModelStateFlow.value = SourceState.Error(e)
@@ -56,7 +65,11 @@ class RemoteOrCacheBookRawSource(
     override suspend fun getRawSource(): Flow<AozoraBlock> {
         if (loadedSource != null && usingHtmlFile != null) {
             val parser = createBlockParser(isHtml = useHtmlFirst)
-            return loadedSource!!.peek().lineSequence().map { parser.parseLineAsBlock(it) }.asFlow()
+            return loadedSource!!
+                .peek()
+                .lineSequence()
+                .map { parser.parseLineAsBlock(it) }
+                .asFlow()
         }
 
         val bookModel = waitBookModelOrThrow()
@@ -114,11 +127,17 @@ private suspend fun createBookRawSource(
     cacheDictionary: Path
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
-    return cachedBook ?: card.downloadBookTo(cacheDictionary)
+    if (cachedBook != null) {
+        return cachedBook
+    }
+    card.downloadBookTo(cacheDictionary)
+    return getCachedBookModel(cacheDictionary) ?: error("no cache after download")
 }
 
 private fun getCachedPatchById(id: String): Path {
-    return Path("/book/$id")
+    return Path(AozoraApplication.context.filesDir.toString(), "/book/$id").also {
+        SystemFileSystem.createDirectories(it)
+    }
 }
 
 /**
@@ -131,7 +150,7 @@ private fun getCachedPatchById(id: String): Path {
  *
  * @throws IllegalArgumentException If htmlUrl is null.
  */
-private suspend fun AozoraBookCard.downloadBookTo(folder: Path): BookModel {
+private suspend fun AozoraBookCard.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }
@@ -139,31 +158,22 @@ private suspend fun AozoraBookCard.downloadBookTo(folder: Path): BookModel {
 
     val (convertedHtmlPath, convertedTextPath) = coroutineScope {
         val htmlDeferred = async {
-            htmlPath?.let { convertHtmlMainContentToUtf8(it, Path(HTML_FILE_NAME)) }
+            htmlPath?.let { processParseHtml(it, folder) }
         }
 
         val plainTextDeferred = async {
             plainTextPath?.let {
                 convertPlainTextMainContentToUtf8(
                     folder,
-                    Path(PLAIN_TEXT_FILE_NAME)
+                    Path("$folder/$PLAIN_TEXT_FILE_NAME")
                 )
             }
         }
 
         htmlDeferred to plainTextDeferred
     }
-
-    return BookModel(
-        meta = BookMeta(
-            title = "dictionary.name",
-            subtitle = null,
-            author = "Unknown",
-        ),
-        contentHtmlPath = convertedHtmlPath.await(),
-        contentPlainTextPath = convertedTextPath.await(),
-        illustrationPath = emptyList(),
-    )
+    convertedHtmlPath.await()
+    convertedTextPath.await()
 }
 
 /**
@@ -181,7 +191,6 @@ private fun getCachedBookModel(path: Path): BookModel? {
     val illustrationPathList: MutableList<Path> = mutableListOf()
 
     SystemFileSystem.list(path).forEach {
-// TODO: parse meta from file
         if (it.name == META_FILE_NAME) {
             meta = BookMeta(
                 title = "dictionary.name",
@@ -243,7 +252,7 @@ private suspend fun downloadAndUnZip(zipUrl: String, htmlUrl: String?, savePath:
  * @return Path of the converted plain text file.
  */
 private suspend fun convertPlainTextMainContentToUtf8(path: Path, target: Path): Path? {
-// TODO : parse meta from html or plain text.
+// TODO: implement this
     return null
 }
 
@@ -251,13 +260,39 @@ private suspend fun convertPlainTextMainContentToUtf8(path: Path, target: Path):
  * Convert html main content to utf8.
  *
  * @param path Path of the html file.
- * @param target Path of the converted html file.
+ * @param folder Path of the converted html file.
  *
- * @return Path of the converted html .
+ * @return BookMeta of the html .
  */
-private suspend fun convertHtmlMainContentToUtf8(path: Path, target: Path): Path? {
-// TODO : get all illustration files.
-    return null
+@VisibleForTesting
+fun processParseHtml(path: Path, folder: Path) {
+    val html = path.readString(Charset.forName("Shift_JIS"))
+    val utf8HtmlFileSink = SystemFileSystem.sink(Path(folder, HTML_FILE_NAME)).buffered()
+    val res = Jsoup.parse(html)
+    val title = res.select(".title").text()
+    val author = res.select(".author").text()
+    val mainText = html.replaceBefore("<div class=\"main_text\">", "")
+    utf8HtmlFileSink.use { sink ->
+        utf8HtmlFileSink.writeString(mainText)
+    }
+
+    val byteCount = File(folder.toString()).length()
+
+    val model = BookMeta(
+        title = title,
+        subtitle = null,
+        author = author,
+        contentByteSize = byteCount.toLong()
+    )
+
+
+    val metaFileSink = SystemFileSystem.sink(Path(folder, META_FILE_NAME)).buffered()
+
+    metaFileSink.use {
+        it.writeString(Json.encodeToString(model))
+    }
+
+    SystemFileSystem.delete(Path(folder, TEMP_HTML), mustExist = false)
 }
 
 private const val META_FILE_NAME = ".meta"

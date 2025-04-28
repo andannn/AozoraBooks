@@ -51,15 +51,17 @@ private fun ReaderContent(
         state = pagerState,
         reverseLayout = true,
     ) { pageIndex ->
-        val page = rememberUpdatedState(pages[pageIndex])
+        val page = rememberUpdatedState(pages.getOrNull(pageIndex))
         val layoutPage = remember(page.value) {
-            page.value.layout()
+            page.value?.layout()
         }
-        PageView(
-            modifier = Modifier.fillMaxSize(),
-            page = layoutPage,
-            textColor = textColor
-        )
+        if (layoutPage != null) {
+            PageView(
+                modifier = Modifier.fillMaxSize(),
+                page = layoutPage,
+                textColor = textColor
+            )
+        }
     }
 }
 

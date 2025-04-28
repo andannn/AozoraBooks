@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemTemporaryDirectory
+import kotlinx.serialization.json.Json
 import me.andannn.aosora.core.common.model.AozoraBookCard
 import kotlin.random.Random
 import kotlin.test.AfterTest
@@ -48,4 +49,8 @@ class RemoteOrCacheBookRawSourceTest {
         remoteOrCacheBookRawSource.getRawSource()
     }
 
+    @Test
+    fun testParseHtmlMeta() {
+        processParseHtml(Path("src/test/resources/test.html"), Path("$testPath"))
+    }
 }

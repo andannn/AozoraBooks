@@ -13,6 +13,7 @@ object HeadingMatcher : ElementMatcher {
         node as? Element ?: return null
         if (node.tagName() != "div") return null
 
+        // <h4 class="naka-midashi"><a class="midashi_anchor" id="midashi30">二</a></h4>
         val className = node.attr("class")
         val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
         val child = node.children().getOrNull(0) ?: return null

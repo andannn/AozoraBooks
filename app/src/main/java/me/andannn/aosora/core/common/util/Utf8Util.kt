@@ -4,10 +4,15 @@ import kotlinx.io.Buffer
 import kotlinx.io.InternalIoApi
 import kotlinx.io.Sink
 import kotlinx.io.Source
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.indexOf
 import kotlinx.io.readCodePointValue
 import kotlinx.io.readString
 import kotlinx.io.writeString
+import java.nio.charset.Charset
+import kotlin.text.Charsets
 
 
 /**
@@ -151,8 +156,18 @@ fun Source.lineSequence() = sequence<RawLine> {
     }
 }
 
+/**
+ * convert string to source.
+ */
 fun String.asSource(): Source {
     val buffer = Buffer()
     buffer.writeString(this)
     return buffer
+}
+
+/**
+ * read string from path.
+ */
+fun Path.readString(charset: Charset = Charsets.UTF_8): String {
+    return SystemFileSystem.source(this).buffered().readString(charset)
 }

@@ -1,6 +1,8 @@
 package me.andannn.aosora.core.common.model
 
 import kotlinx.io.files.Path
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * Book source.
@@ -20,24 +22,29 @@ data class BookModel(
 /**
  * Meta data of book.
  */
+@Serializable
 data class BookMeta(
     /**
      * Title of book.
      */
+    @SerialName("title")
     val title: String,
 
     /**
      * Subtitle of book which maybe null.
      */
+    @SerialName("subtitle")
     val subtitle: String?,
 
     /**
      * Author of book.
      */
+    @SerialName("author")
     val author: String,
 
     /**
      * Content byte size of book.
      */
+    @SerialName("content_length")
     val contentByteSize: Long = 0,
 )
