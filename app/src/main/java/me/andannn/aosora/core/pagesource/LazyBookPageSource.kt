@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import me.andannn.aosora.core.common.model.AozoraPage
-import me.andannn.aosora.core.common.model.PageContext
 import me.andannn.aosora.core.common.model.PageMetaData
 import kotlin.collections.plus
 
@@ -34,7 +33,7 @@ abstract class LazyBookPageSource<T: AozoraPage>(
     private val pageListFlow = MutableStateFlow<List<T>>(emptyList())
     private val pagerSnapShotFlow = MutableSharedFlow<PagerSnapShot<T>>()
 
-    override fun getPagerSnapShotFlow(meta: PageMetaData, startProgress: Long): Flow<PagerSnapShot<AozoraPage>> {
+    override fun getPagerSnapShotFlow(meta: PageMetaData, startProgress: Long): Flow<PagerSnapShot<T>> {
         return pagerSnapShotFlow
     }
 

@@ -6,12 +6,11 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.io.Buffer
 import kotlinx.io.Source
 import kotlinx.io.buffered
-import kotlinx.io.readLine
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
 import me.andannn.aosora.core.common.model.PageContext
 import me.andannn.aosora.core.common.util.lineSequence
-import me.andannn.aosora.core.pagesource.page.builder.createReaderPageBuilder
+import me.andannn.aosora.core.pagesource.page.builder.createPageBuilder
 import me.andannn.aosora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aosora.core.parser.AozoraBlockParser
 
@@ -31,8 +30,8 @@ abstract class BufferedLazyPageSource(
         val buffer = Buffer()
         bookSource.peek().readAtMostTo(buffer, progress)
         return createPageFlowFromSequence(
-            builder = {
-                createReaderPageBuilder<AozoraRoughPage>(meta)
+            builderFactory = {
+                createPageBuilder<AozoraRoughPage>(meta)
             },
             blockSequenceFlow = buffer.parseAsReversedLineSequence()
                 .map { parser.parseLineAsBlock(it) }.asFlow()
@@ -43,8 +42,8 @@ abstract class BufferedLazyPageSource(
         val source = bookSource.peek().buffered()
         source.skip(progress)
         return createPageFlowFromSequence(
-            builder = {
-                createReaderPageBuilder<AozoraRoughPage>(meta)
+            builderFactory = {
+                createPageBuilder<AozoraRoughPage>(meta)
             },
             blockSequenceFlow = source.parseAsLineSequence().map { parser.parseLineAsBlock(it) }
                 .asFlow()

@@ -5,12 +5,15 @@ import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.BlockType
 import me.andannn.aosora.core.common.util.RawLine
 import me.andannn.aosora.core.parser.html.HtmlLineParser
+import me.andannn.aosora.core.parser.plaintext.PlainTextLineParser
 
 /**
  * Create block parser.
  */
-fun createBlockParser(lineParser: AozoraLineParser = HtmlLineParser): AozoraBlockParser =
-    DefaultAozoraBlockParser(lineParser)
+fun createBlockParser(isHtml: Boolean): AozoraBlockParser =
+    DefaultAozoraBlockParser(
+        parser = if (isHtml) HtmlLineParser else PlainTextLineParser
+    )
 
 interface AozoraBlockParser {
     /**

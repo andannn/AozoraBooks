@@ -1,7 +1,6 @@
 package me.andannn.aosora.core.pagesource
 
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -13,8 +12,9 @@ import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
 import me.andannn.aosora.core.common.model.PageMetaData
-import me.andannn.aosora.core.pagesource.page.builder.createReaderPageBuilder
+import me.andannn.aosora.core.pagesource.page.builder.createPageBuilder
 import me.andannn.aosora.core.pagesource.page.createPageFlowFromSequence
+import me.andannn.aosora.core.pagesource.raw.BookRawSource
 
 private const val TAG = "CachedPageSource"
 
@@ -22,11 +22,9 @@ private const val TAG = "CachedPageSource"
  * the parsed result is cached in this class.
  * use catch when [getPagerSnapShotFlow] is called if available,
  */
-abstract class CachedLinerPageSource(
-    private val scope: CoroutineScope,
-) : BookPageSource<AozoraPage> {
-    abstract val rawSourceFlow: Flow<AozoraBlock>
-
+abstract class CachedLinerPageSource<out T : AozoraPage>(
+    private val rawSource: BookRawSource
+): BookPageSource<T> {
     private val cachedBlockList = mutableListOf<AozoraBlock>()
     private var isCachedCompleted: Boolean = false
     private var version: Int = 0
@@ -34,17 +32,15 @@ abstract class CachedLinerPageSource(
     override fun getPagerSnapShotFlow(
         metaData: PageMetaData,
         initialProgress: Long
-    ): Flow<PagerSnapShot<AozoraPage>> = flow {
+    ): Flow<PagerSnapShot<T>> = flow {
         Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialProgress, metaData $metaData. " }
 
-        val pageFlow = createPageFlowFromSequence(
-            blockSequenceFlow = rawSourceFlow.cachedOrSource(),
-            builder = {
-                createReaderPageBuilder<AozoraRoughPage>(metaData)
-            }
+        val pageFlow = createPageFlowFromSequence<T>(
+            blockSequenceFlow = rawSource.getRawSource().cachedOrSource(),
+            builderFactory = { createPageBuilder<T>(metaData) }
         )
 
-        val loadedPages = mutableListOf<AozoraPage>()
+        val loadedPages = mutableListOf<T>()
         var initialPageIndex: Int? = null
 
         pageFlow
@@ -59,7 +55,7 @@ abstract class CachedLinerPageSource(
                     initialPageIndex = index
                 }
                 if (initialPageIndex != null) {
-                    emit(PagerSnapShot(initialPageIndex, loadedPages, version++))
+                    emit(PagerSnapShot<T>(initialPageIndex, loadedPages, version++))
                 }
             }
 

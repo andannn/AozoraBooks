@@ -1,5 +1,6 @@
 package me.andannn.aosora.core.pagesource
 
+import android.net.Uri
 import android.util.Log
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +16,7 @@ import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.AozoraPage.AozoraLayoutPage
 import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
+import me.andannn.aosora.core.common.model.BookMeta
 import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.FontType
 import me.andannn.aosora.core.common.model.Line
@@ -22,32 +24,32 @@ import me.andannn.aosora.core.common.model.PageContext
 import me.andannn.aosora.core.common.model.PageMetaData
 import me.andannn.aosora.core.common.util.asSource
 import me.andannn.aosora.core.common.util.lineSequence
-import me.andannn.aosora.core.pagesource.page.builder.createReaderPageBuilder
+import me.andannn.aosora.core.pagesource.page.builder.createPageBuilder
 import me.andannn.aosora.core.pagesource.page.createPageFlowFromSequence
+import me.andannn.aosora.core.pagesource.raw.BookRawSource
 import me.andannn.aosora.core.parser.AozoraBlockParser
 import me.andannn.aosora.core.parser.createBlockParser
-import me.andannn.aosora.core.parser.html.HtmlLineParser
 
 object DummySource {
-    fun createSimpleDummyBookPageSource(): BookPageSource<AozoraPage> {
-        val pageList = mutableListOf<AozoraPage>()
+    fun createSimpleDummyBookPageSource(): BookPageSource<AozoraRoughPage> {
+        val pageList = mutableListOf<AozoraRoughPage>()
         return object : BookPageSource<AozoraRoughPage> {
             override fun getPagerSnapShotFlow(
                 meta: PageMetaData,
                 startProgress: Long
-            ): Flow<PagerSnapShot<AozoraPage>> {
-                val aozoraBlockParser = createBlockParser(HtmlLineParser)
+            ): Flow<PagerSnapShot<AozoraRoughPage>> {
+                val aozoraBlockParser = createBlockParser(true)
                 fun pageFlow() =
                     createPageFlowFromSequence(
                         blockSequenceFlow = dummyHtml.asSource().lineSequence()
                             .map { aozoraBlockParser.parseLineAsBlock(it) }.asFlow(),
-                        builder = {
-                            createReaderPageBuilder<AozoraRoughPage>(meta)
+                        builderFactory = {
+                            createPageBuilder<AozoraRoughPage>(meta)
                         }
                     )
                 return pageFlow().map {
                     pageList.add(it)
-                    PagerSnapShot(
+                    PagerSnapShot<AozoraRoughPage>(
                         pageList = pageList,
                         initialIndex = 0,
                         snapshotVersion = 0
@@ -83,13 +85,26 @@ object DummySource {
 
     fun createDummySequenceCachedSource(
         scope: CoroutineScope,
-    ) = object : CachedLinerPageSource(scope) {
-        override val rawSourceFlow: Flow<AozoraBlock>
-            get() = dummyHtml.asSource().lineSequence()
-                .map {
-                    createBlockParser(HtmlLineParser).parseLineAsBlock(it)
-                }.asFlow()
-    }
+    ) = object : CachedLinerPageSource<AozoraLayoutPage>(
+        rawSource = object : BookRawSource {
+            override suspend fun getRawSource(): Flow<AozoraBlock> {
+                val dummySource = dummyHtml.asSource()
+                return dummySource.peek().lineSequence()
+                    .map {
+                        createBlockParser(true).parseLineAsBlock(it)
+                    }.asFlow()
+            }
+
+            override suspend fun getImageUriByPath(path: String): Uri? {
+                TODO("Not yet implemented")
+            }
+
+            override suspend fun getBookMeta(): BookMeta {
+                TODO("Not yet implemented")
+            }
+
+        }
+    ) {}
 }
 
 private class DummyLazyBookPageSource(
@@ -126,13 +141,13 @@ private class DummyLazyBookPageSource(
     }
 
     override fun generatePageFlowAfter(): Flow<AozoraPage> {
-        val parser = createBlockParser(HtmlLineParser)
-
+        val parser = createBlockParser(true)
         return createPageFlowFromSequence(
-            blockSequenceFlow = dummyHtml.asSource().lineSequence().map { parser.parseLineAsBlock(it) }
+            blockSequenceFlow = dummyHtml.asSource().lineSequence()
+                .map { parser.parseLineAsBlock(it) }
                 .asFlow(),
-            builder = {
-                createReaderPageBuilder<AozoraLayoutPage>(meta)
+            builderFactory = {
+                createPageBuilder<AozoraLayoutPage>(meta)
             }
         )
     }
@@ -158,7 +173,7 @@ private class DummyBufferedPageSource(
 
     override val bookSource: Source = buffer
 
-    override val parser: AozoraBlockParser = createBlockParser(HtmlLineParser)
+    override val parser: AozoraBlockParser = createBlockParser(true)
 }
 
 private val dummyHtml: String

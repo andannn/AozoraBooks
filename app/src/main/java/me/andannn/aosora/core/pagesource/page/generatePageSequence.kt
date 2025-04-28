@@ -12,12 +12,12 @@ import me.andannn.aosora.core.pagesource.page.builder.PageBuilder
  */
 fun <T: AozoraPage> createPageFlowFromSequence(
     blockSequenceFlow: Flow<AozoraBlock>,
-    builder: () -> PageBuilder<T>,
-) = flow<AozoraPage> {
+    builderFactory: () -> PageBuilder<T>,
+) = flow<T> {
     var pageBuilder: PageBuilder<T>? = null
 
     suspend fun tryAdd(block: AozoraBlock) {
-        val builder = pageBuilder ?: builder()
+        val builder = pageBuilder ?: builderFactory()
             .also { pageBuilder = it }
 
         when (val result = builder.tryAddBlock(block)) {

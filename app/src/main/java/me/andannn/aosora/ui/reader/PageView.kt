@@ -30,7 +30,7 @@ import me.andannn.aosora.core.render.ElementRenderAdapter.Companion.DefaultAdapt
 
 private const val TAG = "PageView"
 
-const val DEBUG_RENDER = true
+const val DEBUG_RENDER = false
 
 @Composable
 fun PageView(

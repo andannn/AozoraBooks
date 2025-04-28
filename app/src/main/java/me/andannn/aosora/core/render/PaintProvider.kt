@@ -60,7 +60,6 @@ class DefaultPaintProvider() : PaintProvider {
     }
 }
 
-
 private data class FontMeta(
     val fontSize: Float,
     val fontType: FontType,
