@@ -5,15 +5,18 @@ import androidx.compose.runtime.Stable
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.andannn.aosora.app.screens.ReaderScreen
 
 class HomePresenter(
     private val navigator: Navigator
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
-        return HomeState { eventSink ->
-            when (eventSink) {
-                else -> {}
+        return HomeState { event ->
+            when (event) {
+                is HomeUiEvent.OnCardClick -> {
+                    navigator.goTo(ReaderScreen(event.cardId))
+                }
             }
         }
     }
@@ -25,4 +28,5 @@ data class HomeState(
 ) : CircuitUiState
 
 sealed interface HomeUiEvent {
+    data class OnCardClick(val cardId: String): HomeUiEvent
 }

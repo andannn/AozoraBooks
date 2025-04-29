@@ -15,6 +15,8 @@ interface BookPageSource<out T: AozoraPage> {
      * @param initialProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
      */
     fun getPagerSnapShotFlow(metaData: PageMetaData, initialProgress: Long = 0): Flow<PagerSnapShot<T>>
+
+    fun dispose()
 }
 
 /**

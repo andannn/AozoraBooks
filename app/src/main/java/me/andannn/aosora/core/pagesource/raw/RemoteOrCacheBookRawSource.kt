@@ -99,6 +99,10 @@ class RemoteOrCacheBookRawSource(
         return bookModel.meta
     }
 
+    override fun dispose() {
+        loadedSource?.close()
+    }
+
     override suspend fun getImageUriByPath(path: String): Uri? {
         val bookModel = waitBookModelOrThrow()
         val illustrationPath = bookModel.illustrationPath.firstOrNull { it.name == path }

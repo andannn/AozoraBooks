@@ -12,6 +12,7 @@ import me.andannn.aosora.core.common.model.AozoraBlock
 import me.andannn.aosora.core.common.model.AozoraPage
 import me.andannn.aosora.core.common.model.AozoraPage.AozoraRoughPage
 import me.andannn.aosora.core.common.model.PageMetaData
+import me.andannn.aosora.core.pagesource.page.builder.PageBuilder
 import me.andannn.aosora.core.pagesource.page.builder.createPageBuilder
 import me.andannn.aosora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aosora.core.pagesource.raw.BookRawSource
@@ -23,7 +24,8 @@ private const val TAG = "CachedPageSource"
  * use catch when [getPagerSnapShotFlow] is called if available,
  */
 abstract class CachedLinerPageSource<out T : AozoraPage>(
-    private val rawSource: BookRawSource
+    private val rawSource: BookRawSource,
+    private val useRoughPageBuilder: Boolean = false
 ): BookPageSource<T> {
     private val cachedBlockList = mutableListOf<AozoraBlock>()
     private var isCachedCompleted: Boolean = false
@@ -37,7 +39,7 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
 
         val pageFlow = createPageFlowFromSequence<T>(
             blockSequenceFlow = rawSource.getRawSource().cachedOrSource(),
-            builderFactory = { createPageBuilder<T>(metaData) }
+            builderFactory = { createPageBuilder(metaData, useRoughPageBuilder) as PageBuilder<T> }
         )
 
         val loadedPages = mutableListOf<T>()
@@ -67,6 +69,11 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
             }
 
         Napier.d(tag = TAG) { "end load page. pages: ${loadedPages.size} in ${System.currentTimeMillis() - startMilliseconds}" }
+    }
+
+    override fun dispose() {
+        Napier.d(tag = TAG) { "dispose called" }
+        rawSource.dispose()
     }
 
     /**

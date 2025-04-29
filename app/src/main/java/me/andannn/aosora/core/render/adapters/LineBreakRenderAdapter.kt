@@ -6,7 +6,7 @@ import me.andannn.aosora.core.common.model.FontStyle
 import me.andannn.aosora.core.common.model.AozoraElement
 import me.andannn.aosora.core.render.ElementRenderAdapter
 import me.andannn.aosora.core.render.PaintProvider
-import me.andannn.aosora.ui.reader.DEBUG_RENDER
+import me.andannn.aosora.ui.reader.viewer.DEBUG_RENDER
 
 class LineBreakRenderAdapter(
     private val paintProvider: PaintProvider

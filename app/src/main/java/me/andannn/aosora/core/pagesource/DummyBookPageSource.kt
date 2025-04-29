@@ -31,30 +31,33 @@ import me.andannn.aosora.core.parser.AozoraBlockParser
 import me.andannn.aosora.core.parser.createBlockParser
 
 object DummySource {
-    fun createSimpleDummyBookPageSource(): BookPageSource<AozoraRoughPage> {
-        val pageList = mutableListOf<AozoraRoughPage>()
-        return object : BookPageSource<AozoraRoughPage> {
+    fun createSimpleDummyBookPageSource(): BookPageSource<AozoraPage> {
+        val pageList = mutableListOf<AozoraPage>()
+        return object : BookPageSource<AozoraPage> {
             override fun getPagerSnapShotFlow(
                 meta: PageMetaData,
                 startProgress: Long
-            ): Flow<PagerSnapShot<AozoraRoughPage>> {
+            ): Flow<PagerSnapShot<AozoraPage>> {
                 val aozoraBlockParser = createBlockParser(true)
                 fun pageFlow() =
                     createPageFlowFromSequence(
                         blockSequenceFlow = dummyHtml.asSource().lineSequence()
                             .map { aozoraBlockParser.parseLineAsBlock(it) }.asFlow(),
                         builderFactory = {
-                            createPageBuilder<AozoraRoughPage>(meta)
+                            createPageBuilder(meta)
                         }
                     )
                 return pageFlow().map {
                     pageList.add(it)
-                    PagerSnapShot<AozoraRoughPage>(
+                    PagerSnapShot<AozoraPage>(
                         pageList = pageList,
                         initialIndex = 0,
                         snapshotVersion = 0
                     )
                 }
+            }
+
+            override fun dispose() {
             }
         }
     }
@@ -103,6 +106,10 @@ object DummySource {
                 TODO("Not yet implemented")
             }
 
+            override fun dispose() {
+                TODO("Not yet implemented")
+            }
+
         }
     ) {}
 }
@@ -147,9 +154,13 @@ private class DummyLazyBookPageSource(
                 .map { parser.parseLineAsBlock(it) }
                 .asFlow(),
             builderFactory = {
-                createPageBuilder<AozoraLayoutPage>(meta)
+                createPageBuilder(meta)
             }
         )
+    }
+
+    override fun dispose() {
+
     }
 }
 
@@ -174,6 +185,9 @@ private class DummyBufferedPageSource(
     override val bookSource: Source = buffer
 
     override val parser: AozoraBlockParser = createBlockParser(true)
+    override fun dispose() {
+
+    }
 }
 
 private val dummyHtml: String

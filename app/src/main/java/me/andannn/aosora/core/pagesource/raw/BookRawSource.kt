@@ -25,4 +25,6 @@ interface BookRawSource {
      * get book meta.
      */
     suspend fun getBookMeta(): BookMeta
+
+    fun dispose()
 }

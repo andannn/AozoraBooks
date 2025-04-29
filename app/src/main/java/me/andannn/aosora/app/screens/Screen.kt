@@ -4,7 +4,7 @@ import com.slack.circuit.runtime.screen.Screen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-object HomeScreen : Screen
+data object HomeScreen : Screen
 
 @Parcelize
-object ReaderScreen : Screen
+data class ReaderScreen(val cardId: String) : Screen

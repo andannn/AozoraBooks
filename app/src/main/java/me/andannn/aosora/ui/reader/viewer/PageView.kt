@@ -1,4 +1,4 @@
-package me.andannn.aosora.ui.reader
+package me.andannn.aosora.ui.reader.viewer
 
 import android.graphics.Canvas
 import androidx.compose.foundation.background

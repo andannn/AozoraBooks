@@ -31,7 +31,7 @@ abstract class BufferedLazyPageSource(
         bookSource.peek().readAtMostTo(buffer, progress)
         return createPageFlowFromSequence(
             builderFactory = {
-                createPageBuilder<AozoraRoughPage>(meta)
+                createPageBuilder(meta)
             },
             blockSequenceFlow = buffer.parseAsReversedLineSequence()
                 .map { parser.parseLineAsBlock(it) }.asFlow()
@@ -43,7 +43,7 @@ abstract class BufferedLazyPageSource(
         source.skip(progress)
         return createPageFlowFromSequence(
             builderFactory = {
-                createPageBuilder<AozoraRoughPage>(meta)
+                createPageBuilder(meta)
             },
             blockSequenceFlow = source.parseAsLineSequence().map { parser.parseLineAsBlock(it) }
                 .asFlow()

@@ -10,10 +10,9 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
-import me.andannn.aosora.app.screens.HomePresenterFactory
 import me.andannn.aosora.app.screens.HomeScreen
-import me.andannn.aosora.app.screens.HomeUiFactory
-import me.andannn.aosora.app.screens.ReaderUiFactory
+import me.andannn.aosora.app.screens.RoutePresenterFactory
+import me.andannn.aosora.app.screens.RouteUiFactory
 
 @Composable
 fun AozoraBooksApp(
@@ -36,11 +35,10 @@ fun AozoraBooksApp(
 
 private fun buildCircuitMobile() = buildCircuit(
     presenterFactory = listOf(
-        HomePresenterFactory,
+        RoutePresenterFactory,
     ),
     uiFactory = listOf(
-        HomeUiFactory,
-        ReaderUiFactory,
+        RouteUiFactory,
     )
 )
 
