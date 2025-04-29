@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,3 +22,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "Aosora"
 include(":app")
+include(":core:common")
+include(":core:parser")
+include(":core:pagesource")
+include(":core:service")
+include(":core:util")
+include(":ui:feature")
+include(":ui:common")
+include(":ui:rendering")

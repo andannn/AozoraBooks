@@ -1,23 +1,23 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("melodify.kmp.application")
+    id("melodify.compose.multiplatform.application")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.parcelize)
     alias(libs.plugins.serialization)
 }
 
 android {
-    namespace = "me.andannn.aosora"
-    compileSdk = 36
+    namespace = "me.andannn.aozora"
 
     defaultConfig {
-        applicationId = "me.andannn.aosora"
-        minSdk = 26
-        targetSdk = 36
+        applicationId = "me.andannn.aozora"
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
     }
 
     buildTypes {
@@ -29,34 +29,28 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":core:common"))
+            implementation(project(":core:service"))
+            implementation(project(":core:parser"))
+            implementation(project(":core:pagesource"))
+            implementation(project(":ui:common"))
+            implementation(project(":ui:feature"))
+            implementation(libs.napier)
+        }
     }
 }
 
 dependencies {
-    testImplementation(libs.kotlin.test)
-
-    implementation(libs.kotlinx.collections.immutable)
-    implementation(libs.napier)
     implementation(libs.kotlinx.io.core)
     implementation(libs.circuit.foundation)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.foundation)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation(libs.jsoup)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
@@ -65,7 +59,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
