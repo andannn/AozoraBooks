@@ -23,6 +23,7 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.BookPageSource
+import me.andannn.aozora.core.pagesource.DummySource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.RoughPageSource
 

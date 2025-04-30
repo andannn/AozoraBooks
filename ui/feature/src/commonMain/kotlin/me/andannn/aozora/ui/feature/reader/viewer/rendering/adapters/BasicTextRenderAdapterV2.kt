@@ -74,7 +74,6 @@ abstract class BasicTextRenderAdapterV2(
             isNotation = isNotation
         ).size
         val offsetX = (oneCharSize.width) / 2
-        val offsetY = (oneCharSize.height - oneCharSize.width) / 2
         val textSize = oneCharSize.width
         text.forEach { char ->
             val result = measureHelper.measure(
@@ -82,6 +81,7 @@ abstract class BasicTextRenderAdapterV2(
                 fontStyle = fontStyle,
                 isNotation = isNotation,
             )
+            val offsetY = (result.size.height - result.size.width) / 2
             withCharTransforms(
                 char,
                 onGetPivot = {
