@@ -1,6 +1,5 @@
 package me.andannn.aozora.ui.feature.reader.viewer
 
-import android.util.Log
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -98,7 +97,6 @@ class BookViewerPresenter(
 //            snapshotFlow { settledPageState }.distinctUntilChanged()
 //        }
 
-
         val scope = rememberCoroutineScope()
         val bookSource: BookPageSource<AozoraPage> = remember {
             RoughPageSource(
@@ -147,10 +145,9 @@ class BookViewerPresenter(
                 .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
                 .distinctUntilChanged()
                 .collect {
-                    Log.d(
-                        TAG,
+                    Napier.d(tag = TAG) {
                         "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${it.pageList.map { it.hashCode() }}"
-                    )
+                    }
                     snapshotState = it
                 }
         }

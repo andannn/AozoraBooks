@@ -49,7 +49,7 @@ private fun ReaderContent(cardId: String, modifier: Modifier = Modifier) {
                 originalWidth = maxWidth,
                 additionalTopMargin = TopMargin.MEDIUM,
                 fontSizeLevel = fontLevel.value,
-                fontType = FontType.NOTO_SERIF,
+                fontType = FontType.NOTO_SANS,
                 lineSpacing = LineSpacing.MEDIUM
             ),
         )
@@ -60,7 +60,7 @@ private fun ReaderContent(cardId: String, modifier: Modifier = Modifier) {
 
             Column {
                 TextButton(onClick = {
-                    initial.value += 1000
+                    initial.longValue += 1000
                 }) {
                     Text("AAA")
                 }

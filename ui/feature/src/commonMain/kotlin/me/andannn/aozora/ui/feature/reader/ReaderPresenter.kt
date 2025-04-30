@@ -10,7 +10,6 @@ class ReaderPresenter(private val cardId: String) : Presenter<ReaderState> {
     override fun present(): ReaderState {
         return ReaderState(cardId)
     }
-
 }
 
 

@@ -1,15 +1,15 @@
-package me.andannn.aozora.ui.rendering
+package me.andannn.aozora.ui.feature.reader.viewer.rendering
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.ui.rendering.adapters.EmphasisRenderAdapter
-import me.andannn.aozora.ui.rendering.adapters.IndentRenderAdapter
-import me.andannn.aozora.ui.rendering.adapters.LineBreakRenderAdapter
-import me.andannn.aozora.ui.rendering.adapters.PageBreakRenderAdapter
-import me.andannn.aozora.ui.rendering.adapters.RubyRenderAdapter
-import me.andannn.aozora.ui.rendering.adapters.TextRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.EmphasisRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.IndentRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.LineBreakRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.PageBreakRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.RubyRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.TextRenderAdapter
 
 interface ElementRenderAdapter {
 

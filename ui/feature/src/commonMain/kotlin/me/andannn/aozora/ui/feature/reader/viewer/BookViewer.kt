@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.ReaderTheme
@@ -43,7 +42,7 @@ private fun ReaderContent(
     pagerState: PagerState
 ) {
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
-    val textColor = theme.getTextColor(MaterialTheme.colorScheme).toArgb()
+    val textColor = theme.getTextColor(MaterialTheme.colorScheme)
 
     HorizontalPager(
         modifier = Modifier.background(backgroundColor),
@@ -55,7 +54,7 @@ private fun ReaderContent(
             page.value?.layout()
         }
         if (layoutPage != null) {
-            PageView(
+            PageViewV2(
                 modifier = Modifier.fillMaxSize(),
                 page = layoutPage,
                 textColor = textColor

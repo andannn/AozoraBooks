@@ -1,4 +1,4 @@
-package me.andannn.aozora.ui.rendering
+package me.andannn.aozora.ui.feature.reader.viewer.rendering
 
 import android.content.Context
 import android.graphics.Paint
@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.ui.feature.R
 import org.koin.mp.KoinPlatform.getKoin
 import kotlin.random.Random
 

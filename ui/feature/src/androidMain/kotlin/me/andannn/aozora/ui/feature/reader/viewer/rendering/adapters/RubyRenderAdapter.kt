@@ -1,11 +1,11 @@
-package me.andannn.aozora.ui.rendering.adapters
+package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.ui.rendering.PaintProvider
-import me.andannn.aozora.ui.rendering.DEBUG_RENDER
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.PaintProvider
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 
 class RubyRenderAdapter(
     private val paintProvider: PaintProvider
