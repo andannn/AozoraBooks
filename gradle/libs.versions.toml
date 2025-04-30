@@ -1,9 +1,8 @@
 [versions]
-agp = "8.8.1"
+agp = "8.9.2"
 circuit = "0.27.1"
-jsoupJsoup = "1.19.1"
 kotlin = "2.1.20"
-coreKtx = "1.15.0"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -13,18 +12,13 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 napierVersion = "2.7.1"
 kotlinxCollectionsImmutable = "0.3.8"
-kotlinxCoroutines = "1.10.1"
+kotlinxCoroutines = "1.10.2"
 kotlinxSerializationJson = "1.8.0"
 ksp = "2.1.10-1.0.31"
 androidGradlePlugin = "8.7.3"
-androidxRoom = "2.7.0-alpha12"
-googleService = "4.4.2"
-firebaseCrashlytics = "3.0.3"
 compose-plugin = "1.7.3"
 koin-bom = "4.0.4"
 kotlinxDatetime = "0.6.2"
-appcompat = "1.7.0"
-material = "1.12.0"
 ksoup = "0.1.4"
 okio = "3.10.2"
 
@@ -33,7 +27,6 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuit-test = { group = "com.slack.circuit", name = "circuit-test", version.ref = "circuit" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoupJsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -75,17 +68,12 @@ kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-pl
 composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
-google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
-room = { id = "androidx.room", version.ref = "androidxRoom" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
