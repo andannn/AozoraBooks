@@ -85,7 +85,7 @@ class Utf8UtilTest {
     @Test
     fun readStringTest() {
         val str =
-            Path("src/commonTest/resources/test.html").readString(Charsets.forName("Shift_JIS"))
+            Path("src/commonTest/resources/test.html").readString("Shift_JIS")
         println(str)
     }
 

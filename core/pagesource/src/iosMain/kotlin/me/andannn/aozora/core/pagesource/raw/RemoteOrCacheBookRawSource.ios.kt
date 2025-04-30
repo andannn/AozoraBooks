@@ -8,7 +8,7 @@ import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
 actual fun getCachedPatchById(id: String): Path {
-    return Path(documentDirectory(), "/book/$id")
+    return Path(documentDirectory(), "book/$id")
 }
 
 @OptIn(ExperimentalForeignApi::class)
