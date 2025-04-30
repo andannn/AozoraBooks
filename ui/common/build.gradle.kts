@@ -7,7 +7,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:common"))
-            api(project(":ui:rendering"))
         }
     }
 }

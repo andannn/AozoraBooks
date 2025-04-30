@@ -13,10 +13,10 @@ import androidx.compose.ui.graphics.nativeCanvas
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.Line
-import me.andannn.aozora.ui.rendering.DEBUG_RENDER
-import me.andannn.aozora.ui.rendering.DefaultPaintProvider
-import me.andannn.aozora.ui.rendering.ElementRenderAdapter
-import me.andannn.aozora.ui.rendering.ElementRenderAdapter.Companion.DefaultAdapters
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.DefaultPaintProvider
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapter.Companion.DefaultAdapters
 
 private const val TAG = "PageView"
 

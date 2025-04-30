@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Aosora"
-include(":app")
+include(":composeApp")
 include(":core:common")
 include(":core:parser")
 include(":core:pagesource")
@@ -29,4 +29,3 @@ include(":core:service")
 include(":core:util")
 include(":ui:feature")
 include(":ui:common")
-include(":ui:rendering")
