@@ -29,19 +29,16 @@ data class BookMeta(
      */
     @SerialName("title")
     val title: String,
-
     /**
      * Subtitle of book which maybe null.
      */
     @SerialName("subtitle")
     val subtitle: String?,
-
     /**
      * Author of book.
      */
     @SerialName("author")
     val author: String,
-
     /**
      * Content byte size of book.
      */

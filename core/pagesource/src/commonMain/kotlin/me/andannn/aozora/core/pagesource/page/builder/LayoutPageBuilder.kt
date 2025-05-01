@@ -2,17 +2,17 @@ package me.andannn.aozora.core.pagesource.page.builder
 
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
-import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
-import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
+import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
+import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
 
 private const val TAG = "ReaderPageBuilder"
 
@@ -31,7 +31,7 @@ fun AozoraPage.layout(): AozoraLayoutPage {
 class LayoutPageBuilder(
     private val meta: PageMetaData,
     private val measurer: ElementMeasurer,
-    private val forceAddBlock: Boolean = false
+    private val forceAddBlock: Boolean = false,
 ) : PageBuilder<AozoraLayoutPage> {
     private val fullWidth: Float = meta.renderWidth
     private val fullHeight: Float = meta.renderHeight
@@ -48,16 +48,17 @@ class LayoutPageBuilder(
 
         while (remainingElements.isNotEmpty()) {
             val element = remainingElements.first()
-            val result = tryAddElement(
-                element,
-                lineIndent = (block.blockType as? BlockType.TextType)?.indent ?: 0,
-                sizeOf = { element ->
-                    measurer.measure(
-                        element,
-                        (block.blockType as? BlockType.TextType)?.style
-                    )
-                }
-            )
+            val result =
+                tryAddElement(
+                    element,
+                    lineIndent = (block.blockType as? BlockType.TextType)?.indent ?: 0,
+                    sizeOf = { element ->
+                        measurer.measure(
+                            element,
+                            (block.blockType as? BlockType.TextType)?.style,
+                        )
+                    },
+                )
 
             when (result) {
                 is FillResult.FillContinue -> {
@@ -82,7 +83,7 @@ class LayoutPageBuilder(
     fun tryAddElement(
         element: AozoraElement,
         lineIndent: Int,
-        sizeOf: (AozoraElement) -> ElementMeasureResult
+        sizeOf: (AozoraElement) -> ElementMeasureResult,
     ): FillResult {
         Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
@@ -101,13 +102,14 @@ class LayoutPageBuilder(
             }
         }
 
-        val builder = lineBuilder ?: LineBuilder(
-            maxPx = fullHeight,
-            initialIndent = lineIndent,
-            measure = sizeOf,
-        ).also {
-            lineBuilder = it
-        }
+        val builder =
+            lineBuilder ?: LineBuilder(
+                maxPx = fullHeight,
+                initialIndent = lineIndent,
+                measure = sizeOf,
+            ).also {
+                lineBuilder = it
+            }
 
         when (element) {
             is AozoraElement.Ruby,
@@ -116,7 +118,8 @@ class LayoutPageBuilder(
             is AozoraElement.LineBreak,
             is AozoraElement.Indent,
             is AozoraElement.Illustration,
-            is AozoraElement.Emphasis -> {
+            is AozoraElement.Emphasis,
+            -> {
                 when (val result = builder.tryAdd(element)) {
                     FillResult.FillContinue -> return result
                     is FillResult.Filled -> {
@@ -145,7 +148,7 @@ class LayoutPageBuilder(
 
         return AozoraLayoutPage(
             metaData = meta,
-            lines = lines.toImmutableList()
+            lines = lines.toImmutableList(),
         )
     }
 

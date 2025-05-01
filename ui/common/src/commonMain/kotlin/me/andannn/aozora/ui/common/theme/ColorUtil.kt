@@ -1,9 +1,7 @@
 package me.andannn.aozora.ui.common.theme
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.rememberTextMeasurer
 import me.andannn.aozora.core.data.common.ReaderTheme
 
 fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color {
@@ -15,12 +13,13 @@ fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color {
     }
 }
 
-fun ReaderTheme.getTextColor(colorScheme: ColorScheme): Color = when (this) {
-    ReaderTheme.MONOCHROME -> Grey10
-    ReaderTheme.DYNAMIC -> colorScheme.onSurfaceVariant
-    ReaderTheme.PAPER -> Ink
-    ReaderTheme.GREEN_EYE_CARE -> GreenText
-}
+fun ReaderTheme.getTextColor(colorScheme: ColorScheme): Color =
+    when (this) {
+        ReaderTheme.MONOCHROME -> Grey10
+        ReaderTheme.DYNAMIC -> colorScheme.onSurfaceVariant
+        ReaderTheme.PAPER -> Ink
+        ReaderTheme.GREEN_EYE_CARE -> GreenText
+    }
 
 val RandomColor: Color
     get() {

@@ -13,59 +13,60 @@ import kotlinx.io.readString
 data class RawLine(
     val index: Long,
     val length: Long,
-    val content: String
+    val content: String,
 )
 
 /**
  * create line sequence from source.
  */
 @OptIn(InternalIoApi::class)
-fun Source.lineSequence() = sequence<RawLine> {
-    var currentIndex = 0L
-    while (!exhausted()) {
-        var lfIndex = indexOf('\n'.code.toByte())
-        when (lfIndex) {
-            -1L -> {
-                yield(
-                    RawLine(
-                        index = currentIndex,
-                        length = buffer.size,
-                        content = readString()
+fun Source.lineSequence() =
+    sequence<RawLine> {
+        var currentIndex = 0L
+        while (!exhausted()) {
+            var lfIndex = indexOf('\n'.code.toByte())
+            when (lfIndex) {
+                -1L -> {
+                    yield(
+                        RawLine(
+                            index = currentIndex,
+                            length = buffer.size,
+                            content = readString(),
+                        ),
                     )
-                )
-                currentIndex += buffer.size
-            } // buffer .size
-            0L -> {
-                skip(1) // empty readCount 1
-                yield(
-                    RawLine(
-                        index = currentIndex,
-                        length = 1,
-                        content = ""
+                    currentIndex += buffer.size
+                } // buffer .size
+                0L -> {
+                    skip(1) // empty readCount 1
+                    yield(
+                        RawLine(
+                            index = currentIndex,
+                            length = 1,
+                            content = "",
+                        ),
                     )
-                )
-                currentIndex += 1
-            }
-
-            else -> {
-                var skipBytes = 1
-                if (buffer[lfIndex - 1] == '\r'.code.toByte()) {
-                    lfIndex -= 1
-                    skipBytes += 1
+                    currentIndex += 1
                 }
-                val string = readString(lfIndex)
-                skip(skipBytes.toLong())  // read lfIndex + skipBytes
 
-                val consumed = lfIndex + skipBytes
-                yield(
-                    RawLine(
-                        index = currentIndex,
-                        length = consumed,
-                        content = string
+                else -> {
+                    var skipBytes = 1
+                    if (buffer[lfIndex - 1] == '\r'.code.toByte()) {
+                        lfIndex -= 1
+                        skipBytes += 1
+                    }
+                    val string = readString(lfIndex)
+                    skip(skipBytes.toLong()) // read lfIndex + skipBytes
+
+                    val consumed = lfIndex + skipBytes
+                    yield(
+                        RawLine(
+                            index = currentIndex,
+                            length = consumed,
+                            content = string,
+                        ),
                     )
-                )
-                currentIndex += consumed
+                    currentIndex += consumed
+                }
             }
         }
     }
-}

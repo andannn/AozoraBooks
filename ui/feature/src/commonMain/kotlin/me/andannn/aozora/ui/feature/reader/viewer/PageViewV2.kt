@@ -26,46 +26,50 @@ private const val TAG = "PageView"
 
 @Composable
 fun PageViewV2(
-    modifier: Modifier = Modifier,
     page: AozoraLayoutPage,
     textColor: Color,
     fontFamily: FontFamily,
+    modifier: Modifier = Modifier,
 ) {
     Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
-    val measurer = rememberTextMeasurer(
-        cacheSize = 0
-    )
+    val measurer =
+        rememberTextMeasurer(
+            cacheSize = 0,
+        )
     val density = LocalDensity.current
-    val adapters = remember(measurer, density) {
-        createAdapters(measurer, density, fontFamily, textColor)
-    }
+    val adapters =
+        remember(measurer, density) {
+            createAdapters(measurer, density, fontFamily, textColor)
+        }
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .drawWithContent {
-                val renderWidth = page.metaData.renderWidth
-                val renderHeight = page.metaData.renderHeight
-                val offsetX = page.metaData.offset.first
-                val offsetY = page.metaData.offset.second
+        modifier =
+            modifier
+                .fillMaxSize()
+                .drawWithContent {
+                    val renderWidth = page.metaData.renderWidth
+                    val renderHeight = page.metaData.renderHeight
+                    val offsetX = page.metaData.offset.first
+                    val offsetY = page.metaData.offset.second
 
-                if (DEBUG_RENDER) {
-                    drawRect(
-                        topLeft = Offset(offsetX, offsetY),
-                        size = Size(renderWidth, renderHeight),
-                        color = RandomColor
-                    )
-                }
-                translate(
-                    offsetX, offsetY
-                ) {
-                    var currentX = renderWidth
-                    for (line in page.lines) {
-                        currentX -= line.lineHeight / 2
-                        drawAozoraLineV2(currentX, line, textColor, adapters)
-                        currentX -= line.lineHeight / 2
+                    if (DEBUG_RENDER) {
+                        drawRect(
+                            topLeft = Offset(offsetX, offsetY),
+                            size = Size(renderWidth, renderHeight),
+                            color = RandomColor,
+                        )
                     }
-                }
-            }
+                    translate(
+                        offsetX,
+                        offsetY,
+                    ) {
+                        var currentX = renderWidth
+                        for (line in page.lines) {
+                            currentX -= line.lineHeight / 2
+                            drawAozoraLineV2(currentX, line, textColor, adapters)
+                            currentX -= line.lineHeight / 2
+                        }
+                    }
+                },
     )
 }
 
@@ -92,19 +96,20 @@ fun DrawScope.drawAozoraLineV2(
 
         if (DEBUG_RENDER) {
             drawRect(
-                topLeft = Offset(
-                    x - line.lineHeight / 2,
-                    currentY,
-                ),
-                size = Size(
-                    line.lineHeight,
-                    drawSize.height
-                ),
-                color = RandomColor
+                topLeft =
+                    Offset(
+                        x - line.lineHeight / 2,
+                        currentY,
+                    ),
+                size =
+                    Size(
+                        line.lineHeight,
+                        drawSize.height,
+                    ),
+                color = RandomColor,
             )
         }
 
         currentY += drawSize.height
     }
 }
-

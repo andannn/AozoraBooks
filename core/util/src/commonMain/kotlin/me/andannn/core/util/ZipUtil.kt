@@ -14,9 +14,10 @@ import okio.use
 fun Path.unzip(targetDirectory: Path) {
     val zipFileSystem = FileSystem.SYSTEM.openZip(this.toString().toPath())
     val fileSystem = FileSystem.SYSTEM
-    val paths = zipFileSystem.listRecursively("/".toPath())
-        .filter { zipFileSystem.metadata(it).isRegularFile }
-        .toList()
+    val paths =
+        zipFileSystem.listRecursively("/".toPath())
+            .filter { zipFileSystem.metadata(it).isRegularFile }
+            .toList()
 
     paths.forEach { zipFilePath ->
         zipFileSystem.source(zipFilePath).buffer().use { source ->
@@ -29,7 +30,6 @@ fun Path.unzip(targetDirectory: Path) {
         }
     }
 }
-
 
 private fun okio.Path.createParentDirectories() {
     this.parent?.let { parent ->

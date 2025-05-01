@@ -19,9 +19,9 @@ abstract class BufferedLazyPageSource(
     private val progress: Long,
     settledPageFlow: Flow<AozoraPage?>,
 ) : LazyBookPageSource<AozoraPage>(
-    scope = scope,
-    settledPageFlow = settledPageFlow
-) {
+        scope = scope,
+        settledPageFlow = settledPageFlow,
+    ) {
     abstract val bookSource: Source
     abstract val parser: AozoraBlockParser
 
@@ -32,8 +32,11 @@ abstract class BufferedLazyPageSource(
             builderFactory = {
                 createPageBuilder(meta)
             },
-            blockSequenceFlow = buffer.parseAsReversedLineSequence()
-                .map { parser.parseLineAsBlock(it) }.asFlow()
+            blockSequenceFlow =
+                buffer
+                    .parseAsReversedLineSequence()
+                    .map { parser.parseLineAsBlock(it) }
+                    .asFlow(),
         )
     }
 
@@ -44,13 +47,15 @@ abstract class BufferedLazyPageSource(
             builderFactory = {
                 createPageBuilder(meta)
             },
-            blockSequenceFlow = source.parseAsLineSequence().map { parser.parseLineAsBlock(it) }
-                .asFlow()
+            blockSequenceFlow =
+                source
+                    .parseAsLineSequence()
+                    .map { parser.parseLineAsBlock(it) }
+                    .asFlow(),
         )
     }
 }
 
 private fun Source.parseAsLineSequence() = lineSequence()
 
-private fun Source.parseAsReversedLineSequence() =
-    lineSequence().toList().reversed().asSequence()
+private fun Source.parseAsReversedLineSequence() = lineSequence().toList().reversed().asSequence()

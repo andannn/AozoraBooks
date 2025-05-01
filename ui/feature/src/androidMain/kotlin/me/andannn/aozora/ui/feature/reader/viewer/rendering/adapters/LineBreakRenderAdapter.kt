@@ -2,14 +2,14 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
-import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapter
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.PaintProvider
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 
 class LineBreakRenderAdapter(
-    private val paintProvider: PaintProvider
+    private val paintProvider: PaintProvider,
 ) : ElementRenderAdapter {
     override fun draw(
         canvas: Canvas,
@@ -17,7 +17,7 @@ class LineBreakRenderAdapter(
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle?,
-        textColor: Int
+        textColor: Int,
     ): Size? {
         element as? AozoraElement.LineBreak ?: return null
         if (fontStyle == null) {
@@ -32,11 +32,9 @@ class LineBreakRenderAdapter(
                 y,
                 x + paint.textSize / 2,
                 y + paint.textSize,
-                paintProvider.getDebugPaint()
+                paintProvider.getDebugPaint(),
             )
         }
         return Size(paint.textSize, 0f)
     }
 }
-
-

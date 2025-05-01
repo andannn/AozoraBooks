@@ -12,14 +12,16 @@ import aosora.ui.common.generated.resources.noto_serif_jp_regular
 import org.jetbrains.compose.resources.Font
 
 // Set of Material typography styles to start with
-val DefaultTypography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
+val DefaultTypography =
+    Typography(
+        bodyLarge =
+            TextStyle(
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                letterSpacing = 0.5.sp,
+            ),
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
@@ -35,14 +37,15 @@ val DefaultTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     )
-    */
-)
+     */
+    )
 
 val NotoSerifJpFontFamily
-    @Composable get() = FontFamily(
-        Font(
-            resource = Res.font.noto_serif_jp_regular,
-            weight = FontWeight.Normal,
-            style = FontStyle.Normal
-        ),
-    )
+    @Composable get() =
+        FontFamily(
+            Font(
+                resource = Res.font.noto_serif_jp_regular,
+                weight = FontWeight.Normal,
+                style = FontStyle.Normal,
+            ),
+        )

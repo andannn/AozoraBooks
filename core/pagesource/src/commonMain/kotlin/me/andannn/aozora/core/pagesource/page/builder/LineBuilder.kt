@@ -1,10 +1,10 @@
 package me.andannn.aozora.core.pagesource.page.builder
 
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.data.common.FontStyle
-import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.Line
+import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.pagesource.util.divide
 
 class LineBuilder(
@@ -28,7 +28,8 @@ class LineBuilder(
             is AozoraElement.Ruby,
             is AozoraElement.Text,
             is AozoraElement.Heading,
-            is AozoraElement.Emphasis -> {
+            is AozoraElement.Emphasis,
+            -> {
                 val measureResult = measure(element)
                 if (currentHeight + measureResult.size.height > maxPx) {
                     val remainLength = maxPx - currentHeight
@@ -62,7 +63,8 @@ class LineBuilder(
             }
 
             is AozoraElement.Illustration,
-            is AozoraElement.Indent -> {
+            is AozoraElement.Indent,
+            -> {
                 if (elementList.isNotEmpty()) {
                     error("indent, and image can only be add to new line")
                 } else {
@@ -74,15 +76,17 @@ class LineBuilder(
         }
     }
 
-    fun build(): Line {
-        return Line(
+    fun build(): Line =
+        Line(
             lineHeight = maxWidth,
             elements = elementList.toImmutableList(),
-            fontStyle = currentFontStyle
+            fontStyle = currentFontStyle,
         )
-    }
 
-    private fun updateState(element: AozoraElement, measureResult: ElementMeasureResult) {
+    private fun updateState(
+        element: AozoraElement,
+        measureResult: ElementMeasureResult,
+    ) {
         elementList += element
         currentHeight += measureResult.size.height
         maxWidth = maxOf(maxWidth, measureResult.size.width)

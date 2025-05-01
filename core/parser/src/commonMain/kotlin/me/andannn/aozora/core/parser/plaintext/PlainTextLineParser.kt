@@ -1,8 +1,8 @@
 package me.andannn.aozora.core.parser.plaintext
 
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.parser.RawLine
 import me.andannn.aozora.core.parser.AozoraLineParser
+import me.andannn.aozora.core.parser.RawLine
 import me.andannn.aozora.core.parser.plaintext.parsers.EmphasisParser
 import me.andannn.aozora.core.parser.plaintext.parsers.HeadingParser
 import me.andannn.aozora.core.parser.plaintext.parsers.IllustrationNotionParser
@@ -14,17 +14,15 @@ import me.andannn.aozora.core.parser.plaintext.parsers.SpecificRubyParser
 import me.andannn.aozora.core.parser.plaintext.parsers.TokenMatchResult
 import kotlin.collections.plusAssign
 
-object PlainTextLineParser: AozoraLineParser {
-    override fun parseLine(line: RawLine): List<AozoraElement> {
-        return parseLineInternal(line.content)
-    }
+object PlainTextLineParser : AozoraLineParser {
+    override fun parseLine(line: RawLine): List<AozoraElement> = parseLineInternal(line.content)
 
     /**
      * parse line to elements
      */
     fun parseLineInternal(
         line: String,
-        parsers: List<AozoraPainTextParser> = Parsers
+        parsers: List<AozoraPainTextParser> = Parsers,
     ): List<AozoraElement> {
         val result = mutableListOf<AozoraElement>()
         val matches = collectMatches(line, parsers)
@@ -57,14 +55,14 @@ object PlainTextLineParser: AozoraLineParser {
 
     private fun collectMatches(
         line: String,
-        parsers: List<AozoraPainTextParser>
+        parsers: List<AozoraPainTextParser>,
     ): List<TokenMatchResult> {
-        val allMatches = parsers
-            .flatMapIndexed { index, parser ->
-                val priority = index
-                parser.matchAll(line).map { PrioritizedMatch(it, priority) }
-            }
-            .sortedWith(compareBy({ it.match.range.first }, { it.priority }))
+        val allMatches =
+            parsers
+                .flatMapIndexed { index, parser ->
+                    val priority = index
+                    parser.matchAll(line).map { PrioritizedMatch(it, priority) }
+                }.sortedWith(compareBy({ it.match.range.first }, { it.priority }))
 
         val result = mutableListOf<TokenMatchResult>()
         var lastRangeEnd = -1
@@ -80,19 +78,20 @@ object PlainTextLineParser: AozoraLineParser {
     }
 }
 
-private val Parsers = listOf(
-    HeadingParser,
-    SpecificRubyParser,
-    RubyParser,
-    LineBreakParser,
-    IllustrationNotionParser,
-    EmphasisParser,
-    IndentParser,
-    PageBreakParser,
-    LineBreakParser,
-)
+private val Parsers =
+    listOf(
+        HeadingParser,
+        SpecificRubyParser,
+        RubyParser,
+        LineBreakParser,
+        IllustrationNotionParser,
+        EmphasisParser,
+        IndentParser,
+        PageBreakParser,
+        LineBreakParser,
+    )
 
 private data class PrioritizedMatch(
     val match: TokenMatchResult,
-    val priority: Int
+    val priority: Int,
 )

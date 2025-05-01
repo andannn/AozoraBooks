@@ -4,5 +4,4 @@ enum class Margin {
     LARGE,
     MEDIUM,
     SMALL,
-    ;
 }

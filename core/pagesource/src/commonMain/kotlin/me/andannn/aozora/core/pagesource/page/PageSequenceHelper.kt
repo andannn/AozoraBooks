@@ -17,8 +17,9 @@ fun <T : AozoraPage> createPageFlowFromSequence(
     var pageBuilder: PageBuilder<T>? = null
 
     suspend fun tryAdd(block: AozoraBlock) {
-        val builder = pageBuilder ?: builderFactory()
-            .also { pageBuilder = it }
+        val builder =
+            pageBuilder ?: builderFactory()
+                .also { pageBuilder = it }
 
         when (val result = builder.tryAddBlock(block)) {
             FillResult.FillContinue -> return

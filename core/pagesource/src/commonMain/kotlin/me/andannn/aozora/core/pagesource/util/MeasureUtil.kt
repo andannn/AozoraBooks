@@ -16,23 +16,26 @@ fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText,
     }
     return when (this) {
         is AozoraElement.Emphasis -> {
-            val left = copy(
-                text = text.substring(0, startIndex),
-                style = style
-            )
-            val right = copy(
-                text = text.substring(startIndex),
-                style = style
-            )
+            val left =
+                copy(
+                    text = text.substring(0, startIndex),
+                    style = style,
+                )
+            val right =
+                copy(
+                    text = text.substring(startIndex),
+                    style = style,
+                )
             left to right
         }
 
         is AozoraElement.Text -> {
             copy(
-                text = text.substring(0, startIndex)
-            ) to copy(
-                text = text.substring(startIndex)
-            )
+                text = text.substring(0, startIndex),
+            ) to
+                copy(
+                    text = text.substring(startIndex),
+                )
         }
 
         is AozoraElement.Heading -> {
@@ -44,7 +47,6 @@ fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText,
         }
     }
 }
-
 
 /**
  * Divide the element by [startIndex] (not include).
@@ -76,29 +78,35 @@ fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBloc
             }
 
             var hitPair: Pair<AozoraElement.BaseText, AozoraElement.BaseText>? = null
-            (hitElement.value as? AozoraElement.BaseText)?.divide(startIndex - currentElementStartIndex)
+            (hitElement.value as? AozoraElement.BaseText)
+                ?.divide(startIndex - currentElementStartIndex)
                 ?.let {
                     hitPair = it
                 }
             if (hitPair != null) {
                 return this.copy(
-                    elements = elements.subList(0, hitElement.index) + listOf(hitPair.first)
-                ) to this.copy(
-                    elements = listOf(hitPair.second) + elements.subList(
-                        hitElement.index + 1,
-                        elements.size
+                    elements = elements.subList(0, hitElement.index) + listOf(hitPair.first),
+                ) to
+                    this.copy(
+                        elements =
+                            listOf(hitPair.second) +
+                                elements.subList(
+                                    hitElement.index + 1,
+                                    elements.size,
+                                ),
                     )
-                )
             } else {
                 val nextIndex = hitElement.index + 1
                 return this.copy(
-                    elements = elements.subList(0, nextIndex)
-                ) to this.copy(
-                    elements = elements.subList(
-                        nextIndex,
-                        elements.size
+                    elements = elements.subList(0, nextIndex),
+                ) to
+                    this.copy(
+                        elements =
+                            elements.subList(
+                                nextIndex,
+                                elements.size,
+                            ),
                     )
-                )
             }
         }
     }

@@ -8,5 +8,5 @@ actual data object HomeScreen : Screen
 
 @Parcelize
 actual data class ReaderScreen actual constructor(
-     actual val cardId: String
+    actual val cardId: String,
 ) : Screen

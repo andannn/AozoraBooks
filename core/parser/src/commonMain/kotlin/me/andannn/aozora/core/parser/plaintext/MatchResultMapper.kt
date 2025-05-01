@@ -7,7 +7,7 @@ import me.andannn.aozora.core.parser.plaintext.parsers.TokenMatchResult
  */
 fun MatchResult.mapTokenMatchResultWitCutStart(
     input: String,
-    parser: AozoraPainTextParser
+    parser: AozoraPainTextParser,
 ): TokenMatchResult? {
     val match = this
     val base = match.groupValues[1]
@@ -27,6 +27,6 @@ fun MatchResult.mapTokenMatchResultWitCutStart(
 //            }
 //        )
 //    } else {
-        return null
+    return null
 //    }
 }

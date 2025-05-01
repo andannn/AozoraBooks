@@ -2,8 +2,8 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.MeasureHelper
 
 class EmphasisRenderAdapterV2(
@@ -13,7 +13,7 @@ class EmphasisRenderAdapterV2(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
     ): Size? {
         element as? AozoraElement.Emphasis ?: return null
         if (fontStyle == null) {

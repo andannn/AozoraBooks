@@ -49,7 +49,9 @@ interface RenderSetting {
     val additionalTopMargin: TopMargin
 }
 
-interface PageMetaData: PaperLayout, RenderSetting
+interface PageMetaData :
+    PaperLayout,
+    RenderSetting
 
 /**
  * Meta data for a render page.
@@ -58,15 +60,15 @@ data class PageContext(
     override val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
     override val fontType: FontType = FontType.DEFAULT,
     override val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
-    override val fontSizeLevel: FontSizeLevel = FontSizeLevel.Level_4,
+    override val fontSizeLevel: FontSizeLevel = FontSizeLevel.LEVEL_4,
     override val originalHeight: Float,
     override val originalWidth: Float,
 ) : PageMetaData {
     override val offset: Pair<Float, Float> by lazy {
         Pair(
-            /* x = */
+            // x =
             originalWidth * DEFAULT_HORIZONTAL_MARGIN_PERCENT / 2,
-            /* y = */
+            // y =
             originalHeight * DEFAULT_VERTICAL_MARGIN_PERCENT / 2 + additionalTopMargin.value,
         )
     }

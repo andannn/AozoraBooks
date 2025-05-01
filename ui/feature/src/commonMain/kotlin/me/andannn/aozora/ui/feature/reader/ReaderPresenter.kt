@@ -12,12 +12,10 @@ class ReaderPresenter(private val cardId: String) : Presenter<ReaderState> {
     }
 }
 
-
 @Stable
 data class ReaderState(
     val cardId: String,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 
-sealed interface ReaderUiEvent {
-}
+sealed interface ReaderUiEvent

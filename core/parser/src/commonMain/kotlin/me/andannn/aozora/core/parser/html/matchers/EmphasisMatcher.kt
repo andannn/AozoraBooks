@@ -1,12 +1,12 @@
 package me.andannn.aozora.core.parser.html.matchers
 
+import com.fleeksoft.ksoup.nodes.Element
+import com.fleeksoft.ksoup.nodes.Node
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.EmphasisStyle
 import me.andannn.aozora.core.parser.html.ElementMatcher
-import com.fleeksoft.ksoup.nodes.Element
-import com.fleeksoft.ksoup.nodes.Node
 
-object EmphasisMatcher : ElementMatcher{
+object EmphasisMatcher : ElementMatcher {
     override fun match(node: Node): AozoraElement? {
         node as? Element ?: return null
 
@@ -16,11 +16,12 @@ object EmphasisMatcher : ElementMatcher{
             return null
         }
 
-        val style = when (node.tagName()) {
-            "em" -> EmphasisStyle.Bouten
-            "strong" -> EmphasisStyle.Strong
-            else -> error("unknown emphasis style: ${node.tagName()}")
-        }
+        val style =
+            when (node.tagName()) {
+                "em" -> EmphasisStyle.Bouten
+                "strong" -> EmphasisStyle.Strong
+                else -> error("unknown emphasis style: ${node.tagName()}")
+            }
         val sesameDot = node.text()
         return AozoraElement.Emphasis(sesameDot, style)
     }

@@ -2,13 +2,12 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
-import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapterV2
@@ -22,29 +21,28 @@ abstract class BasicTextRenderAdapterV2(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
-    ): Size? {
-        return drawWithScope(scope = this, x, y, element, fontStyle)
-    }
+        fontStyle: FontStyle?,
+    ): Size? = drawWithScope(scope = this, x, y, element, fontStyle)
 
     protected fun drawWithScope(
         scope: DrawScope,
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
     ): Size? {
         element as? AozoraElement.BaseText ?: return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
 
-        val drawSize = scope.drawVerticalString(
-            text = element.text,
-            fontStyle = fontStyle,
-            x = x,
-            y = y,
-        )
+        val drawSize =
+            scope.drawVerticalString(
+                text = element.text,
+                fontStyle = fontStyle,
+                x = x,
+                y = y,
+            )
 
         if (DEBUG_RENDER) {
             scope.drawRect(
@@ -62,38 +60,42 @@ abstract class BasicTextRenderAdapterV2(
         fontStyle: FontStyle,
         x: Float,
         y: Float,
-        isNotation: Boolean = false
+        isNotation: Boolean = false,
     ): Size {
         var currentY = y
-        val oneCharSize = measureHelper.measure(
-            text = "あ",
-            fontStyle = fontStyle,
-            isNotation = isNotation
-        ).size
+        val oneCharSize =
+            measureHelper
+                .measure(
+                    text = "あ",
+                    fontStyle = fontStyle,
+                    isNotation = isNotation,
+                ).size
         val offsetX = (oneCharSize.width) / 2
         val textSize = oneCharSize.width
         text.forEach { char ->
-            val result = measureHelper.measure(
-                text = char.toString(),
-                fontStyle = fontStyle,
-                isNotation = isNotation,
-            )
+            val result =
+                measureHelper.measure(
+                    text = char.toString(),
+                    fontStyle = fontStyle,
+                    isNotation = isNotation,
+                )
             val offsetY = (result.size.height - result.size.width) / 2
             withCharTransforms(
                 char,
                 onGetPivot = {
                     Offset(
                         x = x,
-                        y = currentY + (oneCharSize.width) / 2
+                        y = currentY + (oneCharSize.width) / 2,
                     )
-                }
+                },
             ) {
                 drawText(
                     textLayoutResult = result,
-                    topLeft = Offset(
-                        x = x - offsetX,
-                        y = currentY - offsetY
-                    )
+                    topLeft =
+                        Offset(
+                            x = x - offsetX,
+                            y = currentY - offsetY,
+                        ),
                 )
             }
 
@@ -107,23 +109,30 @@ abstract class BasicTextRenderAdapterV2(
 }
 
 private sealed interface TransForm {
-    data class Rotate(val rotate: Float) : TransForm
-    data class Translate(val dx: Float = 0f, val dy: Float = 0f) : TransForm
+    data class Rotate(
+        val rotate: Float,
+    ) : TransForm
+
+    data class Translate(
+        val dx: Float = 0f,
+        val dy: Float = 0f,
+    ) : TransForm
 }
 
-private val TransformMap = mapOf<Char, List<TransForm>>(
-    '、' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
-    '。' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
-    '「' to listOf(TransForm.Rotate(90f)),
-    '」' to listOf(TransForm.Rotate(90f)),
-    '（' to listOf(TransForm.Rotate(90f)),
-    '）' to listOf(TransForm.Rotate(90f)),
-)
+private val TransformMap =
+    mapOf<Char, List<TransForm>>(
+        '、' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
+        '。' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
+        '「' to listOf(TransForm.Rotate(90f)),
+        '」' to listOf(TransForm.Rotate(90f)),
+        '（' to listOf(TransForm.Rotate(90f)),
+        '）' to listOf(TransForm.Rotate(90f)),
+    )
 
 private fun DrawScope.withCharTransforms(
     char: Char,
     onGetPivot: () -> Offset,
-    block: DrawScope.() -> Unit
+    block: DrawScope.() -> Unit,
 ) {
     val transforms = TransformMap[char]
     if (transforms.isNullOrEmpty()) {
@@ -137,7 +146,7 @@ private fun DrawScope.applyTransformsRecursively(
     transforms: List<TransForm>,
     index: Int,
     onGetPivot: () -> Offset,
-    block: DrawScope.() -> Unit
+    block: DrawScope.() -> Unit,
 ) {
     if (index >= transforms.size) {
         block()
@@ -154,7 +163,7 @@ private fun DrawScope.applyTransformsRecursively(
             rotate(
                 degrees = current.rotate,
                 pivot = onGetPivot(),
-                block = next
+                block = next,
             )
         }
 
@@ -162,7 +171,7 @@ private fun DrawScope.applyTransformsRecursively(
             translate(
                 left = current.dx,
                 top = current.dy,
-                block = next
+                block = next,
             )
         }
     }

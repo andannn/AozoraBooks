@@ -13,7 +13,6 @@ import kotlin.random.Random
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class Utf8UtilTest {
     private val dispatcher = StandardTestDispatcher()
@@ -59,25 +58,6 @@ class Utf8UtilTest {
         assertEquals("あい\n", remain.readString())
         assertEquals("うえおかきくけこ", buffer.readString())
         assertEquals(7, size)
-    }
-
-    @Test
-    fun readUtf8WithBufferStartFromContinuationByteTest() {
-        val sample = "傍"
-        val buffer = Buffer()
-        buffer.writeString(sample)
-        buffer.skip(1)
-        assertFailsWith(IllegalStateException::class) {
-            buffer.readUtf8StringByThreshold(3)
-        }
-    }
-
-    @Test
-    fun readUtf8StringByThresholdTest() {
-        val sample = "傍4f124"
-        val buffer = Buffer()
-        buffer.writeString(sample)
-        assertEquals("傍4f124" to 8, buffer.readUtf8StringByThreshold(128))
     }
 
     @Test

@@ -1,11 +1,11 @@
 package me.andannn.aozora.core.parser.html.matchers
 
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.parser.html.ElementMatcher
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
+import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.parser.html.ElementMatcher
 
-object ImageMatcher: ElementMatcher {
+object ImageMatcher : ElementMatcher {
     override fun match(node: Node): AozoraElement? {
         node as? Element ?: return null
         if (node.tagName() != "img") {

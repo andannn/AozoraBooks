@@ -9,21 +9,22 @@ sealed interface BlockType {
      */
     sealed class TextType(
         open val style: AozoraTextStyle,
-        open val indent: Int
+        open val indent: Int,
     ) : BlockType
 
     /**
      * paragraph text block
      */
-    data class Text(override val indent: Int = 0) :
-        TextType(style = AozoraTextStyle.PARAGRAPH, indent)
+    data class Text(
+        override val indent: Int = 0,
+    ) : TextType(style = AozoraTextStyle.PARAGRAPH, indent)
 
     /**
      * heading text block
      */
     data class Heading(
         override val style: AozoraTextStyle,
-        override val indent: Int
+        override val indent: Int,
     ) : TextType(style, indent)
 
     /**

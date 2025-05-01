@@ -6,5 +6,6 @@ expect object HomeScreen : Screen
 
 expect class ReaderScreen : Screen {
     constructor(cardId: String)
+
     val cardId: String
 }

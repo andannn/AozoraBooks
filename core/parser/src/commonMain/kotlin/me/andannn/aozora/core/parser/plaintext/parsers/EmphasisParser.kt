@@ -20,7 +20,7 @@ object EmphasisParser : AozoraPainTextParser {
 
         return AozoraElement.Emphasis(
             text = target,
-            emphasisStyle = EmphasisStyle.Bouten
+            emphasisStyle = EmphasisStyle.Bouten,
         )
     }
 }

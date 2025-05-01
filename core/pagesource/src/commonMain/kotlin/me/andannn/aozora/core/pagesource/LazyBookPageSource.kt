@@ -26,16 +26,18 @@ private const val TAG = "LazyBookPageSource"
 /**
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class LazyBookPageSource<T: AozoraPage>(
+abstract class LazyBookPageSource<T : AozoraPage>(
     scope: CoroutineScope,
-    private val settledPageFlow: Flow<AozoraPage?>
-) : BookPageSource<T>, CoroutineScope by scope {
+    private val settledPageFlow: Flow<AozoraPage?>,
+) : BookPageSource<T>,
+    CoroutineScope by scope {
     private val pageListFlow = MutableStateFlow<List<T>>(emptyList())
     private val pagerSnapShotFlow = MutableSharedFlow<PagerSnapShot<T>>()
 
-    override fun getPagerSnapShotFlow(meta: PageMetaData, startProgress: Long): Flow<PagerSnapShot<T>> {
-        return pagerSnapShotFlow
-    }
+    override fun getPagerSnapShotFlow(
+        meta: PageMetaData,
+        startProgress: Long,
+    ): Flow<PagerSnapShot<T>> = pagerSnapShotFlow
 
     private val beforePageCountFlow =
         combine(settledPageFlow, pageListFlow) { settledPage, pageList ->
@@ -60,12 +62,12 @@ abstract class LazyBookPageSource<T: AozoraPage>(
         launch {
             generatePageFlowAfter()
                 .flowOn(Dispatchers.IO)
-                .chunked(OneTimeLoadSize) // emit every 5 pages.
+                .chunked(ONE_TIME_LOAD_SIZE) // emit every 5 pages.
                 .collect {
                     addToAfter(it)
                     yield()
                     Napier.d(tag = TAG) { "in after await E." }
-                    afterPageCountFlow.awaitUntilLessThan(OneTimeLoadSize)
+                    afterPageCountFlow.awaitUntilLessThan(ONE_TIME_LOAD_SIZE)
                     Napier.d(tag = TAG) { "in after await X." }
                 }
             Napier.d(tag = TAG) { "all page after is loaded." }
@@ -77,12 +79,12 @@ abstract class LazyBookPageSource<T: AozoraPage>(
 
             generatePageFlowBefore()
                 .flowOn(Dispatchers.IO)
-                .chunked(OneTimeLoadSize) // emit every 5 pages.
+                .chunked(ONE_TIME_LOAD_SIZE) // emit every 5 pages.
                 .collect {
                     addToBefore(it)
                     yield()
                     Napier.d(tag = TAG) { "in before await E." }
-                    beforePageCountFlow.awaitUntilLessThan(OneTimeLoadSize)
+                    beforePageCountFlow.awaitUntilLessThan(ONE_TIME_LOAD_SIZE)
                     Napier.d(tag = TAG) { "in before await X." }
                 }
             Napier.d(tag = TAG) { "all page before is loaded." }
@@ -95,9 +97,10 @@ abstract class LazyBookPageSource<T: AozoraPage>(
 
     private suspend fun awaitSettledPage() = settledPageFlow.first { it != null }
 
-    private suspend fun Flow<Int>.awaitUntilLessThan(limit: Int) = this.first { count ->
-        count != -1 && count < limit
-    }
+    private suspend fun Flow<Int>.awaitUntilLessThan(limit: Int) =
+        this.first { count ->
+            count != -1 && count < limit
+        }
 
     private fun addToBefore(page: List<T>) {
         Napier.d(tag = TAG) { "add new page before: ${page.reversed().map { it.hashCode() }}" }
@@ -128,12 +131,12 @@ abstract class LazyBookPageSource<T: AozoraPage>(
                     PagerSnapShot(
                         pageList = pageListFlow.value,
                         initialIndex = index,
-                        snapshotVersion = version++
-                    )
+                        snapshotVersion = version++,
+                    ),
                 )
 
                 notifyTask = null
-            }
+            },
         )
     }
 
@@ -157,15 +160,16 @@ abstract class LazyBookPageSource<T: AozoraPage>(
             }
 
             notifyJob?.cancel()
-            notifyJob = launch {
-                delay(delayMs)
+            notifyJob =
+                launch {
+                    delay(delayMs)
 
-                onNotify.invoke(needResetInitialIndex)
-            }
+                    onNotify.invoke(needResetInitialIndex)
+                }
         }
     }
 
     companion object {
-        private const val OneTimeLoadSize = 5
+        private const val ONE_TIME_LOAD_SIZE = 5
     }
 }

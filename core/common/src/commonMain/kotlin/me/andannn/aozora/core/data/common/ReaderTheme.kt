@@ -1,6 +1,5 @@
 package me.andannn.aozora.core.data.common
 
-
 /**
  * The theme of the reader.
  */
@@ -21,5 +20,4 @@ enum class ReaderTheme {
     PAPER,
 
     GREEN_EYE_CARE,
-    ;
 }
