@@ -7,6 +7,7 @@ enum class FontSizeLevel(
     LEVEL_2(36f),
     LEVEL_3(42f),
     LEVEL_4(48f),
+
     LEVEL_5(54f),
     LEVEL_6(60f),
 }
