@@ -29,7 +29,7 @@ It supports advanced layout features like ruby annotations and vertical text, an
 | Dependency Injection | Koin                           |
 | Platforms      | Android, iOS                         |
 
-## 🚀Getting Started
+## Getting Started
 
 ### Prerequisites
 - Android Studio(Meerkat or newer)
@@ -49,6 +49,6 @@ It supports advanced layout features like ruby annotations and vertical text, an
 
 1. Wait for the Gradle sync to complete successfully.
 2. Add a new **iOS Application Configuration** in Android Studio or IntelliJ IDEA.
-   > 📁 Xcode project path: `<project root>/iosApp/iosApp.xcodeproj`  
-   > 🎯 Execution target: any simulator compatible with your installed Xcode version
+   > Xcode project path: `<project root>/iosApp/iosApp.xcodeproj`  
+   > Execution target: any simulator compatible with your installed Xcode version
 3. Click the **Run** ▶️ button to launch the app.
