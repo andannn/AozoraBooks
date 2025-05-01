@@ -9,21 +9,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.BookPageSource
-import me.andannn.aozora.core.pagesource.DummySource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.RoughPageSource
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
@@ -48,7 +43,6 @@ class BookViewerPresenter(
     private val initialProgress: Long,
     private val pageMetadata: PageMetaData,
 ) : Presenter<BookViewerState> {
-
     @Composable
     override fun present(): BookViewerState {
         var snapshotState by remember {
@@ -58,7 +52,7 @@ class BookViewerPresenter(
         val pagerState =
             rememberRefreshablePagerState(
                 initialPage = snapshotState?.initialIndex ?: 0,
-                version = snapshotState?.snapshotVersion
+                version = snapshotState?.snapshotVersion,
             ) {
                 snapshotState?.pageList?.size ?: 0
             }
@@ -100,11 +94,12 @@ class BookViewerPresenter(
 //        }
 
         val scope = rememberCoroutineScope()
-        val bookSource: BookPageSource<AozoraPage> = remember {
-            RoughPageSource(
-                card,
-                scope = scope,
-            )
+        val bookSource: BookPageSource<AozoraPage> =
+            remember {
+                RoughPageSource(
+                    card,
+                    scope = scope,
+                )
 //            LayoutPageSource(
 //                AozoraBookCard(
 //                    id = "1",
@@ -113,7 +108,7 @@ class BookViewerPresenter(
 //                ),
 //                scope = scope,
 //            )
-            //            createBookSource(
+                //            createBookSource(
 //                AozoraBookCard(
 //                    id = "1",
 //                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
@@ -133,7 +128,7 @@ class BookViewerPresenter(
 //                progress = 3876,
 //                settledPageFlow = settledPageFlow
 //            )
-        }
+            }
         DisposableEffect(Unit) {
             onDispose {
                 bookSource.dispose()
@@ -141,14 +136,17 @@ class BookViewerPresenter(
         }
         LaunchedEffect(
             initialProgress,
-            pageMetadata
+            pageMetadata,
         ) {
             bookSource
                 .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
                 .distinctUntilChanged()
                 .collect {
                     Napier.d(tag = TAG) {
-                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${it.pageList.map { it.hashCode() }}"
+                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${it.pageList.map {
+                            it
+                                .hashCode()
+                        }}"
                     }
                     snapshotState = it
                 }
@@ -157,7 +155,7 @@ class BookViewerPresenter(
         return BookViewerState(
             pageMetadata = pageMetadata,
             pages = snapshotState?.pageList ?: emptyList(),
-            pagerState = pagerState
+            pagerState = pagerState,
         ) { eventSink ->
             when (eventSink) {
                 else -> {}
@@ -175,5 +173,4 @@ data class BookViewerState(
     val evenSink: (BookViewerUiEvent) -> Unit = {},
 ) : CircuitUiState
 
-sealed interface BookViewerUiEvent {
-}
+sealed interface BookViewerUiEvent

@@ -25,14 +25,17 @@ import me.andannn.aozora.ui.common.theme.getTextColor
 private const val TAG = "BookViewer"
 
 @Composable
-fun BookViewer(state: BookViewerState, modifier: Modifier = Modifier) {
+fun BookViewer(
+    state: BookViewerState,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(modifier = modifier) {
         ReaderContent(
             modifier = Modifier.padding(it),
             pages = state.pages,
             theme = state.theme,
             pagerState = state.pagerState,
-            pageMetadata = state.pageMetadata
+            pageMetadata = state.pageMetadata,
         )
     }
 }
@@ -43,7 +46,7 @@ private fun ReaderContent(
     pages: List<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
-    pageMetadata: PageMetaData
+    pageMetadata: PageMetaData,
 ) {
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
@@ -56,24 +59,24 @@ private fun ReaderContent(
         reverseLayout = true,
     ) { pageIndex ->
         val page = rememberUpdatedState(pages.getOrNull(pageIndex))
-        val layoutPage = remember(page.value) {
-            page.value?.layout()
-        }
+        val layoutPage =
+            remember(page.value) {
+                page.value?.layout()
+            }
         if (layoutPage != null) {
             PageViewV2(
                 modifier = Modifier.fillMaxSize(),
                 page = layoutPage,
                 textColor = textColor,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             )
         }
     }
 }
 
 @Composable
-private fun getFontFamilyByType(type: FontType): FontFamily {
-    return when (type) {
+private fun getFontFamilyByType(type: FontType): FontFamily =
+    when (type) {
         FontType.NOTO_SANS -> FontFamily.Default
         FontType.NOTO_SERIF -> NotoSerifJpFontFamily
     }
-}

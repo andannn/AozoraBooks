@@ -11,14 +11,13 @@ import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapter
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.MeasureHelper
 
 class IndentRenderAdapterV2(
-    private val measureHelper: MeasureHelper
+    private val measureHelper: MeasureHelper,
 ) : ElementRenderAdapterV2 {
-
     override fun DrawScope.draw(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?
+        fontStyle: FontStyle?,
     ): Size? {
         element as? AozoraElement.Indent ?: return null
         if (fontStyle == null) {
@@ -30,12 +29,13 @@ class IndentRenderAdapterV2(
         if (DEBUG_RENDER) {
             repeat(element.count) {
                 drawCircle(
-                    center = Offset(
-                        x = x,
-                        y = y + textSize / 2 + textSize * it,
-                    ),
+                    center =
+                        Offset(
+                            x = x,
+                            y = y + textSize / 2 + textSize * it,
+                        ),
                     radius = textSize / 2,
-                    color = RandomColor
+                    color = RandomColor,
                 )
             }
         }

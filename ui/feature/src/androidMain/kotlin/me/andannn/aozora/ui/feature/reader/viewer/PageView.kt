@@ -27,42 +27,44 @@ fun PageView(
     textColor: Int,
 ) {
     Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
-    val adapters = remember {
-        DefaultAdapters
-    }
+    val adapters =
+        remember {
+            DefaultAdapters
+        }
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .drawWithContent {
-                drawIntoCanvas { canvas ->
-                    val renderWidth = page.metaData.renderWidth
-                    val renderHeight = page.metaData.renderHeight
-                    val offsetX = page.metaData.offset.first
-                    val offsetY = page.metaData.offset.second
+        modifier =
+            modifier
+                .fillMaxSize()
+                .drawWithContent {
+                    drawIntoCanvas { canvas ->
+                        val renderWidth = page.metaData.renderWidth
+                        val renderHeight = page.metaData.renderHeight
+                        val offsetX = page.metaData.offset.first
+                        val offsetY = page.metaData.offset.second
 
-                    if (DEBUG_RENDER) {
-                        canvas.nativeCanvas.drawRect(
-                            offsetX,
-                            offsetY,
-                            offsetX + renderWidth,
-                            offsetY + renderHeight,
-                            DefaultPaintProvider().getDebugPaint()
-                        )
+                        if (DEBUG_RENDER) {
+                            canvas.nativeCanvas.drawRect(
+                                offsetX,
+                                offsetY,
+                                offsetX + renderWidth,
+                                offsetY + renderHeight,
+                                DefaultPaintProvider().getDebugPaint(),
+                            )
+                        }
+                        canvas.save()
+                        canvas.nativeCanvas.translate(offsetX, offsetY)
+
+                        var currentX = renderWidth
+                        for (line in page.lines) {
+                            currentX -= line.lineHeight / 2
+                            canvas.nativeCanvas.drawAozoraLine(currentX, line, adapters, textColor)
+                            currentX -= line.lineHeight / 2
+                        }
+
+                        canvas.restore()
                     }
-                    canvas.save()
-                    canvas.nativeCanvas.translate(offsetX, offsetY)
-
-                    var currentX = renderWidth
-                    for (line in page.lines) {
-                        currentX -= line.lineHeight / 2
-                        canvas.nativeCanvas.drawAozoraLine(currentX, line, adapters, textColor)
-                        currentX -= line.lineHeight / 2
-                    }
-
-                    canvas.restore()
-                }
-                drawContent()
-            }
+                    drawContent()
+                },
     )
 }
 
@@ -70,7 +72,7 @@ fun Canvas.drawAozoraLine(
     x: Float,
     line: Line,
     adapters: List<ElementRenderAdapter>,
-    textColor: Int
+    textColor: Int,
 ) {
     val fontStyle = line.fontStyle
     var currentY = 0f
@@ -93,7 +95,7 @@ fun Canvas.drawAozoraLine(
                 currentY,
                 x + line.lineHeight / 2,
                 currentY + drawSize.height,
-                DefaultPaintProvider().getDebugPaint()
+                DefaultPaintProvider().getDebugPaint(),
             )
         }
 

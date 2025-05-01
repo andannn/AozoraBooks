@@ -22,40 +22,50 @@ import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
 import me.andannn.aozora.ui.feature.reader.viewer.rememberBookViewerPresenter
 
 @Composable
-fun Reader(state: ReaderState, modifier: Modifier = Modifier) {
+fun Reader(
+    state: ReaderState,
+    modifier: Modifier = Modifier,
+) {
     ReaderContent(
         cardId = state.cardId,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
-private fun ReaderContent(cardId: String, modifier: Modifier = Modifier) {
+private fun ReaderContent(
+    cardId: String,
+    modifier: Modifier = Modifier,
+) {
     val localDensity = LocalDensity.current
-    val initial = remember {
-        mutableLongStateOf(0L)
-    }
-    val fontLevel = remember {
-        mutableStateOf(FontSizeLevel.Level_4)
-    }
+    val initial =
+        remember {
+            mutableLongStateOf(0L)
+        }
+    val fontLevel =
+        remember {
+            mutableStateOf(FontSizeLevel.Level_4)
+        }
     BoxWithConstraints(modifier = modifier) {
         val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }
         val maxWidth = with(localDensity) { maxWidth.toPx() }
-        val presenter = rememberBookViewerPresenter(
-            card = getCardById(cardId),
-            initialProgress = initial.longValue,
-            pageMetadata = PageContext(
-                originalHeight = maxHeight,
-                originalWidth = maxWidth,
-                additionalTopMargin = TopMargin.MEDIUM,
-                fontSizeLevel = fontLevel.value,
-                fontType = FontType.NOTO_SERIF,
-                lineSpacing = LineSpacing.MEDIUM
-            ),
-        )
+        val presenter =
+            rememberBookViewerPresenter(
+                card = getCardById(cardId),
+                initialProgress = initial.longValue,
+                pageMetadata =
+                    PageContext(
+                        originalHeight = maxHeight,
+                        originalWidth = maxWidth,
+                        additionalTopMargin = TopMargin.MEDIUM,
+                        fontSizeLevel = fontLevel.value,
+                        fontType = FontType.NOTO_SERIF,
+                        lineSpacing = LineSpacing.MEDIUM,
+                    ),
+            )
         Box {
             BookViewer(
-                state = presenter.present()
+                state = presenter.present(),
             )
 
             Column {
@@ -74,20 +84,21 @@ private fun ReaderContent(cardId: String, modifier: Modifier = Modifier) {
     }
 }
 
-private fun getCardById(id: String)  = when (id) {
-    "301" -> {
-        AozoraBookCard(
-            id = "301",
-            zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
-            htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
-        )
+private fun getCardById(id: String) =
+    when (id) {
+        "301" -> {
+            AozoraBookCard(
+                id = "301",
+                zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
+            )
+        }
+        "789" -> {
+            AozoraBookCard(
+                id = "789",
+                zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
+            )
+        }
+        else -> error("")
     }
-    "789" -> {
-        AozoraBookCard(
-            id = "789",
-            zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
-            htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
-        )
-    }
-    else -> error("")
-}

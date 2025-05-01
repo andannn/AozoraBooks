@@ -1,14 +1,10 @@
 package me.andannn.aozora.ui.feature.reader.viewer.rendering
 
-import android.content.Context
 import android.graphics.Paint
 import android.graphics.Paint.VERTICAL_TEXT_FLAG
 import android.graphics.Typeface
-import androidx.core.content.res.ResourcesCompat
-import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.FontStyle
-import me.andannn.aozora.ui.feature.R
-import org.koin.mp.KoinPlatform.getKoin
+import me.andannn.aozora.core.data.common.FontType
 import kotlin.random.Random
 
 interface PaintProvider {
@@ -21,7 +17,7 @@ interface PaintProvider {
     fun getDebugPaint(): Paint
 }
 
-class DefaultPaintProvider() : PaintProvider {
+class DefaultPaintProvider : PaintProvider {
     private val paintCache = mutableMapOf<FontMeta, Paint>()
 
     override fun getPaint(
@@ -45,12 +41,11 @@ class DefaultPaintProvider() : PaintProvider {
                     }
 
                     color = fontMeta.fontColor
-                }
-                .also { paintCache[fontMeta] = it }
+                }.also { paintCache[fontMeta] = it }
     }
 
-    override fun getDebugPaint(): Paint {
-        return Paint().apply {
+    override fun getDebugPaint(): Paint =
+        Paint().apply {
             style = Paint.Style.FILL_AND_STROKE
             strokeWidth = 3f
             // random color
@@ -58,10 +53,9 @@ class DefaultPaintProvider() : PaintProvider {
                 256 / 6,
                 Random.nextInt(256),
                 Random.nextInt(256),
-                Random.nextInt(256)
+                Random.nextInt(256),
             )
         }
-    }
 }
 
 fun FontType.getTypeface(): Typeface? {

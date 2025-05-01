@@ -18,7 +18,6 @@ import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.RubyRenderA
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.TextRenderAdapterV2
 
 interface ElementRenderAdapterV2 {
-
     /**
      * Draws the given element at the given coordinates.
      * @param x The x coordinate to draw the element at.
@@ -40,7 +39,7 @@ fun createAdapters(
     measurer: TextMeasurer,
     density: Density,
     fontFamily: FontFamily,
-    textColor: Color
+    textColor: Color,
 ): List<ElementRenderAdapterV2> {
     val measureHelper = DefaultMeasureHelper(measurer, density, fontFamily, textColor)
     return listOf(
@@ -80,8 +79,7 @@ class DefaultMeasureHelper(
                 fontSize = fontSizeSp,
                 fontFamily = fontFamily,
                 color = textColor,
-            )
+            ),
         )
     }
 }
-

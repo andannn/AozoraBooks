@@ -5,17 +5,14 @@ data class FontStyle(
      * font type.
      */
     val fontType: FontType,
-
     /**
      * base font size in pixels.
      */
     val baseSize: Float,
-
     /**
      * notation font size in pixels.
      */
     val notationSize: Float,
-
     /**
      * line height multiplier.
      */

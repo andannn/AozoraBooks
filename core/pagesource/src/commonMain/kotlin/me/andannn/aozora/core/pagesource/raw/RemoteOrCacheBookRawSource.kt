@@ -3,8 +3,6 @@ package me.andannn.aozora.core.pagesource.raw
 import com.fleeksoft.ksoup.Ksoup
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
-import io.ktor.utils.io.charsets.Charsets
-import io.ktor.utils.io.charsets.forName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -39,7 +37,7 @@ class RemoteOrCacheBookRawSource(
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
     private val useHtmlFirst: Boolean = true,
-    private val cacheDictionary: Path = getCachedPatchById(card.id)
+    private val cacheDictionary: Path = getCachedPatchById(card.id),
 ) : BookRawSource {
     private val bookModelStateFlow = MutableStateFlow<SourceState>(SourceState.Loading)
 
@@ -69,19 +67,21 @@ class RemoteOrCacheBookRawSource(
         }
 
         val bookModel = waitBookModelOrThrow()
-        val (filePath, usingHtml) = if (useHtmlFirst) {
-            bookModel.contentHtmlPath?.let { it to true }
-                ?: bookModel.contentPlainTextPath?.let { it to false }
-                ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-        } else {
-            bookModel.contentPlainTextPath?.let { it to false }
-                ?: bookModel.contentHtmlPath?.let { it to true }
-                ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-        }
+        val (filePath, usingHtml) =
+            if (useHtmlFirst) {
+                bookModel.contentHtmlPath?.let { it to true }
+                    ?: bookModel.contentPlainTextPath?.let { it to false }
+                    ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
+            } else {
+                bookModel.contentPlainTextPath?.let { it to false }
+                    ?: bookModel.contentHtmlPath?.let { it to true }
+                    ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
+            }
 
         usingHtmlFile = usingHtml
         val parser = createBlockParser(isHtml = usingHtml)
-        return SystemFileSystem.source(filePath)
+        return SystemFileSystem
+            .source(filePath)
             .buffered()
             .also { loadedSource = it }
             .peek()
@@ -101,8 +101,9 @@ class RemoteOrCacheBookRawSource(
 
     override suspend fun getImageUriByPath(path: String): Path? {
         val bookModel = waitBookModelOrThrow()
-        val illustrationPath = bookModel.illustrationPath.firstOrNull { it.name == path }
-            ?: return null
+        val illustrationPath =
+            bookModel.illustrationPath.firstOrNull { it.name == path }
+                ?: return null
         return illustrationPath
     }
 
@@ -117,14 +118,20 @@ class RemoteOrCacheBookRawSource(
 }
 
 private sealed interface SourceState {
-    data class Error(val e: Exception) : SourceState
-    data class Success(val source: BookModel) : SourceState
+    data class Error(
+        val e: Exception,
+    ) : SourceState
+
+    data class Success(
+        val source: BookModel,
+    ) : SourceState
+
     data object Loading : SourceState
 }
 
 private suspend fun createBookRawSource(
     card: AozoraBookCard,
-    cacheDictionary: Path
+    cacheDictionary: Path,
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
     if (cachedBook != null) {
@@ -155,22 +162,25 @@ private suspend fun AozoraBookCard.downloadBookTo(folder: Path) {
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }
     val plainTextPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".txt") }
 
-    val (convertedHtmlPath, convertedTextPath) = coroutineScope {
-        val htmlDeferred = async {
-            htmlPath?.let { processParseHtml(it, folder) }
-        }
+    val (convertedHtmlPath, convertedTextPath) =
+        coroutineScope {
+            val htmlDeferred =
+                async {
+                    htmlPath?.let { processParseHtml(it, folder) }
+                }
 
-        val plainTextDeferred = async {
-            plainTextPath?.let {
-                convertPlainTextMainContentToUtf8(
-                    folder,
-                    Path("$folder/$PLAIN_TEXT_FILE_NAME")
-                )
-            }
-        }
+            val plainTextDeferred =
+                async {
+                    plainTextPath?.let {
+                        convertPlainTextMainContentToUtf8(
+                            folder,
+                            Path("$folder/$PLAIN_TEXT_FILE_NAME"),
+                        )
+                    }
+                }
 
-        htmlDeferred to plainTextDeferred
-    }
+            htmlDeferred to plainTextDeferred
+        }
     convertedHtmlPath.await()
     convertedTextPath.await()
 }
@@ -191,11 +201,12 @@ private fun getCachedBookModel(path: Path): BookModel? {
 
     SystemFileSystem.list(path).forEach {
         if (it.name == META_FILE_NAME) {
-            meta = BookMeta(
-                title = "dictionary.name",
-                subtitle = null,
-                author = "Unknown",
-            )
+            meta =
+                BookMeta(
+                    title = "dictionary.name",
+                    subtitle = null,
+                    author = "Unknown",
+                )
         }
         if (it.name == PLAIN_TEXT_FILE_NAME) {
             contentPlainTextPath = it
@@ -221,26 +232,31 @@ private fun getCachedBookModel(path: Path): BookModel? {
     )
 }
 
-private suspend fun downloadAndUnZip(zipUrl: String, htmlUrl: String?, savePath: Path) =
-    coroutineScope {
-        val client = getKoin().get<HttpClient>()
-        val zipTask = async {
+private suspend fun downloadAndUnZip(
+    zipUrl: String,
+    htmlUrl: String?,
+    savePath: Path,
+) = coroutineScope {
+    val client = getKoin().get<HttpClient>()
+    val zipTask =
+        async {
             val tempZipFilePath = Path("$savePath/temp.zip")
             client.downloadTo(zipUrl, tempZipFilePath)
             tempZipFilePath.unzip(savePath)
             SystemFileSystem.delete(tempZipFilePath)
         }
 
-        val htmlTask = htmlUrl?.let {
+    val htmlTask =
+        htmlUrl?.let {
             async {
                 val tempHtmlFile = Path("$savePath/$TEMP_HTML")
                 client.downloadTo(htmlUrl, tempHtmlFile)
             }
         }
 
-        zipTask.await()
-        htmlTask?.await()
-    }
+    zipTask.await()
+    htmlTask?.await()
+}
 
 /**
  * Convert plain txt androidMain content to utf8.
@@ -250,7 +266,10 @@ private suspend fun downloadAndUnZip(zipUrl: String, htmlUrl: String?, savePath:
  *
  * @return Path of the converted plain text file.
  */
-private suspend fun convertPlainTextMainContentToUtf8(path: Path, target: Path): Path? {
+private suspend fun convertPlainTextMainContentToUtf8(
+    path: Path,
+    target: Path,
+): Path? {
 // TODO: implement this
     return null
 }
@@ -263,7 +282,10 @@ private suspend fun convertPlainTextMainContentToUtf8(path: Path, target: Path):
  *
  * @return BookMeta of the html .
  */
-fun processParseHtml(path: Path, folder: Path) {
+fun processParseHtml(
+    path: Path,
+    folder: Path,
+) {
     val html = path.readString("Shift_JIS")
     val utf8HtmlFileSink = SystemFileSystem.sink(Path(folder, HTML_FILE_NAME)).buffered()
     val res = Ksoup.parse(html)
@@ -277,13 +299,13 @@ fun processParseHtml(path: Path, folder: Path) {
 // TODO: Calculate file lenth
 //    val byteCount = Path(folder.toString()).length()
 
-    val model = BookMeta(
-        title = title,
-        subtitle = null,
-        author = author,
-        contentByteSize = 0
-    )
-
+    val model =
+        BookMeta(
+            title = title,
+            subtitle = null,
+            author = author,
+            contentByteSize = 0,
+        )
 
     val metaFileSink = SystemFileSystem.sink(Path(folder, META_FILE_NAME)).buffered()
 
