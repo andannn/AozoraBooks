@@ -2,10 +2,10 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.MeasureHelper
 
@@ -17,8 +17,7 @@ class RubyRenderAdapterV2(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?,
-        textColor: Color
+        fontStyle: FontStyle?
     ): Size? {
         element as? AozoraElement.Ruby ?: return null
         if (fontStyle == null) {
@@ -45,7 +44,6 @@ class RubyRenderAdapterV2(
 
             drawVerticalString(
                 text = element.ruby,
-                textColor = textColor,
                 fontStyle = fontStyle,
                 x + baseWidth / 2 + notionWidth / 2,
                 y + offsetHeight,
@@ -65,6 +63,6 @@ class RubyRenderAdapterV2(
                 )
             }
         }
-        return super.drawWithScope(scope = this, textColor, x, y, element, fontStyle)
+        return super.drawWithScope(scope = this, x, y, element, fontStyle)
     }
 }

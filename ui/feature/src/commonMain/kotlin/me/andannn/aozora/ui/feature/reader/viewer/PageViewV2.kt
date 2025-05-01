@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
@@ -28,6 +29,7 @@ fun PageViewV2(
     modifier: Modifier = Modifier,
     page: AozoraLayoutPage,
     textColor: Color,
+    fontFamily: FontFamily,
 ) {
     Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
     val measurer = rememberTextMeasurer(
@@ -35,7 +37,7 @@ fun PageViewV2(
     )
     val density = LocalDensity.current
     val adapters = remember(measurer, density) {
-        createAdapters(measurer, density)
+        createAdapters(measurer, density, fontFamily, textColor)
     }
     Box(
         modifier = modifier
@@ -78,7 +80,7 @@ fun DrawScope.drawAozoraLineV2(
     line.elements.forEach { element ->
         var drawSize: Size? = null
         for (adapter in adapters) {
-            val size = with(adapter) { draw(x, currentY, element, fontStyle, textColor) }
+            val size = with(adapter) { draw(x, currentY, element, fontStyle) }
             if (size != null) {
                 drawSize = size
                 break

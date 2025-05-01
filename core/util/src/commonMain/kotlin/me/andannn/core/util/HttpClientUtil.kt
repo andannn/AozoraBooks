@@ -10,6 +10,8 @@ import io.ktor.utils.io.readRemaining
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import okio.FileSystem
+import okio.SYSTEM
 import kotlin.use
 
 /**
@@ -19,9 +21,11 @@ suspend fun HttpClient.downloadTo(
     url: String,
     path: Path
 ) {
-    val sink = SystemFileSystem.sink(path).buffered()
     val response = get(url)
     val channel: ByteReadChannel = response.body()
+
+    path.createParentDirectories()
+    val sink = SystemFileSystem.sink(path).buffered()
     sink.use {
         var count = 0L
         while (!channel.exhausted()) {
@@ -30,5 +34,12 @@ suspend fun HttpClient.downloadTo(
 
             chunk.transferTo(it)
         }
+    }
+}
+
+
+private fun Path.createParentDirectories() {
+    this.parent?.let { parent ->
+        SystemFileSystem.createDirectories(parent)
     }
 }

@@ -264,7 +264,7 @@ private suspend fun convertPlainTextMainContentToUtf8(path: Path, target: Path):
  * @return BookMeta of the html .
  */
 fun processParseHtml(path: Path, folder: Path) {
-    val html = path.readString(Charsets.forName("Shift_JIS"))
+    val html = path.readString("Shift_JIS")
     val utf8HtmlFileSink = SystemFileSystem.sink(Path(folder, HTML_FILE_NAME)).buffered()
     val res = Ksoup.parse(html)
     val title = res.select(".title").text()

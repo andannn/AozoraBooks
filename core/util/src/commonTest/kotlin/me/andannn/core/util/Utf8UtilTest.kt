@@ -1,7 +1,5 @@
 package me.andannn.core.util
 
-import io.ktor.utils.io.charsets.Charsets
-import io.ktor.utils.io.charsets.forName
 import io.ktor.utils.io.core.toByteArray
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -85,7 +83,7 @@ class Utf8UtilTest {
     @Test
     fun readStringTest() {
         val str =
-            Path("src/commonTest/resources/test.html").readString(Charsets.forName("Shift_JIS"))
+            Path("src/commonTest/resources/test.html").readString("Shift_JIS")
         println(str)
     }
 

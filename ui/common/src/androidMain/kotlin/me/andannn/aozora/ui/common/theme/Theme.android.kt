@@ -6,8 +6,6 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import me.andannn.aozora.ui.common.theme.DarkColorScheme
-import me.andannn.aozora.ui.common.theme.LightColorScheme
 
 @Composable
 actual fun getColorScheme(darkTheme: Boolean, dynamicColor: Boolean): ColorScheme {

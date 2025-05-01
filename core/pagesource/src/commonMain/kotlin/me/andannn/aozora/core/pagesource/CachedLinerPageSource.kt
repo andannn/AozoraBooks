@@ -54,7 +54,7 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
 
         pageFlow
             .onEach {
-                Napier.d(tag = TAG) { "page added ${(it as? AozoraPage.AozoraRoughPage)?.progressRange}" }
+                Napier.v(tag = TAG) { "page added ${(it as? AozoraPage.AozoraRoughPage)?.progressRange}" }
             }
             .flowOn(Dispatchers.IO)
             .chunked(CHUNK_SIZE)

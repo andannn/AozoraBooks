@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
@@ -32,15 +33,16 @@ interface ElementRenderAdapterV2 {
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle? = null,
-        textColor: Color
     ): Size?
 }
 
 fun createAdapters(
     measurer: TextMeasurer,
-    density: Density
+    density: Density,
+    fontFamily: FontFamily,
+    textColor: Color
 ): List<ElementRenderAdapterV2> {
-    val measureHelper = DefaultMeasureHelper(measurer, density)
+    val measureHelper = DefaultMeasureHelper(measurer, density, fontFamily, textColor)
     return listOf(
         EmphasisRenderAdapterV2(measureHelper),
         IndentRenderAdapterV2(measureHelper),
@@ -61,7 +63,9 @@ interface MeasureHelper {
 
 class DefaultMeasureHelper(
     private val measurer: TextMeasurer,
-    private val density: Density
+    private val density: Density,
+    private val fontFamily: FontFamily,
+    private val textColor: Color,
 ) : MeasureHelper {
     override fun measure(
         text: String,
@@ -69,12 +73,13 @@ class DefaultMeasureHelper(
         isNotation: Boolean,
     ): TextLayoutResult {
         val fontSizePx = if (isNotation) fontStyle.notationSize else fontStyle.baseSize
-        val fontType = fontStyle.fontType
         val fontSizeSp = with(density) { fontSizePx.toSp() }
         return measurer.measure(
             text,
             TextStyle(
                 fontSize = fontSizeSp,
+                fontFamily = fontFamily,
+                color = textColor,
             )
         )
     }

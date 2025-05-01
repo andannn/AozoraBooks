@@ -1,7 +1,9 @@
 package me.andannn.aozora.ui.common.theme
 
 import androidx.compose.material3.ColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.rememberTextMeasurer
 import me.andannn.aozora.core.data.common.ReaderTheme
 
 fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color {

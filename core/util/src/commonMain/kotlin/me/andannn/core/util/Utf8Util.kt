@@ -65,8 +65,10 @@ fun String.asSource(): Source {
 /**
  * read file as string from path.
  */
-fun Path.readString(charset: Charset = Charsets.UTF_8): String {
-    val source = SystemFileSystem.source(this).buffered()
+expect fun Path.readString(charset: String): String
+
+internal fun readStringOfPath(path: Path, charset: Charset): String {
+    val source = SystemFileSystem.source(path).buffered()
     return charset.newDecoder().decode(source)
 }
 

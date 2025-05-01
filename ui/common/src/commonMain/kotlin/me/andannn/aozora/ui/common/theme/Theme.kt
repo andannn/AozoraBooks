@@ -29,7 +29,7 @@ fun AozoraTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = DefaultTypography,
         content = content
     )
 }

@@ -1,13 +1,18 @@
 package me.andannn.aozora.ui.common.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import aosora.ui.common.generated.resources.Res
+import aosora.ui.common.generated.resources.noto_serif_jp_regular
+import org.jetbrains.compose.resources.Font
 
 // Set of Material typography styles to start with
-val Typography = Typography(
+val DefaultTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -32,3 +37,12 @@ val Typography = Typography(
     )
     */
 )
+
+val NotoSerifJpFontFamily
+    @Composable get() = FontFamily(
+        Font(
+            resource = Res.font.noto_serif_jp_regular,
+            weight = FontWeight.Normal,
+            style = FontStyle.Normal
+        ),
+    )
