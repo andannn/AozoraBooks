@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.MeasureHelper
@@ -21,15 +22,13 @@ abstract class BasicTextRenderAdapterV2(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?,
-        textColor: Color
+        fontStyle: FontStyle?
     ): Size? {
-        return drawWithScope(scope = this, textColor, x, y, element, fontStyle)
+        return drawWithScope(scope = this, x, y, element, fontStyle)
     }
 
     protected fun drawWithScope(
         scope: DrawScope,
-        textColor: Color,
         x: Float,
         y: Float,
         element: AozoraElement,
@@ -42,7 +41,6 @@ abstract class BasicTextRenderAdapterV2(
 
         val drawSize = scope.drawVerticalString(
             text = element.text,
-            textColor = textColor,
             fontStyle = fontStyle,
             x = x,
             y = y,
@@ -61,7 +59,6 @@ abstract class BasicTextRenderAdapterV2(
 
     protected fun DrawScope.drawVerticalString(
         text: String,
-        textColor: Color,
         fontStyle: FontStyle,
         x: Float,
         y: Float,
@@ -93,7 +90,6 @@ abstract class BasicTextRenderAdapterV2(
             ) {
                 drawText(
                     textLayoutResult = result,
-                    color = textColor,
                     topLeft = Offset(
                         x = x - offsetX,
                         y = currentY - offsetY
@@ -171,14 +167,3 @@ private fun DrawScope.applyTransformsRecursively(
         }
     }
 }
-
-
-val RandomColor: Color
-    get() {
-        return Color(
-            alpha = 255 / 6,
-            red = (0..255).random(),
-            green = (0..255).random(),
-            blue = (0..255).random(),
-        )
-    }

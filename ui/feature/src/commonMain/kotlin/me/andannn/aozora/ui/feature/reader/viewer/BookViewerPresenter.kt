@@ -26,6 +26,7 @@ import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.DummySource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.RoughPageSource
+import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
 
 @Composable
 fun rememberBookViewerPresenter(
@@ -61,38 +62,38 @@ class BookViewerPresenter(
             ) {
                 snapshotState?.pageList?.size ?: 0
             }
-
-        var settledPageState by remember {
-            mutableStateOf<AozoraPage?>(null)
-        }
-
-        val settledPage by rememberUpdatedState(pagerState.settledPage)
-
-        LaunchedEffect(Unit) {
-            var lastKnownVersion: Int = 0
-
-            combine(
-                snapshotFlow { settledPage },
-                snapshotFlow { snapshotState }.filterNotNull(),
-            ) { settledPageIndex, snapShot -> settledPageIndex to snapShot }
-                .collect { (settledPageIndex, snapShot) ->
-                    val snapShotVersion = snapShot.snapshotVersion
-                    if (snapShotVersion == 0) {
-                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
-                        return@collect
-                    }
-
-                    val changedByPageList = (lastKnownVersion != snapShotVersion)
-                    lastKnownVersion = snapShotVersion
-
-                    if (changedByPageList) {
-                        Napier.d(tag = TAG) { "SettledPage changed by pageList." }
-                    } else {
-                        Napier.d(tag = TAG) { "SettledPage changed by user gesture." }
-                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
-                    }
-                }
-        }
+//
+//        var settledPageState by remember {
+//            mutableStateOf<AozoraPage?>(null)
+//        }
+//
+//        val settledPage by rememberUpdatedState(pagerState.settledPage)
+//
+//        LaunchedEffect(Unit) {
+//            var lastKnownVersion: Int = 0
+//
+//            combine(
+//                snapshotFlow { settledPage },
+//                snapshotFlow { snapshotState }.filterNotNull(),
+//            ) { settledPageIndex, snapShot -> settledPageIndex to snapShot }
+//                .collect { (settledPageIndex, snapShot) ->
+//                    val snapShotVersion = snapShot.snapshotVersion
+//                    if (snapShotVersion == 0) {
+//                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
+//                        return@collect
+//                    }
+//
+//                    val changedByPageList = (lastKnownVersion != snapShotVersion)
+//                    lastKnownVersion = snapShotVersion
+//
+//                    if (changedByPageList) {
+//                        Napier.d(tag = TAG) { "SettledPage changed by pageList." }
+//                    } else {
+//                        Napier.d(tag = TAG) { "SettledPage changed by user gesture." }
+//                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
+//                    }
+//                }
+//        }
 //
 //        val settledPageFlow = remember {
 //            snapshotFlow { settledPageState }.distinctUntilChanged()
@@ -154,6 +155,7 @@ class BookViewerPresenter(
         }
 
         return BookViewerState(
+            pageMetadata = pageMetadata,
             pages = snapshotState?.pageList ?: emptyList(),
             pagerState = pagerState
         ) { eventSink ->
@@ -166,6 +168,7 @@ class BookViewerPresenter(
 
 @Stable
 data class BookViewerState(
+    val pageMetadata: PageMetaData,
     val pages: List<AozoraPage>,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
     val pagerState: PagerState,

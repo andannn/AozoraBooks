@@ -49,7 +49,7 @@ private fun ReaderContent(cardId: String, modifier: Modifier = Modifier) {
                 originalWidth = maxWidth,
                 additionalTopMargin = TopMargin.MEDIUM,
                 fontSizeLevel = fontLevel.value,
-                fontType = FontType.NOTO_SANS,
+                fontType = FontType.NOTO_SERIF,
                 lineSpacing = LineSpacing.MEDIUM
             ),
         )

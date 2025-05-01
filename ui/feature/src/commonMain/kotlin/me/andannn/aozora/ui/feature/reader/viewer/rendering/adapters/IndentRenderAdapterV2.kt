@@ -2,10 +2,10 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.MeasureHelper
@@ -14,40 +14,11 @@ class IndentRenderAdapterV2(
     private val measureHelper: MeasureHelper
 ) : ElementRenderAdapterV2 {
 
-
-    //    override fun draw(
-//        canvas: Canvas,
-//        x: Float,
-//        y: Float,
-//        element: AozoraElement,
-//        fontStyle: FontStyle?,
-//        textColor: Int
-//    ): Size? {
-//        element as? AozoraElement.Indent ?: return null
-//        if (fontStyle == null) {
-//            error("fontStyle must not be null")
-//        }
-//
-//        val paint = paintProvider.getPaint(fontStyle, textColor = textColor)
-//
-//        if (DEBUG_RENDER) {
-//            repeat(element.count) {
-//                canvas.drawCircle(
-//                    x,
-//                    y + paint.textSize / 2 + paint.textSize * it,
-//                    paint.textSize / 2,
-//                    paintProvider.getDebugPaint()
-//                )
-//            }
-//        }
-//        return Size(0f, paint.textSize * element.count)
-//    }
     override fun DrawScope.draw(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?,
-        textColor: Color
+        fontStyle: FontStyle?
     ): Size? {
         element as? AozoraElement.Indent ?: return null
         if (fontStyle == null) {
@@ -55,7 +26,6 @@ class IndentRenderAdapterV2(
         }
 
         val result = measureHelper.measure("あ", fontStyle)
-//        val paint = paintProvider.getPaint(fontStyle, textColor = textColor)
         val textSize = result.size.width.toFloat()
         if (DEBUG_RENDER) {
             repeat(element.count) {

@@ -84,7 +84,7 @@ class LayoutPageBuilder(
         lineIndent: Int,
         sizeOf: (AozoraElement) -> ElementMeasureResult
     ): FillResult {
-        Napier.d(tag = TAG) { "tryAddElement E. element $element" }
+        Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
             return FillResult.Filled(element)
         }
@@ -154,6 +154,6 @@ class LayoutPageBuilder(
         lines += line
         currentWidth += line.lineHeight
         lineBuilder = null
-        Napier.d(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }
+        Napier.v(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }
     }
 }

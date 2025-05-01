@@ -65,7 +65,9 @@ class DefaultPaintProvider() : PaintProvider {
 }
 
 fun FontType.getTypeface(): Typeface? {
-    return ResourcesCompat.getFont(getKoin().get<Context>(), R.font.noto_serif_jp_regular)
+// TODO: Use resource in commonMain
+//    return ResourcesCompat.getFont(getKoin().get<Context>(), R.font.noto_serif_jp_regular)
+    return null
 }
 
 private data class FontMeta(

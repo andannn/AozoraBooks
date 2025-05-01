@@ -1,7 +1,6 @@
 package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
@@ -14,14 +13,13 @@ class EmphasisRenderAdapterV2(
         x: Float,
         y: Float,
         element: AozoraElement,
-        fontStyle: FontStyle?,
-        textColor: Color
+        fontStyle: FontStyle?
     ): Size? {
         element as? AozoraElement.Emphasis ?: return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
 
-        return drawWithScope(this, textColor, x, y, element, fontStyle)
+        return drawWithScope(this, x, y, element, fontStyle)
     }
 }
