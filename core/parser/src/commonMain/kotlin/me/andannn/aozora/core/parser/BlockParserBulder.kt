@@ -8,5 +8,5 @@ import me.andannn.aozora.core.parser.plaintext.PlainTextLineParser
  */
 fun createBlockParser(isHtml: Boolean): AozoraBlockParser =
     DefaultAozoraBlockParser(
-        parser = if (isHtml) HtmlLineParser else PlainTextLineParser
+        parser = if (isHtml) HtmlLineParser else PlainTextLineParser,
     )

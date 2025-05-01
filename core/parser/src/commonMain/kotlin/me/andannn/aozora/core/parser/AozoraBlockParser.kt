@@ -4,7 +4,6 @@ import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.BlockType
 
-
 interface AozoraBlockParser {
     /**
      * parse line to block
@@ -13,12 +12,9 @@ interface AozoraBlockParser {
 }
 
 internal class DefaultAozoraBlockParser(
-    val parser: AozoraLineParser
+    val parser: AozoraLineParser,
 ) : AozoraBlockParser {
-
-    override fun parseLineAsBlock(
-        line: RawLine,
-    ): AozoraBlock {
+    override fun parseLineAsBlock(line: RawLine): AozoraBlock {
         val elements = parser.parseLine(line)
         var blockType: BlockType?
         val blockElements: List<AozoraElement>
@@ -39,7 +35,7 @@ internal class DefaultAozoraBlockParser(
         return AozoraBlock(
             elements = blockElements,
             blockType = blockType,
-            byteRange = line.index..(line.index + line.length)
+            byteRange = line.index..(line.index + line.length),
         )
     }
 }

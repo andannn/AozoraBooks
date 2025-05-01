@@ -42,11 +42,9 @@ class RoughPageBuilder(
         }
     }
 
-    override fun build(): AozoraRoughPage {
-        return AozoraRoughPage(
+    override fun build(): AozoraRoughPage =
+        AozoraRoughPage(
             metaData = meta,
-            blocks = addedBlockList.toImmutableList()
+            blocks = addedBlockList.toImmutableList(),
         )
-    }
 }
-

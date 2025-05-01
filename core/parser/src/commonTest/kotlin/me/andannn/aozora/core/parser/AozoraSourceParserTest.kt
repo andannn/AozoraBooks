@@ -6,6 +6,7 @@ import me.andannn.aozora.core.parser.plaintext.PlainTextLineParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Suppress("ktlint:standard:max-line-length")
 abstract class AozoraSourceParserTest {
     abstract val parser: AozoraLineParser
 
@@ -50,7 +51,9 @@ class HtmlSourceParserTest : AozoraSourceParserTest() {
     override val sample1: String
         get() = "小山の妻君は<br />"
     override val sample2: String
-        get() = "ふと気が付いて見ると書生はいない。たくさんおった兄弟が一<ruby><rb>疋</rb><rp>（</rp><rt>ぴき</rt><rp>）</rp></ruby>も見えぬ。<ruby><rb>肝心</rb><rp>（</rp><rt>かんじん</rt><rp>）</rp></ruby>の母親"
+        get() =
+            "ふと気が付いて見ると書生はいない。たくさんおった兄弟が一<ruby><rb>疋</rb><rp>（</rp><rt>ぴき</rt><rp>）</rp></ruby>" +
+                "も見えぬ。<ruby><rb>肝心</rb><rp>（</rp><rt>かんじん</rt><rp>）</rp></ruby>の母親"
     override val sample3: String
         get() = "藤吉は<strong class=\"SESAME_DOT\">むっくり</strong>起き上った。"
     override val parser: AozoraLineParser

@@ -9,23 +9,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Home(state: HomeState, modifier: Modifier = Modifier) {
+fun Home(
+    state: HomeState,
+    modifier: Modifier = Modifier,
+) {
     HomeContent(
         modifier = modifier,
-        state = state
+        state = state,
     )
 }
 
 @Composable
-fun HomeContent(state: HomeState, modifier: Modifier = Modifier ) {
+fun HomeContent(
+    state: HomeState,
+    modifier: Modifier = Modifier,
+) {
     Scaffold {
         Column(
-            modifier = modifier.padding(it)
+            modifier = modifier.padding(it),
         ) {
             Card(
                 onClick = {
                     state.evenSink.invoke(HomeUiEvent.OnCardClick("789"))
-                }
+                },
             ) {
                 Text(text = "吾輩は猫である")
             }
@@ -33,7 +39,7 @@ fun HomeContent(state: HomeState, modifier: Modifier = Modifier ) {
             Card(
                 onClick = {
                     state.evenSink.invoke(HomeUiEvent.OnCardClick("301"))
-                }
+                },
             ) {
                 Text(text = "人間失格")
             }

@@ -2,22 +2,22 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
-import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapter
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.PaintProvider
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
 
 abstract class BasicTextRenderAdapter(
-    private val paintProvider: PaintProvider
-): ElementRenderAdapter {
+    private val paintProvider: PaintProvider,
+) : ElementRenderAdapter {
     override fun draw(
         canvas: Canvas,
         x: Float,
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle?,
-        textColor: Int
+        textColor: Int,
     ): Size? {
         element as? AozoraElement.BaseText ?: return null
         if (fontStyle == null) {
@@ -28,12 +28,18 @@ abstract class BasicTextRenderAdapter(
         val height = paint.measureText(element.text)
         val width = paint.textSize
         canvas.drawText(
-            /* text = */ element.text,
-            /* start = */ 0,
-            /* end = */ element.text.length,
-            /* x = */ x,
-            /* y = */ y,
-            /* paint = */ paint
+            // text =
+            element.text,
+            // start =
+            0,
+            // end =
+            element.text.length,
+            // x =
+            x,
+            // y =
+            y,
+            // paint =
+            paint,
         )
 
         if (DEBUG_RENDER) {
@@ -42,7 +48,7 @@ abstract class BasicTextRenderAdapter(
                 y,
                 x + width / 2,
                 y + height,
-                paintProvider.getDebugPaint()
+                paintProvider.getDebugPaint(),
             )
         }
 
@@ -51,15 +57,15 @@ abstract class BasicTextRenderAdapter(
 }
 
 class TextRenderAdapter(
-    paintProvider: PaintProvider
-): BasicTextRenderAdapter(paintProvider) {
+    paintProvider: PaintProvider,
+) : BasicTextRenderAdapter(paintProvider) {
     override fun draw(
         canvas: Canvas,
         x: Float,
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle?,
-        textColor: Int
+        textColor: Int,
     ): Size? {
         element as? AozoraElement.Text ?: return null
         return super.draw(canvas, x, y, element, fontStyle, textColor)

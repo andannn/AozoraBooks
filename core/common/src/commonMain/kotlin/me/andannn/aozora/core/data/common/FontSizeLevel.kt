@@ -1,15 +1,14 @@
 package me.andannn.aozora.core.data.common
 
 enum class FontSizeLevel(
-    val fontSize: Float
+    val fontSize: Float,
 ) {
-    Level_1(30f),
-    Level_2(36f),
-    Level_3(42f),
-    Level_4(48f),
-    Level_5(54f),
-    Level_6(60f),
-    ;
+    LEVEL_1(30f),
+    LEVEL_2(36f),
+    LEVEL_3(42f),
+    LEVEL_4(48f),
+    LEVEL_5(54f),
+    LEVEL_6(60f),
 }
 
 fun FontSizeLevel.next(): FontSizeLevel {

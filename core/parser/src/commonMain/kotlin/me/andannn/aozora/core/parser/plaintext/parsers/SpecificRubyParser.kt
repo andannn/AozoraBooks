@@ -10,8 +10,7 @@ import me.andannn.aozora.core.parser.plaintext.AozoraPainTextParser
 object SpecificRubyParser : AozoraPainTextParser {
     private val regex = Regex("""｜(.*?)《(.*?)》""")
 
-    override fun matchAll(input: String): Sequence<TokenMatchResult> =
-        regex.findAll(input).map { it.toTokenResult(this) }
+    override fun matchAll(input: String): Sequence<TokenMatchResult> = regex.findAll(input).map { it.toTokenResult(this) }
 
     override fun create(match: TokenMatchResult): AozoraElement {
         val base = match.groups[1].value

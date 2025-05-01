@@ -2,8 +2,8 @@ package me.andannn.aozora.ui.feature.reader.viewer.rendering
 
 import android.graphics.Canvas
 import androidx.compose.ui.geometry.Size
-import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.EmphasisRenderAdapter
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.IndentRenderAdapter
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.LineBreakRenderAdapter
@@ -12,7 +12,6 @@ import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.RubyRenderA
 import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.TextRenderAdapter
 
 interface ElementRenderAdapter {
-
     /**
      * Draws the given element at the given coordinates.
      * @param x The x coordinate to draw the element at.
@@ -29,7 +28,7 @@ interface ElementRenderAdapter {
         y: Float,
         element: AozoraElement,
         fontStyle: FontStyle? = null,
-        textColor: Int
+        textColor: Int,
     ): Size?
 
     companion object {

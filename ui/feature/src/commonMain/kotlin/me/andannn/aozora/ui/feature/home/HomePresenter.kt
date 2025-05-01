@@ -8,7 +8,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 
 class HomePresenter(
-    private val navigator: Navigator
+    private val navigator: Navigator,
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
@@ -28,5 +28,5 @@ data class HomeState(
 ) : CircuitUiState
 
 sealed interface HomeUiEvent {
-    data class OnCardClick(val cardId: String): HomeUiEvent
+    data class OnCardClick(val cardId: String) : HomeUiEvent
 }

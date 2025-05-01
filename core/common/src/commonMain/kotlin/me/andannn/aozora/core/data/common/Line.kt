@@ -12,21 +12,19 @@ data class Line(
      * lineHeight = 24  (即 16 × 1.5)
      */
     val lineHeight: Float,
-
     /**
      * font style.
      */
     val fontStyle: FontStyle?,
-
     /**
      * elements in line.
      */
     val elements: ImmutableList<AozoraElement>,
 ) {
     val fullText: String
-            by lazy {
-                elements.fold("") { acc, element ->
-                    acc + element.debugText()
-                }
+        by lazy {
+            elements.fold("") { acc, element ->
+                acc + element.debugText()
             }
+        }
 }

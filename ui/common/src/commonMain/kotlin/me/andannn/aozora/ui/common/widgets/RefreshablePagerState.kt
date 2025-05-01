@@ -17,24 +17,22 @@ private const val TAG = "rememberRefreshablePage"
 fun rememberRefreshablePagerState(
     initialPage: Int = 0,
     version: Int?,
-    pageCount: () -> Int
-): PagerState {
-    return rememberSaveable(initialPage, version, saver = DefaultPagerState.Saver) {
+    pageCount: () -> Int,
+): PagerState =
+    rememberSaveable(initialPage, version, saver = DefaultPagerState.Saver) {
         Napier.d(tag = TAG) { "create new pager state: initialPage: $initialPage" }
         DefaultPagerState(
             initialPage,
-            pageCount
+            pageCount,
         )
     }.apply {
         pageCountState.value = pageCount
     }
-}
 
 private class DefaultPagerState(
     currentPage: Int,
-    updatedPageCount: () -> Int
+    updatedPageCount: () -> Int,
 ) : PagerState(currentPage) {
-
     var pageCountState = mutableStateOf(updatedPageCount)
     override val pageCount: Int get() = pageCountState.value.invoke()
 
@@ -42,19 +40,20 @@ private class DefaultPagerState(
         /**
          * To keep current page and current page offset saved
          */
-        val Saver: Saver<DefaultPagerState, *> = listSaver(
-            save = {
-                listOf(
-                    it.currentPage,
-                    it.pageCount
-                )
-            },
-            restore = {
-                DefaultPagerState(
-                    currentPage = it[0] as Int,
-                    updatedPageCount = { it[1] as Int }
-                )
-            }
-        )
+        val Saver: Saver<DefaultPagerState, *> =
+            listSaver(
+                save = {
+                    listOf(
+                        it.currentPage,
+                        it.pageCount,
+                    )
+                },
+                restore = {
+                    DefaultPagerState(
+                        currentPage = it[0] as Int,
+                        updatedPageCount = { it[1] as Int },
+                    )
+                },
+            )
     }
 }

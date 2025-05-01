@@ -14,7 +14,7 @@ val Grey10 = Color(0xFFF2F2F2)
 val Grey90 = Color(0xFF1A1A1A)
 
 val Paper80 = Color(0xFFF5ECD8) // 类似 Kindle 的米黄色
-val Ink = Color(0xFF3E3E3E)     // 偏深灰而不是纯黑，更护眼
+val Ink = Color(0xFF3E3E3E) // 偏深灰而不是纯黑，更护眼
 
 val GreenBackground = Color(0xFFEFF5EB) // 淡绿，柔和不刺眼
-val GreenText = Color(0xFF2F4F2F)       // 深橄榄绿，清晰但不刺眼
+val GreenText = Color(0xFF2F4F2F) // 深橄榄绿，清晰但不刺眼

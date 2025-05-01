@@ -1,7 +1,6 @@
 package me.andannn.aozora.core.data.common
 
 sealed interface AozoraElement {
-
     /**
      * Text element.
      *
@@ -18,7 +17,7 @@ sealed interface AozoraElement {
      */
     data class Text(
         override val text: String,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH
+        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
@@ -29,7 +28,7 @@ sealed interface AozoraElement {
     data class Ruby(
         override val text: String,
         val ruby: String,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH
+        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
@@ -40,7 +39,7 @@ sealed interface AozoraElement {
     data class Emphasis(
         override val text: String,
         val emphasisStyle: EmphasisStyle,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH
+        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
@@ -53,13 +52,14 @@ sealed interface AozoraElement {
     data class Heading(
         override val style: AozoraTextStyle,
         val indent: Int,
-        val elements: List<AozoraElement> = emptyList()
+        val elements: List<AozoraElement> = emptyList(),
     ) : BaseText() {
         override val text: String
-            get() = elements.fold("") { acc, element ->
-                check(element is BaseText)
-                acc + element.text
-            }
+            get() =
+                elements.fold("") { acc, element ->
+                    check(element is BaseText)
+                    acc + element.text
+                }
     }
 
     /**
@@ -72,7 +72,7 @@ sealed interface AozoraElement {
     data class Illustration(
         val filename: String,
         val width: Int?,
-        val height: Int?
+        val height: Int?,
     ) : AozoraElement
 
     /**
@@ -85,7 +85,7 @@ sealed interface AozoraElement {
         /**
          * 表示缩进几个全角字符
          */
-        val count: Int
+        val count: Int,
     ) : AozoraElement
 
     /**
@@ -98,7 +98,6 @@ sealed interface AozoraElement {
      */
     data object LineBreak : AozoraElement
 
-
     /**
      * length of text
      */
@@ -106,15 +105,17 @@ sealed interface AozoraElement {
         get() = (this as? BaseText)?.text?.length ?: (this as? Indent)?.count ?: 0
 }
 
-fun AozoraElement.debugText() = when (this) {
-    is AozoraElement.BaseText -> {
-        text
+fun AozoraElement.debugText() =
+    when (this) {
+        is AozoraElement.BaseText -> {
+            text
+        }
+
+        is AozoraElement.Illustration -> "[Image $filename]"
+        is AozoraElement.Indent -> "[Indent $count]"
+        AozoraElement.LineBreak -> "\n"
+        AozoraElement.PageBreak -> ""
     }
-    is AozoraElement.Illustration -> "[Image ${filename}]"
-    is AozoraElement.Indent -> "[Indent ${count}]"
-    AozoraElement.LineBreak -> "\n"
-    AozoraElement.PageBreak -> ""
-}
 
 enum class AozoraTextStyle {
     HEADING_LARGE,
@@ -130,5 +131,4 @@ enum class EmphasisStyle {
     Bouten,
 
     Strong,
-    ;
 }

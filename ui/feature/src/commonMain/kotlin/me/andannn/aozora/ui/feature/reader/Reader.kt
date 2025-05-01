@@ -44,7 +44,7 @@ private fun ReaderContent(
         }
     val fontLevel =
         remember {
-            mutableStateOf(FontSizeLevel.Level_4)
+            mutableStateOf(FontSizeLevel.LEVEL_4)
         }
     BoxWithConstraints(modifier = modifier) {
         val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }

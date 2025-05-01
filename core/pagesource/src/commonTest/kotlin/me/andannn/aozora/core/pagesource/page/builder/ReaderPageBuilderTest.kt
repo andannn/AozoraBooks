@@ -45,7 +45,7 @@ class ReaderPageBuilderTest {
             override val offset: Pair<Float, Float>
                 get() = 0f to 0f
             override val fontSizeLevel: FontSizeLevel
-                get() = FontSizeLevel.Level_4
+                get() = FontSizeLevel.LEVEL_4
             override val lineSpacing: LineSpacing
                 get() = LineSpacing.MEDIUM
             override val fontType: FontType

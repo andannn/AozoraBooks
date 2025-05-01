@@ -27,11 +27,12 @@ fun List<Node>.parseAsAozoraElements(): List<AozoraElement> =
         PARSERS.firstNotNullOfOrNull { it.match(node) }
     }
 
-private val PARSERS = listOf(
-    PlainTextMatcher,
-    RubyMatcher,
-    ImageMatcher,
-    EmphasisMatcher,
-    LineBreakMatcher,
-    HeadingMatcher
-)
+private val PARSERS =
+    listOf(
+        PlainTextMatcher,
+        RubyMatcher,
+        ImageMatcher,
+        EmphasisMatcher,
+        LineBreakMatcher,
+        HeadingMatcher,
+    )

@@ -17,17 +17,18 @@ object HeadingMatcher : ElementMatcher {
         val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
         val child = node.children().getOrNull(0) ?: return null
         val styleName = child.attr("class") ?: return null
-        val style = when (styleName) {
-            "naka-midashi" -> AozoraTextStyle.HEADING_MEDIUM
+        val style =
+            when (styleName) {
+                "naka-midashi" -> AozoraTextStyle.HEADING_MEDIUM
 
-            else -> AozoraTextStyle.PARAGRAPH
-        }
+                else -> AozoraTextStyle.PARAGRAPH
+            }
         val contentNodes = child.selectFirst(".midashi_anchor")?.childNodes() ?: return null
         val elements = contentNodes.parseAsAozoraElements()
         return Heading(
             indent = indent,
             style = style,
-            elements = elements
+            elements = elements,
         )
     }
 }

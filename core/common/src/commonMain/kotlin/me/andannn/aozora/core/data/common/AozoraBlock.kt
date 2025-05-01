@@ -6,7 +6,7 @@ package me.andannn.aozora.core.data.common
 data class AozoraBlock(
     val elements: List<AozoraElement>,
     val blockType: BlockType,
-    val byteRange: LongRange
+    val byteRange: LongRange,
 ) {
     val textCount: Int by lazy {
         elements.fold(0) { acc, element ->

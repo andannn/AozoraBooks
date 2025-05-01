@@ -7,7 +7,7 @@ import me.andannn.aozora.core.parser.plaintext.AozoraPainTextParser
  * 例：
  * ［＃挿絵１（fig51160_01.png、横478×縦438）入る］
  */
-object IllustrationNotionParser: AozoraPainTextParser {
+object IllustrationNotionParser : AozoraPainTextParser {
     private val regex = Regex("""［＃.+（([^)、]+)、横(\d+)×縦(\d+)）入る］""")
 
     override fun matchAll(input: String): Sequence<TokenMatchResult> {
@@ -22,7 +22,7 @@ object IllustrationNotionParser: AozoraPainTextParser {
         return AozoraElement.Illustration(
             filename = filename,
             width = width,
-            height = height
+            height = height,
         )
     }
 }

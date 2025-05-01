@@ -20,9 +20,9 @@ fun AozoraBooksApp(
 ) {
     CircuitCompositionLocals(circuit = circuit) {
         val backStack = rememberSaveableBackStack(HomeScreen)
-        val navigator = rememberCircuitNavigator(backStack) {
-
-        }
+        val navigator =
+            rememberCircuitNavigator(backStack) {
+            }
 
 //        BackHandler(enabled = backStack.size > 1) {
 //            navigator.pop()
@@ -32,21 +32,24 @@ fun AozoraBooksApp(
     }
 }
 
-private fun buildCircuitMobile() = buildCircuit(
-    presenterFactory = listOf(
-        RoutePresenterFactory,
-    ),
-    uiFactory = listOf(
-        RouteUiFactory,
+private fun buildCircuitMobile() =
+    buildCircuit(
+        presenterFactory =
+            listOf(
+                RoutePresenterFactory,
+            ),
+        uiFactory =
+            listOf(
+                RouteUiFactory,
+            ),
     )
-)
 
 internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),
     uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit {
-    return Circuit.Builder()
+): Circuit =
+    Circuit
+        .Builder()
         .addPresenterFactories(presenterFactory)
         .addUiFactories(uiFactory)
         .build()
-}

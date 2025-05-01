@@ -24,10 +24,11 @@ actual fun Path.readString(charset: String): String {
     return source.toNSData().string(decoder) ?: error("failed to read string")
 }
 
-private val charsetToDecoderMap = mapOf(
-    "UTF_8" to NSUTF8StringEncoding,
-    "Shift_JIS" to NSShiftJISStringEncoding,
-)
+private val charsetToDecoderMap =
+    mapOf(
+        "UTF_8" to NSUTF8StringEncoding,
+        "Shift_JIS" to NSShiftJISStringEncoding,
+    )
 
 @OptIn(BetaInteropApi::class)
 private fun NSData.string(charset: ULong): String? {
@@ -35,7 +36,7 @@ private fun NSData.string(charset: ULong): String? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun ByteArray.toNSData(): NSData = usePinned {
-    NSData.dataWithBytes(it.addressOf(0), size.toULong())
-}
-
+fun ByteArray.toNSData(): NSData =
+    usePinned {
+        NSData.dataWithBytes(it.addressOf(0), size.toULong())
+    }

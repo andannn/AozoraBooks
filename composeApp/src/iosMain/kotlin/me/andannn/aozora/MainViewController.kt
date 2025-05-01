@@ -6,17 +6,19 @@ import io.github.aakira.napier.Napier
 import me.andannn.aozora.app.AozoraBooksApp
 import org.koin.core.context.startKoin
 
-fun MainViewController() = ComposeUIViewController(
-    configure = {
+@Suppress("ktlint:standard:function-naming")
+fun MainViewController() =
+    ComposeUIViewController(
+        configure = {
 // TODO: Check debug build
-        Napier.base(DebugAntilog())
+            Napier.base(DebugAntilog())
 
-        startKoin {
-            modules(
-                modules
-            )
-        }
+            startKoin {
+                modules(
+                    modules,
+                )
+            }
+        },
+    ) {
+        AozoraBooksApp()
     }
-) {
-    AozoraBooksApp()
-}

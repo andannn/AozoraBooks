@@ -7,10 +7,8 @@ data class TokenMatchResult(
      * The parser that matched the token.
      */
     val parser: AozoraPainTextParser,
-
     /** The range of indices in the original string where match was captured. */
     val range: IntRange,
-
     /**
      * A collection of groups matched by the regular expression.
      *
@@ -20,8 +18,9 @@ data class TokenMatchResult(
     val groups: List<MatchGroup>,
 )
 
-fun MatchResult.toTokenResult(parser: AozoraPainTextParser) = TokenMatchResult(
-    parser = parser,
-    range = range,
-    groups = groups.filterNotNull()
-)
+fun MatchResult.toTokenResult(parser: AozoraPainTextParser) =
+    TokenMatchResult(
+        parser = parser,
+        range = range,
+        groups = groups.filterNotNull(),
+    )

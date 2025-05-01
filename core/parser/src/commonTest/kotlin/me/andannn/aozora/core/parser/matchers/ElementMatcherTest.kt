@@ -18,7 +18,7 @@ class ElementMatcherTest {
     fun testTextNodeMatcher() {
         assertEquals(
             AozoraElement.Text("AAA"),
-            PlainTextMatcher.match("AAA".parseAsHtmlNodes().first())
+            PlainTextMatcher.match("AAA".parseAsHtmlNodes().first()),
         )
     }
 
@@ -26,7 +26,7 @@ class ElementMatcherTest {
     fun testRubyNodeMatcher() {
         assertEquals(
             AozoraElement.Ruby("饒", "ゆたけ"),
-            RubyMatcher.match("<ruby><rb>饒</rb><rp>（</rp><rt>ゆたけ</rt><rp>）</rp></ruby>".parseAsHtmlNodes().first())
+            RubyMatcher.match("<ruby><rb>饒</rb><rp>（</rp><rt>ゆたけ</rt><rp>）</rp></ruby>".parseAsHtmlNodes().first()),
         )
     }
 
@@ -34,7 +34,11 @@ class ElementMatcherTest {
     fun testImageNodeMatcher() {
         assertEquals(
             AozoraElement.Illustration(filename = "fig49947_04.png", width = 311, height = 235),
-            ImageMatcher.match("<img class=\"illustration\" width=\"311\" height=\"235\" src=\"fig49947_04.png\" alt=\"「シチュウ鍋の図」のキャプション付きの図\" /><br />\n>".parseAsHtmlNodes().first())
+            ImageMatcher.match(
+                "<img class=\"illustration\" width=\"311\" height=\"235\" src=\"fig49947_04.png\" alt=\"「シチュウ鍋の図」のキャプション付きの図\" /><br />\n>"
+                    .parseAsHtmlNodes()
+                    .first(),
+            ),
         )
     }
 
@@ -42,7 +46,7 @@ class ElementMatcherTest {
     fun testLineBreak() {
         assertEquals(
             AozoraElement.LineBreak,
-            LineBreakMatcher.match("<br />".parseAsHtmlNodes().first())
+            LineBreakMatcher.match("<br />".parseAsHtmlNodes().first()),
         )
     }
 
@@ -50,19 +54,30 @@ class ElementMatcherTest {
     fun testEmphasisMatcher() {
         assertEquals(
             AozoraElement.Emphasis("せびられ", emphasisStyle = EmphasisStyle.Bouten),
-            EmphasisMatcher.match("<em class=\"sesame_dot\">せびられ</em>".parseAsHtmlNodes().first())
+            EmphasisMatcher.match("<em class=\"sesame_dot\">せびられ</em>".parseAsHtmlNodes().first()),
         )
     }
 
     @Test
     fun testHeaderMatcher() {
         assertEquals(
-            AozoraElement.Heading(indent = 4, style = AozoraTextStyle.HEADING_MEDIUM, elements = listOf(
-                AozoraElement.Text("第一　"),
-                AozoraElement.Ruby("腹中", "ふくちゅう"),
-                AozoraElement.Text("の新年"),
-            )),
-            HeadingMatcher.match("<div class=\"jisage_4\" style=\"margin-left: 4em\"><h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi120\">第一　<ruby><rb>腹中</rb><rp>（</rp><rt>ふくちゅう</rt><rp>）</rp></ruby>の新年</a></h4></div>\n".parseAsHtmlNodes().first())
+            AozoraElement.Heading(
+                indent = 4,
+                style = AozoraTextStyle.HEADING_MEDIUM,
+                elements =
+                    listOf(
+                        AozoraElement.Text("第一　"),
+                        AozoraElement.Ruby("腹中", "ふくちゅう"),
+                        AozoraElement.Text("の新年"),
+                    ),
+            ),
+            HeadingMatcher.match(
+                (
+                    "<div class=\"jisage_4\" style=\"margin-left: 4em\">" +
+                        "<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi120\">" +
+                        "第一　<ruby><rb>腹中</rb><rp>（</rp><rt>ふくちゅう</rt><rp>）</rp></ruby>の新年</a></h4></div>\n"
+                ).parseAsHtmlNodes().first(),
+            ),
         )
     }
 }

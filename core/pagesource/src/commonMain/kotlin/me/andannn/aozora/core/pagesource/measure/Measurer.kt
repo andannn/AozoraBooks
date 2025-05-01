@@ -2,14 +2,14 @@ package me.andannn.aozora.core.pagesource.measure
 
 import androidx.compose.ui.geometry.Size
 import me.andannn.aozora.core.data.common.AozoraBlock
-import me.andannn.aozora.core.data.common.FontStyle
-import me.andannn.aozora.core.data.common.RenderSetting
-import me.andannn.aozora.core.data.common.resolveFontStyle
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.PaperLayout
+import me.andannn.aozora.core.data.common.RenderSetting
+import me.andannn.aozora.core.data.common.resolveFontStyle
 import kotlin.collections.get
 import kotlin.math.ceil
 
@@ -33,13 +33,17 @@ fun interface BlockMeasurer {
 }
 
 fun interface ElementMeasurer {
-    fun measure(element: AozoraElement, style: AozoraTextStyle?): ElementMeasureResult
+    fun measure(
+        element: AozoraElement,
+        style: AozoraTextStyle?,
+    ): ElementMeasureResult
 }
 
 class DefaultMeasurer(
     private val renderSetting: RenderSetting,
     private val layout: PaperLayout,
-) : ElementMeasurer, BlockMeasurer {
+) : ElementMeasurer,
+    BlockMeasurer {
     constructor(meta: PageMetaData) : this(meta, meta)
 
     private val fontStyleCache = mutableMapOf<AozoraTextStyle, FontStyle>()
@@ -47,10 +51,8 @@ class DefaultMeasurer(
 
     override fun measure(
         element: AozoraElement,
-        style: AozoraTextStyle?
-    ): ElementMeasureResult {
-        return sizeOf(element, style)
-    }
+        style: AozoraTextStyle?,
+    ): ElementMeasureResult = sizeOf(element, style)
 
     override fun measure(block: AozoraBlock): BlockMeasureResult {
         val blockType = block.blockType
@@ -58,7 +60,7 @@ class DefaultMeasurer(
             BlockType.Image -> return BlockMeasureResult(
                 lineCount = 1,
                 lineHeightPerLine = sizeOf(block.elements[0]).size.width,
-                availableRenderHeight = renderHeight
+                availableRenderHeight = renderHeight,
             )
 
             is BlockType.TextType -> {
@@ -70,10 +72,9 @@ class DefaultMeasurer(
                     return BlockMeasureResult(
                         lineCount = 1,
                         lineHeightPerLine = lineHeight,
-                        availableRenderHeight = renderHeight
+                        availableRenderHeight = renderHeight,
                     )
                 }
-
 
                 val totalHeight = block.textCount * style.baseSize
                 val indent = blockType.indent
@@ -83,7 +84,7 @@ class DefaultMeasurer(
                     lineCount = ceil(totalHeight / (availableRenderHeight)).toInt(),
                     lineHeightPerLine = lineHeight,
                     fontStyle = style,
-                    availableRenderHeight = availableRenderHeight
+                    availableRenderHeight = availableRenderHeight,
                 )
             }
         }
@@ -91,27 +92,29 @@ class DefaultMeasurer(
 
     private fun sizeOf(
         element: AozoraElement,
-        aozoraStyle: AozoraTextStyle? = null
+        aozoraStyle: AozoraTextStyle? = null,
     ): ElementMeasureResult {
         val cachedStyle = fontStyleCache[aozoraStyle]
         when (element) {
             is AozoraElement.BaseText -> {
                 val style = cachedStyle ?: resolveAndSave(aozoraStyle!!)
                 return ElementMeasureResult(
-                    size = Size(
-                        style.lineHeight,
-                        style.baseSize * element.length
-                    ),
-                    fontStyle = style
+                    size =
+                        Size(
+                            style.lineHeight,
+                            style.baseSize * element.length,
+                        ),
+                    fontStyle = style,
                 )
             }
 
             is AozoraElement.Illustration -> {
                 return ElementMeasureResult(
-                    size = Size(
-                        element.width?.toFloat() ?: 0f,
-                        element.height?.toFloat() ?: 0f
-                    )
+                    size =
+                        Size(
+                            element.width?.toFloat() ?: 0f,
+                            element.height?.toFloat() ?: 0f,
+                        ),
                 )
             }
 
@@ -120,10 +123,11 @@ class DefaultMeasurer(
                 val style = cachedStyle ?: resolveAndSave(AozoraTextStyle.PARAGRAPH)
                 return ElementMeasureResult(
                     fontStyle = style,
-                    size = Size(
-                        style.baseSize.toFloat() * style.lineHeightMultiplier,
-                        0f
-                    )
+                    size =
+                        Size(
+                            style.baseSize.toFloat() * style.lineHeightMultiplier,
+                            0f,
+                        ),
                 )
             }
 
@@ -132,8 +136,8 @@ class DefaultMeasurer(
                 return ElementMeasureResult(
                     Size(
                         style.lineHeight,
-                        style.baseSize.toFloat() * element.count
-                    )
+                        style.baseSize.toFloat() * element.count,
+                    ),
                 )
             }
 
@@ -142,13 +146,14 @@ class DefaultMeasurer(
     }
 
     private fun resolveAndSave(aozoraStyle: AozoraTextStyle): FontStyle {
-        return aozoraStyle.resolveFontStyle(
-            fontSizeLevel = renderSetting.fontSizeLevel,
-            lineSpacing = renderSetting.lineSpacing,
-            fontType = renderSetting.fontType,
-        ).also {
-            fontStyleCache[aozoraStyle] = it
-            return it
-        }
+        return aozoraStyle
+            .resolveFontStyle(
+                fontSizeLevel = renderSetting.fontSizeLevel,
+                lineSpacing = renderSetting.lineSpacing,
+                fontType = renderSetting.fontType,
+            ).also {
+                fontStyleCache[aozoraStyle] = it
+                return it
+            }
     }
 }

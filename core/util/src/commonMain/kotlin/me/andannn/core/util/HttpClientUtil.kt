@@ -10,8 +10,6 @@ import io.ktor.utils.io.readRemaining
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import okio.FileSystem
-import okio.SYSTEM
 import kotlin.use
 
 /**
@@ -19,7 +17,7 @@ import kotlin.use
  */
 suspend fun HttpClient.downloadTo(
     url: String,
-    path: Path
+    path: Path,
 ) {
     val response = get(url)
     val channel: ByteReadChannel = response.body()
@@ -36,7 +34,6 @@ suspend fun HttpClient.downloadTo(
         }
     }
 }
-
 
 private fun Path.createParentDirectories() {
     this.parent?.let { parent ->
