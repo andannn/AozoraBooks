@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "922107522210",
+    "project_id": "aozorabooks-fa7b1",
+    "storage_bucket": "aozorabooks-fa7b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922107522210:android:864f6d6a3fc0518589bbfb",
+        "android_client_info": {
+          "package_name": "me.andannn.aozora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT85TbwP2Jb0Qun3-TxQcEsKfmoTaCwzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
