@@ -1,0 +1,62 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: 'tagged-release'
+
+on:
+  pull_request:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
+    name: 'Tagged Release'
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore.jks'
+          fileDir: './keystore/'
+          encodedString: ${{ secrets.KEYSTORE }}
+
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      # Set Repository Name As Env Variable
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+
+      - name: Build android apk
+        run: ./gradlew assembleRelease -P android.releaseSigning=true
+        env:
+          SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
+      - name: Upload Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          files: |
+            composeApp/build/outputs/apk/release/composeApp-release.apk
+          repo_token: "${{ secrets.TOKEN }}"
+          prerelease: true
