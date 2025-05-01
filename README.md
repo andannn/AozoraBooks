@@ -16,7 +16,8 @@ It supports advanced layout features like ruby annotations and vertical text, an
 <p float="left">
   <img src="screenshots/template.png" width="25%" />
 </p>
-## 🛠️ Tech Stack
+
+## Tech Stack
 
 | Layer          | Tech                                 |
 |----------------|--------------------------------------|
