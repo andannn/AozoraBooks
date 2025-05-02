@@ -1,6 +1,8 @@
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
+    alias(libs.plugins.google.service)
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.parcelize)
     alias(libs.plugins.serialization)
@@ -63,6 +65,10 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.lifecycle.runtime.ktx)
+
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.crashlytics)
         }
     }
 }
