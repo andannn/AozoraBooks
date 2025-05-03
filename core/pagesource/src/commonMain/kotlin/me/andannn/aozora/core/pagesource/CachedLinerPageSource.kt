@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock.System
 import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.AozoraPage.*
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.page.builder.PageBuilder
