@@ -3,6 +3,7 @@ package me.andannn.aozora.ui.feature.reader
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -10,14 +11,11 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.FontSizeLevel
-import me.andannn.aozora.core.data.common.FontType
-import me.andannn.aozora.core.data.common.LineSpacing
-import me.andannn.aozora.core.data.common.PageContext
-import me.andannn.aozora.core.data.common.TopMargin
-import me.andannn.aozora.core.data.common.next
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
 import me.andannn.aozora.ui.feature.reader.viewer.rememberBookViewerPresenter
 
@@ -29,6 +27,7 @@ fun Reader(
     ReaderContent(
         cardId = state.cardId,
         modifier = modifier,
+        onEvent = state.evenSink,
     )
 }
 
@@ -36,6 +35,7 @@ fun Reader(
 private fun ReaderContent(
     cardId: String,
     modifier: Modifier = Modifier,
+    onEvent: (ReaderUiEvent) -> Unit,
 ) {
     val localDensity = LocalDensity.current
     val initial =
@@ -53,15 +53,7 @@ private fun ReaderContent(
             rememberBookViewerPresenter(
                 card = getCardById(cardId),
                 initialProgress = initial.longValue,
-                pageMetadata =
-                    PageContext(
-                        originalHeight = maxHeight,
-                        originalWidth = maxWidth,
-                        additionalTopMargin = TopMargin.MEDIUM,
-                        fontSizeLevel = fontLevel.value,
-                        fontType = FontType.NOTO_SERIF,
-                        lineSpacing = LineSpacing.MEDIUM,
-                    ),
+                screenSize = Size(maxWidth, maxHeight),
             )
         Box {
             BookViewer(
@@ -69,15 +61,12 @@ private fun ReaderContent(
             )
 
             Column {
+                Box(modifier = Modifier.height(30.dp))
+
                 TextButton(onClick = {
-                    initial.longValue += 1000
+                    onEvent.invoke(ReaderUiEvent.OnOpenFontSetting)
                 }) {
-                    Text("AAA")
-                }
-                TextButton(onClick = {
-                    fontLevel.value = fontLevel.value.next()
-                }) {
-                    Text("Change FontLevel")
+                    Text("Open Font Setting")
                 }
             }
         }
@@ -93,6 +82,7 @@ private fun getCardById(id: String) =
                 htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
             )
         }
+
         "789" -> {
             AozoraBookCard(
                 id = "789",
@@ -100,5 +90,6 @@ private fun getCardById(id: String) =
                 htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
             )
         }
+
         else -> error("")
     }

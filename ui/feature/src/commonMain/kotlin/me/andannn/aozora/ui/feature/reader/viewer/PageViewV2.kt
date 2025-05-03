@@ -38,7 +38,7 @@ fun PageViewV2(
         )
     val density = LocalDensity.current
     val adapters =
-        remember(measurer, density) {
+        remember(measurer, density, fontFamily, textColor) {
             createAdapters(measurer, density, fontFamily, textColor)
         }
     Box(
@@ -65,7 +65,7 @@ fun PageViewV2(
                         var currentX = renderWidth
                         for (line in page.lines) {
                             currentX -= line.lineHeight / 2
-                            drawAozoraLineV2(currentX, line, textColor, adapters)
+                            drawAozoraLineV2(currentX, line, adapters)
                             currentX -= line.lineHeight / 2
                         }
                     }
@@ -76,7 +76,6 @@ fun PageViewV2(
 fun DrawScope.drawAozoraLineV2(
     x: Float,
     line: Line,
-    textColor: Color,
     adapters: List<ElementRenderAdapterV2>,
 ) {
     val fontStyle = line.fontStyle

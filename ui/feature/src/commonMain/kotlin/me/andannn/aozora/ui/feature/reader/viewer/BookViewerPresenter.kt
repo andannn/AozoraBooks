@@ -10,29 +10,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Size
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.distinctUntilChanged
+import me.andannn.aozora.core.data.UserSettingRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.RoughPageSource
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberBookViewerPresenter(
     card: AozoraBookCard,
+    screenSize: Size,
     initialProgress: Long,
-    pageMetadata: PageMetaData,
-) = remember(card, initialProgress, pageMetadata) {
+    settingRepository: UserSettingRepository = getKoin().get(),
+) = remember(card, initialProgress, screenSize, settingRepository) {
     BookViewerPresenter(
         card,
         initialProgress,
-        pageMetadata,
+        screenSize,
+        settingRepository,
     )
 }
 
@@ -41,10 +48,17 @@ private const val TAG = "ReaderPresenter"
 class BookViewerPresenter(
     private val card: AozoraBookCard,
     private val initialProgress: Long,
-    private val pageMetadata: PageMetaData,
+    private val screenSize: Size,
+    private val settingRepository: UserSettingRepository,
 ) : Presenter<BookViewerState> {
     @Composable
     override fun present(): BookViewerState {
+        val fontSize by settingRepository.getFontSizeLevel().collectAsRetainedState()
+        val fontType by settingRepository.getFontFontType().collectAsRetainedState()
+        val theme by settingRepository.getReaderTheme().collectAsRetainedState()
+        val topMargin by settingRepository.getTopMargin().collectAsRetainedState()
+        val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
+
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot<AozoraPage>?>(null)
         }
@@ -134,26 +148,49 @@ class BookViewerPresenter(
                 bookSource.dispose()
             }
         }
+
         LaunchedEffect(
             initialProgress,
-            pageMetadata,
+            fontSize,
+            topMargin,
+            lineSpacing,
         ) {
+            val pageMetadata =
+                PageContext(
+                    originalHeight = screenSize.height,
+                    originalWidth = screenSize.width,
+                    additionalTopMargin = topMargin,
+                    fontSizeLevel = fontSize,
+                    fontType = fontType,
+                    lineSpacing = lineSpacing,
+                )
             bookSource
                 .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
                 .distinctUntilChanged()
                 .collect {
                     Napier.d(tag = TAG) {
-                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${it.pageList.map {
-                            it
-                                .hashCode()
-                        }}"
+                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${
+                            it.pageList.map {
+                                it
+                                    .hashCode()
+                            }
+                        }"
                     }
                     snapshotState = it
                 }
         }
 
         return BookViewerState(
-            pageMetadata = pageMetadata,
+            pageMetadata =
+                PageContext(
+                    originalHeight = screenSize.height,
+                    originalWidth = screenSize.width,
+                    additionalTopMargin = topMargin,
+                    fontSizeLevel = fontSize,
+                    fontType = fontType,
+                    lineSpacing = lineSpacing,
+                ),
+            theme = theme,
             pages = snapshotState?.pageList ?: emptyList(),
             pagerState = pagerState,
         ) { eventSink ->

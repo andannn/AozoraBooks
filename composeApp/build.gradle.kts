@@ -52,6 +52,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:common"))
+            implementation(project(":core:data"))
             implementation(project(":core:service"))
             implementation(project(":core:parser"))
             implementation(project(":core:pagesource"))

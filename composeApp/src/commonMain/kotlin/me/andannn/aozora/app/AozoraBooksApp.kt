@@ -1,6 +1,7 @@
 package me.andannn.aozora.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
@@ -9,6 +10,9 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
+import me.andannn.aozora.ui.common.dialog.ActionDialog
+import me.andannn.aozora.ui.common.dialog.LocalPopupController
+import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.feature.screens.HomeScreen
 import me.andannn.aozora.ui.feature.screens.RoutePresenterFactory
 import me.andannn.aozora.ui.feature.screens.RouteUiFactory
@@ -18,17 +22,23 @@ fun AozoraBooksApp(
     modifier: Modifier = Modifier,
     circuit: Circuit = buildCircuitMobile(),
 ) {
-    CircuitCompositionLocals(circuit = circuit) {
-        val backStack = rememberSaveableBackStack(HomeScreen)
-        val navigator =
-            rememberCircuitNavigator(backStack) {
-            }
+    CompositionLocalProvider(
+        LocalPopupController provides PopupController(),
+    ) {
+        CircuitCompositionLocals(circuit = circuit) {
+            val backStack = rememberSaveableBackStack(HomeScreen)
+            val navigator =
+                rememberCircuitNavigator(backStack) {
+                }
 
 //        BackHandler(enabled = backStack.size > 1) {
 //            navigator.pop()
 //        }
 
-        NavigableCircuitContent(navigator, backStack)
+            NavigableCircuitContent(navigator, backStack)
+
+            ActionDialog()
+        }
     }
 }
 
