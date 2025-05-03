@@ -6,13 +6,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:common"))
-            implementation(project(":core:util"))
-            implementation(libs.kotlinx.io.core)
-            implementation(libs.ksoup)
         }
     }
 }
 
 android {
-    namespace = "me.andannn.aozora.core.parser"
+    namespace = "me.andannn.aozora.core.data"
 }

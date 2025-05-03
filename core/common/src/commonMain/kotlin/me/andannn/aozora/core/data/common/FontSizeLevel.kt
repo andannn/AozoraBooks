@@ -15,3 +15,8 @@ fun FontSizeLevel.next(): FontSizeLevel {
     val nextIndex = (this.ordinal + 1) % FontSizeLevel.entries.size
     return FontSizeLevel.entries[nextIndex]
 }
+
+fun FontSizeLevel.pre(): FontSizeLevel {
+    val preIndex = (this.ordinal - 1 + FontSizeLevel.entries.size) % FontSizeLevel.entries.size
+    return FontSizeLevel.entries[preIndex]
+}
