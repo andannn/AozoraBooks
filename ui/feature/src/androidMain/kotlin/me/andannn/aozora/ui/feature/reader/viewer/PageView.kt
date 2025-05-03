@@ -37,10 +37,10 @@ fun PageView(
                 .fillMaxSize()
                 .drawWithContent {
                     drawIntoCanvas { canvas ->
-                        val renderWidth = page.metaData.renderWidth
-                        val renderHeight = page.metaData.renderHeight
-                        val offsetX = page.metaData.offset.first
-                        val offsetY = page.metaData.offset.second
+                        val renderWidth = page.pageMetaData.renderWidth
+                        val renderHeight = page.pageMetaData.renderHeight
+                        val offsetX = page.pageMetaData.offset.first
+                        val offsetY = page.pageMetaData.offset.second
 
                         if (DEBUG_RENDER) {
                             canvas.nativeCanvas.drawRect(

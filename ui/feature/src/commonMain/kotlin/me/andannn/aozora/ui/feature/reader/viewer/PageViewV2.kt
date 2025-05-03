@@ -46,10 +46,11 @@ fun PageViewV2(
             modifier
                 .fillMaxSize()
                 .drawWithContent {
-                    val renderWidth = page.metaData.renderWidth
-                    val renderHeight = page.metaData.renderHeight
-                    val offsetX = page.metaData.offset.first
-                    val offsetY = page.metaData.offset.second
+                    val contentWidth = page.contentWidth
+                    val renderWidth = page.pageMetaData.renderWidth
+                    val renderHeight = page.pageMetaData.renderHeight
+                    val offsetX = page.pageMetaData.offset.first
+                    val offsetY = page.pageMetaData.offset.second
 
                     if (DEBUG_RENDER) {
                         drawRect(
@@ -59,14 +60,18 @@ fun PageViewV2(
                         )
                     }
                     translate(
-                        offsetX,
-                        offsetY,
+                        left = (contentWidth - renderWidth).div(2),
                     ) {
-                        var currentX = renderWidth
-                        for (line in page.lines) {
-                            currentX -= line.lineHeight / 2
-                            drawAozoraLineV2(currentX, line, adapters)
-                            currentX -= line.lineHeight / 2
+                        translate(
+                            offsetX,
+                            offsetY,
+                        ) {
+                            var currentX = renderWidth
+                            for (line in page.lines) {
+                                currentX -= line.lineHeight / 2
+                                drawAozoraLineV2(currentX, line, adapters)
+                                currentX -= line.lineHeight / 2
+                            }
                         }
                     }
                 },

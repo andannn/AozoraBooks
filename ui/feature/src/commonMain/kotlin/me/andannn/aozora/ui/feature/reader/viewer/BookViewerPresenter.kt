@@ -23,8 +23,8 @@ import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.BookPageSource
+import me.andannn.aozora.core.pagesource.LayoutPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
-import me.andannn.aozora.core.pagesource.RoughPageSource
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -60,7 +60,7 @@ class BookViewerPresenter(
         val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
 
         var snapshotState by remember {
-            mutableStateOf<PagerSnapShot<AozoraPage>?>(null)
+            mutableStateOf<PagerSnapShot?>(null)
         }
 
         val pagerState =
@@ -108,40 +108,12 @@ class BookViewerPresenter(
 //        }
 
         val scope = rememberCoroutineScope()
-        val bookSource: BookPageSource<AozoraPage> =
+        val bookSource: BookPageSource =
             remember {
-                RoughPageSource(
+                LayoutPageSource(
                     card,
                     scope = scope,
                 )
-//            LayoutPageSource(
-//                AozoraBookCard(
-//                    id = "1",
-//                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
-//                    htmlUrl = "https://www.aozora.gr.jp/cards/001095/files/45844_60119.html",
-//                ),
-//                scope = scope,
-//            )
-                //            createBookSource(
-//                AozoraBookCard(
-//                    id = "1",
-//                    zipUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_ruby_78315.zip",
-//                    htmlUrl = "https://www.aozora.gr.jp/cards/002238/files/61411_78314.html",
-//                )
-//            )
-//            DummySource.createSimpleDummyBookPageSource()
-//            DummySource.createDummyLazyBookPageSource(
-//                scope = this,
-//                settledPageFlow = settledPageFlow,
-//                meta = meta
-//            )
-//            DummySource.createDummySequenceCachedSource(scope = scope)
-//            DummySource.createDummyBufferedBookPageSource(
-//                meta = meta,
-//                scope = this,
-//                progress = 3876,
-//                settledPageFlow = settledPageFlow
-//            )
             }
         DisposableEffect(Unit) {
             onDispose {

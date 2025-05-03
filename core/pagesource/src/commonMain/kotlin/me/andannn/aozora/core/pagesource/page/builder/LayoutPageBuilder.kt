@@ -7,6 +7,7 @@ import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.data.common.BlockType
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -17,16 +18,86 @@ import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
 private const val TAG = "ReaderPageBuilder"
 
 fun AozoraPage.layout(): AozoraLayoutPage {
-    if (this is AozoraLayoutPage) {
-        return this
-    }
+    return when (this) {
+        is AozoraLayoutPage -> return this
+        is AozoraRoughPage -> {
+            val builder =
+                LayoutPageBuilder(pageMetaData, DefaultMeasurer(pageMetaData), forceAddBlock = true)
+            this.blocks.forEach {
+                builder.tryAddBlock(it)
+            }
+            return builder.build()
+        }
 
-    val builder = LayoutPageBuilder(metaData, DefaultMeasurer(metaData), forceAddBlock = true)
-    (this as AozoraRoughPage).blocks.forEach {
-        builder.tryAddBlock(it)
+        is AozoraPage.AozoraCoverPage ->
+            createCoverPage(
+                pageMetaData,
+                title = title,
+                author = author,
+                subtitle = subtitle,
+            ).layout()
     }
-    return builder.build()
 }
+
+private fun createCoverPage(
+    pageMetaData: PageMetaData,
+    title: String,
+    subtitle: String?,
+    author: String,
+): AozoraRoughPage =
+    AozoraRoughPage(
+        pageMetaData = pageMetaData,
+        blocks =
+            listOfNotNull<AozoraBlock>(
+                AozoraBlock(
+                    blockType =
+                        BlockType.Heading(
+                            style = AozoraTextStyle.HEADING_LARGE,
+                            indent = 2,
+                        ),
+                    byteRange = 0L..0L,
+                    elements =
+                        listOfNotNull(
+                            AozoraElement.Text(
+                                text = title,
+                            ),
+                            AozoraElement.LineBreak,
+                        ),
+                ),
+                subtitle?.let {
+                    AozoraBlock(
+                        blockType =
+                            BlockType.Heading(
+                                style = AozoraTextStyle.HEADING_LARGE,
+                                indent = 2,
+                            ),
+                        byteRange = 0L..0L,
+                        elements =
+                            listOfNotNull(
+                                AozoraElement.Text(
+                                    text = it,
+                                ),
+                                AozoraElement.LineBreak,
+                            ),
+                    )
+                },
+                AozoraBlock(
+                    blockType =
+                        BlockType.Heading(
+                            style = AozoraTextStyle.HEADING_MEDIUM,
+                            indent = 3,
+                        ),
+                    byteRange = 0L..0L,
+                    elements =
+                        listOfNotNull(
+                            AozoraElement.Text(
+                                text = author,
+                            ),
+                            AozoraElement.LineBreak,
+                        ),
+                ),
+            ).toImmutableList(),
+    )
 
 class LayoutPageBuilder(
     private val meta: PageMetaData,
@@ -147,7 +218,7 @@ class LayoutPageBuilder(
         }
 
         return AozoraLayoutPage(
-            metaData = meta,
+            pageMetaData = meta,
             lines = lines.toImmutableList(),
         )
     }

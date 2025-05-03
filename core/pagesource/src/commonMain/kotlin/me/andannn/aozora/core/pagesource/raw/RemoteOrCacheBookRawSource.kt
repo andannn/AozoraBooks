@@ -16,6 +16,7 @@ import kotlinx.io.Source
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.data.common.AozoraBlock
@@ -201,12 +202,8 @@ private fun getCachedBookModel(path: Path): BookModel? {
 
     SystemFileSystem.list(path).forEach {
         if (it.name == META_FILE_NAME) {
-            meta =
-                BookMeta(
-                    title = "dictionary.name",
-                    subtitle = null,
-                    author = "Unknown",
-                )
+            val metaJson = SystemFileSystem.source(it).buffered().readString()
+            meta = Json.decodeFromString(metaJson)
         }
         if (it.name == PLAIN_TEXT_FILE_NAME) {
             contentPlainTextPath = it

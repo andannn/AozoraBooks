@@ -63,6 +63,7 @@ private fun ReaderContent(
             remember(page.value) {
                 page.value?.layout()
             }
+
         if (layoutPage != null) {
             PageViewV2(
                 modifier = Modifier.fillMaxSize(),

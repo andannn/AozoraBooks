@@ -44,7 +44,7 @@ class RoughPageBuilder(
 
     override fun build(): AozoraRoughPage =
         AozoraRoughPage(
-            metaData = meta,
+            pageMetaData = meta,
             blocks = addedBlockList.toImmutableList(),
         )
 }
