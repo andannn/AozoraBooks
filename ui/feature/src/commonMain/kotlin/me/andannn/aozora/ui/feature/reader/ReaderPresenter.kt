@@ -28,7 +28,6 @@ class ReaderPresenter(
 ) : Presenter<ReaderState> {
     @Composable
     override fun present(): ReaderState {
-        print(cardId)
         val scope = rememberCoroutineScope()
         return ReaderState(cardId) { event ->
             when (event) {

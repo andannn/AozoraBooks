@@ -11,9 +11,14 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock.System
 import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
+import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.page.builder.PageBuilder
 import me.andannn.aozora.core.pagesource.page.builder.createPageBuilder
@@ -26,38 +31,35 @@ private const val TAG = "CachedLinerPageSource"
  * the parsed result is cached in this class.
  * use catch when [getPagerSnapShotFlow] is called if available,
  */
-abstract class CachedLinerPageSource<out T : AozoraPage>(
+abstract class CachedLinerPageSource(
     private val rawSource: BookRawSource,
     private val useRoughPageBuilder: Boolean = false,
-) : BookPageSource<T> {
+) : BookPageSource {
     private val cachedBlockList = mutableListOf<AozoraBlock>()
     private var isCachedCompleted: Boolean = false
     private var version: Int = 0
 
+    private var bookMetaData: BookMeta? = null
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getPagerSnapShotFlow(
-        metaData: PageMetaData,
+        pageMetaData: PageMetaData,
         initialProgress: Long,
-    ): Flow<PagerSnapShot<T>> =
+    ): Flow<PagerSnapShot> =
         flow {
-            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialProgress, metaData $metaData. " }
+            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialProgress, metaData $pageMetaData. " }
 
-            val pageFlow =
-                createPageFlowFromSequence<T>(
-                    blockSequenceFlow = rawSource.getRawSource().cachedOrSource(),
-                    builderFactory = { createPageBuilder(metaData, useRoughPageBuilder) as PageBuilder<T> },
-                )
+            bookMetaData = rawSource.getBookMeta()
+            val rawSourceFlow = rawSource.getRawSource()
 
-            val loadedPages = mutableListOf<T>()
+            val loadedPages = mutableListOf<AozoraPage>()
             var initialPageIndex: Int? = null
 
             var startMilliseconds = System.now().toEpochMilliseconds()
             Napier.d(tag = TAG) { "start load page. " }
 
-            pageFlow
-                .onEach {
-                    Napier.v(tag = TAG) { "page added ${(it as? AozoraPage.AozoraRoughPage)?.progressRange}" }
-                }.flowOn(Dispatchers.IO)
+            createPageFlow(pageMetaData, rawSourceFlow)
+                .onEach { Napier.v(tag = TAG) { "page added ${it::class.simpleName} ${(it as? AozoraRoughPage)?.progressRange}" } }
                 .chunked(CHUNK_SIZE)
                 .collectIndexed { index, pageList ->
                     loadedPages.addAll(pageList)
@@ -66,19 +68,64 @@ abstract class CachedLinerPageSource<out T : AozoraPage>(
                         initialPageIndex = 0
                     }
 
-                    val hitIndex = pageList.indexOfFirst { initialProgress in (it as AozoraPage.AozoraRoughPage).progressRange }
+                    val hitIndex =
+                        pageList.indexOfFirst { initialProgress in ((it as? AozoraRoughPage)?.progressRange ?: -1L..0L) }
                     if (initialPageIndex == null && hitIndex != -1) {
                         Napier.d(tag = TAG) { "hit initial. index: $hitIndex}" }
                         initialPageIndex = hitIndex + index * CHUNK_SIZE
                     }
 
                     if (initialPageIndex != null) {
-                        emit(PagerSnapShot<T>(initialPageIndex, loadedPages, version++))
+                        emit(PagerSnapShot(initialPageIndex, loadedPages, version++))
                     }
                 }
 
-            Napier.d(tag = TAG) { "end load page. pages: ${loadedPages.size} in ${System.now().toEpochMilliseconds() - startMilliseconds}" }
+            Napier.d(tag = TAG) {
+                "end load page. pages: ${loadedPages.size} in ${
+                    System.now().toEpochMilliseconds() - startMilliseconds
+                }"
+            }
         }
+
+    private fun createPageFlow(
+        pageMetaData: PageMetaData,
+        rawSourceFlow: Flow<AozoraBlock>,
+    ): Flow<AozoraPage> {
+        val pageFlow =
+            if (useRoughPageBuilder) {
+                createPageFlowFromSequence<AozoraRoughPage>(
+                    blockSequenceFlow = rawSourceFlow.cachedOrSource(),
+                    builderFactory = {
+                        createPageBuilder(
+                            pageMetaData,
+                            useRoughPageBuilder,
+                        ) as PageBuilder<AozoraRoughPage>
+                    },
+                )
+            } else {
+                createPageFlowFromSequence<AozoraLayoutPage>(
+                    blockSequenceFlow = rawSourceFlow.cachedOrSource(),
+                    builderFactory = {
+                        createPageBuilder(
+                            pageMetaData,
+                            useRoughPageBuilder,
+                        ) as PageBuilder<AozoraLayoutPage>
+                    },
+                )
+            }
+
+        return pageFlow
+            .onStart {
+                emit(
+                    AozoraCoverPage(
+                        pageMetaData = pageMetaData,
+                        title = bookMetaData!!.title,
+                        author = bookMetaData!!.author,
+                        subtitle = bookMetaData!!.subtitle,
+                    ),
+                )
+            }.flowOn(Dispatchers.IO)
+    }
 
     override fun dispose() {
         Napier.d(tag = TAG) { "dispose called" }
