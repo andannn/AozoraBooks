@@ -10,10 +10,11 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.pagesource.page.builder.createPageBuilder
+import me.andannn.aozora.core.pagesource.page.builder.LayoutPageBuilderFactory
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
-import me.andannn.aozora.core.parser.createBlockParser
+import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
+import me.andannn.aozora.core.parser.html.HtmlLineParser
 import me.andannn.aozora.core.parser.lineSequence
 import me.andannn.core.util.asSource
 
@@ -25,7 +26,7 @@ object DummyBookPageSource {
                 meta: PageMetaData,
                 startProgress: Int?,
             ): Flow<PagerSnapShot> {
-                val aozoraBlockParser = createBlockParser(true)
+                val aozoraBlockParser = DefaultAozoraBlockParser(HtmlLineParser)
 
                 fun pageFlow() =
                     createPageFlowFromSequence(
@@ -36,7 +37,7 @@ object DummyBookPageSource {
                                 .map { aozoraBlockParser.parseLineAsBlock(it) }
                                 .asFlow(),
                         builderFactory = {
-                            createPageBuilder(meta)
+                            LayoutPageBuilderFactory.create(meta)
                         },
                     )
                 return pageFlow().map {
@@ -47,9 +48,6 @@ object DummyBookPageSource {
                         snapshotVersion = 0,
                     )
                 }
-            }
-
-            override fun dispose() {
             }
         }
     }
@@ -64,7 +62,7 @@ object DummyBookPageSource {
                             .peek()
                             .lineSequence()
                             .map {
-                                createBlockParser(true).parseLineAsBlock(it)
+                                DefaultAozoraBlockParser(HtmlLineParser).parseLineAsBlock(it)
                             }.asFlow()
                     }
 
@@ -73,10 +71,6 @@ object DummyBookPageSource {
                     }
 
                     override suspend fun getBookMeta(): BookMeta {
-                        TODO("Not yet implemented")
-                    }
-
-                    override fun dispose() {
                         TODO("Not yet implemented")
                     }
                 },

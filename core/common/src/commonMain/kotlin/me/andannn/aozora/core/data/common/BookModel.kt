@@ -15,7 +15,6 @@ import kotlinx.serialization.Serializable
 data class BookModel(
     val meta: BookMeta,
     val contentHtmlPath: Path?,
-    val contentPlainTextPath: Path?,
     val illustrationPath: List<Path> = emptyList(),
 )
 
@@ -42,6 +41,6 @@ data class BookMeta(
     /**
      * Content byte size of book.
      */
-    @SerialName("content_length")
-    val contentByteSize: Long = 0,
+    @SerialName("blockCount")
+    val blockCount: Int = 0,
 )

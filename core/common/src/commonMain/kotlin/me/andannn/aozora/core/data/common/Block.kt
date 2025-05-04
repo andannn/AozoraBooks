@@ -3,35 +3,30 @@ package me.andannn.aozora.core.data.common
 sealed class Block(
     open val blockIndex: Int,
     open val elements: List<AozoraElement>,
-    open val byteRange: LongRange,
 ) {
     sealed class TextBlock(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
-        override val byteRange: LongRange,
         open val textStyle: AozoraTextStyle,
         open val indent: Int = 0,
-    ) : Block(blockIndex, elements, byteRange)
+    ) : Block(blockIndex, elements)
 
     data class Heading(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
-        override val byteRange: LongRange,
         override val textStyle: AozoraTextStyle,
         override val indent: Int,
-    ) : TextBlock(blockIndex, elements, byteRange, textStyle)
+    ) : TextBlock(blockIndex, elements, textStyle)
 
     data class Paragraph(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
-        override val byteRange: LongRange,
-    ) : TextBlock(blockIndex, elements, byteRange, AozoraTextStyle.PARAGRAPH, 0)
+    ) : TextBlock(blockIndex, elements, AozoraTextStyle.PARAGRAPH, 0)
 
     data class Image(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
-        override val byteRange: LongRange,
-    ) : Block(blockIndex, elements, byteRange)
+    ) : Block(blockIndex, elements)
 
     val textCount: Int by lazy {
         elements.fold(0) { acc, element ->

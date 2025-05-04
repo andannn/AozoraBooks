@@ -2,7 +2,6 @@ package me.andannn.aozora.ui.feature.reader.viewer
 
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +24,9 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
+import me.andannn.aozora.core.pagesource.AozoraBookPageSource
 import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
-import me.andannn.aozora.core.pagesource.RoughPageSource
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -58,7 +57,18 @@ class BookViewerPresenter(
         val theme by settingRepository.getReaderTheme().collectAsRetainedState()
         val topMargin by settingRepository.getTopMargin().collectAsRetainedState()
         val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
-        val progressOrNull by settingRepository.getProgressFlow(card.id).collectAsRetainedState(null)
+        val progressOrNull by settingRepository
+            .getProgressFlow(card.id)
+            .collectAsRetainedState(null)
+
+        val scope = rememberCoroutineScope()
+        val bookSource: BookPageSource =
+            remember {
+                AozoraBookPageSource(
+                    card = card,
+                    scope = scope,
+                )
+            }
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot?>(null)
@@ -84,25 +94,11 @@ class BookViewerPresenter(
 
                     if (page != null) {
                         settingRepository.setProgressOfBook(
-                            card.id,
-                            (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first,
+                            bookCardId = card.id,
+                            blockIndex = (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first,
                         )
                     }
                 }
-        }
-
-        val scope = rememberCoroutineScope()
-        val bookSource: BookPageSource =
-            remember {
-                RoughPageSource(
-                    card = card,
-                    scope = scope,
-                )
-            }
-        DisposableEffect(Unit) {
-            onDispose {
-                bookSource.dispose()
-            }
         }
 
         LaunchedEffect(

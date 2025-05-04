@@ -52,7 +52,6 @@ private fun createCoverPage(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_LARGE,
                     indent = 2,
-                    byteRange = 0L..0L,
                     elements =
                         listOfNotNull(
                             AozoraElement.Text(
@@ -66,7 +65,6 @@ private fun createCoverPage(
                         blockIndex = -1,
                         textStyle = AozoraTextStyle.HEADING_LARGE,
                         indent = 2,
-                        byteRange = 0L..0L,
                         elements =
                             listOfNotNull(
                                 AozoraElement.Text(
@@ -80,7 +78,6 @@ private fun createCoverPage(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_MEDIUM,
                     indent = 3,
-                    byteRange = 0L..0L,
                     elements =
                         listOfNotNull(
                             AozoraElement.Text(

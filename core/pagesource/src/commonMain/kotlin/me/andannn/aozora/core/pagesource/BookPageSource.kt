@@ -19,8 +19,6 @@ interface BookPageSource {
         pageMetaData: PageMetaData,
         initialBlockIndex: Int?,
     ): Flow<PagerSnapShot>
-
-    fun dispose()
 }
 
 /**

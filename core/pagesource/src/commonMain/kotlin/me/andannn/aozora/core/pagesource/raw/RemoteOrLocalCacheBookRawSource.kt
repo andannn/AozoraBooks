@@ -1,6 +1,7 @@
 package me.andannn.aozora.core.pagesource.raw
 
 import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.TextNode
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -12,8 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import kotlinx.io.Source
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -24,7 +25,8 @@ import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.BookModel
-import me.andannn.aozora.core.parser.createBlockParser
+import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
+import me.andannn.aozora.core.parser.html.HtmlLineParser
 import me.andannn.aozora.core.parser.lineSequence
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
@@ -34,17 +36,13 @@ import org.koin.mp.KoinPlatform.getKoin
 /**
  * Get source from local cached file or fetch from remote.
  */
-class RemoteOrCacheBookRawSource(
+class RemoteOrLocalCacheBookRawSource(
     card: AozoraBookCard,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
-    private val useHtmlFirst: Boolean = true,
     private val cacheDictionary: Path = getCachedPatchById(card.id),
 ) : BookRawSource {
     private val bookModelStateFlow = MutableStateFlow<SourceState>(SourceState.Loading)
-
-    private var loadedSource: Source? = null
-    private var usingHtmlFile: Boolean? = null
 
     init {
         scope.launch(dispatcher) {
@@ -59,46 +57,28 @@ class RemoteOrCacheBookRawSource(
     }
 
     override suspend fun getRawSource(): Flow<Block> {
-        if (loadedSource != null && usingHtmlFile != null) {
-            val parser = createBlockParser(isHtml = useHtmlFirst)
-            return loadedSource!!
-                .peek()
-                .lineSequence()
-                .map { parser.parseLineAsBlock(it) }
-                .asFlow()
-        }
+        val parser = DefaultAozoraBlockParser(HtmlLineParser)
 
         val bookModel = waitBookModelOrThrow()
-        val (filePath, usingHtml) =
-            if (useHtmlFirst) {
-                bookModel.contentHtmlPath?.let { it to true }
-                    ?: bookModel.contentPlainTextPath?.let { it to false }
-                    ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-            } else {
-                bookModel.contentPlainTextPath?.let { it to false }
-                    ?: bookModel.contentHtmlPath?.let { it to true }
-                    ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
-            }
+        val filePath =
+            bookModel.contentHtmlPath
+                ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
 
-        usingHtmlFile = usingHtml
-        val parser = createBlockParser(isHtml = usingHtml)
+        val source = SystemFileSystem.source(filePath)
         return SystemFileSystem
             .source(filePath)
             .buffered()
-            .also { loadedSource = it }
-            .peek()
             .lineSequence()
             .map { parser.parseLineAsBlock(it) }
             .asFlow()
+            .onCompletion {
+                source.close()
+            }
     }
 
     override suspend fun getBookMeta(): BookMeta {
         val bookModel = waitBookModelOrThrow()
         return bookModel.meta
-    }
-
-    override fun dispose() {
-        loadedSource?.close()
     }
 
     override suspend fun getImageUriByPath(path: String): Path? {
@@ -162,29 +142,8 @@ private suspend fun AozoraBookCard.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }
-    val plainTextPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".txt") }
 
-    val (convertedHtmlPath, convertedTextPath) =
-        coroutineScope {
-            val htmlDeferred =
-                async {
-                    htmlPath?.let { processParseHtml(it, folder) }
-                }
-
-            val plainTextDeferred =
-                async {
-                    plainTextPath?.let {
-                        convertPlainTextMainContentToUtf8(
-                            folder,
-                            Path("$folder/$PLAIN_TEXT_FILE_NAME"),
-                        )
-                    }
-                }
-
-            htmlDeferred to plainTextDeferred
-        }
-    convertedHtmlPath.await()
-    convertedTextPath.await()
+    htmlPath?.let { processParseHtml(it, folder) }
 }
 
 /**
@@ -197,7 +156,6 @@ private fun getCachedBookModel(path: Path): BookModel? {
         return null
     }
     var meta: BookMeta? = null
-    var contentPlainTextPath: Path? = null
     var contentHtmlPath: Path? = null
     val illustrationPathList: MutableList<Path> = mutableListOf()
 
@@ -205,9 +163,6 @@ private fun getCachedBookModel(path: Path): BookModel? {
         if (it.name == META_FILE_NAME) {
             val metaJson = SystemFileSystem.source(it).buffered().readString()
             meta = Json.decodeFromString(metaJson)
-        }
-        if (it.name == PLAIN_TEXT_FILE_NAME) {
-            contentPlainTextPath = it
         }
 
         if (it.name == HTML_FILE_NAME) {
@@ -225,7 +180,6 @@ private fun getCachedBookModel(path: Path): BookModel? {
     return BookModel(
         meta = meta,
         contentHtmlPath = contentHtmlPath,
-        contentPlainTextPath = contentPlainTextPath,
         illustrationPath = illustrationPathList,
     )
 }
@@ -257,22 +211,6 @@ private suspend fun downloadAndUnZip(
 }
 
 /**
- * Convert plain txt androidMain content to utf8.
- *
- * @param path Path of the plain text file.
- * @param target Path of the converted plain text file.
- *
- * @return Path of the converted plain text file.
- */
-private suspend fun convertPlainTextMainContentToUtf8(
-    path: Path,
-    target: Path,
-): Path? {
-// TODO: implement this
-    return null
-}
-
-/**
  * Convert html androidMain content to utf8.
  *
  * @param path Path of the html file.
@@ -280,7 +218,7 @@ private suspend fun convertPlainTextMainContentToUtf8(
  *
  * @return BookMeta of the html .
  */
-fun processParseHtml(
+internal fun processParseHtml(
     path: Path,
     folder: Path,
 ) {
@@ -291,29 +229,28 @@ fun processParseHtml(
     val author = res.select(".author").text()
     val children = res.selectFirst(".main_text")?.childNodes() ?: emptyList()
     val mainContentBuilder = StringBuilder()
+
+    var lineCount = 0
     children
         .asSequence()
         .filterNot { it is TextNode && (it.text().isBlank() || it.text().isEmpty()) }
         .forEach {
-            val a = it.toString()
             mainContentBuilder.append(it.toString().replace("\n", ""))
-            if (a == "<br>") {
+            if (it is Element && it.tagName() == "br") {
                 mainContentBuilder.append("\n")
+                lineCount++
             }
         }
     utf8HtmlFileSink.use { sink ->
         utf8HtmlFileSink.writeString(mainContentBuilder.toString())
     }
 
-// TODO: Calculate file lenth
-//    val byteCount = Path(folder.toString()).length()
-
     val model =
         BookMeta(
             title = title,
             subtitle = null,
             author = author,
-            contentByteSize = 0,
+            blockCount = lineCount,
         )
 
     val metaFileSink = SystemFileSystem.sink(Path(folder, META_FILE_NAME)).buffered()
@@ -326,6 +263,5 @@ fun processParseHtml(
 }
 
 private const val META_FILE_NAME = ".meta"
-private const val PLAIN_TEXT_FILE_NAME = ".utf8.plainText"
 private const val HTML_FILE_NAME = ".utf8.html"
 private const val TEMP_HTML = "temp.html"

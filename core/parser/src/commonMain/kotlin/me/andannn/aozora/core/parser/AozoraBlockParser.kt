@@ -10,7 +10,7 @@ interface AozoraBlockParser {
     fun parseLineAsBlock(line: RawLine): Block
 }
 
-internal class DefaultAozoraBlockParser(
+class DefaultAozoraBlockParser(
     val parser: AozoraLineParser,
 ) : AozoraBlockParser {
     var blockIndex: Int = 0
@@ -26,19 +26,16 @@ internal class DefaultAozoraBlockParser(
                 elements = heading.elements,
                 indent = indent,
                 textStyle = heading.style,
-                byteRange = line.index..(line.index + line.length),
             )
         } else if (elements.size == 1 && elements[0] is AozoraElement.Illustration) {
             return Block.Image(
                 blockIndex = blockIndex++,
                 elements = elements,
-                byteRange = line.index..(line.index + line.length),
             )
         } else {
             return Block.Paragraph(
                 blockIndex = blockIndex++,
                 elements = elements,
-                byteRange = line.index..(line.index + line.length),
             )
         }
     }
