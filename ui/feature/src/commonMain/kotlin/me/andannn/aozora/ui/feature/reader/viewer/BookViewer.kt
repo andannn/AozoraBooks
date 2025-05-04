@@ -13,6 +13,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -43,7 +44,7 @@ fun BookViewer(
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
-    pages: List<AozoraPage>,
+    pages: ImmutableList<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
     pageMetadata: PageMetaData,

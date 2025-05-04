@@ -1,5 +1,6 @@
 package me.andannn.aozora.core.pagesource
 
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -41,7 +42,7 @@ object DummyBookPageSource {
                 return pageFlow().map {
                     pageList.add(it)
                     PagerSnapShot(
-                        pageList = pageList,
+                        pageList = pageList.toImmutableList(),
                         initialIndex = 0,
                         snapshotVersion = 0,
                     )

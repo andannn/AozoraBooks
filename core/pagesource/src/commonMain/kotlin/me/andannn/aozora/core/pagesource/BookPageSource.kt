@@ -1,5 +1,6 @@
 package me.andannn.aozora.core.pagesource
 
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -31,6 +32,6 @@ interface BookPageSource {
  */
 data class PagerSnapShot(
     val initialIndex: Int?,
-    val pageList: List<AozoraPage>,
+    val pageList: ImmutableList<AozoraPage>,
     val snapshotVersion: Int,
 )

@@ -1,6 +1,7 @@
 package me.andannn.aozora.core.pagesource
 
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
@@ -49,6 +50,8 @@ abstract class CachedLinerPageSource(
         flow {
             Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialProgress, metaData $pageMetaData. " }
 
+            version++
+
             bookMetaData = rawSource.getBookMeta()
             val rawSourceFlow = rawSource.getRawSource()
 
@@ -76,7 +79,13 @@ abstract class CachedLinerPageSource(
                     }
 
                     if (initialPageIndex != null) {
-                        emit(PagerSnapShot(initialPageIndex, loadedPages, version++))
+                        emit(
+                            PagerSnapShot(
+                                initialPageIndex,
+                                loadedPages.toImmutableList(),
+                                version,
+                            ),
+                        )
                     }
                 }
 

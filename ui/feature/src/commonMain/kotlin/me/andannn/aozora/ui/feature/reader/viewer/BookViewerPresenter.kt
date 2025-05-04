@@ -4,27 +4,30 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Size
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
-import me.andannn.aozora.core.data.UserSettingRepository
+import kotlinx.coroutines.flow.drop
+import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.BookPageSource
-import me.andannn.aozora.core.pagesource.LayoutPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
+import me.andannn.aozora.core.pagesource.RoughPageSource
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -33,7 +36,7 @@ fun rememberBookViewerPresenter(
     card: AozoraBookCard,
     screenSize: Size,
     initialProgress: Long,
-    settingRepository: UserSettingRepository = getKoin().get(),
+    settingRepository: UserDataRepository = getKoin().get(),
 ) = remember(card, initialProgress, screenSize, settingRepository) {
     BookViewerPresenter(
         card,
@@ -49,7 +52,7 @@ class BookViewerPresenter(
     private val card: AozoraBookCard,
     private val initialProgress: Long,
     private val screenSize: Size,
-    private val settingRepository: UserSettingRepository,
+    private val settingRepository: UserDataRepository,
 ) : Presenter<BookViewerState> {
     @Composable
     override fun present(): BookViewerState {
@@ -70,47 +73,23 @@ class BookViewerPresenter(
             ) {
                 snapshotState?.pageList?.size ?: 0
             }
-//
-//        var settledPageState by remember {
-//            mutableStateOf<AozoraPage?>(null)
-//        }
-//
-//        val settledPage by rememberUpdatedState(pagerState.settledPage)
-//
-//        LaunchedEffect(Unit) {
-//            var lastKnownVersion: Int = 0
-//
-//            combine(
-//                snapshotFlow { settledPage },
-//                snapshotFlow { snapshotState }.filterNotNull(),
-//            ) { settledPageIndex, snapShot -> settledPageIndex to snapShot }
-//                .collect { (settledPageIndex, snapShot) ->
-//                    val snapShotVersion = snapShot.snapshotVersion
-//                    if (snapShotVersion == 0) {
-//                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
-//                        return@collect
-//                    }
-//
-//                    val changedByPageList = (lastKnownVersion != snapShotVersion)
-//                    lastKnownVersion = snapShotVersion
-//
-//                    if (changedByPageList) {
-//                        Napier.d(tag = TAG) { "SettledPage changed by pageList." }
-//                    } else {
-//                        Napier.d(tag = TAG) { "SettledPage changed by user gesture." }
-//                        settledPageState = snapShot.pageList.getOrNull(settledPageIndex)
-//                    }
-//                }
-//        }
-//
-//        val settledPageFlow = remember {
-//            snapshotFlow { settledPageState }.distinctUntilChanged()
-//        }
+
+        LaunchedEffect(
+            snapshotState?.snapshotVersion,
+        ) {
+            Napier.d(tag = TAG) { "invoked ${snapshotState?.snapshotVersion}" }
+            snapshotFlow { pagerState.settledPage }
+                .drop(1)
+                .collect { newIndex ->
+                    Napier.d(tag = TAG) { "new settled page collected $newIndex" }
+                    snapshotState?.pageList[newIndex]
+                }
+        }
 
         val scope = rememberCoroutineScope()
         val bookSource: BookPageSource =
             remember {
-                LayoutPageSource(
+                RoughPageSource(
                     card,
                     scope = scope,
                 )
@@ -140,18 +119,9 @@ class BookViewerPresenter(
                 .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
                 .distinctUntilChanged()
                 .collect {
-                    Napier.d(tag = TAG) {
-                        "present: New snapshot emit. version ${it.snapshotVersion} currentIndex ${it.initialIndex}, size ${
-                            it.pageList.map {
-                                it
-                                    .hashCode()
-                            }
-                        }"
-                    }
                     snapshotState = it
                 }
         }
-
         return BookViewerState(
             pageMetadata =
                 PageContext(
@@ -163,7 +133,7 @@ class BookViewerPresenter(
                     lineSpacing = lineSpacing,
                 ),
             theme = theme,
-            pages = snapshotState?.pageList ?: emptyList(),
+            pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
             pagerState = pagerState,
         ) { eventSink ->
             when (eventSink) {
@@ -173,10 +143,9 @@ class BookViewerPresenter(
     }
 }
 
-@Stable
 data class BookViewerState(
     val pageMetadata: PageMetaData,
-    val pages: List<AozoraPage>,
+    val pages: ImmutableList<AozoraPage>,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
     val pagerState: PagerState,
     val evenSink: (BookViewerUiEvent) -> Unit = {},

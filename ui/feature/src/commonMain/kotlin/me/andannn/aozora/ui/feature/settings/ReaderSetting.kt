@@ -24,7 +24,7 @@ import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.data.UserSettingRepository
+import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -47,13 +47,13 @@ object ReaderSettingDialogId : DialogId {
 }
 
 @Composable
-fun rememberReaderSettingDialogPresenter(settingRepository: UserSettingRepository = getKoin().get()) =
+fun rememberReaderSettingDialogPresenter(settingRepository: UserDataRepository = getKoin().get()) =
     remember(settingRepository) {
         ReaderSettingDialogPresenter(settingRepository)
     }
 
 class ReaderSettingDialogPresenter(
-    private val settingRepository: UserSettingRepository,
+    private val settingRepository: UserDataRepository,
 ) : Presenter<ReaderSettingState> {
     @Composable
     override fun present(): ReaderSettingState {

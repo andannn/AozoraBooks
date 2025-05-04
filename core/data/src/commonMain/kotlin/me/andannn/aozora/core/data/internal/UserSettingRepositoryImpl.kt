@@ -1,15 +1,18 @@
 package me.andannn.aozora.core.data.internal
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import me.andannn.aozora.core.data.UserSettingRepository
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
+import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 
-internal class UserSettingRepositoryImpl : UserSettingRepository {
+internal class UserDataRepositoryImpl : UserDataRepository {
     private val fontSizeLevelFlow = MutableStateFlow(FontSizeLevel.LEVEL_4)
 
     private val fontTypeFlow = MutableStateFlow(FontType.DEFAULT)
@@ -19,6 +22,8 @@ internal class UserSettingRepositoryImpl : UserSettingRepository {
     private val lineSpacingFlow = MutableStateFlow(LineSpacing.MEDIUM)
 
     private val readerThemeFlow = MutableStateFlow(ReaderTheme.DYNAMIC)
+
+    private val progressFlow = MutableStateFlow(mutableMapOf<String, Long>())
 
     override fun getFontSizeLevel(): StateFlow<FontSizeLevel> = fontSizeLevelFlow
 
@@ -49,4 +54,21 @@ internal class UserSettingRepositoryImpl : UserSettingRepository {
     override suspend fun setReaderTheme(readerTheme: ReaderTheme) {
         readerThemeFlow.value = readerTheme
     }
+
+    override suspend fun setProgressOfBook(
+        bookCardId: String,
+        progress: Long,
+    ) {
+        progressFlow.update {
+            it[bookCardId] = progress
+            it
+        }
+    }
+
+    override fun getProgressFlow(bookCardId: String): Flow<Long?> =
+        progressFlow.map {
+            it[bookCardId]
+        }
+
+    override suspend fun getProgress(bookCardId: String): Long? = progressFlow.value[bookCardId]
 }
