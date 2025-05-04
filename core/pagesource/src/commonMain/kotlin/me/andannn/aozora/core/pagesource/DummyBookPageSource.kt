@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.io.files.Path
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.page.builder.createPageBuilder
@@ -23,7 +23,7 @@ object DummyBookPageSource {
         return object : BookPageSource {
             override fun getPagerSnapShotFlow(
                 meta: PageMetaData,
-                startProgress: Long,
+                startProgress: Int?,
             ): Flow<PagerSnapShot> {
                 val aozoraBlockParser = createBlockParser(true)
 
@@ -58,7 +58,7 @@ object DummyBookPageSource {
         object : CachedLinerPageSource(
             rawSource =
                 object : BookRawSource {
-                    override suspend fun getRawSource(): Flow<AozoraBlock> {
+                    override suspend fun getRawSource(): Flow<Block> {
                         val dummySource = dummyHtml.asSource()
                         return dummySource
                             .peek()

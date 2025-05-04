@@ -1,8 +1,8 @@
 package me.andannn.aozora.core.pagesource.page.builder
 
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.BlockMeasurer
 import me.andannn.aozora.core.pagesource.util.divideByTextIndex
@@ -15,9 +15,9 @@ class RoughPageBuilder(
     private val renderWidth: Float = meta.renderWidth
 
     private var currentWidth: Float = 0f
-    private val addedBlockList = mutableListOf<AozoraBlock>()
+    private val addedBlockList = mutableListOf<Block>()
 
-    override fun tryAddBlock(block: AozoraBlock): FillResult {
+    override fun tryAddBlock(block: Block): FillResult {
         val measuredResult = measurer.measure(block)
         if (currentWidth + measuredResult.totalLineHeight <= renderWidth) {
             addedBlockList += block

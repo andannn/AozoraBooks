@@ -2,7 +2,7 @@ package me.andannn.aozora.core.pagesource.raw
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.io.files.Path
-import me.andannn.aozora.core.data.common.AozoraBlock
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 
 private const val TAG = "BookRawSource"
@@ -14,7 +14,7 @@ interface BookRawSource {
     /**
      * get raw source of book.
      */
-    suspend fun getRawSource(): Flow<AozoraBlock>
+    suspend fun getRawSource(): Flow<Block>
 
     /**
      * get image uri by path.

@@ -13,11 +13,11 @@ interface BookPageSource {
      * generated pager snap shot flow by [pageMetaData].
      *
      * @param pageMetaData page meta data.
-     * @param initialProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
+     * @param initialBlockIndex initial start progress of book page source. every 64 bytes is One Unit of progress.
      */
     fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
-        initialProgress: Long = 0,
+        initialBlockIndex: Int?,
     ): Flow<PagerSnapShot>
 
     fun dispose()

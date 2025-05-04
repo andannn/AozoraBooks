@@ -67,16 +67,16 @@ interface UserDataRepository {
      */
     suspend fun setProgressOfBook(
         bookCardId: String,
-        progress: Long,
+        blockIndex: Int?,
     )
 
     /**
      * Get the progress of book.
      */
-    fun getProgressFlow(bookCardId: String): Flow<Long?>
+    fun getProgressFlow(bookCardId: String): Flow<Int?>
 
     /**
      * Get the progress of book.
      */
-    suspend fun getProgress(bookCardId: String): Long?
+    suspend fun getProgress(bookCardId: String): Int?
 }

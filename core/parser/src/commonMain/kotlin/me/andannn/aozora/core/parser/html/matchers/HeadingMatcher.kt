@@ -16,10 +16,11 @@ object HeadingMatcher : ElementMatcher {
         val className = node.attr("class")
         val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
         val child = node.children().getOrNull(0) ?: return null
-        val styleName = child.attr("class") ?: return null
+        val styleName = child.attr("class")
         val style =
             when (styleName) {
                 "naka-midashi" -> AozoraTextStyle.HEADING_MEDIUM
+                "o-midashi" -> AozoraTextStyle.HEADING_LARGE
 
                 else -> AozoraTextStyle.PARAGRAPH
             }
@@ -28,7 +29,7 @@ object HeadingMatcher : ElementMatcher {
         return Heading(
             indent = indent,
             style = style,
-            elements = elements,
+            elements = elements + AozoraElement.LineBreak,
         )
     }
 }

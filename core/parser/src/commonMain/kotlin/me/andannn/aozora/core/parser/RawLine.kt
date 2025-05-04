@@ -10,7 +10,7 @@ import kotlinx.io.readString
  * @property length read byte count
  * @property content line content
  */
-data class RawLine(
+data class RawLine constructor(
     val index: Long,
     val length: Long,
     val content: String,

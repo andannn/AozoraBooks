@@ -1,6 +1,7 @@
 package me.andannn.aozora.core.pagesource.raw
 
 import com.fleeksoft.ksoup.Ksoup
+import com.fleeksoft.ksoup.nodes.TextNode
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,8 +20,8 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.BookModel
 import me.andannn.aozora.core.parser.createBlockParser
@@ -57,7 +58,7 @@ class RemoteOrCacheBookRawSource(
         }
     }
 
-    override suspend fun getRawSource(): Flow<AozoraBlock> {
+    override suspend fun getRawSource(): Flow<Block> {
         if (loadedSource != null && usingHtmlFile != null) {
             val parser = createBlockParser(isHtml = useHtmlFirst)
             return loadedSource!!
@@ -288,9 +289,20 @@ fun processParseHtml(
     val res = Ksoup.parse(html)
     val title = res.select(".title").text()
     val author = res.select(".author").text()
-    val mainText = html.replaceBefore("<div class=\"main_text\">", "")
+    val children = res.selectFirst(".main_text")?.childNodes() ?: emptyList()
+    val mainContentBuilder = StringBuilder()
+    children
+        .asSequence()
+        .filterNot { it is TextNode && (it.text().isBlank() || it.text().isEmpty()) }
+        .forEach {
+            val a = it.toString()
+            mainContentBuilder.append(it.toString().replace("\n", ""))
+            if (a == "<br>") {
+                mainContentBuilder.append("\n")
+            }
+        }
     utf8HtmlFileSink.use { sink ->
-        utf8HtmlFileSink.writeString(mainText)
+        utf8HtmlFileSink.writeString(mainContentBuilder.toString())
     }
 
 // TODO: Calculate file lenth

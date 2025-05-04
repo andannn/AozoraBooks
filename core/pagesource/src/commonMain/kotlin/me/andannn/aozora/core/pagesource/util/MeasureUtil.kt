@@ -1,8 +1,7 @@
 package me.andannn.aozora.core.pagesource.util
 
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.Block
 
 /**
  * Divide the element from [startIndex].
@@ -51,17 +50,17 @@ fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText,
 /**
  * Divide the element by [startIndex] (not include).
  */
-fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBlock> {
+fun Block.divideByTextIndex(startIndex: Int): Pair<Block, Block> {
     if (startIndex <= 0) {
         error("index must be greater than 0")
     }
 
-    when (blockType) {
-        BlockType.Image -> {
+    when (this) {
+        is Block.Image -> {
             error("Image can not be divided")
         }
 
-        is BlockType.TextType -> {
+        is Block.TextBlock -> {
             var currentElementStartIndex = 0
             var hitElement: IndexedValue<AozoraElement>? = null
             for ((index, element) in elements.withIndex()) {
@@ -84,10 +83,10 @@ fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBloc
                     hitPair = it
                 }
             if (hitPair != null) {
-                return this.copy(
+                return this.copyWith(
                     elements = elements.subList(0, hitElement.index) + listOf(hitPair.first),
                 ) to
-                    this.copy(
+                    this.copyWith(
                         elements =
                             listOf(hitPair.second) +
                                 elements.subList(
@@ -97,10 +96,10 @@ fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBloc
                     )
             } else {
                 val nextIndex = hitElement.index + 1
-                return this.copy(
+                return this.copyWith(
                     elements = elements.subList(0, nextIndex),
                 ) to
-                    this.copy(
+                    this.copyWith(
                         elements =
                             elements.subList(
                                 nextIndex,

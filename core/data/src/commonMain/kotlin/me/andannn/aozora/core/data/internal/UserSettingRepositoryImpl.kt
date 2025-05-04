@@ -23,7 +23,7 @@ internal class UserDataRepositoryImpl : UserDataRepository {
 
     private val readerThemeFlow = MutableStateFlow(ReaderTheme.DYNAMIC)
 
-    private val progressFlow = MutableStateFlow(mutableMapOf<String, Long>())
+    private val progressFlow = MutableStateFlow(mutableMapOf<String, Int>())
 
     override fun getFontSizeLevel(): StateFlow<FontSizeLevel> = fontSizeLevelFlow
 
@@ -57,18 +57,18 @@ internal class UserDataRepositoryImpl : UserDataRepository {
 
     override suspend fun setProgressOfBook(
         bookCardId: String,
-        progress: Long,
+        blockIndex: Int?,
     ) {
         progressFlow.update {
-            it[bookCardId] = progress
+            it[bookCardId] = blockIndex ?: 0
             it
         }
     }
 
-    override fun getProgressFlow(bookCardId: String): Flow<Long?> =
+    override fun getProgressFlow(bookCardId: String): Flow<Int?> =
         progressFlow.map {
             it[bookCardId]
         }
 
-    override suspend fun getProgress(bookCardId: String): Long? = progressFlow.value[bookCardId]
+    override suspend fun getProgress(bookCardId: String): Int? = progressFlow.value[bookCardId]
 }

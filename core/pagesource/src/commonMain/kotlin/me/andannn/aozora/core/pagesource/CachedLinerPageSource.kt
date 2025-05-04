@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock.System
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.page.builder.PageBuilder
@@ -36,7 +36,7 @@ abstract class CachedLinerPageSource(
     private val rawSource: BookRawSource,
     private val useRoughPageBuilder: Boolean = false,
 ) : BookPageSource {
-    private val cachedBlockList = mutableListOf<AozoraBlock>()
+    private val cachedBlockList = mutableListOf<Block>()
     private var isCachedCompleted: Boolean = false
     private var version: Int = 0
 
@@ -45,10 +45,10 @@ abstract class CachedLinerPageSource(
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
-        initialProgress: Long,
+        initialBlockIndex: Int?,
     ): Flow<PagerSnapShot> =
         flow {
-            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialProgress, metaData $pageMetaData. " }
+            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialBlockIndex, metaData $pageMetaData. " }
 
             version++
 
@@ -62,20 +62,25 @@ abstract class CachedLinerPageSource(
             Napier.d(tag = TAG) { "start load page. " }
 
             createPageFlow(pageMetaData, rawSourceFlow)
-                .onEach { Napier.v(tag = TAG) { "page added ${it::class.simpleName} ${(it as? AozoraRoughPage)?.progressRange}" } }
+                .onEach { Napier.v(tag = TAG) { "page added ${it::class.simpleName} ${(it as? AozoraRoughPage)?.pageProgress}" } }
                 .chunked(CHUNK_SIZE)
                 .collectIndexed { index, pageList ->
                     loadedPages.addAll(pageList)
-                    if (initialProgress == 0L && index == 0) {
-                        Napier.d(tag = TAG) { "hit first page" }
-                        initialPageIndex = 0
-                    }
 
-                    val hitIndex =
-                        pageList.indexOfFirst { initialProgress in ((it as? AozoraRoughPage)?.progressRange ?: -1L..0L) }
-                    if (initialPageIndex == null && hitIndex != -1) {
-                        Napier.d(tag = TAG) { "hit initial. index: $hitIndex}" }
-                        initialPageIndex = hitIndex + index * CHUNK_SIZE
+                    if (initialPageIndex == null) {
+                        if (initialBlockIndex == null) {
+                            Napier.d(tag = TAG) { "hit Book cover page" }
+                            initialPageIndex = 0
+                        } else {
+                            val hitIndex =
+                                pageList.indexOfFirst {
+                                    initialBlockIndex in ((it as? AozoraRoughPage)?.pageProgress ?: -1L..0L)
+                                }
+                            if (hitIndex != -1) {
+                                Napier.d(tag = TAG) { "hit initial. index: $hitIndex}" }
+                                initialPageIndex = hitIndex + index * CHUNK_SIZE
+                            }
+                        }
                     }
 
                     if (initialPageIndex != null) {
@@ -98,7 +103,7 @@ abstract class CachedLinerPageSource(
 
     private fun createPageFlow(
         pageMetaData: PageMetaData,
-        rawSourceFlow: Flow<AozoraBlock>,
+        rawSourceFlow: Flow<Block>,
     ): Flow<AozoraPage> {
         val pageFlow =
             if (useRoughPageBuilder) {
@@ -144,7 +149,7 @@ abstract class CachedLinerPageSource(
     /**
      * return cached block list if available. or return source flow.
      */
-    private fun Flow<AozoraBlock>.cachedOrSource(): Flow<AozoraBlock> =
+    private fun Flow<Block>.cachedOrSource(): Flow<Block> =
         channelFlow {
             if (isCachedCompleted) {
                 Napier.d(tag = TAG) { "Using cached source." }

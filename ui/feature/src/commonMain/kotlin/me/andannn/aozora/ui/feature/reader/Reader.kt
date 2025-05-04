@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
@@ -36,17 +34,13 @@ private fun ReaderContent(
     onEvent: (ReaderUiEvent) -> Unit,
 ) {
     val localDensity = LocalDensity.current
-    val initial =
-        remember {
-            mutableLongStateOf(0L)
-        }
+
     BoxWithConstraints(modifier = modifier) {
         val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }
         val maxWidth = with(localDensity) { maxWidth.toPx() }
         val presenter =
             rememberBookViewerPresenter(
                 card = getCardById(cardId),
-                initialProgress = initial.longValue,
                 screenSize = Size(maxWidth, maxHeight),
             )
         val state = presenter.present()

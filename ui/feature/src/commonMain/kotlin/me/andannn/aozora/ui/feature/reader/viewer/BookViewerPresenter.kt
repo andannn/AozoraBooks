@@ -35,12 +35,10 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberBookViewerPresenter(
     card: AozoraBookCard,
     screenSize: Size,
-    initialProgress: Long,
     settingRepository: UserDataRepository = getKoin().get(),
-) = remember(card, initialProgress, screenSize, settingRepository) {
+) = remember(card, screenSize, settingRepository) {
     BookViewerPresenter(
         card,
-        initialProgress,
         screenSize,
         settingRepository,
     )
@@ -50,7 +48,6 @@ private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
     private val card: AozoraBookCard,
-    private val initialProgress: Long,
     private val screenSize: Size,
     private val settingRepository: UserDataRepository,
 ) : Presenter<BookViewerState> {
@@ -61,6 +58,7 @@ class BookViewerPresenter(
         val theme by settingRepository.getReaderTheme().collectAsRetainedState()
         val topMargin by settingRepository.getTopMargin().collectAsRetainedState()
         val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
+        val progressOrNull by settingRepository.getProgressFlow(card.id).collectAsRetainedState(null)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot?>(null)
@@ -82,7 +80,14 @@ class BookViewerPresenter(
                 .drop(1)
                 .collect { newIndex ->
                     Napier.d(tag = TAG) { "new settled page collected $newIndex" }
-                    snapshotState?.pageList[newIndex]
+                    val page = snapshotState?.pageList[newIndex]
+
+                    if (page != null) {
+                        settingRepository.setProgressOfBook(
+                            card.id,
+                            (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first,
+                        )
+                    }
                 }
         }
 
@@ -90,7 +95,7 @@ class BookViewerPresenter(
         val bookSource: BookPageSource =
             remember {
                 RoughPageSource(
-                    card,
+                    card = card,
                     scope = scope,
                 )
             }
@@ -101,7 +106,6 @@ class BookViewerPresenter(
         }
 
         LaunchedEffect(
-            initialProgress,
             fontSize,
             topMargin,
             lineSpacing,
@@ -115,8 +119,9 @@ class BookViewerPresenter(
                     fontType = fontType,
                     lineSpacing = lineSpacing,
                 )
+            val savedBlockIndex = settingRepository.getProgress(card.id)
             bookSource
-                .getPagerSnapShotFlow(pageMetadata, initialProgress = initialProgress)
+                .getPagerSnapShotFlow(pageMetadata, initialBlockIndex = savedBlockIndex?.toInt())
                 .distinctUntilChanged()
                 .collect {
                     snapshotState = it
