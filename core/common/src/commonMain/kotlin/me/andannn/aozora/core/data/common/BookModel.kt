@@ -7,13 +7,12 @@ import kotlinx.serialization.Serializable
 /**
  * Book source.
  *
- * @property meta Meta data of book.
+ * @property info Meta data of book.
  * @property contentHtmlPath Path of html file which contains book content.
- * @property contentPlainTextPath Path of plain text file which contains book content.
  * @property illustrationPath List of path of illustration files.
  */
 data class BookModel(
-    val meta: BookMeta,
+    val info: BookInfo,
     val contentHtmlPath: Path?,
     val illustrationPath: List<Path> = emptyList(),
 )
@@ -22,7 +21,7 @@ data class BookModel(
  * Meta data of book.
  */
 @Serializable
-data class BookMeta(
+data class BookInfo(
     /**
      * Title of book.
      */
@@ -45,4 +44,16 @@ data class BookMeta(
     val blockCount: Int = 0,
     @SerialName("bibliographicalInformation")
     val bibliographicalInformation: String,
+    @SerialName("tableOfContents")
+    val tableOfContentList: List<TableOfContent>,
+)
+
+@Serializable
+data class TableOfContent(
+    @SerialName("headingLevel")
+    val headingLevel: Int,
+    @SerialName("text")
+    val title: String,
+    @SerialName("lineNumber")
+    val lineNumber: Int,
 )

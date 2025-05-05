@@ -5,6 +5,7 @@ import androidx.compose.runtime.compositionLocalOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.PageMetaData
 
 val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
@@ -24,14 +25,15 @@ interface BookPageSource {
         pageMetaData: PageMetaData,
         initialBlockIndex: Int?,
     ): Flow<PagerSnapShot>
+
+    /**
+     * get book meta.
+     */
+    suspend fun getBookInfo(): BookInfo
 }
 
 /**
  * Pager snap shot.
- *
- * @param initialIndex initial page index.
- * @param pageList page list.
- * @param snapshotVersion snapshot version.
  */
 data class PagerSnapShot(
     val initialIndex: Int?,

@@ -48,6 +48,22 @@ private fun getCardById(id: String) =
             )
         }
 
+        "56648" -> {
+            AozoraBookCard(
+                id = "56648",
+                zipUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_ruby_58198.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_58207.html",
+            )
+        }
+
+        "60756" -> {
+            AozoraBookCard(
+                id = "60756",
+                zipUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_ruby_74753.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_74787.html",
+            )
+        }
+
         else -> error("")
     }
 

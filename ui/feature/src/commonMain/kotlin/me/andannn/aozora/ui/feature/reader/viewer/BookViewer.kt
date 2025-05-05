@@ -34,9 +34,9 @@ fun BookViewer(
     Scaffold(modifier = modifier) {
         ReaderContent(
             modifier = Modifier.padding(it),
-            pages = state.pages,
+            pages = state.bookPageState.pages,
             theme = state.theme,
-            pagerState = state.pagerState,
+            pagerState = state.bookPageState.pagerState,
             pageMetadata = state.pageMetadata,
         )
     }

@@ -64,6 +64,7 @@ class ElementMatcherTest {
             AozoraElement.Heading(
                 indent = 4,
                 style = AozoraTextStyle.HEADING_MEDIUM,
+                headingLevel = 4,
                 elements =
                     listOf(
                         AozoraElement.Text("第一　"),

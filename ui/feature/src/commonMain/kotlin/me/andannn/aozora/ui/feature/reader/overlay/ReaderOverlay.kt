@@ -50,6 +50,13 @@ fun ReaderOverlayContent(
         ) {
             Text("Open Font Setting")
         }
+        TextButton(
+            onClick = {
+                onEvent.invoke(ReaderOverlayEvent.OnOpenTableOfContents)
+            },
+        ) {
+            Text("Open Table of content")
+        }
         Spacer(modifier = Modifier.weight(1f))
         ProgressSlider(
             modifier =

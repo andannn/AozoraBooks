@@ -124,8 +124,11 @@ class BookViewerPresenter(
                     lineSpacing = lineSpacing,
                 ),
             theme = theme,
-            pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
-            pagerState = pagerState,
+            bookPageState =
+                BookPageState(
+                    pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
+                    pagerState = pagerState,
+                ),
         ) { eventSink ->
             when (eventSink) {
                 else -> {}
@@ -134,11 +137,15 @@ class BookViewerPresenter(
     }
 }
 
+data class BookPageState(
+    val pages: ImmutableList<AozoraPage>,
+    val pagerState: PagerState,
+)
+
 data class BookViewerState(
     val pageMetadata: PageMetaData,
-    val pages: ImmutableList<AozoraPage>,
+    val bookPageState: BookPageState,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
-    val pagerState: PagerState,
     val evenSink: (BookViewerUiEvent) -> Unit = {},
 ) : CircuitUiState
 
