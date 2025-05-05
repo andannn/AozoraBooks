@@ -31,7 +31,7 @@ fun PageViewV2(
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
 ) {
-    Napier.d(tag = TAG) { "PageView E. page ${page.hashCode()}" }
+    Napier.d(tag = TAG) { "PageView E. page $page" }
     val measurer =
         rememberTextMeasurer(
             cacheSize = 0,

@@ -1,41 +1,42 @@
 package me.andannn.aozora.core.parser
 
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.Block
 
 interface AozoraBlockParser {
     /**
      * parse line to block
      */
-    fun parseLineAsBlock(line: RawLine): AozoraBlock
+    fun parseLineAsBlock(line: RawLine): Block
 }
 
-internal class DefaultAozoraBlockParser(
+class DefaultAozoraBlockParser(
     val parser: AozoraLineParser,
 ) : AozoraBlockParser {
-    override fun parseLineAsBlock(line: RawLine): AozoraBlock {
-        val elements = parser.parseLine(line)
-        var blockType: BlockType?
-        val blockElements: List<AozoraElement>
-        var indent = 0
+    var blockIndex: Int = 0
 
-        if (elements.size == 1 && elements[0] is AozoraElement.Heading) {
+    override fun parseLineAsBlock(line: RawLine): Block {
+        val elements = parser.parseLine(line)
+
+        if (elements.size == 2 && elements[0] is AozoraElement.Heading) {
             val heading = (elements[0] as AozoraElement.Heading)
-            blockElements = heading.elements
-            blockType = BlockType.Heading(indent = heading.indent, style = heading.style)
-            indent = heading.indent
+            val indent = heading.indent
+            return Block.Heading(
+                blockIndex = blockIndex++,
+                elements = heading.elements,
+                indent = indent,
+                textStyle = heading.style,
+            )
         } else if (elements.size == 1 && elements[0] is AozoraElement.Illustration) {
-            blockType = BlockType.Image
-            blockElements = elements
+            return Block.Image(
+                blockIndex = blockIndex++,
+                elements = elements,
+            )
         } else {
-            blockType = BlockType.Text()
-            blockElements = elements
+            return Block.Paragraph(
+                blockIndex = blockIndex++,
+                elements = elements,
+            )
         }
-        return AozoraBlock(
-            elements = blockElements,
-            blockType = blockType,
-            byteRange = line.index..(line.index + line.length),
-        )
     }
 }

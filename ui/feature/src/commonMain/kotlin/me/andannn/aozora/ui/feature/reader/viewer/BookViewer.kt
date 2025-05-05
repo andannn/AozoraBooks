@@ -1,18 +1,26 @@
 package me.andannn.aozora.ui.feature.reader.viewer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material.Slider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -21,6 +29,7 @@ import me.andannn.aozora.core.pagesource.page.builder.layout
 import me.andannn.aozora.ui.common.theme.NotoSerifJpFontFamily
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getTextColor
+import kotlin.math.roundToInt
 
 private const val TAG = "BookViewer"
 
@@ -43,7 +52,7 @@ fun BookViewer(
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
-    pages: List<AozoraPage>,
+    pages: ImmutableList<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
     pageMetadata: PageMetaData,
@@ -51,27 +60,69 @@ private fun ReaderContent(
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
     val fontFamily = getFontFamilyByType(pageMetadata.fontType)
-
+    val scope = rememberCoroutineScope()
     Napier.d(tag = TAG) { "ReaderContent font style ${pageMetadata.fontType}, fontFamily $fontFamily" }
-    HorizontalPager(
-        modifier = Modifier.background(backgroundColor),
-        state = pagerState,
-        reverseLayout = true,
-    ) { pageIndex ->
-        val page = rememberUpdatedState(pages.getOrNull(pageIndex))
-        val layoutPage =
-            remember(page.value) {
-                page.value?.layout()
-            }
+    val pageSize = pagerState.pageCount
+    val settledPageIndex = pagerState.targetPage
+    Box {
+        HorizontalPager(
+            modifier = Modifier.background(backgroundColor),
+            state = pagerState,
+            reverseLayout = true,
+        ) { pageIndex ->
+            val page = rememberUpdatedState(pages.getOrNull(pageIndex))
+            val layoutPage =
+                remember(page.value) {
+                    page.value?.layout()
+                }
 
-        if (layoutPage != null) {
-            PageViewV2(
-                modifier = Modifier.fillMaxSize(),
-                page = layoutPage,
-                textColor = textColor,
-                fontFamily = fontFamily,
-            )
+            if (layoutPage != null) {
+                PageViewV2(
+                    modifier = Modifier.fillMaxSize(),
+                    page = layoutPage,
+                    textColor = textColor,
+                    fontFamily = fontFamily,
+                )
+            }
         }
+        Napier.d(tag = TAG) { "pageSize. $pageSize" }
+        Napier.d(tag = TAG) { "settledPageIndex. $settledPageIndex" }
+
+        ProgressSlider(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp, start = 40.dp, end = 40.dp),
+            pageSize = pageSize,
+            currentPageIndex = settledPageIndex,
+            onPageChanged = {
+                scope.launch {
+                    Napier.d(tag = TAG) { "on Change it. $it" }
+                    pagerState.scrollToPage(it)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun ProgressSlider(
+    modifier: Modifier = Modifier,
+    pageSize: Int,
+    currentPageIndex: Int,
+    onPageChanged: (Int) -> Unit,
+) {
+    if (pageSize >= 2) {
+        Slider(
+            modifier =
+                modifier
+                    .graphicsLayer { scaleX = -1f },
+            value = currentPageIndex.toFloat(),
+            valueRange = 0f..(pageSize - 1).toFloat(),
+            onValueChange = {
+                onPageChanged(it.roundToInt())
+            },
+        )
     }
 }
 

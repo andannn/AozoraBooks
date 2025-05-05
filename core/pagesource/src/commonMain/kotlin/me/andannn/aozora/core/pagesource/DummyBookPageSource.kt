@@ -1,18 +1,20 @@
 package me.andannn.aozora.core.pagesource
 
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.io.files.Path
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.pagesource.page.builder.createPageBuilder
+import me.andannn.aozora.core.pagesource.page.builder.LayoutPageBuilderFactory
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
-import me.andannn.aozora.core.parser.createBlockParser
+import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
+import me.andannn.aozora.core.parser.html.HtmlLineParser
 import me.andannn.aozora.core.parser.lineSequence
 import me.andannn.core.util.asSource
 
@@ -22,9 +24,9 @@ object DummyBookPageSource {
         return object : BookPageSource {
             override fun getPagerSnapShotFlow(
                 meta: PageMetaData,
-                startProgress: Long,
+                startProgress: Int?,
             ): Flow<PagerSnapShot> {
-                val aozoraBlockParser = createBlockParser(true)
+                val aozoraBlockParser = DefaultAozoraBlockParser(HtmlLineParser)
 
                 fun pageFlow() =
                     createPageFlowFromSequence(
@@ -35,20 +37,17 @@ object DummyBookPageSource {
                                 .map { aozoraBlockParser.parseLineAsBlock(it) }
                                 .asFlow(),
                         builderFactory = {
-                            createPageBuilder(meta)
+                            LayoutPageBuilderFactory.create(meta)
                         },
                     )
                 return pageFlow().map {
                     pageList.add(it)
                     PagerSnapShot(
-                        pageList = pageList,
+                        pageList = pageList.toImmutableList(),
                         initialIndex = 0,
                         snapshotVersion = 0,
                     )
                 }
-            }
-
-            override fun dispose() {
             }
         }
     }
@@ -57,13 +56,13 @@ object DummyBookPageSource {
         object : CachedLinerPageSource(
             rawSource =
                 object : BookRawSource {
-                    override suspend fun getRawSource(): Flow<AozoraBlock> {
+                    override suspend fun getRawSource(): Flow<Block> {
                         val dummySource = dummyHtml.asSource()
                         return dummySource
                             .peek()
                             .lineSequence()
                             .map {
-                                createBlockParser(true).parseLineAsBlock(it)
+                                DefaultAozoraBlockParser(HtmlLineParser).parseLineAsBlock(it)
                             }.asFlow()
                     }
 
@@ -72,10 +71,6 @@ object DummyBookPageSource {
                     }
 
                     override suspend fun getBookMeta(): BookMeta {
-                        TODO("Not yet implemented")
-                    }
-
-                    override fun dispose() {
                         TODO("Not yet implemented")
                     }
                 },

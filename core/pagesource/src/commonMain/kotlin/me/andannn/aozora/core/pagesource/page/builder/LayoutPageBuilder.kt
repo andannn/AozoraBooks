@@ -2,13 +2,12 @@ package me.andannn.aozora.core.pagesource.page.builder
 
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
@@ -48,14 +47,11 @@ private fun createCoverPage(
     AozoraRoughPage(
         pageMetaData = pageMetaData,
         blocks =
-            listOfNotNull<AozoraBlock>(
-                AozoraBlock(
-                    blockType =
-                        BlockType.Heading(
-                            style = AozoraTextStyle.HEADING_LARGE,
-                            indent = 2,
-                        ),
-                    byteRange = 0L..0L,
+            listOfNotNull<Block>(
+                Block.Heading(
+                    blockIndex = -1,
+                    textStyle = AozoraTextStyle.HEADING_LARGE,
+                    indent = 2,
                     elements =
                         listOfNotNull(
                             AozoraElement.Text(
@@ -65,13 +61,10 @@ private fun createCoverPage(
                         ),
                 ),
                 subtitle?.let {
-                    AozoraBlock(
-                        blockType =
-                            BlockType.Heading(
-                                style = AozoraTextStyle.HEADING_LARGE,
-                                indent = 2,
-                            ),
-                        byteRange = 0L..0L,
+                    Block.Heading(
+                        blockIndex = -1,
+                        textStyle = AozoraTextStyle.HEADING_LARGE,
+                        indent = 2,
                         elements =
                             listOfNotNull(
                                 AozoraElement.Text(
@@ -81,13 +74,10 @@ private fun createCoverPage(
                             ),
                     )
                 },
-                AozoraBlock(
-                    blockType =
-                        BlockType.Heading(
-                            style = AozoraTextStyle.HEADING_MEDIUM,
-                            indent = 3,
-                        ),
-                    byteRange = 0L..0L,
+                Block.Heading(
+                    blockIndex = -1,
+                    textStyle = AozoraTextStyle.HEADING_MEDIUM,
+                    indent = 3,
                     elements =
                         listOfNotNull(
                             AozoraElement.Text(
@@ -114,7 +104,8 @@ class LayoutPageBuilder(
 
     private var isPageBreakAdded = false
 
-    override fun tryAddBlock(block: AozoraBlock): FillResult {
+    override fun tryAddBlock(block: Block): FillResult {
+        Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
         val remainingElements = block.elements.toMutableList()
 
         while (remainingElements.isNotEmpty()) {
@@ -122,11 +113,11 @@ class LayoutPageBuilder(
             val result =
                 tryAddElement(
                     element,
-                    lineIndent = (block.blockType as? BlockType.TextType)?.indent ?: 0,
+                    lineIndent = (block as? Block.TextBlock)?.indent ?: 0,
                     sizeOf = { element ->
                         measurer.measure(
                             element,
-                            (block.blockType as? BlockType.TextType)?.style,
+                            (block as? Block.TextBlock)?.textStyle,
                         )
                     },
                 )
@@ -147,7 +138,7 @@ class LayoutPageBuilder(
         return if (remainingElements.isEmpty()) {
             FillResult.FillContinue
         } else {
-            FillResult.Filled(remainBlock = block.copy(remainingElements))
+            FillResult.Filled(remainBlock = block.copyWith(remainingElements))
         }
     }
 

@@ -28,10 +28,10 @@ sealed class AozoraPage(
 
     data class AozoraRoughPage(
         override val pageMetaData: PageMetaData,
-        val blocks: ImmutableList<AozoraBlock>,
+        val blocks: ImmutableList<Block>,
     ) : AozoraPage(pageMetaData) {
-        val progressRange by lazy {
-            blocks.first().byteRange.first..blocks.last().byteRange.last
+        val pageProgress by lazy {
+            blocks.first().blockIndex..blocks.last().blockIndex
         }
     }
 }

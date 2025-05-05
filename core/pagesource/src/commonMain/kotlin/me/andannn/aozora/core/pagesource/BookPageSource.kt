@@ -1,5 +1,6 @@
 package me.andannn.aozora.core.pagesource
 
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -12,14 +13,12 @@ interface BookPageSource {
      * generated pager snap shot flow by [pageMetaData].
      *
      * @param pageMetaData page meta data.
-     * @param initialProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
+     * @param initialBlockIndex initial start progress of book page source. every 64 bytes is One Unit of progress.
      */
     fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
-        initialProgress: Long = 0,
+        initialBlockIndex: Int?,
     ): Flow<PagerSnapShot>
-
-    fun dispose()
 }
 
 /**
@@ -31,6 +30,6 @@ interface BookPageSource {
  */
 data class PagerSnapShot(
     val initialIndex: Int?,
-    val pageList: List<AozoraPage>,
+    val pageList: ImmutableList<AozoraPage>,
     val snapshotVersion: Int,
 )

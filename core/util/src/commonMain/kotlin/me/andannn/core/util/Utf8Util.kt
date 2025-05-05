@@ -72,6 +72,3 @@ internal fun readStringOfPath(
     val source = SystemFileSystem.source(path).buffered()
     return charset.newDecoder().decode(source)
 }
-
-private const val REPLACEMENT_CHARACTER: Char = '\ufffd'
-private const val REPLACEMENT_CODE_POINT: Int = REPLACEMENT_CHARACTER.code

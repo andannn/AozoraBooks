@@ -7,6 +7,7 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
@@ -31,9 +32,9 @@ fun AozoraBooksApp(
                 rememberCircuitNavigator(backStack) {
                 }
 
-//        BackHandler(enabled = backStack.size > 1) {
-//            navigator.pop()
-//        }
+            BackHandler(enabled = backStack.size > 1) {
+                navigator.pop()
+            }
 
             NavigableCircuitContent(navigator, backStack)
 

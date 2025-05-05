@@ -69,6 +69,7 @@ class ElementMatcherTest {
                         AozoraElement.Text("第一　"),
                         AozoraElement.Ruby("腹中", "ふくちゅう"),
                         AozoraElement.Text("の新年"),
+                        AozoraElement.LineBreak,
                     ),
             ),
             HeadingMatcher.match(

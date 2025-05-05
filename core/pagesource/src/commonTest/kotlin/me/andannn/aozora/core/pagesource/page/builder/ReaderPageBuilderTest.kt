@@ -1,9 +1,9 @@
 package me.andannn.aozora.core.pagesource.page.builder
 
 import androidx.compose.ui.geometry.Size
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.AozoraTextStyle
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.FontType
@@ -214,10 +214,9 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            AozoraBlock(
+            Block.Paragraph(
+                blockIndex = 0,
                 elements = emptyList(),
-                blockType = BlockType.Text(),
-                byteRange = 0L..0L,
             )
         assertEquals(
             FillResult.FillContinue,
@@ -245,10 +244,11 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            AozoraBlock(
+            Block.Heading(
+                indent = 5,
                 elements = emptyList(),
-                blockType = BlockType.Text(indent = 5),
-                byteRange = 0L..0L,
+                textStyle = AozoraTextStyle.HEADING_LARGE,
+                blockIndex = 0,
             )
         assertEquals(
             FillResult.FillContinue,

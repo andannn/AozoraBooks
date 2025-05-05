@@ -7,15 +7,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.data.common.AozoraBookCard
-import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
 import me.andannn.aozora.ui.feature.reader.viewer.rememberBookViewerPresenter
 
@@ -38,36 +34,27 @@ private fun ReaderContent(
     onEvent: (ReaderUiEvent) -> Unit,
 ) {
     val localDensity = LocalDensity.current
-    val initial =
-        remember {
-            mutableLongStateOf(0L)
-        }
-    val fontLevel =
-        remember {
-            mutableStateOf(FontSizeLevel.LEVEL_4)
-        }
+
     BoxWithConstraints(modifier = modifier) {
         val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }
         val maxWidth = with(localDensity) { maxWidth.toPx() }
         val presenter =
             rememberBookViewerPresenter(
                 card = getCardById(cardId),
-                initialProgress = initial.longValue,
                 screenSize = Size(maxWidth, maxHeight),
             )
-        Box {
-            BookViewer(
-                state = presenter.present(),
-            )
+        val state = presenter.present()
+        BookViewer(
+            state = state,
+        )
 
-            Column {
-                Box(modifier = Modifier.height(30.dp))
+        Column {
+            Box(modifier = Modifier.height(30.dp))
 
-                TextButton(onClick = {
-                    onEvent.invoke(ReaderUiEvent.OnOpenFontSetting)
-                }) {
-                    Text("Open Font Setting")
-                }
+            TextButton(onClick = {
+                onEvent.invoke(ReaderUiEvent.OnOpenFontSetting)
+            }) {
+                Text("Open Font Setting")
             }
         }
     }

@@ -57,8 +57,7 @@ sealed interface AozoraElement {
         override val text: String
             get() =
                 elements.fold("") { acc, element ->
-                    check(element is BaseText)
-                    acc + element.text
+                    acc + ((element as? BaseText)?.text ?: "")
                 }
     }
 

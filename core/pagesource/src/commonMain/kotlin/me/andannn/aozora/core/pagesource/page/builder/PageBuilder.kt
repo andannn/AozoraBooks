@@ -1,20 +1,20 @@
 package me.andannn.aozora.core.pagesource.page.builder
 
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.Block
 
 sealed interface FillResult {
     data class Filled(
         val remainElement: AozoraElement? = null,
-        val remainBlock: AozoraBlock? = null,
+        val remainBlock: Block? = null,
     ) : FillResult
 
     data object FillContinue : FillResult
 }
 
 interface PageBuilder<out T : AozoraPage> {
-    fun tryAddBlock(block: AozoraBlock): FillResult
+    fun tryAddBlock(block: Block): FillResult
 
     fun build(): T
 }

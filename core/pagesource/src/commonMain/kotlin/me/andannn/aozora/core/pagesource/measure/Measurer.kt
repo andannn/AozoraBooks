@@ -1,10 +1,9 @@
 package me.andannn.aozora.core.pagesource.measure
 
 import androidx.compose.ui.geometry.Size
-import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.BlockType
+import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.PaperLayout
@@ -29,7 +28,7 @@ data class BlockMeasureResult(
 }
 
 fun interface BlockMeasurer {
-    fun measure(block: AozoraBlock): BlockMeasureResult
+    fun measure(block: Block): BlockMeasureResult
 }
 
 fun interface ElementMeasurer {
@@ -54,18 +53,17 @@ class DefaultMeasurer(
         style: AozoraTextStyle?,
     ): ElementMeasureResult = sizeOf(element, style)
 
-    override fun measure(block: AozoraBlock): BlockMeasureResult {
-        val blockType = block.blockType
-        when (blockType) {
-            BlockType.Image -> return BlockMeasureResult(
+    override fun measure(block: Block): BlockMeasureResult {
+        when (block) {
+            is Block.Image -> return BlockMeasureResult(
                 lineCount = 1,
                 lineHeightPerLine = sizeOf(block.elements[0]).size.width,
                 availableRenderHeight = renderHeight,
             )
 
-            is BlockType.TextType -> {
+            is Block.TextBlock -> {
                 val style =
-                    fontStyleCache[blockType.style] ?: resolveAndSave(blockType.style)
+                    fontStyleCache[block.textStyle] ?: resolveAndSave(block.textStyle)
                 val lineHeight = style.lineHeight
 
                 if (block.elements.size == 1 && block.elements[0] is AozoraElement.LineBreak) {
@@ -77,7 +75,7 @@ class DefaultMeasurer(
                 }
 
                 val totalHeight = block.textCount * style.baseSize
-                val indent = blockType.indent
+                val indent = block.indent
                 val indentHeight = style.baseSize * indent
                 val availableRenderHeight = renderHeight - indentHeight
                 return BlockMeasureResult(

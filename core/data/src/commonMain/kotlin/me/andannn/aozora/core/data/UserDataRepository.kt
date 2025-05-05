@@ -1,5 +1,6 @@
 package me.andannn.aozora.core.data
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
@@ -10,7 +11,7 @@ import me.andannn.aozora.core.data.common.TopMargin
 /**
  * Repository for user setting.
  */
-interface UserSettingRepository {
+interface UserDataRepository {
     /**
      * Get the font size level.
      */
@@ -60,4 +61,22 @@ interface UserSettingRepository {
      * Set the reader theme.
      */
     suspend fun setReaderTheme(readerTheme: ReaderTheme)
+
+    /**
+     * Set the progress of book.
+     */
+    suspend fun setProgressOfBook(
+        bookCardId: String,
+        blockIndex: Int?,
+    )
+
+    /**
+     * Get the progress of book.
+     */
+    fun getProgressFlow(bookCardId: String): Flow<Int?>
+
+    /**
+     * Get the progress of book.
+     */
+    suspend fun getProgress(bookCardId: String): Int?
 }
