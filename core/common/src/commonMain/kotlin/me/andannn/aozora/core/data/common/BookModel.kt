@@ -43,4 +43,6 @@ data class BookMeta(
      */
     @SerialName("blockCount")
     val blockCount: Int = 0,
+    @SerialName("bibliographicalInformation")
+    val bibliographicalInformation: String,
 )

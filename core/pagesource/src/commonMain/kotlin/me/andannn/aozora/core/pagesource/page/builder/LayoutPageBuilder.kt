@@ -4,10 +4,10 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.data.common.Block
+import me.andannn.aozora.core.data.common.LayoutPage
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
@@ -16,9 +16,8 @@ import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
 
 private const val TAG = "ReaderPageBuilder"
 
-fun AozoraPage.layout(): AozoraLayoutPage {
+fun AozoraPage.layout(): LayoutPage {
     return when (this) {
-        is AozoraLayoutPage -> return this
         is AozoraRoughPage -> {
             val builder =
                 LayoutPageBuilder(pageMetaData, DefaultMeasurer(pageMetaData), forceAddBlock = true)
@@ -35,6 +34,8 @@ fun AozoraPage.layout(): AozoraLayoutPage {
                 author = author,
                 subtitle = subtitle,
             ).layout()
+
+        is AozoraPage.AozoraBibliographicalPage -> error("can not be layout")
     }
 }
 
@@ -93,7 +94,7 @@ class LayoutPageBuilder(
     private val meta: PageMetaData,
     private val measurer: ElementMeasurer,
     private val forceAddBlock: Boolean = false,
-) : PageBuilder<AozoraLayoutPage> {
+) {
     private val fullWidth: Float = meta.renderWidth
     private val fullHeight: Float = meta.renderHeight
 
@@ -104,7 +105,7 @@ class LayoutPageBuilder(
 
     private var isPageBreakAdded = false
 
-    override fun tryAddBlock(block: Block): FillResult {
+    fun tryAddBlock(block: Block): FillResult {
         Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
         val remainingElements = block.elements.toMutableList()
 
@@ -203,12 +204,12 @@ class LayoutPageBuilder(
         }
     }
 
-    override fun build(): AozoraLayoutPage {
+    fun build(): LayoutPage {
         if (lineBuilder != null) {
             buildNewLine()
         }
 
-        return AozoraLayoutPage(
+        return LayoutPage(
             pageMetaData = meta,
             lines = lines.toImmutableList(),
         )

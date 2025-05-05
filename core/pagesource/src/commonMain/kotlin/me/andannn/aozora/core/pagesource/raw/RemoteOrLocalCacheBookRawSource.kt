@@ -228,6 +228,7 @@ internal fun processParseHtml(
     val title = res.select(".title").text()
     val author = res.select(".author").text()
     val children = res.selectFirst(".main_text")?.childNodes() ?: emptyList()
+    val bibliographical = res.selectFirst(".bibliographical_information")
     val mainContentBuilder = StringBuilder()
 
     var lineCount = 0
@@ -251,6 +252,7 @@ internal fun processParseHtml(
             subtitle = null,
             author = author,
             blockCount = lineCount,
+            bibliographicalInformation = bibliographical.toString(),
         )
 
     val metaFileSink = SystemFileSystem.sink(Path(folder, META_FILE_NAME)).buffered()

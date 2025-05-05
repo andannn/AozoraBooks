@@ -1,4 +1,4 @@
-package me.andannn.aozora.ui.feature.reader.viewer.rendering
+package me.andannn.aozora.ui.feature.reader.viewer.page.rendering
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -10,12 +10,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.EmphasisRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.IndentRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.LineBreakRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.PageBreakRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.RubyRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.adapters.TextRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.LineBreakRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.PageBreakRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.RubyRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.TextRenderAdapterV2
 
 interface ElementRenderAdapterV2 {
     /**

@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":ui:common"))
             implementation(project(":core:common"))
+            implementation(project(":core:util"))
             implementation(project(":core:data"))
             implementation(project(":core:pagesource"))
         }
