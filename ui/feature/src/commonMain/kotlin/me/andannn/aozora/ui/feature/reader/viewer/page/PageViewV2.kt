@@ -1,4 +1,4 @@
-package me.andannn.aozora.ui.feature.reader.viewer
+package me.andannn.aozora.ui.feature.reader.viewer.page
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,18 +15,18 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraLayoutPage
+import me.andannn.aozora.core.data.common.LayoutPage
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.ui.common.theme.RandomColor
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.DEBUG_RENDER
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.ElementRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.rendering.createAdapters
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.createAdapters
 
 private const val TAG = "PageView"
 
 @Composable
 fun PageViewV2(
-    page: AozoraLayoutPage,
+    page: LayoutPage,
     textColor: Color,
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,

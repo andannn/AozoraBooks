@@ -10,7 +10,8 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.pagesource.page.builder.LayoutPageBuilderFactory
+import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
+import me.andannn.aozora.core.pagesource.page.builder.RoughPageBuilder
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
 import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
@@ -37,7 +38,7 @@ object DummyBookPageSource {
                                 .map { aozoraBlockParser.parseLineAsBlock(it) }
                                 .asFlow(),
                         builderFactory = {
-                            LayoutPageBuilderFactory.create(meta)
+                            RoughPageBuilder(meta = meta, measurer = DefaultMeasurer(meta))
                         },
                     )
                 return pageFlow().map {

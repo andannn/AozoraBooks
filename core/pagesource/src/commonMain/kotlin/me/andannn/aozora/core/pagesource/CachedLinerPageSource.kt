@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.chunked
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock.System
 import me.andannn.aozora.core.data.common.AozoraPage
@@ -20,7 +20,8 @@ import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookMeta
 import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.pagesource.page.builder.RoughPageBuilderFactory
+import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
+import me.andannn.aozora.core.pagesource.page.builder.RoughPageBuilder
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
 
@@ -58,8 +59,7 @@ abstract class CachedLinerPageSource(
             createPageFlow(
                 pageMetaData = pageMetaData,
                 rawSourceProvider = { rawSource.getRawSource() },
-            ).onEach { Napier.v(tag = TAG) { "page added ${it::class.simpleName} ${(it as? AozoraRoughPage)?.pageProgress}" } }
-                .chunked(CHUNK_SIZE)
+            ).chunked(CHUNK_SIZE)
                 .collectIndexed { index, pageList ->
                     loadedPages.addAll(pageList)
 
@@ -108,7 +108,7 @@ abstract class CachedLinerPageSource(
             createPageFlowFromSequence<AozoraRoughPage>(
                 blockSequenceFlow = cachedOrSource(rawSourceProvider),
                 builderFactory = {
-                    RoughPageBuilderFactory.create(pageMetaData)
+                    RoughPageBuilder(meta = pageMetaData, measurer = DefaultMeasurer(pageMetaData))
                 },
             )
 
@@ -120,6 +120,13 @@ abstract class CachedLinerPageSource(
                         title = bookMetaData!!.title,
                         author = bookMetaData!!.author,
                         subtitle = bookMetaData!!.subtitle,
+                    ),
+                )
+            }.onCompletion {
+                emit(
+                    AozoraPage.AozoraBibliographicalPage(
+                        pageMetaData = pageMetaData,
+                        html = rawSource.getBookMeta().bibliographicalInformation,
                     ),
                 )
             }.flowOn(Dispatchers.IO)

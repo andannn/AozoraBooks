@@ -29,6 +29,8 @@ import me.andannn.aozora.core.pagesource.page.builder.layout
 import me.andannn.aozora.ui.common.theme.NotoSerifJpFontFamily
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getTextColor
+import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
+import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
 import kotlin.math.roundToInt
 
 private const val TAG = "BookViewer"
@@ -70,23 +72,27 @@ private fun ReaderContent(
             state = pagerState,
             reverseLayout = true,
         ) { pageIndex ->
-            val page = rememberUpdatedState(pages.getOrNull(pageIndex))
-            val layoutPage =
-                remember(page.value) {
-                    page.value?.layout()
-                }
+            val pageState = rememberUpdatedState(pages.getOrNull(pageIndex))
 
-            if (layoutPage != null) {
-                PageViewV2(
-                    modifier = Modifier.fillMaxSize(),
-                    page = layoutPage,
-                    textColor = textColor,
-                    fontFamily = fontFamily,
-                )
+            val page = pageState.value
+            if (page is AozoraPage.AozoraBibliographicalPage) {
+                AozoraBibliographicalPage(page = page)
+            } else {
+                val layoutPage =
+                    remember(page) {
+                        page?.layout()
+                    }
+
+                if (layoutPage != null) {
+                    PageViewV2(
+                        modifier = Modifier.fillMaxSize(),
+                        page = layoutPage,
+                        textColor = textColor,
+                        fontFamily = fontFamily,
+                    )
+                }
             }
         }
-        Napier.d(tag = TAG) { "pageSize. $pageSize" }
-        Napier.d(tag = TAG) { "settledPageIndex. $settledPageIndex" }
 
         ProgressSlider(
             modifier =
