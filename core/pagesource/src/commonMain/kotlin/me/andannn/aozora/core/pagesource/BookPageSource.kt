@@ -1,9 +1,14 @@
 package me.andannn.aozora.core.pagesource
 
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
+
+val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
+    compositionLocalOf { error("no book source") }
 
 /**
  * Book page source.

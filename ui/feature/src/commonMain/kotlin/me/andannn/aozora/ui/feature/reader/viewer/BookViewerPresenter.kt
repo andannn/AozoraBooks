@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Size
@@ -24,8 +23,8 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
-import me.andannn.aozora.core.pagesource.AozoraBookPageSource
 import me.andannn.aozora.core.pagesource.BookPageSource
+import me.andannn.aozora.core.pagesource.LocalBookPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
 import org.koin.mp.KoinPlatform.getKoin
@@ -34,10 +33,12 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberBookViewerPresenter(
     card: AozoraBookCard,
     screenSize: Size,
+    bookSource: BookPageSource = LocalBookPageSource.current,
     settingRepository: UserDataRepository = getKoin().get(),
-) = remember(card, screenSize, settingRepository) {
+) = remember(card, bookSource, screenSize, settingRepository) {
     BookViewerPresenter(
         card,
+        bookSource,
         screenSize,
         settingRepository,
     )
@@ -47,6 +48,7 @@ private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
     private val card: AozoraBookCard,
+    private val bookSource: BookPageSource,
     private val screenSize: Size,
     private val settingRepository: UserDataRepository,
 ) : Presenter<BookViewerState> {
@@ -57,18 +59,6 @@ class BookViewerPresenter(
         val theme by settingRepository.getReaderTheme().collectAsRetainedState()
         val topMargin by settingRepository.getTopMargin().collectAsRetainedState()
         val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
-        val progressOrNull by settingRepository
-            .getProgressFlow(card.id)
-            .collectAsRetainedState(null)
-
-        val scope = rememberCoroutineScope()
-        val bookSource: BookPageSource =
-            remember {
-                AozoraBookPageSource(
-                    card = card,
-                    scope = scope,
-                )
-            }
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot?>(null)

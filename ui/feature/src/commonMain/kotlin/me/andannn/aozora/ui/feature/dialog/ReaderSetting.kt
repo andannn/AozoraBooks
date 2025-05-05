@@ -1,4 +1,4 @@
-package me.andannn.aozora.ui.feature.settings
+package me.andannn.aozora.ui.feature.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
