@@ -16,6 +16,7 @@ object HeadingMatcher : ElementMatcher {
         val className = node.attr("class")
         val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
         val child = node.children().getOrNull(0) ?: return null
+        val headingLevel = child.tagName().removePrefix("h").toIntOrNull() ?: return null
         val styleName = child.attr("class")
         val style =
             when (styleName) {
@@ -26,9 +27,11 @@ object HeadingMatcher : ElementMatcher {
             }
         val contentNodes = child.selectFirst(".midashi_anchor")?.childNodes() ?: return null
         val elements = contentNodes.parseAsAozoraElements()
+
         return Heading(
             indent = indent,
             style = style,
+            headingLevel = headingLevel,
             elements = elements + AozoraElement.LineBreak,
         )
     }

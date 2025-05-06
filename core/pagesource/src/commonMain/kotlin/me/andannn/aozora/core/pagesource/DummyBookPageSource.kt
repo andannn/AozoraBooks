@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.io.files.Path
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.BookMeta
+import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
 import me.andannn.aozora.core.pagesource.page.builder.RoughPageBuilder
@@ -50,6 +50,10 @@ object DummyBookPageSource {
                     )
                 }
             }
+
+            override suspend fun getBookInfo(): BookInfo {
+                TODO("Not yet implemented")
+            }
         }
     }
 
@@ -71,7 +75,7 @@ object DummyBookPageSource {
                         TODO("Not yet implemented")
                     }
 
-                    override suspend fun getBookMeta(): BookMeta {
+                    override suspend fun getBookInfo(): BookInfo {
                         TODO("Not yet implemented")
                     }
                 },

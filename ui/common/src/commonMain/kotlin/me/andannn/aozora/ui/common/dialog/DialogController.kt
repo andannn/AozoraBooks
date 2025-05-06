@@ -32,7 +32,7 @@ interface PopupController {
 /**
  * user interaction
  */
-sealed interface DialogAction
+interface DialogAction
 
 data object Dismissed : DialogAction
 

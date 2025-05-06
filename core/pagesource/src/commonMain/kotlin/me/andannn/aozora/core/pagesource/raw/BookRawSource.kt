@@ -3,7 +3,7 @@ package me.andannn.aozora.core.pagesource.raw
 import kotlinx.coroutines.flow.Flow
 import kotlinx.io.files.Path
 import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.BookMeta
+import me.andannn.aozora.core.data.common.BookInfo
 
 private const val TAG = "BookRawSource"
 
@@ -24,5 +24,5 @@ interface BookRawSource {
     /**
      * get book meta.
      */
-    suspend fun getBookMeta(): BookMeta
+    suspend fun getBookInfo(): BookInfo
 }

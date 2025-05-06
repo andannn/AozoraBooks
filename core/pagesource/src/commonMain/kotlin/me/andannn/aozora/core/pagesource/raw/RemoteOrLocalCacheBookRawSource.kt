@@ -22,11 +22,15 @@ import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.BookMeta
+import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.BookModel
+import me.andannn.aozora.core.data.common.TableOfContent
 import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.parser.html.HtmlLineParser
+import me.andannn.aozora.core.parser.html.matchers.HeadingMatcher
+import me.andannn.aozora.core.parser.html.parseAsHtmlNodes
 import me.andannn.aozora.core.parser.lineSequence
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
@@ -76,9 +80,9 @@ class RemoteOrLocalCacheBookRawSource(
             }
     }
 
-    override suspend fun getBookMeta(): BookMeta {
+    override suspend fun getBookInfo(): BookInfo {
         val bookModel = waitBookModelOrThrow()
-        return bookModel.meta
+        return bookModel.info
     }
 
     override suspend fun getImageUriByPath(path: String): Path? {
@@ -155,7 +159,7 @@ private fun getCachedBookModel(path: Path): BookModel? {
     if (!SystemFileSystem.exists(path)) {
         return null
     }
-    var meta: BookMeta? = null
+    var meta: BookInfo? = null
     var contentHtmlPath: Path? = null
     val illustrationPathList: MutableList<Path> = mutableListOf()
 
@@ -178,7 +182,7 @@ private fun getCachedBookModel(path: Path): BookModel? {
         return null
     }
     return BookModel(
-        meta = meta,
+        info = meta,
         contentHtmlPath = contentHtmlPath,
         illustrationPath = illustrationPathList,
     )
@@ -232,13 +236,38 @@ internal fun processParseHtml(
     val mainContentBuilder = StringBuilder()
 
     var lineCount = 0
+
+    var currentLineBuilder: StringBuilder? = null
+    val tableOfContentList = mutableListOf<TableOfContent>()
     children
         .asSequence()
         .filterNot { it is TextNode && (it.text().isBlank() || it.text().isEmpty()) }
         .forEach {
-            mainContentBuilder.append(it.toString().replace("\n", ""))
+            val htmlText = it.toString().replace("\n", "")
+
+            val lineBuilder = currentLineBuilder ?: StringBuilder().also { currentLineBuilder = it }
+            lineBuilder.append(htmlText)
+
             if (it is Element && it.tagName() == "br") {
+                val line = lineBuilder.toString()
+                currentLineBuilder = null
+                mainContentBuilder.append(line)
                 mainContentBuilder.append("\n")
+
+                if (line.startsWith("<div") && line.contains("<h")) {
+                    val headingElement =
+                        HeadingMatcher.match(
+                            line.parseAsHtmlNodes().first(),
+                        ) as? AozoraElement.Heading ?: error("heading not found")
+                    tableOfContentList.add(
+                        TableOfContent(
+                            headingLevel = headingElement.headingLevel,
+                            title = headingElement.text,
+                            lineNumber = lineCount,
+                        ),
+                    )
+                }
+
                 lineCount++
             }
         }
@@ -247,12 +276,13 @@ internal fun processParseHtml(
     }
 
     val model =
-        BookMeta(
+        BookInfo(
             title = title,
             subtitle = null,
             author = author,
             blockCount = lineCount,
             bibliographicalInformation = bibliographical.toString(),
+            tableOfContentList = tableOfContentList,
         )
 
     val metaFileSink = SystemFileSystem.sink(Path(folder, META_FILE_NAME)).buffered()

@@ -8,22 +8,18 @@ import kotlinx.collections.immutable.ImmutableList
 sealed class AozoraPage(
     open val pageMetaData: PageMetaData,
 ) {
-    abstract val pageProgress: IntRange
-
     data class AozoraCoverPage(
         override val pageMetaData: PageMetaData,
         val title: String,
         val author: String,
         val subtitle: String?,
-    ) : AozoraPage(pageMetaData) {
-        override val pageProgress: IntRange = Int.MIN_VALUE..Int.MIN_VALUE
-    }
+    ) : AozoraPage(pageMetaData)
 
     data class AozoraRoughPage(
         override val pageMetaData: PageMetaData,
         val blocks: ImmutableList<Block>,
     ) : AozoraPage(pageMetaData) {
-        override val pageProgress by lazy {
+        val pageProgress by lazy {
             blocks.first().blockIndex..blocks.last().blockIndex
         }
     }
@@ -31,9 +27,7 @@ sealed class AozoraPage(
     data class AozoraBibliographicalPage(
         override val pageMetaData: PageMetaData,
         val html: String,
-    ) : AozoraPage(pageMetaData) {
-        override val pageProgress: IntRange = Int.MAX_VALUE..Int.MAX_VALUE
-    }
+    ) : AozoraPage(pageMetaData)
 }
 
 data class LayoutPage(

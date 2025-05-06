@@ -6,47 +6,71 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import kotlinx.coroutines.launch
-import me.andannn.aozora.ui.common.dialog.LocalPopupController
-import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.feature.settings.ReaderSettingDialogId
+import me.andannn.aozora.core.data.common.AozoraBookCard
 
 @Composable
-fun rememberReaderPresenter(
-    cardId: String,
-    popupController: PopupController = LocalPopupController.current,
-) = remember(
-    cardId,
-    popupController,
-) {
-    ReaderPresenter(cardId, popupController)
-}
+fun rememberReaderPresenter(cardId: String) =
+    remember(
+        cardId,
+    ) {
+        ReaderPresenter(cardId)
+    }
 
 class ReaderPresenter(
     private val cardId: String,
-    private val popupController: PopupController,
 ) : Presenter<ReaderState> {
     @Composable
     override fun present(): ReaderState {
         val scope = rememberCoroutineScope()
-        return ReaderState(cardId) { event ->
+        return ReaderState(getCardById(cardId)) { event ->
             when (event) {
-                ReaderUiEvent.OnOpenFontSetting -> {
-                    scope.launch {
-                        popupController.showDialog(ReaderSettingDialogId)
-                    }
-                }
+                else -> {}
             }
         }
     }
 }
 
+private fun getCardById(id: String) =
+    when (id) {
+        "301" -> {
+            AozoraBookCard(
+                id = "301",
+                zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
+            )
+        }
+
+        "789" -> {
+            AozoraBookCard(
+                id = "789",
+                zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
+            )
+        }
+
+        "56648" -> {
+            AozoraBookCard(
+                id = "56648",
+                zipUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_ruby_58198.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_58207.html",
+            )
+        }
+
+        "60756" -> {
+            AozoraBookCard(
+                id = "60756",
+                zipUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_ruby_74753.zip",
+                htmlUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_74787.html",
+            )
+        }
+
+        else -> error("")
+    }
+
 @Stable
 data class ReaderState(
-    val cardId: String,
+    val bookCard: AozoraBookCard,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 
-sealed interface ReaderUiEvent {
-    data object OnOpenFontSetting : ReaderUiEvent
-}
+sealed interface ReaderUiEvent

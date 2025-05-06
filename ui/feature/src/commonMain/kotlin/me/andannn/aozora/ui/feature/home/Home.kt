@@ -43,6 +43,21 @@ fun HomeContent(
             ) {
                 Text(text = "人間失格")
             }
+
+            Card(
+                onClick = {
+                    state.evenSink.invoke(HomeUiEvent.OnCardClick("56648"))
+                },
+            ) {
+                Text(text = "人間椅子")
+            }
+            Card(
+                onClick = {
+                    state.evenSink.invoke(HomeUiEvent.OnCardClick("60756"))
+                },
+            ) {
+                Text(text = "現代語訳　平家物語")
+            }
         }
     }
 }

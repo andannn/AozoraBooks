@@ -52,6 +52,7 @@ sealed interface AozoraElement {
     data class Heading(
         override val style: AozoraTextStyle,
         val indent: Int,
+        val headingLevel: Int,
         val elements: List<AozoraElement> = emptyList(),
     ) : BaseText() {
         override val text: String

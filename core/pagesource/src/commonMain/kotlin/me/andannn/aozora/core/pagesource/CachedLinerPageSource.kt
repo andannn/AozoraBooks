@@ -7,7 +7,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.chunked
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -18,7 +17,7 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.BookMeta
+import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
 import me.andannn.aozora.core.pagesource.page.builder.RoughPageBuilder
@@ -38,8 +37,6 @@ abstract class CachedLinerPageSource(
     private var isCachedCompleted: Boolean = false
     private var version: Int = 0
 
-    private var bookMetaData: BookMeta? = null
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
@@ -48,50 +45,58 @@ abstract class CachedLinerPageSource(
         flow {
             Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialBlockIndex, metaData $pageMetaData. " }
 
-            version++
-            bookMetaData = rawSource.getBookMeta()
+            val version = version++
 
+            val bookInfoData = rawSource.getBookInfo()
+            bookInfoData.tableOfContentList
             val loadedPages = mutableListOf<AozoraPage>()
             var initialPageIndex: Int? = null
             var startMilliseconds = System.now().toEpochMilliseconds()
             Napier.d(tag = TAG) { "start load page. " }
 
             createPageFlow(
+                bookInfoData = bookInfoData,
                 pageMetaData = pageMetaData,
                 rawSourceProvider = { rawSource.getRawSource() },
-            ).chunked(CHUNK_SIZE)
-                .collectIndexed { index, pageList ->
-                    loadedPages.addAll(pageList)
+            ).collectIndexed { index, page ->
+                loadedPages.add(page)
 
-                    if (initialPageIndex == null) {
-                        if (initialBlockIndex == null) {
-                            Napier.d(tag = TAG) { "hit Book cover page" }
-                            initialPageIndex = 0
-                        } else {
-                            val hitIndex =
-                                pageList.indexOfFirst {
-                                    initialBlockIndex in (
-                                        (it as? AozoraRoughPage)?.pageProgress
-                                            ?: -1L..0L
-                                    )
-                                }
-                            if (hitIndex != -1) {
-                                Napier.d(tag = TAG) { "hit initial. index: $hitIndex}" }
-                                initialPageIndex = hitIndex + index * CHUNK_SIZE
+                if (initialPageIndex == null) {
+                    if (initialBlockIndex == null) {
+                        Napier.d(tag = TAG) { "hit Book cover page" }
+                        initialPageIndex = 0
+                    } else {
+                        var hit = false
+                        when (page) {
+                            is AozoraCoverPage -> {
+                                hit = initialBlockIndex == -1
+                            }
+
+                            is AozoraRoughPage -> {
+                                hit = initialBlockIndex in page.pageProgress
+                            }
+
+                            is AozoraPage.AozoraBibliographicalPage -> {
+                                hit = initialBlockIndex == Int.MAX_VALUE
                             }
                         }
-                    }
-
-                    if (initialPageIndex != null) {
-                        emit(
-                            PagerSnapShot(
-                                initialPageIndex,
-                                loadedPages.toImmutableList(),
-                                version,
-                            ),
-                        )
+                        if (hit) {
+                            Napier.d(tag = TAG) { "hit initial. index: $index}" }
+                            initialPageIndex = index
+                        }
                     }
                 }
+
+                if (initialPageIndex != null) {
+                    emit(
+                        PagerSnapShot(
+                            snapshotVersion = version,
+                            pageList = loadedPages.toImmutableList(),
+                            initialIndex = initialPageIndex,
+                        ),
+                    )
+                }
+            }
 
             Napier.d(tag = TAG) {
                 "end load page. pages: ${loadedPages.size} in ${
@@ -101,6 +106,7 @@ abstract class CachedLinerPageSource(
         }
 
     private fun createPageFlow(
+        bookInfoData: BookInfo,
         pageMetaData: PageMetaData,
         rawSourceProvider: suspend () -> Flow<Block>,
     ): Flow<AozoraPage> {
@@ -117,20 +123,22 @@ abstract class CachedLinerPageSource(
                 emit(
                     AozoraCoverPage(
                         pageMetaData = pageMetaData,
-                        title = bookMetaData!!.title,
-                        author = bookMetaData!!.author,
-                        subtitle = bookMetaData!!.subtitle,
+                        title = bookInfoData.title,
+                        author = bookInfoData.author,
+                        subtitle = bookInfoData.subtitle,
                     ),
                 )
             }.onCompletion {
                 emit(
                     AozoraPage.AozoraBibliographicalPage(
                         pageMetaData = pageMetaData,
-                        html = rawSource.getBookMeta().bibliographicalInformation,
+                        html = rawSource.getBookInfo().bibliographicalInformation,
                     ),
                 )
             }.flowOn(Dispatchers.IO)
     }
+
+    override suspend fun getBookInfo(): BookInfo = rawSource.getBookInfo()
 
     /**
      * return cached block list if available. or return source flow.
@@ -155,8 +163,4 @@ abstract class CachedLinerPageSource(
 
             isCachedCompleted = true
         }
-
-    companion object {
-        private const val CHUNK_SIZE = 20
-    }
 }
