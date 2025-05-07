@@ -20,9 +20,13 @@ import kotlinx.coroutines.flow.drop
 import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.FontSizeLevel
+import me.andannn.aozora.core.data.common.FontType
+import me.andannn.aozora.core.data.common.LineSpacing
 import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
+import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.LocalBookPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
@@ -54,11 +58,15 @@ class BookViewerPresenter(
 ) : Presenter<BookViewerState> {
     @Composable
     override fun present(): BookViewerState {
-        val fontSize by settingRepository.getFontSizeLevel().collectAsRetainedState()
-        val fontType by settingRepository.getFontFontType().collectAsRetainedState()
-        val theme by settingRepository.getReaderTheme().collectAsRetainedState()
-        val topMargin by settingRepository.getTopMargin().collectAsRetainedState()
-        val lineSpacing by settingRepository.getLineSpacing().collectAsRetainedState()
+        val fontSize by settingRepository
+            .getFontSizeLevel()
+            .collectAsRetainedState(FontSizeLevel.DEFAULT)
+        val fontType by settingRepository.getFontFontType().collectAsRetainedState(FontType.DEFAULT)
+        val theme by settingRepository.getReaderTheme().collectAsRetainedState(ReaderTheme.DEFAULT)
+        val topMargin by settingRepository.getTopMargin().collectAsRetainedState(TopMargin.DEFAULT)
+        val lineSpacing by settingRepository
+            .getLineSpacing()
+            .collectAsRetainedState(LineSpacing.DEFAULT)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot?>(null)

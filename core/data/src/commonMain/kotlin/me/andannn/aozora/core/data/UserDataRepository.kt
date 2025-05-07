@@ -1,7 +1,6 @@
 package me.andannn.aozora.core.data
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -15,27 +14,27 @@ interface UserDataRepository {
     /**
      * Get the font size level.
      */
-    fun getFontSizeLevel(): StateFlow<FontSizeLevel>
+    fun getFontSizeLevel(): Flow<FontSizeLevel>
 
     /**
      * Get the font type.
      */
-    fun getFontFontType(): StateFlow<FontType>
+    fun getFontFontType(): Flow<FontType>
 
     /**
      * Get the top margin.
      */
-    fun getTopMargin(): StateFlow<TopMargin>
+    fun getTopMargin(): Flow<TopMargin>
 
     /**
      * Get the line spacing.
      */
-    fun getLineSpacing(): StateFlow<LineSpacing>
+    fun getLineSpacing(): Flow<LineSpacing>
 
     /**
      * Get the reader theme.
      */
-    fun getReaderTheme(): StateFlow<ReaderTheme>
+    fun getReaderTheme(): Flow<ReaderTheme>
 
     /**
      * Set the font size level.
