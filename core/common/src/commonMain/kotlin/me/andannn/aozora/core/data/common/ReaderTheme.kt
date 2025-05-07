@@ -20,4 +20,10 @@ enum class ReaderTheme {
     PAPER,
 
     GREEN_EYE_CARE,
+
+    ;
+
+    companion object {
+        val DEFAULT = DYNAMIC
+    }
 }

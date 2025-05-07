@@ -9,6 +9,11 @@ enum class FontSizeLevel(
     LEVEL_4(48f),
     LEVEL_5(54f),
     LEVEL_6(60f),
+    ;
+
+    companion object {
+        val DEFAULT = LEVEL_4
+    }
 }
 
 fun FontSizeLevel.next(): FontSizeLevel {

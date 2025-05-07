@@ -54,6 +54,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:data"))
             implementation(project(":core:service"))
+            implementation(project(":core:datastore"))
             implementation(project(":core:parser"))
             implementation(project(":core:pagesource"))
             implementation(project(":ui:common"))

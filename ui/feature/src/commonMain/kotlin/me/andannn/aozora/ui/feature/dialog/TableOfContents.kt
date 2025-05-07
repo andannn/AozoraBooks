@@ -3,8 +3,11 @@ package me.andannn.aozora.ui.feature.dialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -86,16 +89,21 @@ fun TableOfContentsDialogContent(
 ) {
     Column(modifier = modifier) {
         Text("Table of Contents", style = MaterialTheme.typography.titleMedium)
+        val maxHeadingLevel = state.tableOfContentsList.minOfOrNull { it.headingLevel }
+        Spacer(modifier = Modifier.height(24.dp))
 
         state.tableOfContentsList.forEach { tableOfContent ->
             TableOfContentItem(
                 modifier = modifier.fillMaxWidth(),
+                spacerCount = maxHeadingLevel?.let { tableOfContent.headingLevel - it },
                 tableOfContent = tableOfContent,
                 onClick = {
                     onClickTableOfContent(tableOfContent)
                 },
             )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -104,8 +112,14 @@ fun TableOfContentItem(
     modifier: Modifier = Modifier,
     tableOfContent: TableOfContent,
     onClick: () -> Unit = {},
+    spacerCount: Int?,
 ) {
     Row(modifier.clickable(onClick = onClick).padding(vertical = 12.dp, horizontal = 16.dp)) {
+        if (spacerCount != null) {
+            repeat(spacerCount) {
+                Spacer(modifier = Modifier.width(24.dp))
+            }
+        }
         Text(tableOfContent.title, style = getHeadingLevel(tableOfContent.headingLevel))
     }
 }

@@ -58,11 +58,26 @@ class ReaderSettingDialogPresenter(
     @Composable
     override fun present(): ReaderSettingState {
         val scope = rememberCoroutineScope()
-        val fontSize = settingRepository.getFontSizeLevel().collectAsRetainedState()
-        val fontType = settingRepository.getFontFontType().collectAsRetainedState()
-        val topMargin = settingRepository.getTopMargin().collectAsRetainedState()
-        val lineSpacing = settingRepository.getLineSpacing().collectAsRetainedState()
-        val theme = settingRepository.getReaderTheme().collectAsRetainedState()
+        val fontSize =
+            settingRepository.getFontSizeLevel().collectAsRetainedState(
+                FontSizeLevel.DEFAULT,
+            )
+        val fontType =
+            settingRepository.getFontFontType().collectAsRetainedState(
+                FontType.DEFAULT,
+            )
+        val topMargin =
+            settingRepository.getTopMargin().collectAsRetainedState(
+                TopMargin.DEFAULT,
+            )
+        val lineSpacing =
+            settingRepository.getLineSpacing().collectAsRetainedState(
+                LineSpacing.DEFAULT,
+            )
+        val theme =
+            settingRepository.getReaderTheme().collectAsRetainedState(
+                ReaderTheme.DEFAULT,
+            )
 
         return ReaderSettingState(
             fontSizeLevel = fontSize.value,

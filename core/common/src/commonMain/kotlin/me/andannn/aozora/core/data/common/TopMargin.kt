@@ -6,4 +6,9 @@ enum class TopMargin(
     SMALL(80f),
     MEDIUM(120f),
     LARGE(160f),
+    ;
+
+    companion object {
+        val DEFAULT = MEDIUM
+    }
 }
