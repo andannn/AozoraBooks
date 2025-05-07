@@ -14,6 +14,7 @@ import com.slack.circuit.runtime.ui.Ui
 import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.HomeScreen
 import me.andannn.aozora.ui.feature.screens.RoutePresenterFactory
 import me.andannn.aozora.ui.feature.screens.RouteUiFactory
@@ -23,14 +24,16 @@ fun AozoraBooksApp(
     modifier: Modifier = Modifier,
     circuit: Circuit = buildCircuitMobile(),
 ) {
+    val backStack = rememberSaveableBackStack(HomeScreen)
+    val navigator =
+        rememberCircuitNavigator(backStack) {
+        }
+
     CompositionLocalProvider(
+        LocalNavigator provides navigator,
         LocalPopupController provides PopupController(),
     ) {
         CircuitCompositionLocals(circuit = circuit) {
-            val backStack = rememberSaveableBackStack(HomeScreen)
-            val navigator =
-                rememberCircuitNavigator(backStack) {
-                }
 
             BackHandler(enabled = backStack.size > 1) {
                 navigator.pop()

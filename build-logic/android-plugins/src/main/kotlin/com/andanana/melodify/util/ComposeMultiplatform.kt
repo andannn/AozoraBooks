@@ -8,9 +8,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 @ExperimentalKotlinGradlePluginApi
-fun Project.configureComposeMultiplatform(
-    extension: KotlinMultiplatformExtension,
-) {
+fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtension) {
     with(extension) {
         with(pluginManager) {
             apply("org.jetbrains.kotlin.plugin.compose")
@@ -51,11 +49,8 @@ fun Project.configureComposeMultiplatform(
     }
 }
 
-
 @ExperimentalKotlinGradlePluginApi
-fun Project.configureComposeBuildFeature(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
+fun Project.configureComposeBuildFeature(commonExtension: CommonExtension<*, *, *, *, *, *>) {
     with(commonExtension) {
         dependencies {
             buildFeatures {
