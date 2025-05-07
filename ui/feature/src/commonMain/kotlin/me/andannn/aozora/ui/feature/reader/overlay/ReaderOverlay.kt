@@ -1,13 +1,23 @@
 package me.andannn.aozora.ui.feature.reader.overlay
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material.Slider
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -27,6 +37,7 @@ fun ReaderOverlay(
     ReaderOverlayContent(
         modifier = modifier,
         pagerState = state.pagerState,
+        showOverlay = state.showOverlay,
         onEvent = state.eventSink,
     )
 }
@@ -35,33 +46,45 @@ fun ReaderOverlay(
 fun ReaderOverlayContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
+    showOverlay: Boolean,
     onEvent: (ReaderOverlayEvent) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val pageSize = pagerState.pageCount
     val settledPageIndex = pagerState.targetPage
+    Napier.d { "JQN showOverlay: $showOverlay" }
+    Column(
+        modifier = modifier,
+    ) {
+        val animatedAlpha = animateFloatAsState(targetValue = if (showOverlay) 1f else 0f)
 
-    Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(48.dp))
-        TextButton(
-            onClick = {
-                onEvent.invoke(ReaderOverlayEvent.OnOpenFontSetting)
+        OverlayTopBar(
+            modifier =
+                Modifier
+                    .graphicsLayer {
+                        alpha = animatedAlpha.value
+                    }.background(MaterialTheme.colorScheme.surface)
+                    .statusBarsPadding(),
+            onBack = {
+                onEvent.invoke(ReaderOverlayEvent.OnBack)
             },
-        ) {
-            Text("Open Font Setting")
-        }
-        TextButton(
-            onClick = {
+            onClickTableOfContents = {
                 onEvent.invoke(ReaderOverlayEvent.OnOpenTableOfContents)
             },
-        ) {
-            Text("Open Table of content")
-        }
+            onClickSetting = {
+                onEvent.invoke(ReaderOverlayEvent.OnOpenFontSetting)
+            },
+        )
+
         Spacer(modifier = Modifier.weight(1f))
+
         ProgressSlider(
             modifier =
                 Modifier
-                    .padding(bottom = 24.dp, start = 40.dp, end = 40.dp),
+                    .graphicsLayer {
+                        alpha = animatedAlpha.value
+                    }.background(MaterialTheme.colorScheme.background)
+                    .padding(24.dp),
             pageSize = pageSize,
             currentPageIndex = settledPageIndex,
             onPageChanged = {
@@ -71,6 +94,44 @@ fun ReaderOverlayContent(
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun OverlayTopBar(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit = {},
+    onClickTableOfContents: () -> Unit = {},
+    onClickSetting: () -> Unit = {},
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Row {
+            IconButton(
+                onClick = {
+                    onBack()
+                },
+            ) {
+                Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = {
+                    onClickTableOfContents()
+                },
+            ) {
+                Icon(Icons.Filled.Menu, contentDescription = null)
+            }
+            IconButton(
+                onClick = {
+                    onClickSetting()
+                },
+            ) {
+                Icon(Icons.Filled.Settings, contentDescription = null)
+            }
+        }
     }
 }
 

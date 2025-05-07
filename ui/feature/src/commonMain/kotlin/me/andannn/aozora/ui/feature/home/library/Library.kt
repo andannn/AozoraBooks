@@ -13,14 +13,17 @@ fun Library(
 ) {
     LibraryContent(
         modifier = modifier,
-        onEvent = state.evenSink
+        onEvent = state.evenSink,
     )
 }
 
 @Composable
-fun LibraryContent(modifier: Modifier, onEvent: (LibraryUiEvent) -> Unit) {
+fun LibraryContent(
+    modifier: Modifier,
+    onEvent: (LibraryUiEvent) -> Unit,
+) {
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Card(
             onClick = {
@@ -53,5 +56,4 @@ fun LibraryContent(modifier: Modifier, onEvent: (LibraryUiEvent) -> Unit) {
             Text(text = "現代語訳　平家物語")
         }
     }
-
 }

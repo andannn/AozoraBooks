@@ -159,8 +159,8 @@ internal fun ReaderSettingDialog() {
             mutableStateOf(0)
         }
     ReaderSettingDialogContent(
-        state,
-        currentSelectIndex.value,
+        state = state,
+        currentSelectIndex = currentSelectIndex.value,
         onSelectItem = {
             currentSelectIndex.value = it
         },
@@ -168,12 +168,15 @@ internal fun ReaderSettingDialog() {
 }
 
 @Composable
-internal fun ReaderSettingDialogContent(
+fun ReaderSettingDialogContent(
+    modifier: Modifier = Modifier,
     state: ReaderSettingState,
     currentSelectIndex: Int,
     onSelectItem: (Int) -> Unit = {},
 ) {
-    Column {
+    Column(
+        modifier,
+    ) {
         TabRow(
             modifier = Modifier.fillMaxWidth(),
             selectedTabIndex = currentSelectIndex,

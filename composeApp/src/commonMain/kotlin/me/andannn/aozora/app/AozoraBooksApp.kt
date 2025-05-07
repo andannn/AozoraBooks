@@ -34,7 +34,6 @@ fun AozoraBooksApp(
         LocalPopupController provides PopupController(),
     ) {
         CircuitCompositionLocals(circuit = circuit) {
-
             BackHandler(enabled = backStack.size > 1) {
                 navigator.pop()
             }
