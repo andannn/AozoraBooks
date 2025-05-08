@@ -82,6 +82,7 @@ abstract class BasicTextRenderAdapterV2(
             val offsetY = (result.size.height - result.size.width) / 2
             withCharTransforms(
                 char,
+                oneCharSize.width,
                 onGetPivot = {
                     Offset(
                         x = x,
@@ -117,20 +118,29 @@ private sealed interface TransForm {
         val dx: Float = 0f,
         val dy: Float = 0f,
     ) : TransForm
+
+    data class TranslateFactor(
+        val factorX: Float = 0f,
+        val factorY: Float = 0f,
+    ) : TransForm
 }
 
 private val TransformMap =
-    mapOf<Char, List<TransForm>>(
-        '、' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
+    mapOf(
+        '、' to listOf(TransForm.TranslateFactor(0.7f, -0.6f)),
         '。' to listOf(TransForm.Rotate(180f), TransForm.Translate(0f, -10f)),
         '「' to listOf(TransForm.Rotate(90f)),
         '」' to listOf(TransForm.Rotate(90f)),
         '（' to listOf(TransForm.Rotate(90f)),
         '）' to listOf(TransForm.Rotate(90f)),
+        'ー' to listOf(TransForm.Rotate(90f)),
+        '…' to listOf(TransForm.Rotate(90f)),
+        '〜' to listOf(TransForm.Rotate(90f)),
     )
 
 private fun DrawScope.withCharTransforms(
     char: Char,
+    oneCharSize: Int,
     onGetPivot: () -> Offset,
     block: DrawScope.() -> Unit,
 ) {
@@ -138,13 +148,14 @@ private fun DrawScope.withCharTransforms(
     if (transforms.isNullOrEmpty()) {
         block()
     } else {
-        applyTransformsRecursively(transforms, 0, onGetPivot, block)
+        applyTransformsRecursively(transforms, 0, oneCharSize, onGetPivot, block)
     }
 }
 
 private fun DrawScope.applyTransformsRecursively(
     transforms: List<TransForm>,
     index: Int,
+    charSize: Int,
     onGetPivot: () -> Offset,
     block: DrawScope.() -> Unit,
 ) {
@@ -155,7 +166,7 @@ private fun DrawScope.applyTransformsRecursively(
 
     val current = transforms[index]
     val next: DrawScope.() -> Unit = {
-        applyTransformsRecursively(transforms, index + 1, onGetPivot, block)
+        applyTransformsRecursively(transforms, index + 1, charSize, onGetPivot, block)
     }
 
     when (current) {
@@ -171,6 +182,16 @@ private fun DrawScope.applyTransformsRecursively(
             translate(
                 left = current.dx,
                 top = current.dy,
+                block = next,
+            )
+        }
+
+        is TransForm.TranslateFactor -> {
+            val dx = charSize * current.factorX
+            val dy = charSize * current.factorY
+            translate(
+                left = dx,
+                top = dy,
                 block = next,
             )
         }

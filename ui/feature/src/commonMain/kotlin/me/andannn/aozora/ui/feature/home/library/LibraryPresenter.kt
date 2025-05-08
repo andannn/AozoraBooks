@@ -1,4 +1,4 @@
-package me.andannn.aozora.ui.feature.home
+package me.andannn.aozora.ui.feature.home.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -9,27 +9,33 @@ import androidx.compose.runtime.setValue
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.home.NavigationItem
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 
-class HomePresenter(
+@Composable
+fun rememberLibraryPresenter(navigator: Navigator = LocalNavigator.current) =
+    remember(
+        navigator,
+    ) {
+        LibraryPresenter(navigator)
+    }
+
+class LibraryPresenter(
     private val navigator: Navigator,
-) : Presenter<HomeState> {
+) : Presenter<LibraryState> {
     @Composable
-    override fun present(): HomeState {
+    override fun present(): LibraryState {
         var navigationItem by remember {
             mutableStateOf(NavigationItem.LIBRARY)
         }
 
-        return HomeState(
+        return LibraryState(
             currentNavigation = navigationItem,
         ) { event ->
             when (event) {
-                is HomeUiEvent.OnCardClick -> {
+                is LibraryUiEvent.OnCardClick -> {
                     navigator.goTo(ReaderScreen(event.cardId))
-                }
-
-                is HomeUiEvent.OnNavigationItemClick -> {
-                    navigationItem = event.item
                 }
             }
         }
@@ -37,17 +43,13 @@ class HomePresenter(
 }
 
 @Stable
-data class HomeState(
+data class LibraryState(
     val currentNavigation: NavigationItem,
-    val evenSink: (HomeUiEvent) -> Unit = {},
+    val evenSink: (LibraryUiEvent) -> Unit = {},
 ) : CircuitUiState
 
-sealed interface HomeUiEvent {
+sealed interface LibraryUiEvent {
     data class OnCardClick(
         val cardId: String,
-    ) : HomeUiEvent
-
-    data class OnNavigationItemClick(
-        val item: NavigationItem,
-    ) : HomeUiEvent
+    ) : LibraryUiEvent
 }

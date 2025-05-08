@@ -15,7 +15,8 @@ fun Path.unzip(targetDirectory: Path) {
     val zipFileSystem = FileSystem.SYSTEM.openZip(this.toString().toPath())
     val fileSystem = FileSystem.SYSTEM
     val paths =
-        zipFileSystem.listRecursively("/".toPath())
+        zipFileSystem
+            .listRecursively("/".toPath())
             .filter { zipFileSystem.metadata(it).isRegularFile }
             .toList()
 
