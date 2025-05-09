@@ -1,4 +1,4 @@
-package com.andannn.aozora.core.service
+package me.andannn.aozora.core.service
 
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient

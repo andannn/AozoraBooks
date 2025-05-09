@@ -31,3 +31,16 @@ data class AuthorData(
     val deathDay: String? = null,
     val externalLink: String? = null,
 )
+
+data class TitleItem(
+    val title: String,
+    val subTitle: String?,
+    val link: String,
+)
+
+data class BookColumnItem(
+    val index: String,
+    val title: TitleItem,
+    val characterCategory: String,
+    val author: String,
+)

@@ -7,6 +7,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:common"))
             implementation(project(":core:datastore"))
+            implementation(project(":core:service"))
+            implementation(libs.androidx.paging.common)
         }
     }
 }

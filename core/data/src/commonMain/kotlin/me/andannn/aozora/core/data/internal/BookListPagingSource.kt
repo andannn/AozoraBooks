@@ -1,0 +1,39 @@
+package me.andannn.aozora.core.data.internal
+
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.core.service.AozoraService
+
+class BookListPagingSource(
+    private val kana: String,
+    private val aozoraService: AozoraService,
+) : PagingSource<Int, BookColumnItem>() {
+    private val pageCount: Int? = null
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BookColumnItem> {
+        val pageCount = pageCount ?: aozoraService.getPageCountOfKana(kana)
+        val requestPage = params.key ?: 1
+
+        if (requestPage > pageCount) {
+            return LoadResult.Error(
+                Exception("No more pages"),
+            )
+        }
+
+        return try {
+            val response = fetchData(requestPage)
+            LoadResult.Page(
+                data = response,
+                prevKey = if (requestPage == 1) null else requestPage - 1,
+                nextKey = if (requestPage == pageCount) null else requestPage + 1,
+            )
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, BookColumnItem>): Int? = state.anchorPosition
+
+    private suspend fun fetchData(page: Int): List<BookColumnItem> = aozoraService.getBookListOfKanaByPage(kana, page)
+}
