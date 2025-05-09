@@ -15,7 +15,6 @@ import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.AozoraContentsRepository
 import me.andannn.aozora.core.data.common.BookColumnItem
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.bookcard.BookCardState
 import me.andannn.aozora.ui.feature.screens.BookCardScreen
 import me.andannn.core.util.romajiToKana
 import org.koin.mp.KoinPlatform.getKoin
@@ -69,8 +68,8 @@ class IndexPagesPresenter(
                     navigator.goTo(
                         BookCardScreen(
                             bookCardId = id,
-                            groupId = groupId
-                        )
+                            groupId = groupId,
+                        ),
                     )
                 }
             }
@@ -88,5 +87,5 @@ data class IndexPagesState(
 sealed interface IndexPagesUiEvent {
     data object OnBack : IndexPagesUiEvent
 
-    data class OnBookClick(val book: BookColumnItem): IndexPagesUiEvent
+    data class OnBookClick(val book: BookColumnItem) : IndexPagesUiEvent
 }

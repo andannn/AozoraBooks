@@ -11,5 +11,8 @@ interface AozoraService {
         page: Int,
     ): List<BookColumnItem>
 
-    suspend fun getBookCard(groupId: String, cardId: String): AozoraBookCard
+    suspend fun getBookCard(
+        groupId: String,
+        cardId: String,
+    ): AozoraBookCard
 }

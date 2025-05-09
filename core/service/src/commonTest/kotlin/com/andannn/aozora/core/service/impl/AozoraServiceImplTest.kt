@@ -47,6 +47,7 @@ class AozoraServiceImplTest {
             )
         assertEquals(10, result)
     }
+
     @Test
     fun parseBookCardTest() {
         val result =

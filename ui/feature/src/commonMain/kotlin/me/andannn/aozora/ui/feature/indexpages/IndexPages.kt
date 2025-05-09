@@ -1,6 +1,5 @@
 package me.andannn.aozora.ui.feature.indexpages
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -73,7 +72,7 @@ fun IndexPagesStateContent(
                             item = it,
                             onClick = {
                                 onEvent.invoke(IndexPagesUiEvent.OnBookClick(it))
-                            }
+                            },
                         )
                         HorizontalDivider()
                     }
