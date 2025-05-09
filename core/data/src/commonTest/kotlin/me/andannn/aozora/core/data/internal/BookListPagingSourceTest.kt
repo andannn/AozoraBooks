@@ -66,6 +66,7 @@ private val dummyService =
                                 ),
                             characterCategory = "",
                             author = "",
+                            translator = translator,
                         ),
                     )
                 }

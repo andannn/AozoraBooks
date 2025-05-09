@@ -16,6 +16,7 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.HomeScreen
+import me.andannn.aozora.ui.feature.screens.IndexPageScreen
 import me.andannn.aozora.ui.feature.screens.RoutePresenterFactory
 import me.andannn.aozora.ui.feature.screens.RouteUiFactory
 

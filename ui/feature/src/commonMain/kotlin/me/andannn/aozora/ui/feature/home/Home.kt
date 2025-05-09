@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import me.andannn.aozora.ui.feature.home.library.Library
 import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
 import me.andannn.aozora.ui.feature.home.search.Search
+import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
 
 @Composable
 fun Home(
@@ -59,7 +60,9 @@ fun HomeContent(
                 }
 
                 NavigationItem.SEARCH -> {
-                    Search()
+                    Search(
+                        state = rememberSearchPresenter().present(),
+                    )
                 }
             }
         }

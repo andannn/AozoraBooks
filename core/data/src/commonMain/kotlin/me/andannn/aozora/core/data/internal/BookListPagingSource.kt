@@ -2,8 +2,11 @@ package me.andannn.aozora.core.data.internal
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.BookColumnItem
 import me.andannn.aozora.core.service.AozoraService
+
+private const val TAG = "BookListPagingSource"
 
 class BookListPagingSource(
     private val kana: String,
@@ -12,16 +15,17 @@ class BookListPagingSource(
     private val pageCount: Int? = null
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BookColumnItem> {
-        val pageCount = pageCount ?: aozoraService.getPageCountOfKana(kana)
-        val requestPage = params.key ?: 1
-
-        if (requestPage > pageCount) {
-            return LoadResult.Error(
-                Exception("No more pages"),
-            )
-        }
-
         return try {
+            val pageCount = pageCount ?: aozoraService.getPageCountOfKana(kana)
+            Napier.d(tag = TAG) { "load page $params, pageCount: $pageCount" }
+            val requestPage = params.key ?: 1
+
+            if (requestPage > pageCount) {
+                return LoadResult.Error(
+                    Exception("No more pages"),
+                )
+            }
+
             val response = fetchData(requestPage)
             LoadResult.Page(
                 data = response,

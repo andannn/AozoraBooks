@@ -5,13 +5,21 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.AozoraContentsRepository
+import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.BookColumnItem
-import org.koin.mp.KoinPlatform.getKoin
+import me.andannn.aozora.core.service.AozoraService
 
-class AozoraContentsRepositoryImpl : AozoraContentsRepository {
-    override fun getBookListPaging(kana: String): Flow<PagingData<BookColumnItem>> =
+class AozoraContentsRepositoryImpl(
+    private val aozoraService: AozoraService,
+) : AozoraContentsRepository {
+    override fun getBookListPagingFlow(kana: String): Flow<PagingData<BookColumnItem>> =
         Pager(
             config = PagingConfig(pageSize = 1),
-            pagingSourceFactory = { BookListPagingSource(kana, getKoin().get()) },
+            pagingSourceFactory = { BookListPagingSource(kana, aozoraService) },
         ).flow
+
+    override suspend fun getBookCard(
+        cardId: String,
+        groupId: String,
+    ): AozoraBookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
 }

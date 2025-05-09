@@ -6,6 +6,8 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.androidx.paging.common)
+            implementation(project(":ui:paging-compose"))
             implementation(project(":ui:common"))
             implementation(project(":core:common"))
             implementation(project(":core:util"))

@@ -7,7 +7,6 @@ data class AozoraBookCard(
     val id: String,
     val title: String,
     val titleKana: String,
-    val author: String,
     val zipUrl: String,
     val htmlUrl: String? = null,
     val category: String? = null,
@@ -23,13 +22,16 @@ data class StaffData(
 )
 
 data class AuthorData(
-    val authorId: String,
+    val category: String,
     val authorPageUrl: String,
     val authorName: String,
     val authorNameKana: String,
-    val birthDay: String? = null,
-    val deathDay: String? = null,
-    val externalLink: String? = null,
+    val authorNameRomaji: String,
+    val birth: String? = null,
+    val death: String? = null,
+    val authorUrl: String? = null,
+    val description: String? = null,
+    val descriptionWikiUrl: String? = null,
 )
 
 data class TitleItem(
@@ -43,4 +45,5 @@ data class BookColumnItem(
     val title: TitleItem,
     val characterCategory: String,
     val author: String,
+    val translator: String?,
 )
