@@ -1,10 +1,15 @@
 package me.andannn.aozora.ui.feature.home.library
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
 fun Library(
@@ -22,38 +27,52 @@ fun LibraryContent(
     modifier: Modifier,
     onEvent: (LibraryUiEvent) -> Unit,
 ) {
-    Column(
+    LazyVerticalGrid(
         modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(12.dp),
+        columns = GridCells.Adaptive(128.dp),
     ) {
-        Card(
-            onClick = {
-                onEvent.invoke(LibraryUiEvent.OnCardClick("789"))
-            },
-        ) {
-            Text(text = "吾輩は猫である")
-        }
-
-        Card(
-            onClick = {
-                onEvent.invoke(LibraryUiEvent.OnCardClick("301"))
-            },
-        ) {
-            Text(text = "人間失格")
-        }
-
-        Card(
-            onClick = {
-                onEvent.invoke(LibraryUiEvent.OnCardClick("56648"))
-            },
-        ) {
-            Text(text = "人間椅子")
-        }
-        Card(
-            onClick = {
-                onEvent.invoke(LibraryUiEvent.OnCardClick("60756"))
-            },
-        ) {
-            Text(text = "現代語訳　平家物語")
+        items(
+            items = bookCardList,
+            key = { it.id },
+        ) { card ->
+            PreviewBookCard(
+                author = card.authorName.toString(),
+                title = card.title,
+                onClick = {
+                    onEvent.invoke(LibraryUiEvent.OnCardClick(card.id))
+                },
+            )
         }
     }
 }
+
+val bookCardList =
+    listOf<BookPreviewInfo>(
+        BookPreviewInfo(
+            id = "301",
+            title = "人間失格",
+            authorName = "太宰治",
+            zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
+            htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
+            bookCardUrl = "",
+        ),
+        BookPreviewInfo(
+            id = "789",
+            title = "吾輩は猫である",
+            authorName = "夏目漱石",
+            zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
+            htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
+            bookCardUrl = "",
+        ),
+        BookPreviewInfo(
+            id = "60756",
+            title = "現代語訳　平家物語",
+            authorName = "宮沢賢治",
+            zipUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_ruby_74753.zip",
+            htmlUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_74787.html",
+            bookCardUrl = "",
+        ),
+    )

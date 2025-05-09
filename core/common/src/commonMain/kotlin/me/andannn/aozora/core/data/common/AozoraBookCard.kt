@@ -5,6 +5,29 @@ package me.andannn.aozora.core.data.common
  */
 data class AozoraBookCard(
     val id: String,
+    val title: String,
+    val titleKana: String,
+    val author: String,
     val zipUrl: String,
     val htmlUrl: String? = null,
+    val category: String? = null,
+    val source: String? = null,
+    val characterType: String? = null,
+    val staffData: StaffData? = null,
+    val authorData: AuthorData,
+)
+
+data class StaffData(
+    val proofreading: String,
+    val input: String,
+)
+
+data class AuthorData(
+    val authorId: String,
+    val authorPageUrl: String,
+    val authorName: String,
+    val authorNameKana: String,
+    val birthDay: String? = null,
+    val deathDay: String? = null,
+    val externalLink: String? = null,
 )

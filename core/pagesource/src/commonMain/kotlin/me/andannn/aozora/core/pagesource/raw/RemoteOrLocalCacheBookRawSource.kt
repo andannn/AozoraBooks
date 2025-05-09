@@ -21,11 +21,11 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
-import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.BookModel
+import me.andannn.aozora.core.data.common.BookPreviewInfo
 import me.andannn.aozora.core.data.common.TableOfContent
 import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.parser.html.HtmlLineParser
@@ -41,7 +41,7 @@ import org.koin.mp.KoinPlatform.getKoin
  * Get source from local cached file or fetch from remote.
  */
 class RemoteOrLocalCacheBookRawSource(
-    card: AozoraBookCard,
+    card: BookPreviewInfo,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
     private val cacheDictionary: Path = getCachedPatchById(card.id),
@@ -116,7 +116,7 @@ private sealed interface SourceState {
 }
 
 private suspend fun createBookRawSource(
-    card: AozoraBookCard,
+    card: BookPreviewInfo,
     cacheDictionary: Path,
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
@@ -142,7 +142,7 @@ internal expect fun getCachedPatchById(id: String): Path
  *
  * @throws IllegalArgumentException If htmlUrl is null.
  */
-private suspend fun AozoraBookCard.downloadBookTo(folder: Path) {
+private suspend fun BookPreviewInfo.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }

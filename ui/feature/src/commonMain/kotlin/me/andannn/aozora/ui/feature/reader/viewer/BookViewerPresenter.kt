@@ -18,8 +18,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.BookPreviewInfo
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -35,7 +35,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberBookViewerPresenter(
-    card: AozoraBookCard,
+    card: BookPreviewInfo,
     screenSize: Size,
     bookSource: BookPageSource = LocalBookPageSource.current,
     settingRepository: UserDataRepository = getKoin().get(),
@@ -51,7 +51,7 @@ fun rememberBookViewerPresenter(
 private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
-    private val card: AozoraBookCard,
+    private val card: BookPreviewInfo,
     private val bookSource: BookPageSource,
     private val screenSize: Size,
     private val settingRepository: UserDataRepository,
