@@ -10,11 +10,8 @@ fun Project.configureSpotless() {
     }
 
     spotless {
-        val ktlintVersion = libs.findLibrary("ktlint").get().get().version
-
         kotlin {
             target("src/**/*.kt")
-            ktlint(ktlintVersion)
             licenseHeaderFile(rootProject.file("spotless/copyright.txt"))
         }
     }

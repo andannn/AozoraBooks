@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package com.andannn.aozora.core.service.impl
 
 import kotlinx.coroutines.test.StandardTestDispatcher
