@@ -15,6 +15,7 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.AozoraContentsRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
@@ -40,6 +41,8 @@ fun rememberBookCardPresenter(
     )
 }
 
+private const val TAG = "BookCardPresenter"
+
 class BookCardPresenter(
     private val groupId: String,
     private val bookId: String,
@@ -53,6 +56,7 @@ class BookCardPresenter(
         }
 
         LaunchedEffect(Unit) {
+            Napier.d(tag = TAG) { "present groupId $groupId, bookId $bookId" }
             val result = aozoraContentsRepository.getBookCard(cardId = bookId, groupId = groupId)
             bookCardInfo = result
         }

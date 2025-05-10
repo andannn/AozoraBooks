@@ -73,18 +73,31 @@ internal fun parseBookCard(
     val titleElement = html.selectFirst("table[summary=タイトルデータ] > tbody")
     val title = titleElement?.child(0)?.child(1)?.text()
     val titleKana = titleElement?.child(1)?.child(1)?.text()
+    val authorElement = titleElement?.select("a")
+    val author = authorElement?.text()
+    val authorUrl = BASE_URL + authorElement!!.attr("href").removePrefix("../..")
 
     val bookDataElement = html.selectFirst("table[summary=作品データ] > tbody")
-    val category = bookDataElement?.child(0)?.child(1)?.text()
-    val source = bookDataElement?.child(1)?.child(1)?.text()
-    val characterType = bookDataElement?.child(2)?.child(1)?.text()
+    val childrenTextList =
+        bookDataElement?.children()?.map { it.text().trim() }?.filterNot { it.isBlank() }
+            ?: listOf()
+
+    val category = subTextOfList(childrenTextList, value = "分類：")
+    val source = subTextOfList(childrenTextList, value = "初出：")
+    val characterType = subTextOfList(childrenTextList, value = "文字遣い種別：")
 
     val staffElement = html.selectFirst("table[summary=工作員データ] > tbody")
-    val input = staffElement?.child(0)?.child(1)?.text()
-    val proofreading = staffElement?.child(1)?.child(1)?.text()
+    val staffTextList =
+        staffElement?.children()?.map { it.text().trim() }?.filterNot { it.isBlank() }
+            ?: listOf()
+    val input = subTextOfList(staffTextList, value = "入力：")
+    val proofreading = subTextOfList(staffTextList, value = "校正：")
 
-    val authorDataElement = html.selectFirst("table[summary=作家データ] > tbody")
-    val authData = parseAuthorDataElement(authorDataElement!!)
+    val authorDataElements = html.select("table[summary=作家データ] > tbody")
+    val authDataList =
+        authorDataElements.map {
+            parseAuthorDataElement(it)
+        }
 
     val downloadElement = html.selectFirst("table[summary=ダウンロードデータ] > tbody")
     val zipFileUrl =
@@ -98,7 +111,7 @@ internal fun parseBookCard(
         downloadElement
             .children()
             .firstOrNull {
-                it.text().contains("XHTMLファイル")
+                it.text().contains("HTMLファイル")
             }?.selectFirst("a")
             ?.attr("href")
 
@@ -110,9 +123,11 @@ internal fun parseBookCard(
         id = cardId,
         title = title!!,
         titleKana = titleKana!!,
-        category = category!!,
+        author = author,
+        authorUrl = authorUrl,
+        category = category,
         source = source,
-        authorData = authData,
+        authorDataList = authDataList,
         zipUrl = zipDownloadUrl!!,
         htmlUrl = htmlDownloadUrl!!,
         characterType = characterType,
@@ -129,13 +144,34 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
     val authorElement = element.selectFirst("a")
     val authorName = authorElement?.text()
     val authorUrl = BASE_URL + authorElement!!.attr("href").removePrefix("../..")
-    val authorKana = element.child(2).child(1).text()
-    val authorRomaji = element.child(3).child(1).text()
-    val birth = element.child(4).child(1).text()
-    val death = element.child(5).child(1).text()
-    val descriptionElement = element.child(6).child(1)
-    val description = descriptionElement.childNodes.first().toString()
-    val descriptionWikiUrl = descriptionElement.select("a").last()?.attr("href")
+    val childrenTextList =
+        element.children().map { it.text().trim() }.filterNot { it.isBlank() }
+    val authorKana = subTextOfList(childrenTextList, value = "作家名読み：")
+    val authorRomaji = subTextOfList(childrenTextList, value = "ローマ字表記：")
+    val birth = subTextOfList(childrenTextList, value = "生年：")
+    val death = subTextOfList(childrenTextList, value = "没年：")
+    val descriptionElement =
+        element
+            .children()
+            .firstOrNull {
+                it.text().contains("人物について：")
+            }?.children()
+            ?.getOrNull(1)
+    val isDescriptionEmpty =
+        descriptionElement?.let {
+            it.childNodes.firstOrNull()?.let { it is Element && it.tagName() == "a" }
+        } == true
+    val description =
+        if (isDescriptionEmpty) {
+            null
+        } else {
+            descriptionElement
+                ?.childNodes
+                ?.first()
+                ?.toString()
+                ?.notBlankOrNull()
+        }
+    val descriptionWikiUrl = descriptionElement?.select("a")?.last()?.attr("href")
     return AuthorData(
         category = category,
         authorName = authorName!!,
@@ -145,8 +181,7 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
         birth = birth,
         death = death,
         description = description,
-        descriptionWikiUrl = descriptionWikiUrl!!,
-        authorPageUrl = authorUrl,
+        descriptionWikiUrl = descriptionWikiUrl,
     )
 }
 
@@ -208,3 +243,10 @@ internal fun parsePageCount(responseText: String): Int {
     val lastIndexNum = lastIndex.text().toIntOrNull() ?: 1
     return lastIndexNum
 }
+
+private fun String.notBlankOrNull() = takeIf { it.isNotBlank() }
+
+private fun subTextOfList(
+    list: List<String>,
+    value: String,
+): String? = list.firstOrNull { it.contains(value) }?.substringAfter(value)

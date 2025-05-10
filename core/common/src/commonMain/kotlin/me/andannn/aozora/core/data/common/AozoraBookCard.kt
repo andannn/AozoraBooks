@@ -11,13 +11,15 @@ data class AozoraBookCard(
     val id: String,
     val title: String,
     val titleKana: String,
+    val author: String?,
+    val authorUrl: String?,
     val zipUrl: String,
     val htmlUrl: String? = null,
     val category: String? = null,
     val source: String? = null,
     val characterType: String? = null,
     val staffData: StaffData? = null,
-    val authorData: AuthorData,
+    val authorDataList: List<AuthorData>,
 )
 
 data class StaffData(
@@ -27,10 +29,9 @@ data class StaffData(
 
 data class AuthorData(
     val category: String,
-    val authorPageUrl: String,
     val authorName: String,
-    val authorNameKana: String,
-    val authorNameRomaji: String,
+    val authorNameKana: String?,
+    val authorNameRomaji: String?,
     val birth: String? = null,
     val death: String? = null,
     val authorUrl: String? = null,
