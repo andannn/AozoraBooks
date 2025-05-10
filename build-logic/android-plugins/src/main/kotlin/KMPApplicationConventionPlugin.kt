@@ -1,6 +1,7 @@
 import com.andanana.melodify.util.configureKotlinAndroid
 import com.andanana.melodify.util.configureKotlinMultiplatform
 import com.andanana.melodify.util.configureKtLint
+import com.andanana.melodify.util.configureSpotless
 import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,6 +20,8 @@ class KMPApplicationConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.plugin.parcelize")
                 apply("org.jlleitschuh.gradle.ktlint")
             }
+
+            configureSpotless()
 
             extensions.configure<KotlinMultiplatformExtension> {
                 configureKotlinMultiplatform(this)

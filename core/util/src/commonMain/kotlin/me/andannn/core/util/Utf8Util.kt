@@ -1,7 +1,9 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.core.util
 
-import io.ktor.utils.io.charsets.Charset
-import io.ktor.utils.io.charsets.decode
 import kotlinx.io.Buffer
 import kotlinx.io.Sink
 import kotlinx.io.Source
@@ -63,12 +65,12 @@ fun String.asSource(): Source {
 /**
  * read file as string from path.
  */
-expect fun Path.readString(charset: String): String
-
-internal fun readStringOfPath(
-    path: Path,
-    charset: Charset,
-): String {
-    val source = SystemFileSystem.source(path).buffered()
-    return charset.newDecoder().decode(source)
+fun Path.readString(charset: String): String {
+    val source = SystemFileSystem.source(this).buffered()
+    return readStringFromSource(source, charset)
 }
+
+expect fun readStringFromSource(
+    source: Source,
+    charset: String,
+): String

@@ -6,6 +6,9 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":core:util"))
+            implementation(project(":core:common"))
+            implementation(libs.ksoup)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.resources)

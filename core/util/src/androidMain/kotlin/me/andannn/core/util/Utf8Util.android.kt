@@ -1,8 +1,14 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.core.util
 
+import io.ktor.utils.io.charsets.decode
 import io.ktor.utils.io.charsets.forName
-import kotlinx.io.files.Path
+import kotlinx.io.Source
 
-actual fun Path.readString(charset: String): String {
-    return readStringOfPath(path = this, charset = Charsets.forName(charset))
-}
+actual fun readStringFromSource(
+    source: Source,
+    charset: String,
+): String = Charsets.forName(charset).newDecoder().decode(source)

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.aozora.ui.feature.home
 
 import androidx.compose.foundation.layout.Box
@@ -19,6 +23,7 @@ import androidx.compose.ui.Modifier
 import me.andannn.aozora.ui.feature.home.library.Library
 import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
 import me.andannn.aozora.ui.feature.home.search.Search
+import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
 
 @Composable
 fun Home(
@@ -59,7 +64,9 @@ fun HomeContent(
                 }
 
                 NavigationItem.SEARCH -> {
-                    Search()
+                    Search(
+                        state = rememberSearchPresenter().present(),
+                    )
                 }
             }
         }

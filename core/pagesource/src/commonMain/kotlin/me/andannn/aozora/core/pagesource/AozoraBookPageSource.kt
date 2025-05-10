@@ -1,16 +1,20 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.aozora.core.pagesource
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.data.common.BookPreviewInfo
 import me.andannn.aozora.core.pagesource.raw.RemoteOrLocalCacheBookRawSource
 
 /**
  * Book page source.
  */
 class AozoraBookPageSource(
-    card: AozoraBookCard,
+    card: BookPreviewInfo,
     scope: CoroutineScope,
 ) : CachedLinerPageSource(
         rawSource =

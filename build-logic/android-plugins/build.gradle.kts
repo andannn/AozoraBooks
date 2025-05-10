@@ -9,6 +9,8 @@ dependencies {
     compileOnly(libs.jetbrainsCompose.gradlePlugin)
     compileOnly(libs.composeCompiler.gradlePlugin)
     compileOnly(libs.ktlint.gradlePlugin)
+    compileOnly(libs.spotless.gradlePlugin)
+
 }
 
 gradlePlugin {

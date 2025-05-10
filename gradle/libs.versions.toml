@@ -25,13 +25,14 @@ ktlint = "12.2.0"
 googleService = "4.4.2"
 firebaseCrashlytics = "3.0.3"
 firebaseBom = "33.13.0"
-appcompat = "1.7.0"
-material = "1.12.0"
 androidxDatastore = "1.1.6"
+pagingCommonVersion = "3.3.6"
+spotless = "6.25.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "pagingCommonVersion" }
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
 circuit-test = { group = "com.slack.circuit", name = "circuit-test", version.ref = "circuit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -73,6 +74,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 datastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDatastore" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidxDatastore" }
+
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -80,8 +82,7 @@ composeCompiler-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
@@ -95,4 +96,5 @@ parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotli
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-service = { id = "com.google.gms.google-services", version.ref = "googleService" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }

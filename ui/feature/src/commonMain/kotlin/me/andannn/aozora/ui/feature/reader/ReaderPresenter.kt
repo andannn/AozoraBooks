@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.aozora.ui.feature.reader
 
 import androidx.compose.runtime.Composable
@@ -6,7 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.ui.feature.home.library.bookCardList
 
 @Composable
 fun rememberReaderPresenter(cardId: String) =
@@ -30,46 +35,11 @@ class ReaderPresenter(
     }
 }
 
-private fun getCardById(id: String) =
-    when (id) {
-        "301" -> {
-            AozoraBookCard(
-                id = "301",
-                zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
-                htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
-            )
-        }
-
-        "789" -> {
-            AozoraBookCard(
-                id = "789",
-                zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
-                htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
-            )
-        }
-
-        "56648" -> {
-            AozoraBookCard(
-                id = "56648",
-                zipUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_ruby_58198.zip",
-                htmlUrl = "https://www.aozora.gr.jp/cards/001779/files/56648_58207.html",
-            )
-        }
-
-        "60756" -> {
-            AozoraBookCard(
-                id = "60756",
-                zipUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_ruby_74753.zip",
-                htmlUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_74787.html",
-            )
-        }
-
-        else -> error("")
-    }
+private fun getCardById(id: String): BookPreviewInfo = bookCardList.firstOrNull { it.id == id } ?: error("")
 
 @Stable
 data class ReaderState(
-    val bookCard: AozoraBookCard,
+    val bookCard: BookPreviewInfo,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

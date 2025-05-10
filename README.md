@@ -52,3 +52,11 @@ It supports advanced layout features like ruby annotations and vertical text, an
    > Xcode project path: `<project root>/iosApp/iosApp.xcodeproj`  
    > Execution target: any simulator compatible with your installed Xcode version
 3. Click the **Run** ▶️ button to launch the app.
+
+### Code style
+
+This project uses [ktlint](https://github.com/pinterest/ktlint).
+running `./gradlew ktLintCheck` to check lint issues.
+running `./gradlew ktLintFormat` to automatically fix lint errors.
+running `./gradlew spotlessCheck` to check copyright.
+running `./gradlew spotlessApply` to add copyright.
