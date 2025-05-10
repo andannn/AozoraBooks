@@ -1,6 +1,6 @@
-
 plugins {
     id("melodify.kmp.library")
+    alias(libs.plugins.ksp)
 }
 
 kotlin {

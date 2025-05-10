@@ -1,0 +1,79 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "337fc87b90c38ba84d56747252f61c08",
+    "entities": [
+      {
+        "tableName": "saved_book_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `group_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `author` TEXT NOT NULL, `author_url` TEXT NOT NULL, `zip_url` TEXT NOT NULL, `html_url` TEXT NOT NULL, `saved_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
+        "fields": [
+          {
+            "fieldPath": "bookId",
+            "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "groupId",
+            "columnName": "group_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleKana",
+            "columnName": "title_kana",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorUrl",
+            "columnName": "author_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zipUrl",
+            "columnName": "zip_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "htmlUrl",
+            "columnName": "html_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedDate",
+            "columnName": "saved_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "book_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '337fc87b90c38ba84d56747252f61c08')"
+    ]
+  }
+}
