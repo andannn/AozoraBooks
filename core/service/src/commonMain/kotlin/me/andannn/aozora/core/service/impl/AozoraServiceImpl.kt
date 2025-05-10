@@ -133,8 +133,8 @@ internal fun parseBookCard(
         characterType = characterType,
         staffData =
             StaffData(
-                input = input!!,
-                proofreading = proofreading!!,
+                input = input,
+                proofreading = proofreading,
             ),
     )
 }

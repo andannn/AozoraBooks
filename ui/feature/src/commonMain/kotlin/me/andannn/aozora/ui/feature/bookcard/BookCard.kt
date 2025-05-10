@@ -61,10 +61,14 @@ private fun BookCardContent(
     onEvent: (BookCardUiEvent) -> Unit = {},
 ) {
     if (bookCardInfo == null) {
-        Box(
+        Scaffold(
             modifier = modifier.fillMaxSize(),
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
         return
     }
@@ -214,8 +218,12 @@ private fun BookCardContent(
             val staffData = bookCardInfo.staffData
             staffData?.let {
                 item {
-                    ItemRow(title = "入力：", value = staffData.input)
-                    ItemRow(title = "校正：", value = staffData.proofreading)
+                    staffData.input?.let {
+                        ItemRow(title = "入力：", value = it)
+                    }
+                    staffData.proofreading?.let {
+                        ItemRow(title = "校正：", value = it)
+                    }
                 }
             }
         }

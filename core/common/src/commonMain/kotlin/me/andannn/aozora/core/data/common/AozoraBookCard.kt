@@ -23,8 +23,8 @@ data class AozoraBookCard(
 )
 
 data class StaffData(
-    val proofreading: String,
-    val input: String,
+    val proofreading: String?,
+    val input: String?,
 )
 
 data class AuthorData(
