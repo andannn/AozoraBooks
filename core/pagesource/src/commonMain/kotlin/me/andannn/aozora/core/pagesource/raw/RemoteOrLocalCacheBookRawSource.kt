@@ -226,7 +226,7 @@ private suspend fun downloadAndUnZip(
  *
  * @return BookMeta of the html .
  */
-internal fun processParseHtml(
+fun processParseHtml(
     path: Path,
     folder: Path,
 ) {

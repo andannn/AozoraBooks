@@ -21,6 +21,12 @@ interface SavedBookDao {
     fun getSavedBooks(): Flow<List<SavedBookEntity>>
 
     /**
+     * Get a saved book by id
+     */
+    @Query("SELECT * FROM ${Tables.SAVED_BOOK_TABLE} WHERE ${SavedBookColumns.BOOK_ID} = :bookId")
+    fun getSavedBookById(bookId: String): Flow<SavedBookEntity?>
+
+    /**
      * Insert a saved book
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
