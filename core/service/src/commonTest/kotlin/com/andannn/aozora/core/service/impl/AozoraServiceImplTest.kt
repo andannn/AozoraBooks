@@ -2,7 +2,6 @@ package com.andannn.aozora.core.service.impl
 
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runTest
 import kotlinx.io.files.Path
 import me.andannn.aozora.core.service.clientBuilder
 import me.andannn.aozora.core.service.impl.AozoraServiceImpl
@@ -21,14 +20,6 @@ class AozoraServiceImplTest {
         AozoraServiceImpl(
             httpClient = clientBuilder(),
         )
-
-    @Test
-    fun getBookListPageTest() {
-        testScope.runTest {
-            val result = service.getBookCard("000035", "52463")
-            println(result)
-        }
-    }
 
     @Test
     fun parseBookColumnTest() {

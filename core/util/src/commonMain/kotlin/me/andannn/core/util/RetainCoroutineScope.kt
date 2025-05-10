@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:filename")
+
 package me.andannn.core.util
 
 import androidx.compose.runtime.Composable
@@ -10,7 +12,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 
 @Stable
-class StableCoroutineScope(scope: CoroutineScope) : CoroutineScope by scope
+class StableCoroutineScope(
+    scope: CoroutineScope,
+) : CoroutineScope by scope
 
 /**
  * Return a coroutine scope which bind lifecycle of backstack and survive configuration change.
@@ -20,8 +24,8 @@ class StableCoroutineScope(scope: CoroutineScope) : CoroutineScope by scope
  * https://github.com/chrisbanes/tivi/pull/1763
  */
 @Composable
-fun rememberRetainedCoroutineScope(): StableCoroutineScope {
-    return rememberRetained("coroutine_scope") {
+fun rememberRetainedCoroutineScope(): StableCoroutineScope =
+    rememberRetained("coroutine_scope") {
         object : RememberObserver {
             val scope = StableCoroutineScope(CoroutineScope(Dispatchers.Main + Job()))
 
@@ -34,4 +38,3 @@ fun rememberRetainedCoroutineScope(): StableCoroutineScope {
             override fun onRemembered() = Unit
         }
     }.scope
-}

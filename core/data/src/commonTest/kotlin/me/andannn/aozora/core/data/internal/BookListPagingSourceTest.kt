@@ -5,6 +5,7 @@ import androidx.paging.PagingSource.LoadResult
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.BookColumnItem
 import me.andannn.aozora.core.data.common.TitleItem
 import me.andannn.aozora.core.service.AozoraService
@@ -66,9 +67,13 @@ private val dummyService =
                                 ),
                             characterCategory = "",
                             author = "",
-                            translator = translator,
+                            translator = null
                         ),
                     )
                 }
             }
+
+        override suspend fun getBookCard(groupId: String, cardId: String): AozoraBookCard {
+            error("")
+        }
     }
