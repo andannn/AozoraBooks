@@ -7,20 +7,17 @@ package me.andannn.aozora.core.pagesource.page
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.pagesource.page.builder.FillResult
-import me.andannn.aozora.core.pagesource.page.builder.PageBuilder
 
 /**
  * create page flow from [blockSequenceFlow].
  */
-fun <T : AozoraPage> createPageFlowFromSequence(
-    blockSequenceFlow: Flow<Block>,
+internal fun <T : AozoraPage> createPageFlowFromSequence(
+    blockSequenceFlow: Flow<AozoraBlock>,
     builderFactory: () -> PageBuilder<T>,
 ) = flow<T> {
     var pageBuilder: PageBuilder<T>? = null
 
-    suspend fun tryAdd(block: Block) {
+    suspend fun tryAdd(block: AozoraBlock) {
         val builder =
             pageBuilder ?: builderFactory()
                 .also { pageBuilder = it }

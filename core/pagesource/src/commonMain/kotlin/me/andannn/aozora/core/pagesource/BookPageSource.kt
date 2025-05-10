@@ -9,8 +9,8 @@ import androidx.compose.runtime.compositionLocalOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.BookInfo
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.TableOfContentsModel
 
 val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
     compositionLocalOf { error("no book source") }
@@ -33,7 +33,7 @@ interface BookPageSource {
     /**
      * get book meta.
      */
-    suspend fun getBookInfo(): BookInfo
+    suspend fun getTableOfContents(): List<TableOfContentsModel>
 }
 
 /**

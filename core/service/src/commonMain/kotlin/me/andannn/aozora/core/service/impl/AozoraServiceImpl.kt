@@ -62,7 +62,7 @@ private fun getBookCardUrlBy(
     cardId: String,
 ): String = "$BASE_URL/cards/$groupId/card$cardId.html"
 
-internal fun parseBookCard(
+fun parseBookCard(
     url: String,
     cardId: String,
     groupId: String,
@@ -133,8 +133,8 @@ internal fun parseBookCard(
         characterType = characterType,
         staffData =
             StaffData(
-                input = input!!,
-                proofreading = proofreading!!,
+                input = input,
+                proofreading = proofreading,
             ),
     )
 }
@@ -185,7 +185,7 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
     )
 }
 
-internal fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
+fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
     val html = Ksoup.parse(htmlString)
     val listNodes = html.selectFirst("table.list > tbody") ?: error("")
     val results =
@@ -230,7 +230,7 @@ private fun parseTitle(titleElement: Element): TitleItem {
     )
 }
 
-internal fun parsePageCount(responseText: String): Int {
+fun parsePageCount(responseText: String): Int {
     val html = Ksoup.parse(responseText)
     val lastIndex =
         html

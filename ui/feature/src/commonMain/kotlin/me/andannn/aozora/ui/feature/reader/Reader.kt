@@ -16,7 +16,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.core.pagesource.AozoraBookPageSource
 import me.andannn.aozora.core.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.ActionDialog
@@ -58,7 +58,7 @@ fun Reader(
 
 @Composable
 private fun ReaderContent(
-    bookCard: BookPreviewInfo,
+    bookCard: BookModelTemp,
     modifier: Modifier = Modifier,
     onEvent: (ReaderUiEvent) -> Unit,
 ) {

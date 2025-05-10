@@ -7,12 +7,12 @@ package me.andannn.aozora.core.pagesource.measure
 import androidx.compose.ui.geometry.Size
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.PaperLayout
 import me.andannn.aozora.core.data.common.RenderSetting
 import me.andannn.aozora.core.data.common.resolveFontStyle
+import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.collections.get
 import kotlin.math.ceil
 
@@ -31,8 +31,8 @@ data class BlockMeasureResult(
         get() = lineCount * lineHeightPerLine
 }
 
-fun interface BlockMeasurer {
-    fun measure(block: Block): BlockMeasureResult
+internal fun interface BlockMeasurer {
+    fun measure(block: AozoraBlock): BlockMeasureResult
 }
 
 fun interface ElementMeasurer {
@@ -42,7 +42,7 @@ fun interface ElementMeasurer {
     ): ElementMeasureResult
 }
 
-class DefaultMeasurer(
+internal class DefaultMeasurer(
     private val renderSetting: RenderSetting,
     private val layout: PaperLayout,
 ) : ElementMeasurer,
@@ -57,15 +57,15 @@ class DefaultMeasurer(
         style: AozoraTextStyle?,
     ): ElementMeasureResult = sizeOf(element, style)
 
-    override fun measure(block: Block): BlockMeasureResult {
+    override fun measure(block: AozoraBlock): BlockMeasureResult {
         when (block) {
-            is Block.Image -> return BlockMeasureResult(
+            is AozoraBlock.Image -> return BlockMeasureResult(
                 lineCount = 1,
                 lineHeightPerLine = sizeOf(block.elements[0]).size.width,
                 availableRenderHeight = renderHeight,
             )
 
-            is Block.TextBlock -> {
+            is AozoraBlock.TextBlock -> {
                 val style =
                     fontStyleCache[block.textStyle] ?: resolveAndSave(block.textStyle)
                 val lineHeight = style.lineHeight

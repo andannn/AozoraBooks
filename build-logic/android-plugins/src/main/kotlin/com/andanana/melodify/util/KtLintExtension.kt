@@ -16,6 +16,11 @@ fun Project.configureKtLint(extension: KtlintExtension) {
         )
         filter {
             exclude("**/generated/**")
+            // Skip generated code.
+            // https://github.com/JLLeitschuh/ktlint-gradle/issues/522
+            exclude { entry ->
+                entry.file.toString().contains("generated")
+            }
             include("**/kotlin/**")
         }
     }

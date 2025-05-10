@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
@@ -54,8 +54,8 @@ fun LibraryContent(
 }
 
 val bookCardList =
-    listOf<BookPreviewInfo>(
-        BookPreviewInfo(
+    listOf<BookModelTemp>(
+        BookModelTemp(
             id = "301",
             title = "人間失格",
             authorName = "太宰治",
@@ -63,7 +63,7 @@ val bookCardList =
             htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
             bookCardUrl = "",
         ),
-        BookPreviewInfo(
+        BookModelTemp(
             id = "789",
             title = "吾輩は猫である",
             authorName = "夏目漱石",
@@ -71,7 +71,7 @@ val bookCardList =
             htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
             bookCardUrl = "",
         ),
-        BookPreviewInfo(
+        BookModelTemp(
             id = "60756",
             title = "現代語訳　平家物語",
             authorName = "宮沢賢治",
