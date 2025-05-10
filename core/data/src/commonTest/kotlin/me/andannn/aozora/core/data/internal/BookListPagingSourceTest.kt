@@ -71,13 +71,16 @@ private val dummyService =
                                 ),
                             characterCategory = "",
                             author = "",
-                            translator = null
+                            translator = null,
                         ),
                     )
                 }
             }
 
-        override suspend fun getBookCard(groupId: String, cardId: String): AozoraBookCard {
+        override suspend fun getBookCard(
+            groupId: String,
+            cardId: String,
+        ): AozoraBookCard {
             error("")
         }
     }
