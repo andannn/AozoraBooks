@@ -2,13 +2,13 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.core.parser.html.matchers
+package me.andannn.aozora.core.pagesource.parser.html.matchers
 
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.EmphasisStyle
-import me.andannn.aozora.core.parser.html.ElementMatcher
+import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
 
 object EmphasisMatcher : ElementMatcher {
     override fun match(node: Node): AozoraElement? {

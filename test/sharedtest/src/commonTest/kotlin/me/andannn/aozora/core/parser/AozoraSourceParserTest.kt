@@ -5,7 +5,9 @@
 package me.andannn.aozora.core.parser
 
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.parser.html.HtmlLineParser
+import me.andannn.aozora.core.pagesource.parser.AozoraLineParser
+import me.andannn.aozora.core.pagesource.parser.RawLine
+import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

@@ -27,5 +27,3 @@ kotlin {
 android {
     namespace = "me.andannn.sharedtest"
 }
-
-

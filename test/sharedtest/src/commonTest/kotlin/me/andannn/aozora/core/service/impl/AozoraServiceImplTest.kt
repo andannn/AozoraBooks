@@ -7,7 +7,6 @@ package me.andannn.aozora.core.service.impl
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.io.files.Path
-import me.andannn.aozora.core.service.clientBuilder
 import me.andannn.core.util.readString
 import kotlin.test.Test
 import kotlin.test.assertEquals

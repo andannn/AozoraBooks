@@ -5,12 +5,10 @@
 package me.andannn.core.util
 
 import kotlinx.io.Buffer
-import kotlinx.io.Sink
 import kotlinx.io.Source
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import kotlinx.io.indexOf
 import kotlinx.io.writeString
 
 /**

@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.core.data.common
+package me.andannn.aozora.core.pagesource.raw
 
 import kotlinx.io.files.Path
 import kotlinx.serialization.SerialName
@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  * @property contentHtmlPath Path of html file which contains book content.
  * @property illustrationPath List of path of illustration files.
  */
-data class BookModel(
+internal data class BookModel(
     val info: BookInfo,
     val contentHtmlPath: Path?,
     val illustrationPath: List<Path> = emptyList(),
@@ -25,7 +25,7 @@ data class BookModel(
  * Meta data of book.
  */
 @Serializable
-data class BookInfo(
+internal data class BookInfo(
     /**
      * Title of book.
      */
@@ -53,7 +53,7 @@ data class BookInfo(
 )
 
 @Serializable
-data class TableOfContent(
+internal data class TableOfContent(
     @SerialName("headingLevel")
     val headingLevel: Int,
     @SerialName("text")

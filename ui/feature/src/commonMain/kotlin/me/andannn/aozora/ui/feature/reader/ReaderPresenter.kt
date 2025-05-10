@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.ui.feature.home.library.bookCardList
 
 @Composable
@@ -35,11 +35,11 @@ class ReaderPresenter(
     }
 }
 
-private fun getCardById(id: String): BookPreviewInfo = bookCardList.firstOrNull { it.id == id } ?: error("")
+private fun getCardById(id: String): BookModelTemp = bookCardList.firstOrNull { it.id == id } ?: error("")
 
 @Stable
 data class ReaderState(
-    val bookCard: BookPreviewInfo,
+    val bookCard: BookModelTemp,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

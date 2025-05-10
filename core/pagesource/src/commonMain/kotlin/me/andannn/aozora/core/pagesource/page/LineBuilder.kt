@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.core.pagesource.page.builder
+package me.andannn.aozora.core.pagesource.page
 
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.data.common.AozoraElement
@@ -11,7 +11,7 @@ import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.pagesource.util.divide
 
-class LineBuilder(
+internal class LineBuilder(
     private val maxPx: Float,
     initialIndent: Int = 0,
     private val measure: (AozoraElement) -> ElementMeasureResult,

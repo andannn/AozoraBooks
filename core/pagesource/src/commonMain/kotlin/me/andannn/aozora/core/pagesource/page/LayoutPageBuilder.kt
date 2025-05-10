@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.core.pagesource.page.builder
+package me.andannn.aozora.core.pagesource.page
 
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
@@ -10,7 +10,6 @@ import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.LayoutPage
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.data.common.PageMetaData
@@ -25,7 +24,7 @@ fun AozoraPage.layout(): LayoutPage {
         is AozoraRoughPage -> {
             val builder =
                 LayoutPageBuilder(pageMetaData, DefaultMeasurer(pageMetaData), forceAddBlock = true)
-            this.blocks.forEach {
+            this.blocks.filterIsInstance<AozoraBlock>().forEach {
                 builder.tryAddBlock(it)
             }
             return builder.build()
@@ -52,8 +51,8 @@ private fun createCoverPage(
     AozoraRoughPage(
         pageMetaData = pageMetaData,
         blocks =
-            listOfNotNull<Block>(
-                Block.Heading(
+            listOfNotNull<AozoraBlock>(
+                AozoraBlock.Heading(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_LARGE,
                     indent = 2,
@@ -66,7 +65,7 @@ private fun createCoverPage(
                         ),
                 ),
                 subtitle?.let {
-                    Block.Heading(
+                    AozoraBlock.Heading(
                         blockIndex = -1,
                         textStyle = AozoraTextStyle.HEADING_LARGE,
                         indent = 2,
@@ -79,7 +78,7 @@ private fun createCoverPage(
                             ),
                     )
                 },
-                Block.Heading(
+                AozoraBlock.Heading(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_MEDIUM,
                     indent = 3,
@@ -94,7 +93,7 @@ private fun createCoverPage(
             ).toImmutableList(),
     )
 
-class LayoutPageBuilder(
+internal class LayoutPageBuilder(
     private val meta: PageMetaData,
     private val measurer: ElementMeasurer,
     private val forceAddBlock: Boolean = false,
@@ -109,7 +108,7 @@ class LayoutPageBuilder(
 
     private var isPageBreakAdded = false
 
-    fun tryAddBlock(block: Block): FillResult {
+    fun tryAddBlock(block: AozoraBlock): FillResult {
         Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
         val remainingElements = block.elements.toMutableList()
 
@@ -118,11 +117,11 @@ class LayoutPageBuilder(
             val result =
                 tryAddElement(
                     element,
-                    lineIndent = (block as? Block.TextBlock)?.indent ?: 0,
+                    lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
                     sizeOf = { element ->
                         measurer.measure(
                             element,
-                            (block as? Block.TextBlock)?.textStyle,
+                            (block as? AozoraBlock.TextBlock)?.textStyle,
                         )
                     },
                 )

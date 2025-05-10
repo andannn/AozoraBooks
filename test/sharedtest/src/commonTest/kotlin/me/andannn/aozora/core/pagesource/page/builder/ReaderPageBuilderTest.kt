@@ -5,9 +5,9 @@
 package me.andannn.aozora.core.pagesource.page.builder
 
 import androidx.compose.ui.geometry.Size
+import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.Block
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.FontType
@@ -15,6 +15,9 @@ import me.andannn.aozora.core.data.common.LineSpacing
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
+import me.andannn.aozora.core.pagesource.page.FillResult
+import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
+import me.andannn.aozora.core.pagesource.page.LineBuilder
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -218,7 +221,7 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            Block.Paragraph(
+            AozoraBlock.Paragraph(
                 blockIndex = 0,
                 elements = emptyList(),
             )
@@ -248,7 +251,7 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            Block.Heading(
+            AozoraBlock.Heading(
                 indent = 5,
                 elements = emptyList(),
                 textStyle = AozoraTextStyle.HEADING_LARGE,

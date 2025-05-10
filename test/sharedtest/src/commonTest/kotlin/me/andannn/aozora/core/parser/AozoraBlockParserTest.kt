@@ -4,14 +4,17 @@
  */
 package me.andannn.aozora.core.parser
 
+import me.andannn.aozora.core.data.common.AozoraBlock
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.parser.html.HtmlLineParser
+import me.andannn.aozora.core.pagesource.parser.AozoraBlockParser
+import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
+import me.andannn.aozora.core.pagesource.parser.RawLine
+import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class BlockParserTest {
+class AozoraBlockParserTest {
     val parser: AozoraBlockParser = DefaultAozoraBlockParser(HtmlLineParser)
 
     val sampleString1: String
@@ -26,7 +29,7 @@ class BlockParserTest {
     fun testParseAozoraBlock() {
         val result = parser.parseLineAsBlock(sampleString1.asRawLine())
         assertEquals(
-            Block.Heading(
+            AozoraBlock.Heading(
                 indent = 4,
                 textStyle = AozoraTextStyle.HEADING_MEDIUM,
                 blockIndex = 0,

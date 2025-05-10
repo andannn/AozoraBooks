@@ -2,12 +2,12 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.core.parser.html
+package me.andannn.aozora.core.pagesource.parser.html
 
 import com.fleeksoft.ksoup.nodes.TextNode
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.parser.AozoraLineParser
-import me.andannn.aozora.core.parser.RawLine
+import me.andannn.aozora.core.pagesource.parser.AozoraLineParser
+import me.andannn.aozora.core.pagesource.parser.RawLine
 
 object HtmlLineParser : AozoraLineParser {
     override fun parseLine(line: RawLine): List<AozoraElement> {
