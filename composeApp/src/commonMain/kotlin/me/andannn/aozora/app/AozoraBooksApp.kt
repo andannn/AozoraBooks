@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ */
+
 package me.andannn.aozora.app
 
 import androidx.compose.runtime.Composable
