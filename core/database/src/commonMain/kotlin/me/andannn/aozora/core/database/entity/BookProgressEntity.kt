@@ -1,0 +1,27 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package me.andannn.aozora.core.database.entity
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import me.andannn.aozora.core.database.Tables
+
+internal object BookProgressColumns {
+    const val BOOK_ID = "saved_book_id"
+    const val PROGRESS_BLOCK_INDEX = "progress_block_index"
+    const val UPDATE_EPOCH_MILLISECOND = "update_epoch_millisecond"
+}
+
+@Entity(tableName = Tables.BOOK_PROGRESS_TABLE)
+data class BookProgressEntity(
+    @PrimaryKey
+    @ColumnInfo(name = BookProgressColumns.BOOK_ID)
+    val bookId: String,
+    @ColumnInfo(name = BookProgressColumns.PROGRESS_BLOCK_INDEX)
+    val progressBlockIndex: Int,
+    @ColumnInfo(name = BookProgressColumns.UPDATE_EPOCH_MILLISECOND)
+    val updateEpochMillisecond: Long,
+)

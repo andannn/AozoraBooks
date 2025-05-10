@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,17 +45,17 @@ fun SearchContent(
         contentPadding = PaddingValues(horizontal = 8.dp),
         columns = GridCells.Fixed(10),
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(
-                modifier = Modifier.padding(12.dp),
-                text = "作家別",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        }
-
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            HorizontalDivider()
-        }
+//        item(span = { GridItemSpan(maxLineSpan) }) {
+//            Text(
+//                modifier = Modifier.padding(12.dp),
+//                text = "作家別",
+//                style = MaterialTheme.typography.headlineSmall,
+//            )
+//        }
+//
+//        item(span = { GridItemSpan(maxLineSpan) }) {
+//            HorizontalDivider()
+//        }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
             Text(

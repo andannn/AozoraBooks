@@ -44,7 +44,7 @@ jobs:
         run: ./gradlew ktlintCheck
 
       - name: Run android unit tests
-        run: ./gradlew :test:sharedtest:testDebugUnitTest
+        run: ./gradlew testDebugUnitTest
 
       - name: Run jvm database test
-        run: ./gradlew :test:databaseTest:jvmTest
+        run: ./gradlew :core:database:jvmTest

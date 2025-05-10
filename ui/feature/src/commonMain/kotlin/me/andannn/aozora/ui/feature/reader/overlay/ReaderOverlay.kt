@@ -56,7 +56,6 @@ fun ReaderOverlayContent(
     val scope = rememberCoroutineScope()
     val pageSize = pagerState.pageCount
     val settledPageIndex = pagerState.targetPage
-    Napier.d { "JQN showOverlay: $showOverlay" }
     Column(
         modifier = modifier,
     ) {

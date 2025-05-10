@@ -23,8 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.common.BookInfo
-import me.andannn.aozora.core.data.common.TableOfContent
+import me.andannn.aozora.core.data.common.TableOfContentsModel
 import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.DialogAction
@@ -55,17 +54,17 @@ class TableOfContentsPresenter(
 ) : Presenter<TableOfContentsState> {
     @Composable
     override fun present(): TableOfContentsState {
-        val bookInfo by produceState<BookInfo?>(null) {
-            value = bookSource.getBookInfo()
+        val tableOfContents by produceState<List<TableOfContentsModel>>(emptyList()) {
+            value = bookSource.getTableOfContents()
         }
         return TableOfContentsState(
-            tableOfContentsList = bookInfo?.tableOfContentList ?: emptyList(),
+            tableOfContentsList = tableOfContents,
         )
     }
 }
 
 data class TableOfContentsState(
-    val tableOfContentsList: List<TableOfContent> = emptyList(),
+    val tableOfContentsList: List<TableOfContentsModel> = emptyList(),
 ) : CircuitUiState
 
 @Composable
@@ -89,7 +88,7 @@ fun TableOfContentsDialog(
 fun TableOfContentsDialogContent(
     state: TableOfContentsState,
     modifier: Modifier = Modifier,
-    onClickTableOfContent: (TableOfContent) -> Unit = {},
+    onClickTableOfContent: (TableOfContentsModel) -> Unit = {},
 ) {
     Column(modifier = modifier) {
         Text("Table of Contents", style = MaterialTheme.typography.titleMedium)
@@ -114,7 +113,7 @@ fun TableOfContentsDialogContent(
 @Composable
 fun TableOfContentItem(
     modifier: Modifier = Modifier,
-    tableOfContent: TableOfContent,
+    tableOfContent: TableOfContentsModel,
     onClick: () -> Unit = {},
     spacerCount: Int?,
 ) {

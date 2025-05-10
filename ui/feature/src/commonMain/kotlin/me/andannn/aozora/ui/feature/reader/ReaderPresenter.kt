@@ -6,28 +6,34 @@ package me.andannn.aozora.ui.feature.reader
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.common.BookPreviewInfo
-import me.andannn.aozora.ui.feature.home.library.bookCardList
+import me.andannn.aozora.core.data.UserDataRepository
+import me.andannn.aozora.core.data.common.BookModelTemp
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberReaderPresenter(cardId: String) =
-    remember(
-        cardId,
-    ) {
-        ReaderPresenter(cardId)
-    }
+fun rememberReaderPresenter(
+    cardId: String,
+    userDataRepository: UserDataRepository = getKoin().get(),
+) = remember(
+    cardId,
+    userDataRepository,
+) {
+    ReaderPresenter(cardId, userDataRepository)
+}
 
 class ReaderPresenter(
     private val cardId: String,
+    private val userDataRepository: UserDataRepository,
 ) : Presenter<ReaderState> {
     @Composable
     override fun present(): ReaderState {
-        val scope = rememberCoroutineScope()
-        return ReaderState(getCardById(cardId)) { event ->
+        val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)
+        return ReaderState(savedBook) { event ->
             when (event) {
                 else -> {}
             }
@@ -35,11 +41,9 @@ class ReaderPresenter(
     }
 }
 
-private fun getCardById(id: String): BookPreviewInfo = bookCardList.firstOrNull { it.id == id } ?: error("")
-
 @Stable
 data class ReaderState(
-    val bookCard: BookPreviewInfo,
+    val bookCard: BookModelTemp?,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

@@ -19,8 +19,8 @@ import me.andannn.aozora.core.service.AozoraService
 
 private const val BASE_URL = "https://www.aozora.gr.jp"
 
-class AozoraServiceImpl(
-    val httpClient: HttpClient,
+internal class AozoraServiceImpl(
+    private val httpClient: HttpClient,
 ) : AozoraService {
     override suspend fun getPageCountOfKana(kana: String): Int {
         val url = getBookPageQueryUrlBy(kana, 1)
@@ -62,7 +62,7 @@ private fun getBookCardUrlBy(
     cardId: String,
 ): String = "$BASE_URL/cards/$groupId/card$cardId.html"
 
-fun parseBookCard(
+internal fun parseBookCard(
     url: String,
     cardId: String,
     groupId: String,
@@ -121,6 +121,7 @@ fun parseBookCard(
 
     return AozoraBookCard(
         id = cardId,
+        groupId = groupId,
         title = title!!,
         titleKana = titleKana!!,
         author = author,
@@ -185,7 +186,7 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
     )
 }
 
-fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
+internal fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
     val html = Ksoup.parse(htmlString)
     val listNodes = html.selectFirst("table.list > tbody") ?: error("")
     val results =
@@ -230,7 +231,7 @@ private fun parseTitle(titleElement: Element): TitleItem {
     )
 }
 
-fun parsePageCount(responseText: String): Int {
+internal fun parsePageCount(responseText: String): Int {
     val html = Ksoup.parse(responseText)
     val lastIndex =
         html

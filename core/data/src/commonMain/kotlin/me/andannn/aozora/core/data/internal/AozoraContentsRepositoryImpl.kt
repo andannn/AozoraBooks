@@ -8,13 +8,17 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
 import me.andannn.aozora.core.data.AozoraContentsRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.service.AozoraService
 
-class AozoraContentsRepositoryImpl(
+internal class AozoraContentsRepositoryImpl(
     private val aozoraService: AozoraService,
+    private val savedBookDao: SavedBookDao,
 ) : AozoraContentsRepository {
     override fun getBookListPagingFlow(kana: String): Flow<PagingData<BookColumnItem>> =
         Pager(
@@ -25,5 +29,22 @@ class AozoraContentsRepositoryImpl(
     override suspend fun getBookCard(
         cardId: String,
         groupId: String,
-    ): AozoraBookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
+    ): AozoraBookCard {
+        val bookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
+        savedBookDao.upsertBookList(listOf(bookCard.mapToEntity()))
+        return bookCard
+    }
 }
+
+private fun AozoraBookCard.mapToEntity() =
+    BookEntity(
+        bookId = id,
+        groupId = groupId,
+        title = title,
+        author = author,
+        titleKana = titleKana,
+        authorUrl = authorUrl,
+        zipUrl = zipUrl,
+        htmlUrl = htmlUrl,
+        savedDateInEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+    )

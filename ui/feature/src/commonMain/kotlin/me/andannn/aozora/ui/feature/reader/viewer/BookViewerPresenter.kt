@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -39,7 +39,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberBookViewerPresenter(
-    card: BookPreviewInfo,
+    card: BookModelTemp,
     screenSize: Size,
     bookSource: BookPageSource = LocalBookPageSource.current,
     settingRepository: UserDataRepository = getKoin().get(),
@@ -55,7 +55,7 @@ fun rememberBookViewerPresenter(
 private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
-    private val card: BookPreviewInfo,
+    private val card: BookModelTemp,
     private val bookSource: BookPageSource,
     private val screenSize: Size,
     private val settingRepository: UserDataRepository,
@@ -95,10 +95,13 @@ class BookViewerPresenter(
                     val page = snapshotState?.pageList?.get(newIndex)
 
                     if (page != null) {
-                        settingRepository.setProgressOfBook(
-                            bookCardId = card.id,
-                            blockIndex = (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first,
-                        )
+                        val blockIndex = (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first
+                        if (blockIndex != null) {
+                            settingRepository.setProgressOfBook(
+                                bookCardId = card.id,
+                                blockIndex = blockIndex,
+                            )
+                        }
                     }
                 }
         }
