@@ -1,7 +1,9 @@
 package me.andannn.aozora.ui.feature.indexpages
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.currentCompositeKeyHash
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.paging.cachedIn
@@ -16,6 +18,7 @@ import me.andannn.aozora.core.data.AozoraContentsRepository
 import me.andannn.aozora.core.data.common.BookColumnItem
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.BookCardScreen
+import me.andannn.core.util.rememberRetainedCoroutineScope
 import me.andannn.core.util.romajiToKana
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -45,7 +48,7 @@ class IndexPagesPresenter(
             remember {
                 kana.romajiToKana(isKatakana = true)
             }
-        val scope = rememberCoroutineScope()
+        val scope = rememberRetainedCoroutineScope()
         val pagingDataFlow =
             rememberRetained {
                 aozoraRepository.getBookListPagingFlow(kana).cachedIn(scope)

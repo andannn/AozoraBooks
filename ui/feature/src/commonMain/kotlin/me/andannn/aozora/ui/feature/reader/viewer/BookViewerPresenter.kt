@@ -88,7 +88,7 @@ class BookViewerPresenter(
                 .drop(1)
                 .collect { newIndex ->
                     Napier.d(tag = TAG) { "new settled page collected $newIndex" }
-                    val page = snapshotState?.pageList[newIndex]
+                    val page = snapshotState?.pageList?.get(newIndex)
 
                     if (page != null) {
                         settingRepository.setProgressOfBook(
