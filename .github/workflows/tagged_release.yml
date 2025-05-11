@@ -53,10 +53,19 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
+      - name: Build android bundle
+        run: ./gradlew bundleRelease -P android.releaseSigning=true
+        env:
+          SIGNING_KEYSTORE_PATH: ./keystore/keystore.jks
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
       - name: Upload Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           files: |
             composeApp/build/outputs/apk/release/composeApp-release.apk
+            composeApp/build/outputs/bundle/release/composeApp-release.aab
           repo_token: "${{ secrets.TOKEN }}"
           prerelease: true
