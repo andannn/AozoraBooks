@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId = "me.andannn.aozora"
-        versionCode = 6
-        versionName = "0.0.1-alpha06"
+        versionCode = 7
+        versionName = "0.0.1-alpha07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
