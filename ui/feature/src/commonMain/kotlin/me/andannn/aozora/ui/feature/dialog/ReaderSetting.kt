@@ -4,26 +4,37 @@
  */
 package me.andannn.aozora.ui.feature.dialog
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -39,6 +50,9 @@ import me.andannn.aozora.core.data.common.pre
 import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
 import me.andannn.aozora.ui.common.dialog.DialogType
+import me.andannn.aozora.ui.common.theme.getBackgroundColor
+import me.andannn.aozora.ui.common.theme.getFontFamilyByType
+import me.andannn.aozora.ui.common.theme.getTextColor
 import org.koin.mp.KoinPlatform.getKoin
 
 object ReaderSettingDialogId : DialogId {
@@ -179,10 +193,11 @@ fun ReaderSettingDialogContent(
     onSelectItem: (Int) -> Unit = {},
 ) {
     Column(
-        modifier,
+        modifier.fillMaxSize(),
     ) {
         TabRow(
             modifier = Modifier.fillMaxWidth(),
+            containerColor = Color.Transparent,
             selectedTabIndex = currentSelectIndex,
         ) {
             TabRowItem.entries.forEach {
@@ -192,7 +207,7 @@ fun ReaderSettingDialogContent(
                         onSelectItem.invoke(it.ordinal)
                     },
                     text = {
-                        Text(it.name)
+                        Text(it.label)
                     },
                 )
             }
@@ -241,9 +256,12 @@ private fun LayoutSetting(
     onSelectedTheme: (ReaderTheme) -> Unit = {},
 ) {
     Column(modifier = modifier) {
-        Text("theme")
+        Heading(text = "テーマ")
 
-        Row {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
             ReaderTheme.entries.forEach {
                 ThemeItem(
                     theme = it,
@@ -259,9 +277,12 @@ private fun LayoutSetting(
 
         HorizontalDivider()
 
-        Text("line Spacing")
+        Heading(text = "行間隔")
 
-        Row {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
             LineSpacing.entries.forEach {
                 LineSpacingItem(
                     lineSpacing = it,
@@ -278,9 +299,12 @@ private fun LayoutSetting(
 
     HorizontalDivider()
 
-    Text("top margin")
+    Heading(text = "上部余白")
 
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
         TopMargin.entries.forEach {
             TopMarginItem(
                 topMargin = it,
@@ -293,6 +317,18 @@ private fun LayoutSetting(
             )
         }
     }
+}
+
+@Composable
+fun Heading(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Text(
+        modifier = modifier.padding(horizontal = 18.dp, vertical = 8.dp),
+        text = text,
+        style = MaterialTheme.typography.titleLarge,
+    )
 }
 
 @Composable
@@ -325,9 +361,16 @@ private fun FontSetting(
             }
             Spacer(modifier = Modifier.height(12.dp))
         }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         HorizontalDivider()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Heading(text = "フォントサイズ")
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         AdjustFontSizeSlider(
             fontSizeLevel = fontSizeLevel,
@@ -342,21 +385,25 @@ fun AdjustFontSizeSlider(
     fontSizeLevel: FontSizeLevel,
     onChangeSize: (FontSizeLevel) -> Unit = {},
 ) {
-    Text(fontSizeLevel.name)
-    Row(modifier = modifier) {
-        TextButton(
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        OutlinedButton(
             onClick = {
                 onChangeSize.invoke(fontSizeLevel.pre())
             },
         ) {
-            Text("A-")
+            Text("A-", style = MaterialTheme.typography.titleLarge)
         }
-        TextButton(
+        Text(fontSizeLevel.label)
+        OutlinedButton(
             onClick = {
                 onChangeSize.invoke(fontSizeLevel.next())
             },
         ) {
-            Text("A+")
+            Text("A+", style = MaterialTheme.typography.titleLarge)
         }
     }
 }
@@ -368,11 +415,40 @@ private fun FontItem(
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        modifier = modifier.size(72.dp),
-        onClick = onClick,
+    Column(
+        modifier = modifier.wrapContentSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(fontType.name + isSelected.toString())
+        Surface(
+            modifier = Modifier.size(72.dp),
+            onClick = onClick,
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            shape = CircleShape,
+            border =
+                if (isSelected) {
+                    BorderStroke(
+                        3.dp,
+                        MaterialTheme.colorScheme.outline,
+                    )
+                } else {
+                    null
+                },
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "あ",
+                    fontSize = 32.sp,
+                    fontFamily = getFontFamilyByType(fontType),
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            text = fontType.label,
+        )
     }
 }
 
@@ -383,11 +459,30 @@ private fun ThemeItem(
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        modifier = modifier.size(72.dp),
-        onClick = onClick,
+    val border =
+        BorderStroke(3.dp, MaterialTheme.colorScheme.outline).takeIf { isSelected }
+    val colorScheme = MaterialTheme.colorScheme
+    val bgColor = theme.getBackgroundColor(colorScheme)
+    val textColor = theme.getTextColor(colorScheme)
+    Column(
+        modifier = modifier,
     ) {
-        Text(theme.name + isSelected.toString())
+        Surface(
+            modifier = Modifier.size(72.dp),
+            shape = CircleShape,
+            color = bgColor,
+            border = border,
+            onClick = onClick,
+        ) {
+            Box(Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "あ",
+                    fontSize = 32.sp,
+                    color = textColor,
+                )
+            }
+        }
     }
 }
 
@@ -398,12 +493,12 @@ private fun TopMarginItem(
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        modifier = modifier.size(72.dp),
+    SelectedButton(
+        modifier = modifier,
         onClick = onClick,
-    ) {
-        Text(topMargin.name + isSelected.toString())
-    }
+        text = topMargin.label,
+        selected = isSelected,
+    )
 }
 
 @Composable
@@ -413,11 +508,31 @@ private fun LineSpacingItem(
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        modifier = modifier.size(72.dp),
+    SelectedButton(
+        modifier = modifier,
         onClick = onClick,
+        text = lineSpacing.label,
+        selected = isSelected,
+    )
+}
+
+@Composable
+private fun SelectedButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        modifier = modifier,
+        onClick = onClick,
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+            ),
     ) {
-        Text(lineSpacing.name + isSelected.toString())
+        Text(text)
     }
 }
 
@@ -425,3 +540,35 @@ enum class TabRowItem {
     FONT,
     LAYOUT,
 }
+
+val TabRowItem.label
+    get() =
+        when (this) {
+            TabRowItem.FONT -> "フォント"
+            TabRowItem.LAYOUT -> "レイアウト"
+        }
+
+val FontType.label
+    get() =
+        when (this) {
+            FontType.NOTO_SANS -> "システム"
+            FontType.NOTO_SERIF -> "Noto Serif Japanese"
+        }
+
+val FontSizeLevel.label
+    get() = "レベル　${this.ordinal + 1}"
+
+val LineSpacing.label
+    get() =
+        when (this) {
+            LineSpacing.SMALL -> "小"
+            LineSpacing.MEDIUM -> "中"
+            LineSpacing.LARGE -> "大"
+        }
+val TopMargin.label
+    get() =
+        when (this) {
+            TopMargin.SMALL -> "小"
+            TopMargin.MEDIUM -> "中"
+            TopMargin.LARGE -> "大"
+        }

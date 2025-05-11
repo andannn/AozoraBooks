@@ -32,31 +32,33 @@ fun Home(
 ) {
     HomeContent(
         modifier = modifier,
-        state = state,
+        currentNavigation = state.currentNavigation,
+        onEvent = state.evenSink,
     )
 }
 
 @Composable
 fun HomeContent(
-    state: HomeState,
     modifier: Modifier = Modifier,
+    currentNavigation: NavigationItem,
+    onEvent: (HomeUiEvent) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            AozoraAppBar()
+            AozoraAppBar(currentNavigation)
         },
         bottomBar = {
             AozoraNavigationBar(
-                selectedItem = state.currentNavigation,
+                selectedItem = currentNavigation,
                 onSelectItem = {
-                    state.evenSink.invoke(HomeUiEvent.OnNavigationItemClick(it))
+                    onEvent.invoke(HomeUiEvent.OnNavigationItemClick(it))
                 },
             )
         },
     ) {
         Box(modifier = Modifier.padding(it)) {
-            when (state.currentNavigation) {
+            when (currentNavigation) {
                 NavigationItem.LIBRARY -> {
                     Library(
                         rememberLibraryPresenter().present(),
@@ -75,11 +77,18 @@ fun HomeContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AozoraAppBar(modifier: Modifier = Modifier) {
+fun AozoraAppBar(
+    currentNavigation: NavigationItem,
+    modifier: Modifier = Modifier,
+) {
     TopAppBar(
         modifier = modifier,
         title = {
-            Text("Aozora Books")
+            if (currentNavigation == NavigationItem.LIBRARY) {
+                Text("青空読書")
+            } else {
+                Text(currentNavigation.label)
+            }
         },
     )
 }
@@ -102,7 +111,6 @@ fun AozoraNavigationBar(
                         contentDescription = null,
                     )
                 },
-                label = { Text(item.label) },
                 selected = isSelected,
                 onClick = {
                     onSelectItem(item)
@@ -135,5 +143,5 @@ val NavigationItem.label
     get() =
         when (this) {
             NavigationItem.LIBRARY -> "Library"
-            NavigationItem.SEARCH -> "Search"
+            NavigationItem.SEARCH -> "検索"
         }

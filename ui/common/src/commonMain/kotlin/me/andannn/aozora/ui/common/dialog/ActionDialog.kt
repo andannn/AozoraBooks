@@ -65,7 +65,7 @@ private fun ActionDialogContainer(
 
         DialogType.ModalBottomSheet ->
             ModalBottomSheet(
-                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                sheetState = rememberModalBottomSheetState(),
                 onDismissRequest = {
                     data.performAction(Dismissed)
                 },
