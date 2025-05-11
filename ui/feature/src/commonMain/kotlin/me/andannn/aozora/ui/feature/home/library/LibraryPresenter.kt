@@ -7,35 +7,42 @@ package me.andannn.aozora.ui.feature.home.library
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
+import me.andannn.aozora.core.data.UserDataRepository
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.home.NavigationItem
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberLibraryPresenter(navigator: Navigator = LocalNavigator.current) =
-    remember(
-        navigator,
-    ) {
-        LibraryPresenter(navigator)
-    }
+fun rememberLibraryPresenter(
+    userDataRepository: UserDataRepository = getKoin().get(),
+    navigator: Navigator = LocalNavigator.current,
+) = remember(
+    userDataRepository,
+    navigator,
+) {
+    LibraryPresenter(userDataRepository, navigator)
+}
 
 class LibraryPresenter(
+    private val userDataRepository: UserDataRepository,
     private val navigator: Navigator,
 ) : Presenter<LibraryState> {
     @Composable
     override fun present(): LibraryState {
-        var navigationItem by remember {
-            mutableStateOf(NavigationItem.LIBRARY)
-        }
-
+        val savedBooks by userDataRepository
+            .getAllSavedBook()
+            .collectAsRetainedState(initial = emptyList())
         return LibraryState(
-            currentNavigation = navigationItem,
+            savedBooks = savedBooks.toImmutableList(),
         ) { event ->
             when (event) {
                 is LibraryUiEvent.OnCardClick -> {
@@ -48,7 +55,7 @@ class LibraryPresenter(
 
 @Stable
 data class LibraryState(
-    val currentNavigation: NavigationItem,
+    val savedBooks: ImmutableList<BookModelTemp>,
     val evenSink: (LibraryUiEvent) -> Unit = {},
 ) : CircuitUiState
 

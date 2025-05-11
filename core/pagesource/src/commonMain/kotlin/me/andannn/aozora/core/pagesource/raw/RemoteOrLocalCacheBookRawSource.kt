@@ -26,16 +26,13 @@ import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.BookInfo
-import me.andannn.aozora.core.data.common.BookModel
-import me.andannn.aozora.core.data.common.BookPreviewInfo
-import me.andannn.aozora.core.data.common.TableOfContent
-import me.andannn.aozora.core.parser.DefaultAozoraBlockParser
-import me.andannn.aozora.core.parser.html.HtmlLineParser
-import me.andannn.aozora.core.parser.html.matchers.HeadingMatcher
-import me.andannn.aozora.core.parser.html.parseAsHtmlNodes
-import me.andannn.aozora.core.parser.lineSequence
+import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.pagesource.page.AozoraBlock
+import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
+import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
+import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
+import me.andannn.aozora.core.pagesource.parser.html.parseAsHtmlNodes
+import me.andannn.aozora.core.pagesource.parser.lineSequence
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
 import me.andannn.core.util.unzip
@@ -44,8 +41,8 @@ import org.koin.mp.KoinPlatform.getKoin
 /**
  * Get source from local cached file or fetch from remote.
  */
-class RemoteOrLocalCacheBookRawSource(
-    card: BookPreviewInfo,
+internal class RemoteOrLocalCacheBookRawSource(
+    card: BookModelTemp,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
     private val cacheDictionary: Path = getCachedPatchById(card.id),
@@ -64,7 +61,7 @@ class RemoteOrLocalCacheBookRawSource(
         }
     }
 
-    override suspend fun getRawSource(): Flow<Block> {
+    override suspend fun getRawSource(): Flow<AozoraBlock> {
         val parser = DefaultAozoraBlockParser(HtmlLineParser)
 
         val bookModel = waitBookModelOrThrow()
@@ -120,7 +117,7 @@ private sealed interface SourceState {
 }
 
 private suspend fun createBookRawSource(
-    card: BookPreviewInfo,
+    card: BookModelTemp,
     cacheDictionary: Path,
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
@@ -146,7 +143,7 @@ internal expect fun getCachedPatchById(id: String): Path
  *
  * @throws IllegalArgumentException If htmlUrl is null.
  */
-private suspend fun BookPreviewInfo.downloadBookTo(folder: Path) {
+private suspend fun BookModelTemp.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }
@@ -182,11 +179,8 @@ private fun getCachedBookModel(path: Path): BookModel? {
         }
     }
 
-    if (meta == null) {
-        return null
-    }
     return BookModel(
-        info = meta,
+        info = meta ?: return null,
         contentHtmlPath = contentHtmlPath,
         illustrationPath = illustrationPathList,
     )

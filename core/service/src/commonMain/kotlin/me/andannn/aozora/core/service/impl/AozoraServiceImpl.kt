@@ -19,8 +19,8 @@ import me.andannn.aozora.core.service.AozoraService
 
 private const val BASE_URL = "https://www.aozora.gr.jp"
 
-class AozoraServiceImpl(
-    val httpClient: HttpClient,
+internal class AozoraServiceImpl(
+    private val httpClient: HttpClient,
 ) : AozoraService {
     override suspend fun getPageCountOfKana(kana: String): Int {
         val url = getBookPageQueryUrlBy(kana, 1)
@@ -121,6 +121,7 @@ internal fun parseBookCard(
 
     return AozoraBookCard(
         id = cardId,
+        groupId = groupId,
         title = title!!,
         titleKana = titleKana!!,
         author = author,
@@ -133,8 +134,8 @@ internal fun parseBookCard(
         characterType = characterType,
         staffData =
             StaffData(
-                input = input!!,
-                proofreading = proofreading!!,
+                input = input,
+                proofreading = proofreading,
             ),
     )
 }

@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.BookPreviewInfo
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
@@ -22,6 +22,7 @@ fun Library(
 ) {
     LibraryContent(
         modifier = modifier,
+        savedBooks = state.savedBooks,
         onEvent = state.evenSink,
     )
 }
@@ -29,6 +30,7 @@ fun Library(
 @Composable
 fun LibraryContent(
     modifier: Modifier,
+    savedBooks: List<BookModelTemp>,
     onEvent: (LibraryUiEvent) -> Unit,
 ) {
     LazyVerticalGrid(
@@ -39,7 +41,7 @@ fun LibraryContent(
         columns = GridCells.Adaptive(128.dp),
     ) {
         items(
-            items = bookCardList,
+            items = savedBooks,
             key = { it.id },
         ) { card ->
             PreviewBookCard(
@@ -54,29 +56,29 @@ fun LibraryContent(
 }
 
 val bookCardList =
-    listOf<BookPreviewInfo>(
-        BookPreviewInfo(
+    listOf<BookModelTemp>(
+        BookModelTemp(
             id = "301",
+            groupId = "301",
             title = "人間失格",
             authorName = "太宰治",
             zipUrl = "https://www.aozora.gr.jp/cards/000035/files/301_ruby_5915.zip",
             htmlUrl = "https://www.aozora.gr.jp/cards/000035/files/301_14912.html",
-            bookCardUrl = "",
         ),
-        BookPreviewInfo(
+        BookModelTemp(
             id = "789",
+            groupId = "301",
             title = "吾輩は猫である",
             authorName = "夏目漱石",
             zipUrl = "https://www.aozora.gr.jp/cards/000148/files/789_ruby_5639.zip",
             htmlUrl = "https://www.aozora.gr.jp/cards/000148/files/789_14547.html",
-            bookCardUrl = "",
         ),
-        BookPreviewInfo(
+        BookModelTemp(
             id = "60756",
+            groupId = "301",
             title = "現代語訳　平家物語",
             authorName = "宮沢賢治",
             zipUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_ruby_74753.zip",
             htmlUrl = "https://www.aozora.gr.jp/cards/001529/files/60756_74787.html",
-            bookCardUrl = "",
         ),
     )

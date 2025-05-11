@@ -12,7 +12,7 @@ import me.andannn.aozora.core.service.AozoraService
 
 private const val TAG = "BookListPagingSource"
 
-class BookListPagingSource(
+internal class BookListPagingSource(
     private val kana: String,
     private val aozoraService: AozoraService,
 ) : PagingSource<Int, BookColumnItem>() {

@@ -5,6 +5,7 @@
 package me.andannn.aozora.core.data
 
 import kotlinx.coroutines.flow.Flow
+import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -70,7 +71,7 @@ interface UserDataRepository {
      */
     suspend fun setProgressOfBook(
         bookCardId: String,
-        blockIndex: Int?,
+        blockIndex: Int,
     )
 
     /**
@@ -82,4 +83,26 @@ interface UserDataRepository {
      * Get the progress of book.
      */
     suspend fun getProgress(bookCardId: String): Int?
+
+    /**
+     * Save book to library.
+     */
+    suspend fun saveBookToLibrary(bookId: String)
+
+    /**
+     * Get all saved book.
+     */
+    fun getAllSavedBook(): Flow<List<BookModelTemp>>
+
+    /**
+     * Delete saved book.
+     */
+    suspend fun deleteSavedBook(bookModelTemp: BookModelTemp)
+
+    /**
+     * Get saved book by id.
+     */
+    fun getSavedBookById(id: String): Flow<BookModelTemp?>
+
+    fun getBookCache(bookId: String): Flow<BookModelTemp?>
 }

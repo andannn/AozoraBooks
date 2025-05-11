@@ -11,7 +11,7 @@ import io.ktor.client.plugins.resources.Resources
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-internal val clientBuilder: () -> HttpClient = {
+val clientBuilder: () -> HttpClient = {
     PlatformHttpClient.config {
         commonConfig()
     }

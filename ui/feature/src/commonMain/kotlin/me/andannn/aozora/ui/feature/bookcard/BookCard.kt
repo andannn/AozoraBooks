@@ -18,13 +18,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -49,6 +52,7 @@ fun BookCard(
     BookCardContent(
         modifier = modifier,
         bookCardInfo = state.bookCardInfo,
+        isAddedToShelf = state.isAddedToShelf,
         onEvent = state.evenSink,
     )
 }
@@ -58,13 +62,18 @@ fun BookCard(
 private fun BookCardContent(
     modifier: Modifier = Modifier,
     bookCardInfo: AozoraBookCard?,
+    isAddedToShelf: Boolean,
     onEvent: (BookCardUiEvent) -> Unit = {},
 ) {
     if (bookCardInfo == null) {
-        Box(
+        Scaffold(
             modifier = modifier.fillMaxSize(),
         ) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
         return
     }
@@ -86,6 +95,33 @@ private fun BookCardContent(
                     }
                 },
             )
+        },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
+                SmallFloatingActionButton(
+                    content = {
+                        Icon(Icons.Filled.Book, contentDescription = null)
+                    },
+                    onClick = {
+                        onEvent.invoke(BookCardUiEvent.OnClickRead)
+                    },
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ExtendedFloatingActionButton(
+                    content = {
+                        if (isAddedToShelf) {
+                            Text("本棚から削除")
+                        } else {
+                            Text("本棚に追加")
+                        }
+                    },
+                    onClick = {
+                        onEvent.invoke(BookCardUiEvent.OnAddToShelf)
+                    },
+                )
+            }
         },
     ) {
         LazyColumn(
@@ -214,8 +250,12 @@ private fun BookCardContent(
             val staffData = bookCardInfo.staffData
             staffData?.let {
                 item {
-                    ItemRow(title = "入力：", value = staffData.input)
-                    ItemRow(title = "校正：", value = staffData.proofreading)
+                    staffData.input?.let {
+                        ItemRow(title = "入力：", value = it)
+                    }
+                    staffData.proofreading?.let {
+                        ItemRow(title = "校正：", value = it)
+                    }
                 }
             }
         }

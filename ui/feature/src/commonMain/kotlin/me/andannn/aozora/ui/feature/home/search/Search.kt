@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,17 +45,17 @@ fun SearchContent(
         contentPadding = PaddingValues(horizontal = 8.dp),
         columns = GridCells.Fixed(10),
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(
-                modifier = Modifier.padding(12.dp),
-                text = "作家別",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        }
-
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            HorizontalDivider()
-        }
+//        item(span = { GridItemSpan(maxLineSpan) }) {
+//            Text(
+//                modifier = Modifier.padding(12.dp),
+//                text = "作家別",
+//                style = MaterialTheme.typography.headlineSmall,
+//            )
+//        }
+//
+//        item(span = { GridItemSpan(maxLineSpan) }) {
+//            HorizontalDivider()
+//        }
 
         item(span = { GridItemSpan(maxLineSpan) }) {
             Text(
@@ -136,11 +135,11 @@ private val KanaItemList =
         KanaItem("su", "す"),
         KanaItem("tu", "つ"),
         KanaItem("nu", "ぬ"),
-        KanaItem("fu", "ふ"),
+        KanaItem("hu", "ふ"),
         KanaItem("mu", "む"),
         KanaItem("yu", "ゆ"),
         KanaItem("ru", "る"),
-        KanaItem("n", "ん"),
+        null,
         KanaItem("e", "え"),
         KanaItem("ke", "け"),
         KanaItem("se", "せ"),

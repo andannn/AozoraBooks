@@ -21,7 +21,7 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
-import me.andannn.aozora.core.pagesource.page.builder.layout
+import me.andannn.aozora.core.pagesource.layout
 import me.andannn.aozora.ui.common.theme.NotoSerifJpFontFamily
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getTextColor

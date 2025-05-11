@@ -5,7 +5,7 @@
 package me.andannn.aozora.core.pagesource.util
 
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.Block
+import me.andannn.aozora.core.pagesource.page.AozoraBlock
 
 /**
  * Divide the element from [startIndex].
@@ -13,7 +13,7 @@ import me.andannn.aozora.core.data.common.Block
  *
  * Return pair: [0, startIndex) -> [startIndex, length)
  */
-fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText, AozoraElement.BaseText>? {
+internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText, AozoraElement.BaseText>? {
     if (startIndex > length) {
         return null
     }
@@ -54,17 +54,17 @@ fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText,
 /**
  * Divide the element by [startIndex] (not include).
  */
-fun Block.divideByTextIndex(startIndex: Int): Pair<Block, Block> {
+internal fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBlock> {
     if (startIndex <= 0) {
         error("index must be greater than 0")
     }
 
     when (this) {
-        is Block.Image -> {
+        is AozoraBlock.Image -> {
             error("Image can not be divided")
         }
 
-        is Block.TextBlock -> {
+        is AozoraBlock.TextBlock -> {
             var currentElementStartIndex = 0
             var hitElement: IndexedValue<AozoraElement>? = null
             for ((index, element) in elements.withIndex()) {

@@ -5,7 +5,6 @@
 package me.andannn.aozora.core.data.internal
 
 import androidx.paging.PagingSource
-import androidx.paging.PagingSource.LoadResult
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -35,7 +34,7 @@ class BookListPagingSourceTest {
                     ),
                 )
 
-            assertIs<LoadResult.Page<Int, BookColumnItem>>(result)
+            assertIs<PagingSource.LoadResult.Page<Int, BookColumnItem>>(result)
             assertEquals(null, result.nextKey)
 
             val result2 =
@@ -46,7 +45,7 @@ class BookListPagingSourceTest {
                         placeholdersEnabled = false,
                     ),
                 )
-            assertIs<LoadResult.Error<Int, BookColumnItem>>(result2)
+            assertIs<PagingSource.LoadResult.Error<Int, BookColumnItem>>(result2)
         }
 }
 

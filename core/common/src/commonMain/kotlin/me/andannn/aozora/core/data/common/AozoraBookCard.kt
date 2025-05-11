@@ -9,6 +9,7 @@ package me.andannn.aozora.core.data.common
  */
 data class AozoraBookCard(
     val id: String,
+    val groupId: String,
     val title: String,
     val titleKana: String,
     val author: String?,
@@ -23,8 +24,8 @@ data class AozoraBookCard(
 )
 
 data class StaffData(
-    val proofreading: String,
-    val input: String,
+    val proofreading: String?,
+    val input: String?,
 )
 
 data class AuthorData(
