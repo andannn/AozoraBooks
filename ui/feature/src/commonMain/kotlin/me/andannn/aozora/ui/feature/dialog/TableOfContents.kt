@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,8 +91,12 @@ fun TableOfContentsDialogContent(
     modifier: Modifier = Modifier,
     onClickTableOfContent: (TableOfContentsModel) -> Unit = {},
 ) {
-    Column(modifier = modifier) {
-        Text("Table of Contents", style = MaterialTheme.typography.titleMedium)
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(
+            modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
+            text = "目次",
+            style = MaterialTheme.typography.titleLarge,
+        )
         val maxHeadingLevel = state.tableOfContentsList.minOfOrNull { it.headingLevel }
         Spacer(modifier = Modifier.height(24.dp))
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -68,6 +69,7 @@ fun ReaderOverlayContent(
                         alpha = animatedAlpha.value
                     }.background(MaterialTheme.colorScheme.surface)
                     .statusBarsPadding(),
+            enable = animatedAlpha.value != 0f,
             onBack = {
                 onEvent.invoke(ReaderOverlayEvent.OnBack)
             },
@@ -89,6 +91,7 @@ fun ReaderOverlayContent(
                     }.background(MaterialTheme.colorScheme.background)
                     .padding(24.dp),
             pageSize = pageSize,
+            enable = animatedAlpha.value != 0f,
             currentPageIndex = settledPageIndex,
             onPageChanged = {
                 scope.launch {
@@ -103,6 +106,7 @@ fun ReaderOverlayContent(
 @Composable
 private fun OverlayTopBar(
     modifier: Modifier = Modifier,
+    enable: Boolean,
     onBack: () -> Unit = {},
     onClickTableOfContents: () -> Unit = {},
     onClickSetting: () -> Unit = {},
@@ -115,6 +119,7 @@ private fun OverlayTopBar(
                 onClick = {
                     onBack()
                 },
+                enabled = enable,
             ) {
                 Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
             }
@@ -124,16 +129,20 @@ private fun OverlayTopBar(
                 onClick = {
                     onClickTableOfContents()
                 },
+                enabled = enable,
             ) {
                 Icon(Icons.Filled.Menu, contentDescription = null)
             }
+            Spacer(modifier = Modifier.width(4.dp))
             IconButton(
                 onClick = {
                     onClickSetting()
                 },
+                enabled = enable,
             ) {
                 Icon(Icons.Filled.Settings, contentDescription = null)
             }
+            Spacer(modifier = Modifier.width(4.dp))
         }
     }
 }
@@ -141,6 +150,7 @@ private fun OverlayTopBar(
 @Composable
 private fun ProgressSlider(
     modifier: Modifier = Modifier,
+    enable: Boolean,
     pageSize: Int,
     currentPageIndex: Int,
     onPageChanged: (Int) -> Unit,
@@ -150,6 +160,7 @@ private fun ProgressSlider(
             modifier =
                 modifier
                     .graphicsLayer { scaleX = -1f },
+            enabled = enable,
             value = currentPageIndex.toFloat(),
             valueRange = 0f..(pageSize - 1).toFloat(),
             onValueChange = {

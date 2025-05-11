@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import aosora.ui.common.generated.resources.Res
 import aosora.ui.common.generated.resources.noto_serif_jp_regular
+import me.andannn.aozora.core.data.common.FontType
 import org.jetbrains.compose.resources.Font
 
 // Set of Material typography styles to start with
@@ -43,6 +44,13 @@ val DefaultTypography =
     )
      */
     )
+
+@Composable
+fun getFontFamilyByType(type: FontType): FontFamily =
+    when (type) {
+        FontType.NOTO_SANS -> FontFamily.Default
+        FontType.NOTO_SERIF -> NotoSerifJpFontFamily
+    }
 
 val NotoSerifJpFontFamily
     @Composable get() =

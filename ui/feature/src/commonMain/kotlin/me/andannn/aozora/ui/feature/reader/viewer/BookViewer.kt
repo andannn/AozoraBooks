@@ -15,15 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.layout
-import me.andannn.aozora.ui.common.theme.NotoSerifJpFontFamily
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
+import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
 import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
@@ -85,10 +83,3 @@ private fun ReaderContent(
         }
     }
 }
-
-@Composable
-private fun getFontFamilyByType(type: FontType): FontFamily =
-    when (type) {
-        FontType.NOTO_SANS -> FontFamily.Default
-        FontType.NOTO_SERIF -> NotoSerifJpFontFamily
-    }
