@@ -83,14 +83,13 @@ class ElementMatcherTest {
                         AozoraElement.Text("第一　"),
                         AozoraElement.Ruby("腹中", "ふくちゅう"),
                         AozoraElement.Text("の新年"),
-                        AozoraElement.LineBreak,
                     ),
             ),
             HeadingMatcher.match(
                 (
                     "<div class=\"jisage_4\" style=\"margin-left: 4em\">" +
                         "<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi120\">" +
-                        "第一　<ruby><rb>腹中</rb><rp>（</rp><rt>ふくちゅう</rt><rp>）</rp></ruby>の新年</a></h4></div>\n"
+                        "第一　<ruby><rb>腹中</rb><rp>（</rp><rt>ふくちゅう</rt><rp>）</rp></ruby>の新年</a></h4></div>"
                 ).parseAsHtmlNodes().first(),
             ),
         )
@@ -100,15 +99,12 @@ class ElementMatcherTest {
     fun testHeaderMatcher2() {
         assertEquals(
             AozoraElement.Heading(
-                indent = 4,
+                indent = 6,
                 style = AozoraTextStyle.HEADING_MEDIUM,
                 headingLevel = 4,
                 elements =
                     listOf(
-                        AozoraElement.Text("第一　"),
-                        AozoraElement.Ruby("腹中", "ふくちゅう"),
-                        AozoraElement.Text("の新年"),
-                        AozoraElement.LineBreak,
+                        AozoraElement.Text("序詞"),
                     ),
             ),
             HeadingMatcher.match(

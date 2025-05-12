@@ -221,8 +221,9 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            AozoraBlock.Paragraph(
+            AozoraBlock.TextBlock(
                 blockIndex = 0,
+                textStyle = AozoraTextStyle.HEADING_LARGE,
                 elements = emptyList(),
             )
         assertEquals(
@@ -251,7 +252,7 @@ class ReaderPageBuilderTest {
         val builder = pageBuilder
 
         val block =
-            AozoraBlock.Heading(
+            AozoraBlock.TextBlock(
                 indent = 5,
                 elements = emptyList(),
                 textStyle = AozoraTextStyle.HEADING_LARGE,

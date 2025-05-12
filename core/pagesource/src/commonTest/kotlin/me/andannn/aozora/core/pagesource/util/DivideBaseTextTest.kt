@@ -5,6 +5,7 @@
 package me.andannn.aozora.core.pagesource.util
 
 import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,8 +23,9 @@ class DivideBaseTextTest {
     @Test
     fun testDiveBlock() {
         val block =
-            AozoraBlock.Paragraph(
+            AozoraBlock.TextBlock(
                 blockIndex = 0,
+                textStyle = AozoraTextStyle.PARAGRAPH,
                 elements =
                     listOf(
                         AozoraElement.Text("ab"),
@@ -39,13 +41,14 @@ class DivideBaseTextTest {
     @Test
     fun testDiveBlockWithRuby() {
         val block =
-            AozoraBlock.Paragraph(
+            AozoraBlock.TextBlock(
                 elements =
                     listOf(
                         AozoraElement.Text("ab"),
                         AozoraElement.Ruby("cdef", ruby = "AA"),
                         AozoraElement.Text("ghijk"),
                     ),
+                textStyle = AozoraTextStyle.PARAGRAPH,
                 blockIndex = 0,
             )
         val (left, right) = block.divideByTextIndex(3)
