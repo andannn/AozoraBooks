@@ -23,10 +23,9 @@ internal object HeadingMatcher : ElementMatcher {
         val headingLevel = child.tagName().removePrefix("h").toIntOrNull() ?: return null
         val styleName = child.attr("class")
         val style =
-            when (styleName) {
-                "naka-midashi" -> AozoraTextStyle.HEADING_MEDIUM
-                "o-midashi" -> AozoraTextStyle.HEADING_LARGE
-
+            when {
+                styleName.contains("naka-midashi") -> AozoraTextStyle.HEADING_MEDIUM
+                styleName.contains("o-midashi") -> AozoraTextStyle.HEADING_LARGE
                 else -> AozoraTextStyle.PARAGRAPH
             }
         val contentNodes = child.selectFirst(".midashi_anchor")?.childNodes() ?: return null
@@ -36,7 +35,7 @@ internal object HeadingMatcher : ElementMatcher {
             indent = indent,
             style = style,
             headingLevel = headingLevel,
-            elements = elements + AozoraElement.LineBreak,
+            elements = elements,
         )
     }
 }

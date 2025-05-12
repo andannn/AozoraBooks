@@ -18,6 +18,7 @@ internal sealed class AozoraBlock(
         override val elements: List<AozoraElement>,
         open val textStyle: AozoraTextStyle,
         open val indent: Int = 0,
+        open val maxTextLength: Int = Int.MAX_VALUE,
     ) : AozoraBlock(blockIndex, elements)
 
     data class Heading(
@@ -30,6 +31,8 @@ internal sealed class AozoraBlock(
     data class Paragraph(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
+        override val indent: Int = 0,
+        override val maxTextLength: Int = Int.MAX_VALUE,
     ) : TextBlock(blockIndex, elements, AozoraTextStyle.PARAGRAPH, 0)
 
     data class Image(

@@ -27,7 +27,7 @@ internal class DefaultAozoraBlockParser(
             val indent = heading.indent
             return AozoraBlock.Heading(
                 blockIndex = blockIndex++,
-                elements = heading.elements,
+                elements = heading.elements + elements[1],
                 indent = indent,
                 textStyle = heading.style,
             )
@@ -35,6 +35,14 @@ internal class DefaultAozoraBlockParser(
             return AozoraBlock.Image(
                 blockIndex = blockIndex++,
                 elements = elements,
+            )
+        } else if (elements.size == 2 && elements[0] is AozoraElement.SpecialParagraph) {
+            val paragraph = elements[0] as AozoraElement.SpecialParagraph
+            return AozoraBlock.Paragraph(
+                blockIndex = blockIndex++,
+                elements = paragraph.elements + elements[1],
+                indent = paragraph.indent,
+                maxTextLength = paragraph.maxLength,
             )
         } else {
             return AozoraBlock.Paragraph(

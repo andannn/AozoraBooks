@@ -103,6 +103,7 @@ internal class LayoutPageBuilder(
             is AozoraElement.Ruby,
             is AozoraElement.Text,
             is AozoraElement.Heading,
+            is AozoraElement.SpecialParagraph,
             is AozoraElement.LineBreak,
             is AozoraElement.Indent,
             is AozoraElement.Illustration,

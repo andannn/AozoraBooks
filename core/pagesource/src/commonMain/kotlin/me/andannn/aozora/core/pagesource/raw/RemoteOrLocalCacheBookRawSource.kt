@@ -33,6 +33,7 @@ import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.parseAsHtmlNodes
 import me.andannn.aozora.core.pagesource.parser.lineSequence
+import me.andannn.aozora.core.pagesource.util.validBlock
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
 import me.andannn.core.util.unzip
@@ -75,6 +76,7 @@ internal class RemoteOrLocalCacheBookRawSource(
             .buffered()
             .lineSequence()
             .map { parser.parseLineAsBlock(it) }
+            .validBlock()
             .asFlow()
             .onCompletion {
                 source.close()
