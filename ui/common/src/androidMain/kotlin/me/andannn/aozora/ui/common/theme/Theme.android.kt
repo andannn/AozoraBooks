@@ -15,14 +15,13 @@ import androidx.compose.ui.platform.LocalContext
 actual fun getColorScheme(
     darkTheme: Boolean,
     dynamicColor: Boolean,
-): ColorScheme {
-    return when {
+): ColorScheme =
+    when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> DarkAozoraColorScheme
+        else -> LightAozoraColorScheme
     }
-}
