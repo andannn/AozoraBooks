@@ -32,6 +32,7 @@ internal class LineBuilder(
             is AozoraElement.Ruby,
             is AozoraElement.Text,
             is AozoraElement.Heading,
+            is AozoraElement.SpecialParagraph,
             is AozoraElement.Emphasis,
             -> {
                 val measureResult = measure(element)

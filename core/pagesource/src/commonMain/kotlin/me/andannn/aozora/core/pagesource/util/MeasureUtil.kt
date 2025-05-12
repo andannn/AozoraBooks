@@ -52,6 +52,35 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.
 }
 
 /**
+ * Divide block by line break.
+ *
+ * Heading or Special paragraph my have multiple line break. Divide them by line break.
+ */
+internal fun Sequence<AozoraBlock>.validBlock(): Sequence<AozoraBlock> =
+    sequence {
+        for (block in this@validBlock) {
+            if (block.elements.count { it is AozoraElement.LineBreak } >= 2) {
+                yieldAll(block.divideByLineBreak())
+            } else {
+                yield(block)
+            }
+        }
+    }
+
+private fun AozoraBlock.divideByLineBreak() =
+    sequence<AozoraBlock> {
+        var currentElements = mutableListOf<AozoraElement>()
+
+        for (element in elements) {
+            currentElements += element
+            if (element is AozoraElement.LineBreak) {
+                yield(this@divideByLineBreak.copyWith(elements = currentElements))
+                currentElements = mutableListOf()
+            }
+        }
+    }
+
+/**
  * Divide the element by [startIndex] (not include).
  */
 internal fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBlock> {

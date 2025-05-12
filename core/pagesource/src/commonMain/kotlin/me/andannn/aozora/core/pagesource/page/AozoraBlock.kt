@@ -13,35 +13,24 @@ internal sealed class AozoraBlock(
     override val blockIndex: Int,
     open val elements: List<AozoraElement>,
 ) : Block {
-    sealed class TextBlock(
+    data class TextBlock(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
-        open val textStyle: AozoraTextStyle,
-        open val indent: Int = 0,
-    ) : AozoraBlock(blockIndex, elements)
-
-    data class Heading(
-        override val blockIndex: Int,
-        override val elements: List<AozoraElement>,
-        override val textStyle: AozoraTextStyle,
-        override val indent: Int,
-    ) : TextBlock(blockIndex, elements, textStyle)
-
-    data class Paragraph(
-        override val blockIndex: Int,
-        override val elements: List<AozoraElement>,
-    ) : TextBlock(blockIndex, elements, AozoraTextStyle.PARAGRAPH, 0)
+        val textStyle: AozoraTextStyle,
+        val indent: Int = 0,
+        val maxTextLength: Int = Int.MAX_VALUE,
+    ) : AozoraBlock(blockIndex, elements) {
+        val textCount: Int by lazy {
+            elements.fold(0) { acc, element ->
+                acc + element.length
+            }
+        }
+    }
 
     data class Image(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
     ) : AozoraBlock(blockIndex, elements)
-
-    val textCount: Int by lazy {
-        elements.fold(0) { acc, element ->
-            acc + element.length
-        }
-    }
 
     val fullText: String by lazy {
         elements.fold("") { acc, element ->
@@ -51,8 +40,7 @@ internal sealed class AozoraBlock(
 
     fun copyWith(elements: List<AozoraElement>): AozoraBlock =
         when (this) {
-            is Heading -> this.copy(elements = elements)
             is Image -> this.copy(elements = elements)
-            is Paragraph -> this.copy(elements = elements)
+            is TextBlock -> this.copy(elements = elements)
         }
 }

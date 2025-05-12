@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 actual fun getColorScheme(
     darkTheme: Boolean,
     dynamicColor: Boolean,
-): ColorScheme {
-    TODO("Not yet implemented")
-}
+): ColorScheme =
+    if (darkTheme) {
+        DarkAozoraColorScheme
+    } else {
+        LightAozoraColorScheme
+    }

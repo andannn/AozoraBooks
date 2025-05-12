@@ -55,9 +55,27 @@ sealed interface AozoraElement {
      */
     data class Heading(
         override val style: AozoraTextStyle,
-        val indent: Int,
         val headingLevel: Int,
+        val indent: Int,
         val elements: List<AozoraElement> = emptyList(),
+    ) : BaseText() {
+        override val text: String
+            get() =
+                elements.fold("") { acc, element ->
+                    acc + ((element as? BaseText)?.text ?: "")
+                }
+    }
+
+    /**
+     * Special paragraph element.
+     *
+     * @property style The style of the special paragraph.
+     */
+    data class SpecialParagraph(
+        val indent: Int,
+        val maxLength: Int,
+        val elements: List<AozoraElement> = emptyList(),
+        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText() {
         override val text: String
             get() =

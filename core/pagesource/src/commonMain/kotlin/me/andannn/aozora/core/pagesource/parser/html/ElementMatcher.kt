@@ -13,6 +13,7 @@ import me.andannn.aozora.core.pagesource.parser.html.matchers.ImageMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.LineBreakMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.PlainTextMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.RubyMatcher
+import me.andannn.aozora.core.pagesource.parser.html.matchers.SpecialParagraphMatcher
 
 /**
  * html node element matcher
@@ -39,4 +40,5 @@ private val PARSERS =
         EmphasisMatcher,
         LineBreakMatcher,
         HeadingMatcher,
+        SpecialParagraphMatcher,
     )

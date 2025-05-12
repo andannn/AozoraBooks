@@ -78,12 +78,15 @@ internal class DefaultMeasurer(
                     )
                 }
 
+                val lineBreakCount = block.elements.count { it is AozoraElement.LineBreak }
+                val plusLineNumber = (lineBreakCount - 1).coerceAtLeast(0)
+
                 val totalHeight = block.textCount * style.baseSize
                 val indent = block.indent
                 val indentHeight = style.baseSize * indent
                 val availableRenderHeight = renderHeight - indentHeight
                 return BlockMeasureResult(
-                    lineCount = ceil(totalHeight / (availableRenderHeight)).toInt(),
+                    lineCount = ceil(totalHeight / (availableRenderHeight)).toInt() + plusLineNumber,
                     lineHeightPerLine = lineHeight,
                     fontStyle = style,
                     availableRenderHeight = availableRenderHeight,

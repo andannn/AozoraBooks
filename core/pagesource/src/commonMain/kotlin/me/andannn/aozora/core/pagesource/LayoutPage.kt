@@ -48,7 +48,7 @@ private fun createCoverPage(
         pageMetaData = pageMetaData,
         blocks =
             listOfNotNull<AozoraBlock>(
-                AozoraBlock.Heading(
+                AozoraBlock.TextBlock(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_LARGE,
                     indent = 2,
@@ -61,7 +61,7 @@ private fun createCoverPage(
                         ),
                 ),
                 subtitle?.let {
-                    AozoraBlock.Heading(
+                    AozoraBlock.TextBlock(
                         blockIndex = -1,
                         textStyle = AozoraTextStyle.HEADING_LARGE,
                         indent = 2,
@@ -74,7 +74,7 @@ private fun createCoverPage(
                             ),
                     )
                 },
-                AozoraBlock.Heading(
+                AozoraBlock.TextBlock(
                     blockIndex = -1,
                     textStyle = AozoraTextStyle.HEADING_MEDIUM,
                     indent = 3,
