@@ -114,7 +114,7 @@ class ElementMatcherTest {
             HeadingMatcher.match(
                 (
                     """
-<div class="jisage_6" style="margin-left: 6em"><h4 class="dogyo-naka-midashi"><a class="midashi_anchor" id="midashi10">序詞</a></h4>（祇園精舎）</div>                    
+                    <div class="jisage_6" style="margin-left: 6em"><h4 class="dogyo-naka-midashi"><a class="midashi_anchor" id="midashi10">序詞</a></h4>（祇園精舎）</div>                    
                     """.trimIndent()
                 ).parseAsHtmlNodes().first(),
             ),
@@ -127,11 +127,11 @@ class ElementMatcherTest {
             SpecialParagraphMatcher.match(
                 (
                     """
-<div class="jisage_4" style="margin-left: 4em">
-<div class="jizume_27" style="width: 27em">
-　<ruby><rb>祇園精舎</rb><rp>（</rp><rt>ぎおんしょうじゃ</rt><rp>）</rp></ruby>の鐘の声、諸行無常の<ruby><rb>響</rb><rp>（</rp><rt>ひびき</rt><rp>）</rp></ruby>あり。<ruby><rb>娑羅双樹</rb><rp>（</rp><rt>しゃらそうじゅ</rt><rp>）</rp></ruby>の花の色、<ruby><rb>盛者</rb><rp>（</rp><rt>しょうじゃ</rt><rp>）</rp></ruby>必衰の<ruby><rb>理</rb><rp>（</rp><rt>ことわり</rt><rp>）</rp></ruby>をあらわす。おごれる人も久しからず、唯、春の夜の夢のごとし。<ruby><rb>猛</rb><rp>（</rp><rt>たけ</rt><rp>）</rp></ruby>きものもついにはほろびぬ、<ruby><rb>偏</rb><rp>（</rp><rt>ひとえ</rt><rp>）</rp></ruby>に風の前の<ruby><rb>塵</rb><rp>（</rp><rt>ちり</rt><rp>）</rp></ruby>に同じ。<br>
-</div>
-</div>    
+                    <div class="jisage_4" style="margin-left: 4em">
+                    <div class="jizume_27" style="width: 27em">
+                    　<ruby><rb>祇園精舎</rb><rp>（</rp><rt>ぎおんしょうじゃ</rt><rp>）</rp></ruby>の鐘の声、諸行無常の<ruby><rb>響</rb><rp>（</rp><rt>ひびき</rt><rp>）</rp></ruby>あり。<ruby><rb>娑羅双樹</rb><rp>（</rp><rt>しゃらそうじゅ</rt><rp>）</rp></ruby>の花の色、<ruby><rb>盛者</rb><rp>（</rp><rt>しょうじゃ</rt><rp>）</rp></ruby>必衰の<ruby><rb>理</rb><rp>（</rp><rt>ことわり</rt><rp>）</rp></ruby>をあらわす。おごれる人も久しからず、唯、春の夜の夢のごとし。<ruby><rb>猛</rb><rp>（</rp><rt>たけ</rt><rp>）</rp></ruby>きものもついにはほろびぬ、<ruby><rb>偏</rb><rp>（</rp><rt>ひとえ</rt><rp>）</rp></ruby>に風の前の<ruby><rb>塵</rb><rp>（</rp><rt>ちり</rt><rp>）</rp></ruby>に同じ。<br>
+                    </div>
+                    </div>    
                     """.trimIndent()
                 ).parseAsHtmlNodes().first(),
             )
@@ -146,10 +146,10 @@ class ElementMatcherTest {
             SpecialParagraphMatcher.match(
                 (
                     """
-<div class="jisage_2" style="margin-left: 2em">
-<ruby><rb>仏</rb><rp>（</rp><rt>ほとけ</rt><rp>）</rp></ruby>も昔は凡夫なり　我等も遂には仏なり。<br>
-<ruby><rb>何</rb><rp>（</rp><rt>いず</rt><rp>）</rp></ruby>れも<ruby><rb>仏性</rb><rp>（</rp><rt>ぶっしょう</rt><rp>）</rp></ruby><ruby><rb>具</rb><rp>（</rp><rt>ぐ</rt><rp>）</rp></ruby>せる身を　<ruby><rb>隔</rb><rp>（</rp><rt>へだ</rt><rp>）</rp></ruby>つるのみこそ悲しけれ。<br>
-</div> 
+                    <div class="jisage_2" style="margin-left: 2em">
+                    <ruby><rb>仏</rb><rp>（</rp><rt>ほとけ</rt><rp>）</rp></ruby>も昔は凡夫なり　我等も遂には仏なり。<br>
+                    <ruby><rb>何</rb><rp>（</rp><rt>いず</rt><rp>）</rp></ruby>れも<ruby><rb>仏性</rb><rp>（</rp><rt>ぶっしょう</rt><rp>）</rp></ruby><ruby><rb>具</rb><rp>（</rp><rt>ぐ</rt><rp>）</rp></ruby>せる身を　<ruby><rb>隔</rb><rp>（</rp><rt>へだ</rt><rp>）</rp></ruby>つるのみこそ悲しけれ。<br>
+                    </div> 
                     """.trimIndent()
                 ).parseAsHtmlNodes().first(),
             )

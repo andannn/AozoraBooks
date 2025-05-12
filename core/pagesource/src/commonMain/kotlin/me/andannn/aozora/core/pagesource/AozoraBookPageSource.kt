@@ -60,10 +60,10 @@ class DummyBookPageSource : CachedLinerPageSource() {
 
     private val dummyHtml: String =
         """
-<div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-<div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-<div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-<div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-<div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
         """.trimIndent()
 }
