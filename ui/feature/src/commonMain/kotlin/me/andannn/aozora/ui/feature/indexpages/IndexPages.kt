@@ -4,12 +4,16 @@
  */
 package me.andannn.aozora.ui.feature.indexpages
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -20,10 +24,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.ui.common.widgets.AdType
+import me.andannn.aozora.ui.common.widgets.BannerAdView
 
 @Composable
 fun IndexPages(
@@ -69,8 +77,8 @@ fun IndexPagesStateContent(
             modifier = Modifier.padding(it),
         ) {
             items(pagingData.itemCount) { index ->
-                pagingData[index]?.let {
-                    Column {
+                Column {
+                    pagingData[index]?.let {
                         BookColumnItemView(
                             modifier = Modifier.fillMaxWidth(),
                             item = it,
@@ -79,6 +87,31 @@ fun IndexPagesStateContent(
                             },
                         )
                         HorizontalDivider()
+                    }
+
+                    if (index % 30 == 0) {
+                        BannerAdView(
+                            modifier = Modifier.fillMaxWidth(),
+                            adType = AdType.LEADERBOARD,
+                        )
+                        HorizontalDivider()
+                    }
+                }
+            }
+
+            if (pagingData.loadState.append is LoadState.Loading) {
+                item {
+                    Column {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                        Spacer(Modifier.height(24.dp))
                     }
                 }
             }

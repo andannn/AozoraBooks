@@ -9,6 +9,10 @@ kotlin {
             implementation(project(":core:common"))
             api(project(":core:platform"))
         }
+
+        androidMain.dependencies {
+            implementation(libs.play.services.ads)
+        }
     }
 }
 
