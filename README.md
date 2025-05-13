@@ -44,7 +44,7 @@ It supports advanced layout features like ruby annotations and vertical text, an
 3. Add a new **Android Run Configuration**, and select the `composeApp` module.  
    > Android Studio usually recognizes this module automatically. If not, configure it manually.  
 4. Click the **Run** ▶️ button to launch the app.
- 
+
 ### Run the app (iOS)
 
 1. Wait for the Gradle sync to complete successfully.
