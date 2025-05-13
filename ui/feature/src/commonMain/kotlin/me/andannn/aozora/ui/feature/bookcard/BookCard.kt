@@ -41,6 +41,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.ui.common.widgets.AdType
+import me.andannn.aozora.ui.common.widgets.BannerAdView
 
 private const val TAG = "BookCard"
 
@@ -244,9 +246,15 @@ private fun BookCardContent(
             }
 
             item {
-                Heading(text = "工作員データ")
+                BannerAdView(
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    adType = AdType.LEADERBOARD,
+                )
             }
 
+            item {
+                Heading(text = "工作員データ")
+            }
             val staffData = bookCardInfo.staffData
             staffData?.let {
                 item {

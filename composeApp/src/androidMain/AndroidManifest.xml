@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Aosora"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-9577779442408289~3295413999"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
