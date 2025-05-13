@@ -100,8 +100,8 @@ internal class UserDataRepositoryImpl(
             it.map(BookEntity::toModel)
         }
 
-    override suspend fun deleteSavedBook(bookModelTemp: BookModelTemp) {
-        dao.deleteSavedBook(bookModelTemp.id)
+    override suspend fun deleteSavedBook(bookId: String) {
+        dao.deleteSavedBook(bookId)
     }
 
     override fun getSavedBookById(id: String): Flow<BookModelTemp?> =
@@ -120,7 +120,8 @@ private fun BookEntity.toModel() =
         id = bookId,
         groupId = groupId,
         title = title,
-        authorName = titleKana,
+        titleKana = titleKana,
+        authorName = author,
         zipUrl = zipUrl,
         htmlUrl = htmlUrl,
     )

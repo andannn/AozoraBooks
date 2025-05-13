@@ -82,7 +82,7 @@ class BookCardPresenter(
                     scope.launch {
                         if (savedBookCard != null) {
                             userDataRepository.deleteSavedBook(
-                                savedBookCard!!,
+                                savedBookCard!!.id,
                             )
                         } else {
                             userDataRepository.saveBookToLibrary(

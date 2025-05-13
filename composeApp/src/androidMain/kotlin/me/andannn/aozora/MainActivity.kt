@@ -17,7 +17,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            AozoraTheme {
+            AozoraTheme(
+                dynamicColor = false,
+            ) {
                 AozoraBooksApp()
             }
         }

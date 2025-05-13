@@ -15,8 +15,16 @@ import me.andannn.aozora.ui.feature.bookcard.BookCard
 import me.andannn.aozora.ui.feature.bookcard.BookCardState
 import me.andannn.aozora.ui.feature.bookcard.rememberBookCardPresenter
 import me.andannn.aozora.ui.feature.home.Home
-import me.andannn.aozora.ui.feature.home.HomePresenter
 import me.andannn.aozora.ui.feature.home.HomeState
+import me.andannn.aozora.ui.feature.home.LibraryNestedScreen
+import me.andannn.aozora.ui.feature.home.SearchNestedScreen
+import me.andannn.aozora.ui.feature.home.library.Library
+import me.andannn.aozora.ui.feature.home.library.LibraryState
+import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
+import me.andannn.aozora.ui.feature.home.rememberHomePresenter
+import me.andannn.aozora.ui.feature.home.search.Search
+import me.andannn.aozora.ui.feature.home.search.SearchState
+import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
 import me.andannn.aozora.ui.feature.indexpages.IndexPages
 import me.andannn.aozora.ui.feature.indexpages.IndexPagesState
 import me.andannn.aozora.ui.feature.indexpages.rememberIndexPagesPresenter
@@ -52,6 +60,18 @@ object RouteUiFactory : Ui.Factory {
                 }
             }
 
+            is LibraryNestedScreen -> {
+                ui<LibraryState> { state, modifier ->
+                    Library(state, modifier)
+                }
+            }
+
+            is SearchNestedScreen -> {
+                ui<SearchState> { state, modifier ->
+                    Search(state, modifier)
+                }
+            }
+
             else -> null
         }
 }
@@ -63,7 +83,11 @@ object RoutePresenterFactory : Presenter.Factory {
         context: CircuitContext,
     ): Presenter<*>? =
         when (screen) {
-            is HomeScreen -> HomePresenter(navigator)
+            is HomeScreen ->
+                presenterOf {
+                    rememberHomePresenter().present()
+                }
+
             is ReaderScreen ->
                 presenterOf {
                     rememberReaderPresenter(screen.cardId).present()
@@ -81,6 +105,18 @@ object RoutePresenterFactory : Presenter.Factory {
                         groupId = screen.groupId,
                         bookId = screen.bookCardId,
                     ).present()
+                }
+            }
+
+            is LibraryNestedScreen -> {
+                presenterOf {
+                    rememberLibraryPresenter(nestedNavigator = navigator).present()
+                }
+            }
+
+            is SearchNestedScreen -> {
+                presenterOf {
+                    rememberSearchPresenter(nestedNavigator = navigator).present()
                 }
             }
 

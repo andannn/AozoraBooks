@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Book
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -104,7 +103,7 @@ private fun BookCardContent(
             ) {
                 SmallFloatingActionButton(
                     content = {
-                        Icon(Icons.Filled.Book, contentDescription = null)
+                        Text("読む")
                     },
                     onClick = {
                         onEvent.invoke(BookCardUiEvent.OnClickRead)

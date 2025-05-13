@@ -5,13 +5,16 @@
 package me.andannn.aozora.ui.common.widgets
 
 import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -24,11 +27,12 @@ actual fun BannerAdView(
     adType: AdType,
 ) {
     val context = LocalContext.current
+    val adSize = adType.toSize()
     val adView by produceState<AdView?>(null) {
         value =
             AdView(context)
                 .apply {
-                    setAdSize(adType.toSize())
+                    setAdSize(adSize)
                     adUnitId = "ca-app-pub-9577779442408289/8866179143"
                 }.also { adView ->
                     adView.loadAd(AdRequest.Builder().build())
@@ -39,13 +43,17 @@ actual fun BannerAdView(
             adView?.destroy()
         }
     }
-    if (adView != null) {
-        AndroidView(
-            modifier = modifier.fillMaxWidth(),
-            factory = {
-                adView!!
-            },
-        )
+    Box(
+        modifier = modifier.height(adSize.height.dp),
+    ) {
+        if (adView != null) {
+            AndroidView(
+                modifier = Modifier.fillMaxWidth(),
+                factory = {
+                    adView!!
+                },
+            )
+        }
     }
 }
 
