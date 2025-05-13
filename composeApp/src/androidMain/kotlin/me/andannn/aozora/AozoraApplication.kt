@@ -5,10 +5,12 @@
 package me.andannn.aozora
 
 import android.app.Application
+import android.content.Context
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.GlobalContext.startKoin
+import me.andannn.platform.AndroidAnalytics
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
 class AozoraApplication : Application() {
     override fun onCreate() {
@@ -17,13 +19,18 @@ class AozoraApplication : Application() {
             Napier.base(DebugAntilog())
         }
 
-        startKoin {
-            androidContext(this@AozoraApplication)
-            modules(
+        startKoin(
+            analytics = AndroidAnalytics(),
+            modules =
                 listOf(
                     *modules.toTypedArray(),
+                    androidContextModule(this@AozoraApplication),
                 ),
-            )
-        }
+        )
     }
 }
+
+private fun androidContextModule(application: AozoraApplication) =
+    module {
+        single { application } bind Context::class
+    }
