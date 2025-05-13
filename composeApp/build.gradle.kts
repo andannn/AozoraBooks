@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("melodify.kmp.application")
     id("melodify.compose.multiplatform.application")
@@ -53,6 +55,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:common"))
             implementation(project(":core:data"))
+            api(project(":core:platform"))
             implementation(project(":core:service"))
             implementation(project(":core:datastore"))
             implementation(project(":core:database"))
@@ -71,6 +74,14 @@ kotlin {
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.analytics)
             implementation(libs.firebase.crashlytics)
+        }
+    }
+
+    targets.withType<KotlinNativeTarget>().all {
+        binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true // or false, depending on your use case
+            export(project(":core:platform"))
         }
     }
 }
