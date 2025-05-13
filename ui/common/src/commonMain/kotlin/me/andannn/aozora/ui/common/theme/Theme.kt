@@ -26,6 +26,8 @@ internal val LightAozoraColorScheme =
         onBackground = Color(0xFF1A1C1E),
         surface = Color(0xFFFCFCFF),
         onSurface = Color(0xFF1A1C1E),
+        surfaceVariant = Color(0xFFE1E2EC),
+        onSurfaceVariant = Color(0xFF44464F),
         outline = Color(0xFF767680),
     )
 
@@ -43,6 +45,8 @@ internal val DarkAozoraColorScheme =
         onBackground = Color(0xFFE3E2E6),
         surface = Color(0xFF12131A),
         onSurface = Color(0xFFE3E2E6),
+        surfaceVariant = Color(0xFF2B2F38),
+        onSurfaceVariant = Color(0xFFCAC5DC),
         outline = Color(0xFF8F9099),
     )
 

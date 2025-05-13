@@ -8,6 +8,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.app.AozoraBooksApp
+import me.andannn.aozora.ui.common.theme.AozoraTheme
 
 @Suppress("ktlint:standard:function-naming")
 fun MainViewController() =
@@ -17,5 +18,7 @@ fun MainViewController() =
             Napier.base(DebugAntilog())
         },
     ) {
-        AozoraBooksApp()
+        AozoraTheme {
+            AozoraBooksApp()
+        }
     }
