@@ -15,5 +15,5 @@ interface AozoraContentsRepository {
     suspend fun getBookCard(
         cardId: String,
         groupId: String,
-    ): AozoraBookCard
+    ): LoadResult<AozoraBookCard>
 }

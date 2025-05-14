@@ -20,6 +20,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.data.AozoraContentsRepository
+import me.andannn.aozora.core.data.LoadResult
 import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
@@ -70,7 +71,15 @@ class BookCardPresenter(
         LaunchedEffect(Unit) {
             Napier.d(tag = TAG) { "present groupId $groupId, bookId $bookId" }
             val result = aozoraContentsRepository.getBookCard(cardId = bookId, groupId = groupId)
-            bookCardInfo = result
+            when (result) {
+                is LoadResult.Error -> {
+                    Napier.e(tag = TAG) { "present error ${result.throwable}" }
+                }
+
+                is LoadResult.Success -> {
+                    bookCardInfo = result.data
+                }
+            }
         }
         return BookCardState(
             bookCardInfo = bookCardInfo,
