@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
@@ -44,7 +45,7 @@ abstract class CachedLinerPageSource : BookPageSource {
         pageMetaData: PageMetaData,
         initialBlockIndex: Int?,
     ): Flow<PagerSnapShot> =
-        flow {
+        flow<PagerSnapShot> {
             Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialBlockIndex, metaData $pageMetaData. " }
 
             val version = version++
@@ -69,19 +70,20 @@ abstract class CachedLinerPageSource : BookPageSource {
                         initialPageIndex = 0
                     } else {
                         var hit = false
-                        when (page) {
-                            is AozoraCoverPage -> {
-                                hit = initialBlockIndex == -1
-                            }
+                        hit =
+                            when (page) {
+                                is AozoraCoverPage -> {
+                                    initialBlockIndex == -1
+                                }
 
-                            is AozoraRoughPage -> {
-                                hit = initialBlockIndex in page.pageProgress
-                            }
+                                is AozoraRoughPage -> {
+                                    initialBlockIndex in page.pageProgress
+                                }
 
-                            is AozoraPage.AozoraBibliographicalPage -> {
-                                hit = initialBlockIndex == Int.MAX_VALUE
+                                is AozoraPage.AozoraBibliographicalPage -> {
+                                    initialBlockIndex == Int.MAX_VALUE
+                                }
                             }
-                        }
                         if (hit) {
                             Napier.d(tag = TAG) { "hit initial. index: $index}" }
                             initialPageIndex = index
@@ -91,7 +93,7 @@ abstract class CachedLinerPageSource : BookPageSource {
 
                 if (initialPageIndex != null) {
                     emit(
-                        PagerSnapShot(
+                        PagerSnapShot.Ready(
                             snapshotVersion = version,
                             pageList = loadedPages.toImmutableList(),
                             initialIndex = initialPageIndex,
@@ -105,6 +107,10 @@ abstract class CachedLinerPageSource : BookPageSource {
                     System.now().toEpochMilliseconds() - startMilliseconds
                 }"
             }
+        }.catch {
+            emit(
+                PagerSnapShot.Error(it),
+            )
         }
 
     private fun createPageFlow(

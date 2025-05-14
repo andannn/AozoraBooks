@@ -189,17 +189,19 @@ private fun getCachedBookModel(path: Path): BookModel? {
 }
 
 private suspend fun downloadAndUnZip(
-    zipUrl: String,
+    zipUrl: String?,
     htmlUrl: String?,
     savePath: Path,
 ) = coroutineScope {
     val client = getKoin().get<HttpClient>()
     val zipTask =
-        async {
-            val tempZipFilePath = Path("$savePath/temp.zip")
-            client.downloadTo(zipUrl, tempZipFilePath)
-            tempZipFilePath.unzip(savePath)
-            SystemFileSystem.delete(tempZipFilePath)
+        zipUrl?.let {
+            async {
+                val tempZipFilePath = Path("$savePath/temp.zip")
+                client.downloadTo(zipUrl, tempZipFilePath)
+                tempZipFilePath.unzip(savePath)
+                SystemFileSystem.delete(tempZipFilePath)
+            }
         }
 
     val htmlTask =
@@ -210,7 +212,7 @@ private suspend fun downloadAndUnZip(
             }
         }
 
-    zipTask.await()
+    zipTask?.await()
     htmlTask?.await()
 }
 

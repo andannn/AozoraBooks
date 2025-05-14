@@ -36,11 +36,17 @@ interface BookPageSource {
     suspend fun getTableOfContents(): List<TableOfContentsModel>
 }
 
-/**
- * Pager snap shot.
- */
-data class PagerSnapShot(
-    val initialIndex: Int?,
-    val pageList: ImmutableList<AozoraPage>,
-    val snapshotVersion: Int,
-)
+sealed interface PagerSnapShot {
+    /**
+     * Pager snap shot.
+     */
+    data class Ready(
+        val initialIndex: Int?,
+        val pageList: ImmutableList<AozoraPage>,
+        val snapshotVersion: Int,
+    ) : PagerSnapShot
+
+    data class Error(
+        val exception: Throwable,
+    ) : PagerSnapShot
+}

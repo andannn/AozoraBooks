@@ -10,6 +10,6 @@ data class BookModelTemp constructor(
     val title: String,
     val titleKana: String,
     val authorName: String?,
-    val zipUrl: String,
+    val zipUrl: String?,
     val htmlUrl: String?,
 )
