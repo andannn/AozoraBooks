@@ -1,6 +1,7 @@
 import com.andanana.melodify.util.configureKotlinAndroid
 import com.andanana.melodify.util.configureKotlinMultiplatform
 import com.andanana.melodify.util.configureKtLint
+import com.andanana.melodify.util.configureLicense
 import com.andanana.melodify.util.configureSpotless
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin

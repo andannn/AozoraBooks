@@ -8,6 +8,10 @@ import com.slack.circuit.runtime.screen.Screen
 
 expect object HomeScreen : Screen
 
+expect object LicenseScreen : Screen
+
+expect object AboutScreen : Screen
+
 expect class ReaderScreen : Screen {
     constructor(cardId: String)
 

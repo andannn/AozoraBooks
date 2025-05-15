@@ -73,7 +73,7 @@ class BookViewerPresenter(
             .collectAsRetainedState(LineSpacing.DEFAULT)
 
         var snapshotState by remember {
-            mutableStateOf<PagerSnapShot?>(null)
+            mutableStateOf<PagerSnapShot.Ready?>(null)
         }
 
         val pagerState =
@@ -87,7 +87,6 @@ class BookViewerPresenter(
         LaunchedEffect(
             snapshotState?.snapshotVersion,
         ) {
-            Napier.d(tag = TAG) { "invoked ${snapshotState?.snapshotVersion}" }
             snapshotFlow { pagerState.settledPage }
                 .drop(1)
                 .collect { newIndex ->
@@ -125,7 +124,14 @@ class BookViewerPresenter(
                 .getPagerSnapShotFlow(pageMetadata, initialBlockIndex = savedBlockIndex?.toInt())
                 .distinctUntilChanged()
                 .collect {
-                    snapshotState = it
+                    when (it) {
+                        is PagerSnapShot.Error -> {
+                            Napier.e(tag = TAG) { "error: ${it.exception}" }
+                            // TODO: show dialog and close page.
+                        }
+
+                        is PagerSnapShot.Ready -> snapshotState = it
+                    }
                 }
         }
         return BookViewerState(

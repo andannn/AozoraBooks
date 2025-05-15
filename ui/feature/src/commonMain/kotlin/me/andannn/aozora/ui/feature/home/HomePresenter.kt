@@ -8,15 +8,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.andannn.aozora.ui.common.dialog.LocalPopupController
+import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.screens.AboutScreen
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
+
+@Composable
+fun rememberHomePresenter(
+    navigator: Navigator = LocalNavigator.current,
+    popupController: PopupController = LocalPopupController.current,
+) = remember(
+    navigator,
+    popupController,
+) {
+    HomePresenter(
+        navigator = navigator,
+        popupController = popupController,
+    )
+}
 
 class HomePresenter(
     private val navigator: Navigator,
+    private val popupController: PopupController,
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {
@@ -34,6 +54,10 @@ class HomePresenter(
 
                 is HomeUiEvent.OnNavigationItemClick -> {
                     navigationItem = event.item
+                }
+
+                HomeUiEvent.OnClickMore -> {
+                    navigator.goTo(AboutScreen)
                 }
             }
         }
@@ -54,4 +78,6 @@ sealed interface HomeUiEvent {
     data class OnNavigationItemClick(
         val item: NavigationItem,
     ) : HomeUiEvent
+
+    data object OnClickMore : HomeUiEvent
 }

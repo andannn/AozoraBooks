@@ -14,7 +14,10 @@ import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.IndexPageScreen
 
 @Composable
-fun rememberSearchPresenter(navigator: Navigator = LocalNavigator.current): SearchPresenter =
+fun rememberSearchPresenter(
+    nestedNavigator: Navigator,
+    navigator: Navigator = LocalNavigator.current,
+): SearchPresenter =
     remember(
         navigator,
     ) {

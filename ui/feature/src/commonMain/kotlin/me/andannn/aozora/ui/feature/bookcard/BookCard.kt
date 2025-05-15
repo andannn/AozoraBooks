@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Book
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -104,7 +103,7 @@ private fun BookCardContent(
             ) {
                 SmallFloatingActionButton(
                     content = {
-                        Icon(Icons.Filled.Book, contentDescription = null)
+                        Text("読む")
                     },
                     onClick = {
                         onEvent.invoke(BookCardUiEvent.OnClickRead)
@@ -173,6 +172,14 @@ private fun BookCardContent(
                     ItemRow(title = "文字遣い種別：", value = it)
                 }
             }
+
+            item {
+                BannerAdView(
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    adType = AdType.LEADERBOARD,
+                )
+            }
+
             item {
                 Heading(text = "作家データ")
             }
@@ -243,13 +250,6 @@ private fun BookCardContent(
                         Spacer(Modifier.height(4.dp))
                     }
                 }
-            }
-
-            item {
-                BannerAdView(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                    adType = AdType.LEADERBOARD,
-                )
             }
 
             item {

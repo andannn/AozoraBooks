@@ -12,6 +12,7 @@ import java.io.File
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class MigrationTest {
     private val tempFile =
@@ -36,18 +37,18 @@ class MigrationTest {
         FileSystem.SYSTEM.delete(tempFile)
         FileSystem.SYSTEM.delete("$tempFile.lck".toPath())
     }
-//
-//    @Test
-//    fun migrate3To4() {
-//        val migrationTestHelper =
-//            getMigrationTestHelper(
-//                tempFile.toString(),
-//            )
-//        val newConnection = migrationTestHelper.createDatabase(3)
-//        newConnection.close()
-//
-//        val migratedConnection =
-//            migrationTestHelper.runMigrationsAndValidate(4)
-//        migratedConnection.close()
-//    }
+
+    @Test
+    fun migrate1To2() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(1)
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(2, listOf(MIGRATION_1_2))
+        migratedConnection.close()
+    }
 }

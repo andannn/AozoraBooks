@@ -11,6 +11,12 @@ import kotlinx.parcelize.Parcelize
 actual data object HomeScreen : Screen
 
 @Parcelize
+actual data object LicenseScreen : Screen
+
+@Parcelize
+actual data object AboutScreen : Screen
+
+@Parcelize
 actual data class ReaderScreen actual constructor(
     actual val cardId: String,
 ) : Screen

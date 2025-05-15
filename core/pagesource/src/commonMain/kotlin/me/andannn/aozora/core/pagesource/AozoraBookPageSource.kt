@@ -60,10 +60,7 @@ class DummyBookPageSource : CachedLinerPageSource() {
 
     private val dummyHtml: String =
         """
-        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
-        <div class="jisage_3" style="margin-left: 3em"><h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">第一巻</a></h3></div><br>
+        <br>
+        <div class="burasage" style="margin-left: 2em; text-indent: -1em;"> ○食物が人の口に入れば、第一に歯の<ruby><rb>咀嚼</rb><rp>（</rp><rt>そしゃく</rt><rp>）</rp></ruby>を受け、唾液にて<ruby><rb>澱粉</rb><rp>（</rp><rt>でんぷん</rt><rp>）</rp></ruby>を糖分に変化せしめられ、胃に入りて胃筋の機械的作用と胃液の化学作用を受け、それより小腸に入りて腸液と<ruby><rb>膵液</rb><rp>（</rp><rt>すいえき</rt><rp>）</rp></ruby>と胆汁の消化作用を受け、全く消化せしものは門脈を通じて肝臓に入り、ここにて消毒作用を受け、営養分となりて体中に吸収せらる。</div><div class="burasage" style="margin-left: 2em; text-indent: -1em;"> ○何人も折々は断食して胃腸を休息せしむべし。三度の食事時間が来りしとて腹の減らざるに<ruby><rb>強</rb><rp>（</rp><rt>し</rt><rp>）</rp></ruby>いて食物を摂取するは有害なり。</div><div class="burasage" style="margin-left: 2em; text-indent: -1em;">○屠蘇を紅き布に包むは害あり。白布かガーゼにすべし。</div><div class="burasage" style="margin-left: 2em; text-indent: -1em;">○雑煮を作る時は汁の中へ薄切の大根を加うべし。大根は化学作用にて餅を消化せしむ。</div><div class="burasage" style="margin-left: 2em; text-indent: -1em;"> ○何時にても餅を食したる後は大根かあるいは大根<ruby><rb>卸</rb><rp>（</rp><rt>おろ</rt><rp>）</rp></ruby>しを喫すべし。</div><br>
         """.trimIndent()
 }

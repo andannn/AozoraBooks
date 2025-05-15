@@ -97,7 +97,7 @@ interface UserDataRepository {
     /**
      * Delete saved book.
      */
-    suspend fun deleteSavedBook(bookModelTemp: BookModelTemp)
+    suspend fun deleteSavedBook(bookId: String)
 
     /**
      * Get saved book by id.

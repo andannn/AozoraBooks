@@ -189,17 +189,19 @@ private fun getCachedBookModel(path: Path): BookModel? {
 }
 
 private suspend fun downloadAndUnZip(
-    zipUrl: String,
+    zipUrl: String?,
     htmlUrl: String?,
     savePath: Path,
 ) = coroutineScope {
     val client = getKoin().get<HttpClient>()
     val zipTask =
-        async {
-            val tempZipFilePath = Path("$savePath/temp.zip")
-            client.downloadTo(zipUrl, tempZipFilePath)
-            tempZipFilePath.unzip(savePath)
-            SystemFileSystem.delete(tempZipFilePath)
+        zipUrl?.let {
+            async {
+                val tempZipFilePath = Path("$savePath/temp.zip")
+                client.downloadTo(zipUrl, tempZipFilePath)
+                tempZipFilePath.unzip(savePath)
+                SystemFileSystem.delete(tempZipFilePath)
+            }
         }
 
     val htmlTask =
@@ -210,7 +212,7 @@ private suspend fun downloadAndUnZip(
             }
         }
 
-    zipTask.await()
+    zipTask?.await()
     htmlTask?.await()
 }
 
@@ -248,11 +250,14 @@ internal fun processParseHtml(
             val lineBuilder = currentLineBuilder ?: StringBuilder().also { currentLineBuilder = it }
             lineBuilder.append(htmlText)
 
-            if (it is Element && it.tagName() == "br") {
-                val line = lineBuilder.toString()
+            if (it is Element && it.tagName() == "div") {
+                // div is considered as a block, add <br> at last.
+                val line = "$lineBuilder<br>"
                 currentLineBuilder = null
                 mainContentBuilder.append(line)
                 mainContentBuilder.append("\n")
+
+                lineCount++
 
                 if (line.startsWith("<div") && line.contains("<h")) {
                     val headingElement =
@@ -267,6 +272,11 @@ internal fun processParseHtml(
                         ),
                     )
                 }
+            } else if (it is Element && it.tagName() == "br") {
+                val line = lineBuilder.toString()
+                currentLineBuilder = null
+                mainContentBuilder.append(line)
+                mainContentBuilder.append("\n")
 
                 lineCount++
             }

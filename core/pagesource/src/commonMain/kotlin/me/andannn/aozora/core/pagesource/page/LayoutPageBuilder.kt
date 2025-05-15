@@ -90,7 +90,7 @@ internal class LayoutPageBuilder(
             }
         }
 
-        val builder =
+        val lineBuilder =
             lineBuilder ?: LineBuilder(
                 maxPx = fullHeight,
                 initialIndent = lineIndent,
@@ -102,14 +102,12 @@ internal class LayoutPageBuilder(
         when (element) {
             is AozoraElement.Ruby,
             is AozoraElement.Text,
-            is AozoraElement.Heading,
-            is AozoraElement.SpecialParagraph,
             is AozoraElement.LineBreak,
             is AozoraElement.Indent,
             is AozoraElement.Illustration,
             is AozoraElement.Emphasis,
             -> {
-                when (val result = builder.tryAdd(element)) {
+                when (val result = lineBuilder.tryAdd(element)) {
                     FillResult.FillContinue -> return result
                     is FillResult.Filled -> {
                         buildNewLine()
@@ -124,7 +122,10 @@ internal class LayoutPageBuilder(
                 }
             }
 
-            AozoraElement.PageBreak -> {
+            AozoraElement.PageBreak,
+            is AozoraElement.Heading,
+            is AozoraElement.SpecialParagraph,
+            -> {
                 error("Never")
             }
         }

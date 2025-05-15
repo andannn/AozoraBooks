@@ -31,7 +31,7 @@ class RemoteOrCacheBookRawSourceTest {
     @Test
     fun processParseHtmlTest() {
         processParseHtml(
-            Path("src/commonTest/resources/test.html"),
+            Path("src/commonTest/resources/test2.html"),
             testPath,
         )
     }

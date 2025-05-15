@@ -18,7 +18,6 @@ private fun PreviewBookCardPreview() {
     AozoraTheme {
         Surface(modifier = Modifier.padding(12.dp)) {
             PreviewBookCard(
-                Modifier.padding(12.dp),
                 title = "吾輩は猫である",
                 author = "夏目漱石",
             )

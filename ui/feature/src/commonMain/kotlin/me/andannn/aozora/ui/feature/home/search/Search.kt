@@ -29,8 +29,8 @@ import me.andannn.aozora.ui.common.widgets.BannerAdView
 
 @Composable
 fun Search(
-    modifier: Modifier = Modifier,
     state: SearchState,
+    modifier: Modifier = Modifier,
 ) {
     SearchContent(
         modifier = modifier,

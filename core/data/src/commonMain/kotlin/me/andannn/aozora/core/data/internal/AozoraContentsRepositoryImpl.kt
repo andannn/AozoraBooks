@@ -7,14 +7,18 @@ package me.andannn.aozora.core.data.internal
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import me.andannn.aozora.core.data.AozoraContentsRepository
+import me.andannn.aozora.core.data.LoadResult
 import me.andannn.aozora.core.data.common.AozoraBookCard
 import me.andannn.aozora.core.data.common.BookColumnItem
 import me.andannn.aozora.core.database.dao.SavedBookDao
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.service.AozoraService
+
+private const val TAG = "AozoraContentsRepository"
 
 internal class AozoraContentsRepositoryImpl(
     private val aozoraService: AozoraService,
@@ -29,10 +33,15 @@ internal class AozoraContentsRepositoryImpl(
     override suspend fun getBookCard(
         cardId: String,
         groupId: String,
-    ): AozoraBookCard {
-        val bookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
-        savedBookDao.upsertBookList(listOf(bookCard.mapToEntity()))
-        return bookCard
+    ): LoadResult<AozoraBookCard> {
+        try {
+            val bookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
+            savedBookDao.upsertBookList(listOf(bookCard.mapToEntity()))
+            return LoadResult.Success(bookCard)
+        } catch (e: Exception) {
+            Napier.e { "getBookCard: $e" }
+            return LoadResult.Error(e)
+        }
     }
 }
 

@@ -5,15 +5,18 @@
 package me.andannn.aozora.ui.feature.reader.viewer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.data.common.AozoraPage
@@ -52,6 +55,19 @@ private fun ReaderContent(
     pagerState: PagerState,
     pageMetadata: PageMetaData,
 ) {
+    if (pages.isEmpty()) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+        return
+    }
+
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
     val fontFamily = getFontFamilyByType(pageMetadata.fontType)

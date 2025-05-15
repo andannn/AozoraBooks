@@ -129,8 +129,8 @@ internal fun parseBookCard(
         category = category,
         source = source,
         authorDataList = authDataList,
-        zipUrl = zipDownloadUrl!!,
-        htmlUrl = htmlDownloadUrl!!,
+        zipUrl = zipDownloadUrl,
+        htmlUrl = htmlDownloadUrl,
         characterType = characterType,
         staffData =
             StaffData(

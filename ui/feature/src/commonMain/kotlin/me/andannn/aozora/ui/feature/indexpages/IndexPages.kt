@@ -89,12 +89,24 @@ fun IndexPagesStateContent(
                         HorizontalDivider()
                     }
 
-                    if (index % 30 == 0) {
+                    if (index % 20 == 0) {
                         BannerAdView(
                             modifier = Modifier.fillMaxWidth(),
                             adType = AdType.LEADERBOARD,
                         )
                         HorizontalDivider()
+                    }
+                }
+            }
+
+            if (pagingData.loadState.refresh is LoadState.Loading) {
+                item {
+                    Box(
+                        modifier =
+                            Modifier.fillMaxWidth().padding(16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }

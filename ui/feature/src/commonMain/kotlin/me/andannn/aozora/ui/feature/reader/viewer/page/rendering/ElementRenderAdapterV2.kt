@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.Density
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.ImageRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.LineBreakRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.PageBreakRenderAdapterV2
@@ -53,6 +54,7 @@ fun createAdapters(
         PageBreakRenderAdapterV2(),
         RubyRenderAdapterV2(measureHelper),
         TextRenderAdapterV2(measureHelper),
+        ImageRenderAdapterV2(measureHelper),
     )
 }
 

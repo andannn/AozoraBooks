@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "599ad1ddd1a4f7d7b7cea89878b78bb0",
+    "identityHash": "a0902d87df36491351dd8a41b72f6035",
     "entities": [
       {
         "tableName": "book_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `group_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `author` TEXT, `author_url` TEXT, `zip_url` TEXT NOT NULL, `html_url` TEXT, `saved_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `group_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `author` TEXT, `author_url` TEXT, `zip_url` TEXT, `html_url` TEXT, `saved_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
         "fields": [
           {
             "fieldPath": "bookId",
@@ -45,8 +45,7 @@
           {
             "fieldPath": "zipUrl",
             "columnName": "zip_url",
-            "affinity": "TEXT",
-            "notNull": true
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "htmlUrl",
@@ -137,7 +136,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '599ad1ddd1a4f7d7b7cea89878b78bb0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a0902d87df36491351dd8a41b72f6035')"
     ]
   }
 }

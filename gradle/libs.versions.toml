@@ -35,6 +35,7 @@ androidxRoom = "2.7.1"
 sqliteBundled = "2.5.1"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
+licensee = "1.13.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -97,8 +98,7 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "compose-plugin" }
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+licensee-gradlePlugin = { group = "app.cash.licensee", name = "licensee-gradle-plugin", version.ref = "licensee" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
@@ -115,3 +115,4 @@ google-service = { id = "com.google.gms.google-services", version.ref = "googleS
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
+licensee = { id = "app.cash.licensee", version.ref = "licensee" }

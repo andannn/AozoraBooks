@@ -10,9 +10,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Book
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -20,10 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.andannn.aozora.ui.feature.home.library.Library
-import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
-import me.andannn.aozora.ui.feature.home.search.Search
-import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
+import androidx.compose.ui.unit.dp
+import com.slack.circuit.backstack.rememberSaveableBackStack
+import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.internal.BackHandler
+import com.slack.circuit.foundation.rememberCircuitNavigator
 
 @Composable
 fun Home(
@@ -32,7 +35,6 @@ fun Home(
 ) {
     HomeContent(
         modifier = modifier,
-        currentNavigation = state.currentNavigation,
         onEvent = state.evenSink,
     )
 }
@@ -40,37 +42,54 @@ fun Home(
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    currentNavigation: NavigationItem,
     onEvent: (HomeUiEvent) -> Unit,
 ) {
+    val backStack = rememberSaveableBackStack(LibraryNestedScreen)
+    val navigator =
+        rememberCircuitNavigator(backStack) {
+        }
+    BackHandler(enabled = backStack.size > 1) {
+        navigator.pop()
+    }
+
+    val current = backStack.topRecord?.screen
+    val isRoot = current == LibraryNestedScreen
+    val currentNavigation =
+        when (current) {
+            LibraryNestedScreen -> NavigationItem.LIBRARY
+            SearchNestedScreen -> NavigationItem.SEARCH
+            else -> NavigationItem.LIBRARY
+        }
     Scaffold(
         modifier = modifier,
         topBar = {
-            AozoraAppBar(currentNavigation)
+            AozoraAppBar(
+                currentNavigation,
+                onClickMore = {
+                    onEvent.invoke(HomeUiEvent.OnClickMore)
+                },
+            )
         },
         bottomBar = {
             AozoraNavigationBar(
                 selectedItem = currentNavigation,
                 onSelectItem = {
-                    onEvent.invoke(HomeUiEvent.OnNavigationItemClick(it))
+                    if (it == currentNavigation) return@AozoraNavigationBar
+
+                    if (isRoot) {
+                        navigator.goTo(it.toScreen())
+                    } else {
+                        navigator.pop()
+                    }
                 },
             )
         },
     ) {
         Box(modifier = Modifier.padding(it)) {
-            when (currentNavigation) {
-                NavigationItem.LIBRARY -> {
-                    Library(
-                        rememberLibraryPresenter().present(),
-                    )
-                }
-
-                NavigationItem.SEARCH -> {
-                    Search(
-                        state = rememberSearchPresenter().present(),
-                    )
-                }
-            }
+            NavigableCircuitContent(
+                navigator = navigator,
+                backStack = backStack,
+            )
         }
     }
 }
@@ -80,6 +99,7 @@ fun HomeContent(
 fun AozoraAppBar(
     currentNavigation: NavigationItem,
     modifier: Modifier = Modifier,
+    onClickMore: () -> Unit = {},
 ) {
     TopAppBar(
         modifier = modifier,
@@ -88,6 +108,19 @@ fun AozoraAppBar(
                 Text("青空読書")
             } else {
                 Text(currentNavigation.label)
+            }
+        },
+        actions = {
+            if (currentNavigation == NavigationItem.LIBRARY) {
+                IconButton(
+                    modifier = Modifier.padding(end = 12.dp),
+                    onClick = onClickMore,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.MoreVert,
+                        contentDescription = null,
+                    )
+                }
             }
         },
     )
@@ -124,6 +157,12 @@ enum class NavigationItem {
     LIBRARY,
     SEARCH,
 }
+
+fun NavigationItem.toScreen() =
+    when (this) {
+        NavigationItem.LIBRARY -> LibraryNestedScreen
+        NavigationItem.SEARCH -> SearchNestedScreen
+    }
 
 val NavigationItem.icon
     get() =

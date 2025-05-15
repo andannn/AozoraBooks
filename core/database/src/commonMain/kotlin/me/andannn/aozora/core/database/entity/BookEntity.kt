@@ -37,7 +37,7 @@ data class BookEntity(
     @ColumnInfo(name = BookColumns.AUTHOR_URL)
     val authorUrl: String?,
     @ColumnInfo(name = BookColumns.ZIP_URL)
-    val zipUrl: String,
+    val zipUrl: String?,
     @ColumnInfo(name = BookColumns.HTML_URL)
     val htmlUrl: String?,
     @ColumnInfo(name = BookColumns.SAVED_DATE)

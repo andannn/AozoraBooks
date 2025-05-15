@@ -14,7 +14,7 @@ data class AozoraBookCard(
     val titleKana: String,
     val author: String?,
     val authorUrl: String?,
-    val zipUrl: String,
+    val zipUrl: String?,
     val htmlUrl: String? = null,
     val category: String? = null,
     val source: String? = null,

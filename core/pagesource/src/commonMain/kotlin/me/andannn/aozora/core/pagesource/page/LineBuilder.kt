@@ -31,8 +31,7 @@ internal class LineBuilder(
         when (element) {
             is AozoraElement.Ruby,
             is AozoraElement.Text,
-            is AozoraElement.Heading,
-            is AozoraElement.SpecialParagraph,
+
             is AozoraElement.Emphasis,
             -> {
                 val measureResult = measure(element)
@@ -63,10 +62,6 @@ internal class LineBuilder(
                 return FillResult.Filled()
             }
 
-            AozoraElement.PageBreak -> {
-                error("Can not handle page break in line")
-            }
-
             is AozoraElement.Illustration,
             is AozoraElement.Indent,
             -> {
@@ -77,6 +72,16 @@ internal class LineBuilder(
                     updateState(element, measureResult)
                     return FillResult.FillContinue
                 }
+            }
+
+            AozoraElement.PageBreak -> {
+                error("Can not handle page break in line")
+            }
+
+            is AozoraElement.Heading,
+            is AozoraElement.SpecialParagraph,
+            -> {
+                error("Never")
             }
         }
     }
