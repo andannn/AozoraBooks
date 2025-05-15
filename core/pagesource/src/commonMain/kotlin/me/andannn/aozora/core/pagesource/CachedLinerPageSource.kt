@@ -119,7 +119,7 @@ abstract class CachedLinerPageSource : BookPageSource {
         rawSourceProvider: suspend () -> Flow<AozoraBlock>,
     ): Flow<AozoraPage> {
         val pageFlow: Flow<AozoraPage> =
-            createPageFlowFromSequence<AozoraRoughPage>(
+            createPageFlowFromSequence(
                 blockSequenceFlow = cachedOrSource(rawSourceProvider),
                 builderFactory = {
                     RoughPageBuilder(meta = pageMetaData, measurer = DefaultMeasurer(pageMetaData))

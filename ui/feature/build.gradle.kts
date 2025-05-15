@@ -6,13 +6,15 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(libs.androidx.paging.common)
             implementation(project(":ui:paging-compose"))
             implementation(project(":ui:common"))
             implementation(project(":core:common"))
+            implementation(project(":core:platform"))
             implementation(project(":core:util"))
             implementation(project(":core:data"))
             implementation(project(":core:pagesource"))
+            implementation(libs.androidx.paging.common)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }

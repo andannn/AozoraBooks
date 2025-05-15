@@ -47,14 +47,14 @@ enum class LicenseFile(
 ) {
     Android(
         from = File("composeApp/build/reports/licensee/androidRelease/artifacts.json"),
-        to = File("composeApp/src/androidMain/composeResources/files/license/artifacts.json"),
+        to = File("ui/common/src/androidMain/composeResources/files/license/artifacts.json"),
     ),
     IOSArm64(
         from = File("composeApp/build/reports/licensee/iosArm64/artifacts.json"),
-        to = File("composeApp/src/iosArm64Main/composeResources/files/license/artifacts.json"),
+        to = File("ui/common/src/iosArm64Main/composeResources/files/license/artifacts.json"),
     ),
     IOSSimulatorArm64(
         from = File("composeApp/build/reports/licensee/iosSimulatorArm64/artifacts.json"),
-        to = File("composeApp/src/iosSimulatorArm64Main/composeResources/files/license/artifacts.json"),
+        to = File("ui/common/src/iosSimulatorArm64Main/composeResources/files/license/artifacts.json"),
     ),
 }

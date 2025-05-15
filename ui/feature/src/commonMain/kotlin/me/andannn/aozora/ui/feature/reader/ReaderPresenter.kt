@@ -13,31 +13,23 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.BookModelTemp
-import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberReaderPresenter(
     cardId: String,
     userDataRepository: UserDataRepository = getKoin().get(),
-    platformAnalytics: PlatformAnalytics = getKoin().get(),
 ) = remember(
     cardId,
     userDataRepository,
-    platformAnalytics,
 ) {
-    ReaderPresenter(cardId, userDataRepository, platformAnalytics)
+    ReaderPresenter(cardId, userDataRepository)
 }
 
 class ReaderPresenter(
     private val cardId: String,
     private val userDataRepository: UserDataRepository,
-    private val platformAnalytics: PlatformAnalytics,
 ) : Presenter<ReaderState> {
-    init {
-        platformAnalytics.logEvent("ScreenTransition", mapOf("screen" to "Reader"))
-    }
-
     @Composable
     override fun present(): ReaderState {
         val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)

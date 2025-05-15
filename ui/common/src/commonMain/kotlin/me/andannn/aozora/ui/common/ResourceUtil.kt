@@ -2,9 +2,9 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.license
+package me.andannn.aozora.ui.common
 
-import aosora.composeapp.generated.resources.Res
+import aosora.ui.common.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)

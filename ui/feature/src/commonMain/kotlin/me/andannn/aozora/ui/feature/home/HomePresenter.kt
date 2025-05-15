@@ -17,6 +17,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.screens.AboutScreen
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 
 @Composable
@@ -56,7 +57,7 @@ class HomePresenter(
                 }
 
                 HomeUiEvent.OnClickMore -> {
-//                    popupController.showDialog(DialogId)
+                    navigator.goTo(AboutScreen)
                 }
             }
         }

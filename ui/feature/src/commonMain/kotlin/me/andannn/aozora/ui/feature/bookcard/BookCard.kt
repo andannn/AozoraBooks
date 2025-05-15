@@ -172,6 +172,14 @@ private fun BookCardContent(
                     ItemRow(title = "文字遣い種別：", value = it)
                 }
             }
+
+            item {
+                BannerAdView(
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                    adType = AdType.LEADERBOARD,
+                )
+            }
+
             item {
                 Heading(text = "作家データ")
             }
@@ -242,13 +250,6 @@ private fun BookCardContent(
                         Spacer(Modifier.height(4.dp))
                     }
                 }
-            }
-
-            item {
-                BannerAdView(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                    adType = AdType.LEADERBOARD,
-                )
             }
 
             item {

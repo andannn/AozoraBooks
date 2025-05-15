@@ -250,11 +250,14 @@ internal fun processParseHtml(
             val lineBuilder = currentLineBuilder ?: StringBuilder().also { currentLineBuilder = it }
             lineBuilder.append(htmlText)
 
-            if (it is Element && it.tagName() == "br") {
-                val line = lineBuilder.toString()
+            if (it is Element && it.tagName() == "div") {
+                // div is considered as a block, add <br> at last.
+                val line = "$lineBuilder<br>"
                 currentLineBuilder = null
                 mainContentBuilder.append(line)
                 mainContentBuilder.append("\n")
+
+                lineCount++
 
                 if (line.startsWith("<div") && line.contains("<h")) {
                     val headingElement =
@@ -269,6 +272,11 @@ internal fun processParseHtml(
                         ),
                     )
                 }
+            } else if (it is Element && it.tagName() == "br") {
+                val line = lineBuilder.toString()
+                currentLineBuilder = null
+                mainContentBuilder.append(line)
+                mainContentBuilder.append("\n")
 
                 lineCount++
             }

@@ -105,6 +105,18 @@ fun LibraryContent(
                     }
                 }
             }
+        } else {
+            Column(
+                modifier.fillMaxSize().padding(48.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    "まだ閲覧済みの本はありません。",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
