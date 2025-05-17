@@ -33,8 +33,7 @@ class AozoraApplication : Application() {
 
         MobileAds.initialize(
             this,
-            OnInitializationCompleteListener { initializationStatus: InitializationStatus? -> },
-        )
+        ) { }
     }
 }
 

@@ -10,7 +10,6 @@ enum class FontType {
     ;
 
     companion object {
-        // ANDROID Default. No need setting typeface to paint.
-        val DEFAULT = NOTO_SANS
+        val DEFAULT = NOTO_SERIF
     }
 }

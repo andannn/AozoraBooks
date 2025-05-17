@@ -1,10 +1,10 @@
+plugins {
+    id("melodify.kmp.library")
+    id("melodify.compose.multiplatform.library")
+}
 
 android {
     namespace = "me.andannn.platform"
-}
-
-plugins {
-    id("melodify.kmp.library")
 }
 
 kotlin {
