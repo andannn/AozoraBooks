@@ -96,7 +96,7 @@ internal class UserDataRepositoryImpl(
     }
 
     override fun getAllSavedBook(): Flow<List<BookModelTemp>> =
-        dao.getSavedBooks().map {
+        dao.getSavedBooksByDesc().map {
             it.map(BookEntity::toModel)
         }
 

@@ -40,10 +40,11 @@ interface SavedBookDao {
     @Query(
         """
             SELECT * FROM ${Tables.BOOK_TABLE}
-            WHERE ${BookColumns.BOOK_ID} IN (SELECT ${SavedBookColumn.BOOK_ID} FROM ${Tables.SAVED_BOOK_TABLE})
+            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
+            ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
     )
-    fun getSavedBooks(): Flow<List<BookEntity>>
+    fun getSavedBooksByDesc(): Flow<List<BookEntity>>
 
     /**
      * Get a saved book by id

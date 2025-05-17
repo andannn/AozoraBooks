@@ -41,10 +41,10 @@ class DatabaseTest {
                     createdDate = 1,
                 ),
             )
-            assertEquals(1, savedBookDao.getSavedBooks().first().size)
+            assertEquals(1, savedBookDao.getSavedBooksByDesc().first().size)
 
             savedBookDao.deleteSavedBook("1")
-            assertEquals(0, savedBookDao.getSavedBooks().first().size)
+            assertEquals(0, savedBookDao.getSavedBooksByDesc().first().size)
         }
 
     @Test
@@ -71,6 +71,32 @@ class DatabaseTest {
                 savedBookDao.getSavedBookById("1").first() == null
             }
         }
+
+    @Test
+    fun getSavedBookByDataDescTest() = testScope.runTest {
+        savedBookDao.upsertBookList(bookEntities)
+        savedBookDao.upsertSavedBook(
+            SavedBookEntity(
+                bookId = "2",
+                createdDate = 2,
+            )
+        )
+        savedBookDao.upsertSavedBook(
+            SavedBookEntity(
+                bookId = "1",
+                createdDate = 1,
+            )
+        )
+        val savedBooks = savedBookDao.getSavedBooksByDesc().first()
+        println(savedBooks)
+        assertTrue {
+            savedBooks[0].bookId == "2"
+        }
+        assertTrue {
+            savedBooks[1].bookId == "1"
+        }
+    }
+
 
     @Test
     fun insertSavedBookTest() =
@@ -117,4 +143,15 @@ private val bookEntities =
             htmlUrl = "htmlUrl2",
             savedDateInEpochMillisecond = 2L,
         ),
+        BookEntity(
+            bookId = "3",
+            groupId = "3",
+            title = "title3",
+            titleKana = "titleKana3",
+            author = "author3",
+            authorUrl = "authorUrl3",
+            zipUrl = "zipUrl3",
+            htmlUrl = "htmlUrl3",
+            savedDateInEpochMillisecond = 3L,
+        )
     )
