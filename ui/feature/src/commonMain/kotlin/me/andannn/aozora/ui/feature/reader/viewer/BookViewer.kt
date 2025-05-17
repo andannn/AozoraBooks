@@ -81,7 +81,7 @@ private fun ReaderContent(
 
         val page = pageState.value
         if (page is AozoraPage.AozoraBibliographicalPage) {
-            AozoraBibliographicalPage(page = page)
+            AozoraBibliographicalPage(page = page, textColor = textColor)
         } else {
             val layoutPage =
                 remember(page) {

@@ -15,19 +15,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraBibliographicalPage
-import me.andannn.core.util.parseBookSourceAsAnnotatedString
 
 @Composable
 fun AozoraBibliographicalPage(
     modifier: Modifier = Modifier,
     page: AozoraBibliographicalPage,
+    textColor: Color,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(horizontal = 48.dp)) {
         val content =
             remember(page.html) {
-                parseBookSourceAsAnnotatedString(page.html)
+                AnnotatedString.fromHtml(
+                    page.html,
+                )
             }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -36,6 +41,7 @@ fun AozoraBibliographicalPage(
         Text(
             text = content,
             style = MaterialTheme.typography.bodyLarge,
+            color = textColor,
         )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider()
