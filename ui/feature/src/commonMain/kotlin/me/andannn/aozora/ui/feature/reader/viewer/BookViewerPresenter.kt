@@ -29,6 +29,7 @@ import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
 import me.andannn.aozora.core.data.common.PageContext
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.pagesource.BookPageSource
@@ -92,15 +93,25 @@ class BookViewerPresenter(
                 .collect { newIndex ->
                     Napier.d(tag = TAG) { "new settled page collected $newIndex" }
                     val page = snapshotState?.pageList?.get(newIndex)
-
                     if (page != null) {
-                        val blockIndex = (page as? AozoraPage.AozoraRoughPage)?.pageProgress?.first
-                        if (blockIndex != null) {
-                            settingRepository.setProgressOfBook(
-                                bookCardId = card.id,
-                                blockIndex = blockIndex,
-                            )
-                        }
+                        val progress =
+                            when (page) {
+                                is AozoraPage.AozoraCoverPage -> {
+                                    ReadProgress.None
+                                }
+
+                                is AozoraPage.AozoraBibliographicalPage -> {
+                                    ReadProgress.Done
+                                }
+
+                                is AozoraPage.AozoraRoughPage -> {
+                                    ReadProgress.Reading(page.pageProgress.first)
+                                }
+                            }
+                        settingRepository.setProgressOfBook(
+                            bookCardId = card.id,
+                            readProgress = progress,
+                        )
                     }
                 }
         }
@@ -119,9 +130,9 @@ class BookViewerPresenter(
                     fontType = fontType,
                     lineSpacing = lineSpacing,
                 )
-            val savedBlockIndex = settingRepository.getProgress(card.id)
+            val progress = settingRepository.getProgress(card.id)
             bookSource
-                .getPagerSnapShotFlow(pageMetadata, initialBlockIndex = savedBlockIndex?.toInt())
+                .getPagerSnapShotFlow(pageMetadata, readingProgress = progress)
                 .distinctUntilChanged()
                 .collect {
                     when (it) {

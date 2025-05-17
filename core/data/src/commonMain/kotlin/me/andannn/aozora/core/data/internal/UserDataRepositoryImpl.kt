@@ -12,6 +12,7 @@ import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.database.dao.SavedBookDao
@@ -71,20 +72,19 @@ internal class UserDataRepositoryImpl(
 
     override suspend fun setProgressOfBook(
         bookCardId: String,
-        blockIndex: Int,
+        readProgress: ReadProgress,
     ) {
         dao.updateProgressOfBook(
             BookProgressEntity(
                 bookId = bookCardId,
-                progressBlockIndex = blockIndex,
+                progressBlockIndex = readProgress.toDataBaseValue(),
                 updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
             ),
         )
     }
 
-    override fun getProgressFlow(bookCardId: String): Flow<Int?> = dao.getProgressOfBookFlow(bookCardId).map { it.progressBlockIndex }
-
-    override suspend fun getProgress(bookCardId: String): Int? = dao.getProgressOfBook(bookCardId)?.progressBlockIndex
+    override suspend fun getProgress(bookCardId: String): ReadProgress =
+        dao.getProgressOfBook(bookCardId)?.progressBlockIndex.toReadProgress()
 
     override suspend fun saveBookToLibrary(bookId: String) {
         dao.upsertSavedBook(
@@ -125,3 +125,28 @@ private fun BookEntity.toModel() =
         zipUrl = zipUrl,
         htmlUrl = htmlUrl,
     )
+
+private const val READ_PROGRESS_NONE = -2
+private const val READ_PROGRESS_DONE = -1
+
+private fun ReadProgress.toDataBaseValue(): Int =
+    when (this) {
+        ReadProgress.Done -> READ_PROGRESS_DONE
+        ReadProgress.None -> READ_PROGRESS_NONE
+        is ReadProgress.Reading -> blockIndex
+    }
+
+private fun Int?.toReadProgress(): ReadProgress =
+    when (this) {
+        null, READ_PROGRESS_NONE -> {
+            ReadProgress.None
+        }
+
+        READ_PROGRESS_DONE -> {
+            ReadProgress.Done
+        }
+
+        else -> {
+            ReadProgress.Reading(this)
+        }
+    }

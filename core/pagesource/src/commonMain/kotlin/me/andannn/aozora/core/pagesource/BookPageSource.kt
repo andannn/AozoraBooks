@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.TableOfContentsModel
 
 val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
@@ -23,11 +24,11 @@ interface BookPageSource {
      * generated pager snap shot flow by [pageMetaData].
      *
      * @param pageMetaData page meta data.
-     * @param initialBlockIndex initial start progress of book page source. every 64 bytes is One Unit of progress.
+     * @param readingProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
      */
     fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
-        initialBlockIndex: Int?,
+        readingProgress: ReadProgress,
     ): Flow<PagerSnapShot>
 
     /**

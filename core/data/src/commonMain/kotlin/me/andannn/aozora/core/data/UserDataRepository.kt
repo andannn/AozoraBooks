@@ -9,6 +9,7 @@ import me.andannn.aozora.core.data.common.BookModelTemp
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 
@@ -71,18 +72,13 @@ interface UserDataRepository {
      */
     suspend fun setProgressOfBook(
         bookCardId: String,
-        blockIndex: Int,
+        readProgress: ReadProgress,
     )
 
     /**
      * Get the progress of book.
      */
-    fun getProgressFlow(bookCardId: String): Flow<Int?>
-
-    /**
-     * Get the progress of book.
-     */
-    suspend fun getProgress(bookCardId: String): Int?
+    suspend fun getProgress(bookCardId: String): ReadProgress
 
     /**
      * Save book to library.
