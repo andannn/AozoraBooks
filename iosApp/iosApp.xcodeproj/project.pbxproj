@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		A10432102DD811DB00246F98 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A104320F2DD811DB00246F98 /* GoogleMobileAds */; };
+		A10432122DD8137D00246F98 /* PlatformBannerAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10432112DD8137300246F98 /* PlatformBannerAdView.swift */; };
 		E15D77332DD2E19800FE0B29 /* PlatformAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D77322DD2E19200FE0B29 /* PlatformAnalytics.swift */; };
 		E1C3DCF62DD2FDD800399E12 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = E1C3DCF52DD2FDD800399E12 /* FirebaseAnalytics */; };
 		E1C3DCF82DD2FDD800399E12 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E1C3DCF72DD2FDD800399E12 /* FirebaseCore */; };
@@ -26,6 +27,7 @@
 		7555FF7B242A565900829871 /* 青空読書.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "青空読書.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10432112DD8137300246F98 /* PlatformBannerAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformBannerAdView.swift; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		E15D77322DD2E19200FE0B29 /* PlatformAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformAnalytics.swift; sourceTree = "<group>"; };
 		E1C3DCFB2DD30BB800399E12 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				A10432112DD8137300246F98 /* PlatformBannerAdView.swift */,
 				E15D77322DD2E19200FE0B29 /* PlatformAnalytics.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10432122DD8137D00246F98 /* PlatformBannerAdView.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				E15D77332DD2E19800FE0B29 /* PlatformAnalytics.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,

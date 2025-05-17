@@ -18,7 +18,8 @@ struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     init() {
-        KoinLauncherKt.startKoin(analytics: IOSAnalytics(), modules: KoinModulesKt.modules)
+        let adViewControllerFactoryModule = KoinLauncher_iosKt.adViewControllerFactoryModule(adViewControllerFactory: IOSPlatformAdViewControllerFactory())
+        KoinLauncherKt.startKoin(analytics: IOSAnalytics(), modules: KoinModulesKt.modules + [adViewControllerFactoryModule])
     }
 
     var body: some Scene {

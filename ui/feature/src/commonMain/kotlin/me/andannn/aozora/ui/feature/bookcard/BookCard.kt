@@ -40,8 +40,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.AozoraBookCard
-import me.andannn.aozora.ui.common.widgets.AdType
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.platform.AdType
 
 private const val TAG = "BookCard"
 

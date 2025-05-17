@@ -24,8 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.ui.common.widgets.AdType
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.platform.AdType
 
 @Composable
 fun Search(
