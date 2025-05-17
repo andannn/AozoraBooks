@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -40,7 +40,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberBookViewerPresenter(
-    card: BookModelTemp,
+    card: CachedBookModel,
     screenSize: Size,
     bookSource: BookPageSource = LocalBookPageSource.current,
     settingRepository: UserDataRepository = getKoin().get(),
@@ -56,7 +56,7 @@ fun rememberBookViewerPresenter(
 private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
-    private val card: BookModelTemp,
+    private val card: CachedBookModel,
     private val bookSource: BookPageSource,
     private val screenSize: Size,
     private val settingRepository: UserDataRepository,
@@ -72,6 +72,9 @@ class BookViewerPresenter(
         val lineSpacing by settingRepository
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
+        val progress by settingRepository
+            .getProgressFlow(card.id)
+            .collectAsRetainedState(ReadProgress.None)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot.Ready?>(null)
@@ -88,13 +91,14 @@ class BookViewerPresenter(
         LaunchedEffect(
             snapshotState?.snapshotVersion,
         ) {
+            val totalCount = bookSource.getTotalBlockCount()
             snapshotFlow { pagerState.settledPage }
                 .drop(1)
                 .collect { newIndex ->
                     Napier.d(tag = TAG) { "new settled page collected $newIndex" }
                     val page = snapshotState?.pageList?.get(newIndex)
                     if (page != null) {
-                        val progress =
+                        val currentProgress =
                             when (page) {
                                 is AozoraPage.AozoraCoverPage -> {
                                     ReadProgress.None
@@ -105,12 +109,15 @@ class BookViewerPresenter(
                                 }
 
                                 is AozoraPage.AozoraRoughPage -> {
-                                    ReadProgress.Reading(page.pageProgress.first)
+                                    ReadProgress.Reading(
+                                        blockIndex = page.pageProgress.first,
+                                        totalBlockCount = totalCount,
+                                    )
                                 }
                             }
                         settingRepository.setProgressOfBook(
                             bookCardId = card.id,
-                            readProgress = progress,
+                            readProgress = currentProgress,
                         )
                     }
                 }
@@ -130,9 +137,9 @@ class BookViewerPresenter(
                     fontType = fontType,
                     lineSpacing = lineSpacing,
                 )
-            val progress = settingRepository.getProgress(card.id)
+            val savedProgress = settingRepository.getProgress(card.id)
             bookSource
-                .getPagerSnapShotFlow(pageMetadata, readingProgress = progress)
+                .getPagerSnapShotFlow(pageMetadata, readingProgress = savedProgress)
                 .distinctUntilChanged()
                 .collect {
                     when (it) {
@@ -160,6 +167,7 @@ class BookViewerPresenter(
                 BookPageState(
                     pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
                     pagerState = pagerState,
+                    progress = progress,
                 ),
         ) { eventSink ->
             when (eventSink) {
@@ -172,6 +180,7 @@ class BookViewerPresenter(
 data class BookPageState(
     val pages: ImmutableList<AozoraPage>,
     val pagerState: PagerState,
+    val progress: ReadProgress,
 )
 
 data class BookViewerState(

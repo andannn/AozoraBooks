@@ -150,6 +150,10 @@ abstract class CachedLinerPageSource : BookPageSource {
             )
         }
 
+    override suspend fun getTotalBlockCount(): Int {
+        return rawSource.getBookInfo().blockCount
+    }
+
     /**
      * return cached block list if available. or return source flow.
      */

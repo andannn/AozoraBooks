@@ -8,11 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -21,15 +23,15 @@ import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.layout
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
+import me.andannn.aozora.ui.common.util.toPercentString
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
 import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
-
-private const val TAG = "BookViewer"
 
 @Composable
 fun BookViewer(
@@ -42,6 +44,7 @@ fun BookViewer(
             pages = state.bookPageState.pages,
             theme = state.theme,
             pagerState = state.bookPageState.pagerState,
+            progress = state.bookPageState.progress,
             pageMetadata = state.pageMetadata,
         )
     }
@@ -53,6 +56,7 @@ private fun ReaderContent(
     pages: ImmutableList<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
+    progress: ReadProgress,
     pageMetadata: PageMetaData,
 ) {
     if (pages.isEmpty()) {
@@ -72,30 +76,48 @@ private fun ReaderContent(
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
     val fontFamily = getFontFamilyByType(pageMetadata.fontType)
 
-    HorizontalPager(
-        modifier = Modifier.background(backgroundColor),
-        state = pagerState,
-        reverseLayout = true,
-    ) { pageIndex ->
-        val pageState = rememberUpdatedState(pages.getOrNull(pageIndex))
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        HorizontalPager(
+            modifier = Modifier.background(backgroundColor),
+            state = pagerState,
+            reverseLayout = true,
+        ) { pageIndex ->
+            val pageState = rememberUpdatedState(pages.getOrNull(pageIndex))
 
-        val page = pageState.value
-        if (page is AozoraPage.AozoraBibliographicalPage) {
-            AozoraBibliographicalPage(page = page, textColor = textColor)
-        } else {
-            val layoutPage =
-                remember(page) {
-                    page?.layout()
+            val page = pageState.value
+            if (page is AozoraPage.AozoraBibliographicalPage) {
+                AozoraBibliographicalPage(page = page, textColor = textColor)
+            } else {
+                val layoutPage =
+                    remember(page) {
+                        page?.layout()
+                    }
+
+                if (layoutPage != null) {
+                    PageViewV2(
+                        modifier = Modifier.fillMaxSize(),
+                        page = layoutPage,
+                        textColor = textColor,
+                        fontFamily = fontFamily,
+                    )
                 }
-
-            if (layoutPage != null) {
-                PageViewV2(
-                    modifier = Modifier.fillMaxSize(),
-                    page = layoutPage,
-                    textColor = textColor,
-                    fontFamily = fontFamily,
-                )
             }
         }
+
+        Text(
+            modifier = Modifier.align(Alignment.BottomStart).safeContentPadding(),
+            text = progress.toLabelString(),
+            style = MaterialTheme.typography.labelSmall,
+        )
     }
 }
+
+private fun ReadProgress.toLabelString(): String =
+    when (this) {
+        is ReadProgress.Reading -> progressFactor?.toPercentString() ?: ""
+        ReadProgress.None,
+        ReadProgress.Done,
+        -> ""
+    }

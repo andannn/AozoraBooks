@@ -20,7 +20,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.BookWithProgress
+import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
@@ -55,8 +56,11 @@ class LibraryPresenter(
 ) : Presenter<LibraryState> {
     @Composable
     override fun present(): LibraryState {
-        val savedBooks by userDataRepository
-            .getAllSavedBook()
+        val notCompletedBooks by userDataRepository
+            .getAllNotCompletedBooks()
+            .collectAsRetainedState(initial = emptyList())
+        val completedBooks by userDataRepository
+            .getAllCompletedBooks()
             .collectAsRetainedState(initial = emptyList())
         var currentTab by rememberRetained {
             mutableStateOf(TabItem.BOOK_SHELF)
@@ -64,7 +68,8 @@ class LibraryPresenter(
         val scope = rememberCoroutineScope()
         return LibraryState(
             currentTab = currentTab,
-            savedBooks = savedBooks.toImmutableList(),
+            notCompletedBooks = notCompletedBooks.toImmutableList(),
+            completedBooks = completedBooks.toImmutableList(),
         ) { event ->
             when (event) {
                 is LibraryUiEvent.OnCardClick -> {
@@ -108,7 +113,8 @@ class LibraryPresenter(
 @Stable
 data class LibraryState(
     val currentTab: TabItem,
-    val savedBooks: ImmutableList<BookModelTemp>,
+    val notCompletedBooks: ImmutableList<BookWithProgress>,
+    val completedBooks: ImmutableList<BookWithProgress>,
     val evenSink: (LibraryUiEvent) -> Unit = {},
 ) : CircuitUiState
 
@@ -118,7 +124,7 @@ sealed interface LibraryUiEvent {
     ) : LibraryUiEvent
 
     data class OnCardOptionClick(
-        val card: BookModelTemp,
+        val card: CachedBookModel,
     ) : LibraryUiEvent
 
     data class OnTabRowClick(

@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.BookWithProgress
+import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
@@ -16,6 +17,7 @@ import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -78,13 +80,18 @@ internal class UserDataRepositoryImpl(
             BookProgressEntity(
                 bookId = bookCardId,
                 progressBlockIndex = readProgress.toDataBaseValue(),
+                totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
                 updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
             ),
         )
     }
 
-    override suspend fun getProgress(bookCardId: String): ReadProgress =
-        dao.getProgressOfBook(bookCardId)?.progressBlockIndex.toReadProgress()
+    override suspend fun getProgress(bookCardId: String): ReadProgress = dao.getProgressOfBook(bookCardId).toReadProgress()
+
+    override fun getProgressFlow(bookCardId: String): Flow<ReadProgress> =
+        dao.getProgressOfBookFlow(bookCardId).map {
+            it.toReadProgress()
+        }
 
     override suspend fun saveBookToLibrary(bookId: String) {
         dao.upsertSavedBook(
@@ -95,16 +102,21 @@ internal class UserDataRepositoryImpl(
         )
     }
 
-    override fun getAllSavedBook(): Flow<List<BookModelTemp>> =
-        dao.getSavedBooksByDesc().map {
-            it.map(BookEntity::toModel)
+    override fun getAllNotCompletedBooks(): Flow<List<BookWithProgress>> =
+        dao.getNotCompletedBooksByDesc().map {
+            it.map(BookEntityWithProgress::toModel)
+        }
+
+    override fun getAllCompletedBooks(): Flow<List<BookWithProgress>> =
+        dao.getCompleteBooksByDesc().map {
+            it.map(BookEntityWithProgress::toModel)
         }
 
     override suspend fun deleteSavedBook(bookId: String) {
         dao.deleteSavedBook(bookId)
     }
 
-    override fun getSavedBookById(id: String): Flow<BookModelTemp?> =
+    override fun getSavedBookById(id: String): Flow<CachedBookModel?> =
         dao.getSavedBookById(id).map {
             it?.toModel()
         }
@@ -115,8 +127,14 @@ internal class UserDataRepositoryImpl(
         }
 }
 
+private fun BookEntityWithProgress.toModel() =
+    BookWithProgress(
+        book = book.toModel(),
+        progress = progress.toReadProgress(),
+    )
+
 private fun BookEntity.toModel() =
-    BookModelTemp(
+    CachedBookModel(
         id = bookId,
         groupId = groupId,
         title = title,
@@ -136,8 +154,8 @@ private fun ReadProgress.toDataBaseValue(): Int =
         is ReadProgress.Reading -> blockIndex
     }
 
-private fun Int?.toReadProgress(): ReadProgress =
-    when (this) {
+private fun BookProgressEntity?.toReadProgress(): ReadProgress =
+    when (val blockIndex = this?.progressBlockIndex) {
         null, READ_PROGRESS_NONE -> {
             ReadProgress.None
         }
@@ -147,6 +165,9 @@ private fun Int?.toReadProgress(): ReadProgress =
         }
 
         else -> {
-            ReadProgress.Reading(this)
+            ReadProgress.Reading(
+                blockIndex = blockIndex,
+                totalBlockCount = this?.totalBlockCount,
+            )
         }
     }

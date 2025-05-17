@@ -55,7 +55,7 @@ It supports advanced layout features like ruby annotations and vertical text, an
 
 ### Code style
 
-This project uses [ktlint](https://github.com/pinterest/ktlint).
+This project uses [ktlint](https://github.com/pinterest/ktlint).`
 running `./gradlew ktLintCheck` to check lint issues.
 running `./gradlew ktLintFormat` to automatically fix lint errors.
 running `./gradlew spotlessCheck` to check copyright.

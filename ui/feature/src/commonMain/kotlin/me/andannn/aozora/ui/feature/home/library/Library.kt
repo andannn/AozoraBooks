@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.BookWithProgress
 import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
@@ -33,7 +33,8 @@ fun Library(
 ) {
     LibraryContent(
         modifier = modifier,
-        savedBooks = state.savedBooks,
+        notCompletedBooks = state.notCompletedBooks,
+        completedBooks = state.completedBooks,
         currentTab = state.currentTab,
         onEvent = state.evenSink,
     )
@@ -43,7 +44,8 @@ fun Library(
 fun LibraryContent(
     modifier: Modifier,
     currentTab: TabItem,
-    savedBooks: List<BookModelTemp>,
+    notCompletedBooks: List<BookWithProgress>,
+    completedBooks: List<BookWithProgress>,
     onEvent: (LibraryUiEvent) -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -62,9 +64,9 @@ fun LibraryContent(
         }
 
         if (currentTab == TabItem.BOOK_SHELF) {
-            if (savedBooks.isEmpty()) {
+            if (notCompletedBooks.isEmpty()) {
                 Column(
-                    modifier.fillMaxSize().padding(48.dp),
+                    Modifier.fillMaxSize().padding(48.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
@@ -83,40 +85,66 @@ fun LibraryContent(
                     }
                 }
             } else {
-                LazyColumn(
-                    modifier = modifier,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(vertical = 12.dp, horizontal = 18.dp),
-                ) {
-                    items(
-                        items = savedBooks,
-                        key = { it.id },
-                    ) { card ->
-                        PreviewBookCard(
-                            title = card.title,
-                            author = card.authorName.toString(),
-                            onClick = {
-                                onEvent.invoke(LibraryUiEvent.OnCardClick(card.id))
-                            },
-                            onOptionClick = {
-                                onEvent.invoke(LibraryUiEvent.OnCardOptionClick(card))
-                            },
-                        )
-                    }
-                }
-            }
-        } else {
-            Column(
-                modifier.fillMaxSize().padding(48.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    "まだ閲覧済みの本はありません。",
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
+                BookList(
+                    modifier = Modifier,
+                    bookList = notCompletedBooks,
+                    onEvent = onEvent,
                 )
             }
+        } else {
+            if (completedBooks.isEmpty()) {
+                Column(
+                    Modifier.fillMaxSize().padding(48.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        "まだ閲覧済みの本はありません。",
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
+            } else {
+                BookList(
+                    modifier = Modifier,
+                    bookList = completedBooks,
+                    onEvent = onEvent,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BookList(
+    modifier: Modifier,
+    bookList: List<BookWithProgress>,
+    onEvent: (LibraryUiEvent) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 18.dp),
+    ) {
+        items(
+            items = bookList,
+            key = { it.book.id },
+        ) { bookWithProgress ->
+            val card = bookWithProgress.book
+            val progress = bookWithProgress.progress
+
+            PreviewBookCard(
+                modifier = Modifier.animateItem(),
+                title = card.title,
+                author = card.authorName.toString(),
+                progress = progress,
+                onClick = {
+                    onEvent.invoke(LibraryUiEvent.OnCardClick(card.id))
+                },
+                onOptionClick = {
+                    onEvent.invoke(LibraryUiEvent.OnCardOptionClick(card))
+                },
+            )
         }
     }
 }

@@ -28,19 +28,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.ui.common.util.toPercentString
 
 @Composable
 fun PreviewBookCard(
     modifier: Modifier = Modifier,
     title: String,
     author: String,
+    progress: ReadProgress,
     onClick: () -> Unit = {},
     onOptionClick: () -> Unit = {},
 ) {
+    val progressText =
+        remember(progress) {
+            when (progress) {
+                ReadProgress.Done -> "既読"
+                ReadProgress.None -> "未読"
+                is ReadProgress.Reading ->
+                    "読書中 ${
+                        progress.progressFactor?.toPercentString() ?: ""
+                    }"
+            }
+        }
     Surface(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
@@ -101,6 +116,11 @@ fun PreviewBookCard(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = author,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = progressText,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
 

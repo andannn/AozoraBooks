@@ -35,6 +35,11 @@ interface BookPageSource {
      * get book meta.
      */
     suspend fun getTableOfContents(): List<TableOfContentsModel>
+
+    /**
+     * get total block count.
+     */
+    suspend fun getTotalBlockCount(): Int
 }
 
 sealed interface PagerSnapShot {

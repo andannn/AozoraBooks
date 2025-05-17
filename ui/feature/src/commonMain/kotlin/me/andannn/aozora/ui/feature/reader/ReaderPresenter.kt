@@ -12,7 +12,7 @@ import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.CachedBookModel
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -43,7 +43,7 @@ class ReaderPresenter(
 
 @Stable
 data class ReaderState(
-    val bookCard: BookModelTemp?,
+    val bookCard: CachedBookModel?,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 
