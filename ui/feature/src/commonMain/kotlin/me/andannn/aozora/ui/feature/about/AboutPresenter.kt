@@ -7,6 +7,8 @@ package me.andannn.aozora.ui.feature.about
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -15,17 +17,22 @@ import me.andannn.aozora.ui.feature.screens.LicenseScreen
 import me.andannn.platform.appVersion
 
 @Composable
-fun rememberAboutPresenter(navigator: Navigator = LocalNavigator.current) =
-    remember(
-        navigator,
-    ) {
-        AboutPresenter(
-            navigator = navigator,
-        )
-    }
+fun rememberAboutPresenter(
+    navigator: Navigator = LocalNavigator.current,
+    uriHandler: UriHandler = LocalUriHandler.current,
+) = remember(
+    navigator,
+    uriHandler,
+) {
+    AboutPresenter(
+        navigator = navigator,
+        uriHandler = uriHandler,
+    )
+}
 
 class AboutPresenter(
     private val navigator: Navigator,
+    private val uriHandler: UriHandler,
 ) : Presenter<AboutState> {
     @Composable
     override fun present(): AboutState =
@@ -39,6 +46,10 @@ class AboutPresenter(
 
                 AboutUiEvent.OnClickLicense -> {
                     navigator.goTo(LicenseScreen)
+                }
+
+                AboutUiEvent.OnClickPrivacy -> {
+                    uriHandler.openUri("https://andannn.github.io/ja/aozora-privacy/")
                 }
             }
         }
@@ -54,4 +65,6 @@ sealed interface AboutUiEvent {
     data object OnBack : AboutUiEvent
 
     data object OnClickLicense : AboutUiEvent
+
+    data object OnClickPrivacy : AboutUiEvent
 }

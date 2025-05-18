@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import me.andannn.aozora.core.database.dao.READ_PROGRESS_DONE
 import me.andannn.aozora.core.database.dao.SavedBookDao
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
@@ -41,10 +42,10 @@ class DatabaseTest {
                     createdDate = 1,
                 ),
             )
-            assertEquals(1, savedBookDao.getSavedBooks().first().size)
+            assertEquals(1, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
             savedBookDao.deleteSavedBook("1")
-            assertEquals(0, savedBookDao.getSavedBooks().first().size)
+            assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
         }
 
     @Test
@@ -73,6 +74,32 @@ class DatabaseTest {
         }
 
     @Test
+    fun getSavedBookByDataDescTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertSavedBook(
+                SavedBookEntity(
+                    bookId = "2",
+                    createdDate = 2,
+                ),
+            )
+            savedBookDao.upsertSavedBook(
+                SavedBookEntity(
+                    bookId = "1",
+                    createdDate = 1,
+                ),
+            )
+            val savedBooks = savedBookDao.getNotCompletedBooksByDesc().first()
+            println(savedBooks)
+            assertTrue {
+                savedBooks[0].book.bookId == "2"
+            }
+            assertTrue {
+                savedBooks[1].book.bookId == "1"
+            }
+        }
+
+    @Test
     fun insertSavedBookTest() =
         testScope.runTest {
             val progressEntity =
@@ -89,6 +116,69 @@ class DatabaseTest {
             savedBookDao.updateProgressOfBook(progressEntity.copy(updateEpochMillisecond = 2))
             assertTrue {
                 savedBookDao.getProgressOfBook("1")?.updateEpochMillisecond == 2L
+            }
+        }
+
+    @Test
+    fun insertAndGetProgressTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertSavedBook(
+                SavedBookEntity(
+                    bookId = "1",
+                    createdDate = 1,
+                ),
+            )
+
+            // saved book is not empty but progress is empty.
+            assertTrue {
+                savedBookDao.getNotCompletedBooksByDesc().first().size == 1
+            }
+            assertTrue {
+                savedBookDao.getNotCompletedBooksByDesc().first()[0].progress == null
+            }
+
+            savedBookDao.updateProgressOfBook(
+                BookProgressEntity(
+                    bookId = "1",
+                    progressBlockIndex = 1,
+                    updateEpochMillisecond = 1,
+                ),
+            )
+            // get Book with progress.
+            assertTrue {
+                savedBookDao.getNotCompletedBooksByDesc().first()[0].progress?.progressBlockIndex == 1
+            }
+        }
+
+    @Test
+    fun setAndGetReadingProgressTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertSavedBook(
+                SavedBookEntity(
+                    bookId = "1",
+                    createdDate = 1,
+                ),
+            )
+            assertTrue {
+                savedBookDao.getNotCompletedBooksByDesc().first().size == 1
+            }
+
+            savedBookDao.updateProgressOfBook(
+                BookProgressEntity(
+                    bookId = "1",
+                    progressBlockIndex = READ_PROGRESS_DONE,
+                    updateEpochMillisecond = 1,
+                ),
+            )
+
+            assertTrue {
+                savedBookDao.getNotCompletedBooksByDesc().first().isEmpty()
+            }
+
+            assertTrue {
+                savedBookDao.getCompleteBooksByDesc().first().isNotEmpty()
             }
         }
 }
@@ -116,5 +206,16 @@ private val bookEntities =
             zipUrl = "zipUrl2",
             htmlUrl = "htmlUrl2",
             savedDateInEpochMillisecond = 2L,
+        ),
+        BookEntity(
+            bookId = "3",
+            groupId = "3",
+            title = "title3",
+            titleKana = "titleKana3",
+            author = "author3",
+            authorUrl = "authorUrl3",
+            zipUrl = "zipUrl3",
+            htmlUrl = "htmlUrl3",
+            savedDateInEpochMillisecond = 3L,
         ),
     )

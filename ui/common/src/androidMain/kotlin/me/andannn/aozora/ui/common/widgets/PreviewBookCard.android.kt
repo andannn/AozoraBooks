@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.ui.common.theme.AozoraTheme
 
 @Preview
@@ -20,6 +21,7 @@ private fun PreviewBookCardPreview() {
             PreviewBookCard(
                 title = "吾輩は猫である",
                 author = "夏目漱石",
+                progress = ReadProgress.None,
             )
         }
     }
@@ -32,6 +34,7 @@ private fun PreviewBookCardPreviewLongDark() {
         PreviewBookCard(
             title = "吾輩は猫である 吾輩は猫である 吾輩は猫である 吾輩は猫である",
             author = "夏目漱石 夏目漱石 夏目漱石 夏目漱石 夏目漱石",
+            progress = ReadProgress.Done,
         )
     }
 }

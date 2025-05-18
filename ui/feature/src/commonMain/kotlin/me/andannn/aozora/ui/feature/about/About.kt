@@ -72,6 +72,14 @@ private fun AboutContent(
             item {
                 SettingItem(
                     imageVector = Icons.Outlined.LocalPolice,
+                    title = "利用規約＆プライバシーポリシー",
+                    onClick = {
+                        onEvent.invoke(AboutUiEvent.OnClickPrivacy)
+                    },
+                )
+
+                SettingItem(
+                    imageVector = Icons.Outlined.LocalPolice,
                     title = "ライセンス",
                     onClick = {
                         onEvent.invoke(AboutUiEvent.OnClickLicense)

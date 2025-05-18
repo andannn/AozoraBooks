@@ -19,6 +19,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import me.andannn.platform.AdType
 
 @RequiresPermission(android.Manifest.permission.INTERNET)
 @Composable

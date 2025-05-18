@@ -1,11 +1,13 @@
 import SwiftUI
 import ComposeApp
 import FirebaseCore
+import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     FirebaseApp.configure()
+    MobileAds.shared.start(completionHandler: nil)
 
     return true
   }
@@ -16,7 +18,8 @@ struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
     init() {
-        KoinLauncherKt.startKoin(analytics: IOSAnalytics(), modules: KoinModulesKt.modules)
+        let adViewControllerFactoryModule = KoinLauncher_iosKt.adViewControllerFactoryModule(adViewControllerFactory: IOSPlatformAdViewControllerFactory())
+        KoinLauncherKt.startKoin(analytics: IOSAnalytics(), modules: KoinModulesKt.modules + [adViewControllerFactoryModule])
     }
 
     var body: some Scene {

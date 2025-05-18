@@ -21,6 +21,7 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.TableOfContentsModel
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
@@ -43,10 +44,10 @@ abstract class CachedLinerPageSource : BookPageSource {
 
     override fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
-        initialBlockIndex: Int?,
+        readingProgress: ReadProgress,
     ): Flow<PagerSnapShot> =
         flow<PagerSnapShot> {
-            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $initialBlockIndex, metaData $pageMetaData. " }
+            Napier.d(tag = TAG) { "Get page snapshot flow initialProgress $readingProgress, metaData $pageMetaData. " }
 
             val version = version++
 
@@ -65,29 +66,23 @@ abstract class CachedLinerPageSource : BookPageSource {
                 loadedPages.add(page)
 
                 if (initialPageIndex == null) {
-                    if (initialBlockIndex == null) {
-                        Napier.d(tag = TAG) { "hit Book cover page" }
-                        initialPageIndex = 0
-                    } else {
-                        var hit = false
-                        hit =
-                            when (page) {
-                                is AozoraCoverPage -> {
-                                    initialBlockIndex == -1
-                                }
-
-                                is AozoraRoughPage -> {
-                                    initialBlockIndex in page.pageProgress
-                                }
-
-                                is AozoraPage.AozoraBibliographicalPage -> {
-                                    initialBlockIndex == Int.MAX_VALUE
-                                }
+                    val hit =
+                        when (page) {
+                            is AozoraCoverPage -> {
+                                readingProgress is ReadProgress.None
                             }
-                        if (hit) {
-                            Napier.d(tag = TAG) { "hit initial. index: $index}" }
-                            initialPageIndex = index
+
+                            is AozoraRoughPage -> {
+                                readingProgress is ReadProgress.Reading && readingProgress.blockIndex in page.pageProgress
+                            }
+
+                            is AozoraPage.AozoraBibliographicalPage -> {
+                                readingProgress is ReadProgress.Done
+                            }
                         }
+                    if (hit) {
+                        Napier.d(tag = TAG) { "hit initial. index: $index}" }
+                        initialPageIndex = index
                     }
                 }
 
@@ -154,6 +149,10 @@ abstract class CachedLinerPageSource : BookPageSource {
                 lineNumber = it.lineNumber,
             )
         }
+
+    override suspend fun getTotalBlockCount(): Int {
+        return rawSource.getBookInfo().blockCount
+    }
 
     /**
      * return cached block list if available. or return source flow.

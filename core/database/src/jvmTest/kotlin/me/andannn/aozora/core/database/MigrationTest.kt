@@ -51,4 +51,18 @@ class MigrationTest {
             migrationTestHelper.runMigrationsAndValidate(2, listOf(MIGRATION_1_2))
         migratedConnection.close()
     }
+
+    @Test
+    fun migrate2To3() {
+        val migrationTestHelper =
+            getMigrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(2)
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(3, listOf(MIGRATION_2_3))
+        migratedConnection.close()
+    }
 }

@@ -10,6 +10,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.database.Tables
+import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
 import me.andannn.aozora.core.database.entity.BookColumns
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressColumns
@@ -40,10 +41,27 @@ interface SavedBookDao {
     @Query(
         """
             SELECT * FROM ${Tables.BOOK_TABLE}
-            WHERE ${BookColumns.BOOK_ID} IN (SELECT ${SavedBookColumn.BOOK_ID} FROM ${Tables.SAVED_BOOK_TABLE})
+            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
+            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
+            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} != $READ_PROGRESS_DONE OR ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} IS NULL
+            ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
     )
-    fun getSavedBooks(): Flow<List<BookEntity>>
+    fun getNotCompletedBooksByDesc(): Flow<List<BookEntityWithProgress>>
+
+    /**
+     * Get all saved books
+     */
+    @Query(
+        """
+            SELECT * FROM ${Tables.BOOK_TABLE}
+            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
+            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
+            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} == $READ_PROGRESS_DONE
+            ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
+        """,
+    )
+    fun getCompleteBooksByDesc(): Flow<List<BookEntityWithProgress>>
 
     /**
      * Get a saved book by id
@@ -73,5 +91,8 @@ interface SavedBookDao {
     suspend fun getProgressOfBook(bookId: String): BookProgressEntity?
 
     @Query("SELECT * FROM ${Tables.BOOK_PROGRESS_TABLE} WHERE ${BookProgressColumns.BOOK_ID} = :bookId")
-    fun getProgressOfBookFlow(bookId: String): Flow<BookProgressEntity>
+    fun getProgressOfBookFlow(bookId: String): Flow<BookProgressEntity?>
 }
+
+internal const val READ_PROGRESS_NONE = -2
+internal const val READ_PROGRESS_DONE = -1

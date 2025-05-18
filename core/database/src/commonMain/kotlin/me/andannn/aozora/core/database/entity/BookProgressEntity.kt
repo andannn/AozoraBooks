@@ -12,6 +12,7 @@ import me.andannn.aozora.core.database.Tables
 internal object BookProgressColumns {
     const val BOOK_ID = "saved_book_id"
     const val PROGRESS_BLOCK_INDEX = "progress_block_index"
+    const val TOTAL_BLOCK_COUNT = "total_block_count"
     const val UPDATE_EPOCH_MILLISECOND = "update_epoch_millisecond"
 }
 
@@ -24,4 +25,6 @@ data class BookProgressEntity(
     val progressBlockIndex: Int,
     @ColumnInfo(name = BookProgressColumns.UPDATE_EPOCH_MILLISECOND)
     val updateEpochMillisecond: Long,
+    @ColumnInfo(name = BookProgressColumns.TOTAL_BLOCK_COUNT)
+    val totalBlockCount: Int? = null,
 )

@@ -5,10 +5,12 @@
 package me.andannn.aozora.core.data
 
 import kotlinx.coroutines.flow.Flow
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.BookWithProgress
+import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
 
@@ -71,18 +73,18 @@ interface UserDataRepository {
      */
     suspend fun setProgressOfBook(
         bookCardId: String,
-        blockIndex: Int,
+        readProgress: ReadProgress,
     )
 
     /**
      * Get the progress of book.
      */
-    fun getProgressFlow(bookCardId: String): Flow<Int?>
+    suspend fun getProgress(bookCardId: String): ReadProgress
 
     /**
-     * Get the progress of book.
+     * Get the progress flow of book.
      */
-    suspend fun getProgress(bookCardId: String): Int?
+    fun getProgressFlow(bookCardId: String): Flow<ReadProgress>
 
     /**
      * Save book to library.
@@ -90,9 +92,14 @@ interface UserDataRepository {
     suspend fun saveBookToLibrary(bookId: String)
 
     /**
-     * Get all saved book.
+     * Get all book which is not completed.
      */
-    fun getAllSavedBook(): Flow<List<BookModelTemp>>
+    fun getAllNotCompletedBooks(): Flow<List<BookWithProgress>>
+
+    /**
+     * Get all completed books.
+     */
+    fun getAllCompletedBooks(): Flow<List<BookWithProgress>>
 
     /**
      * Delete saved book.
@@ -102,7 +109,7 @@ interface UserDataRepository {
     /**
      * Get saved book by id.
      */
-    fun getSavedBookById(id: String): Flow<BookModelTemp?>
+    fun getSavedBookById(id: String): Flow<CachedBookModel?>
 
-    fun getBookCache(bookId: String): Flow<BookModelTemp?>
+    fun getBookCache(bookId: String): Flow<CachedBookModel?>
 }

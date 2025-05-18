@@ -7,8 +7,6 @@ package me.andannn.aozora
 import android.app.Application
 import android.content.Context
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.initialization.InitializationStatus
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import me.andannn.platform.AndroidAnalytics
@@ -33,8 +31,7 @@ class AozoraApplication : Application() {
 
         MobileAds.initialize(
             this,
-            OnInitializationCompleteListener { initializationStatus: InitializationStatus? -> },
-        )
+        ) { }
     }
 }
 

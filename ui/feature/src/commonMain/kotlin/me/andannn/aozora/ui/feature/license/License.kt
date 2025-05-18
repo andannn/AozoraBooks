@@ -70,7 +70,13 @@ private fun LicenseContent(
                 items = licenseList,
                 key = { it.artifactId },
             ) { library ->
-                LibraryItem(info = library)
+                LibraryItem(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+                    info = library,
+                    onClick = {
+                        onEvent(LicenseUiEvent.OnClickLicense(library))
+                    },
+                )
             }
         }
     }
@@ -80,12 +86,14 @@ private fun LicenseContent(
 private fun LibraryItem(
     modifier: Modifier = Modifier,
     info: LibraryInfo,
+    onClick: () -> Unit = {},
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp),
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
     ) {
         Column {
-            Text("${info.artifactId} ${info.version}", style = MaterialTheme.typography.titleLarge)
+            Text("${info.artifactId} ${info.version}", style = MaterialTheme.typography.headlineSmall)
             info.spdxLicenses.forEach { spdx ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(spdx.name, style = MaterialTheme.typography.titleMedium)

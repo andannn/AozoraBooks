@@ -26,7 +26,7 @@ import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.BookModelTemp
+import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
@@ -43,7 +43,7 @@ import org.koin.mp.KoinPlatform.getKoin
  * Get source from local cached file or fetch from remote.
  */
 internal class RemoteOrLocalCacheBookRawSource(
-    card: BookModelTemp,
+    card: CachedBookModel,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
     private val cacheDictionary: Path = getCachedPatchById(card.id),
@@ -119,7 +119,7 @@ private sealed interface SourceState {
 }
 
 private suspend fun createBookRawSource(
-    card: BookModelTemp,
+    card: CachedBookModel,
     cacheDictionary: Path,
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
@@ -145,7 +145,7 @@ internal expect fun getCachedPatchById(id: String): Path
  *
  * @throws IllegalArgumentException If htmlUrl is null.
  */
-private suspend fun BookModelTemp.downloadBookTo(folder: Path) {
+private suspend fun CachedBookModel.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }

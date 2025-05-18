@@ -4,7 +4,7 @@
  */
 package me.andannn.aozora.core.data.common
 
-data class BookModelTemp constructor(
+data class CachedBookModel(
     val id: String,
     val groupId: String,
     val title: String,
@@ -12,4 +12,9 @@ data class BookModelTemp constructor(
     val authorName: String?,
     val zipUrl: String?,
     val htmlUrl: String?,
+)
+
+data class BookWithProgress(
+    val book: CachedBookModel,
+    val progress: ReadProgress,
 )

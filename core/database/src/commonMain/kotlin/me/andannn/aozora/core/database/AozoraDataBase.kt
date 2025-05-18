@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import me.andannn.aozora.core.database.dao.SavedBookDao
 import me.andannn.aozora.core.database.entity.BookEntity
+import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
 
@@ -30,7 +31,7 @@ internal object Tables {
         SavedBookEntity::class,
         BookProgressEntity::class,
     ],
-    version = 2,
+    version = 3,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class AozoraDataBase : RoomDatabase() {
@@ -46,13 +47,13 @@ internal expect object MelodifyDataBaseConstructor : RoomDatabaseConstructor<Aoz
 internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
     apply {
         setQueryCoroutineContext(Dispatchers.IO)
-        addMigrations(MIGRATION_1_2)
+        addMigrations(MIGRATION_1_2, MIGRATION_2_3)
     }
 
 internal val MIGRATION_1_2 =
     object : Migration(1, 2) {
-        override fun migrate(database: SQLiteConnection) {
-            database.execSQL(
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
                 """
                 CREATE TABLE book_table_new (
                     book_id TEXT NOT NULL PRIMARY KEY,
@@ -68,7 +69,7 @@ internal val MIGRATION_1_2 =
                 """.trimIndent(),
             )
 
-            database.execSQL(
+            connection.execSQL(
                 """
                 INSERT INTO book_table_new (
                     book_id, group_id, title, title_kana, author, author_url, zip_url, html_url, saved_date
@@ -79,7 +80,16 @@ internal val MIGRATION_1_2 =
                 """.trimIndent(),
             )
 
-            database.execSQL("DROP TABLE book_table")
-            database.execSQL("ALTER TABLE book_table_new RENAME TO book_table")
+            connection.execSQL("DROP TABLE book_table")
+            connection.execSQL("ALTER TABLE book_table_new RENAME TO book_table")
+        }
+    }
+
+internal val MIGRATION_2_3 =
+    object : Migration(2, 3) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                "ALTER TABLE ${Tables.BOOK_PROGRESS_TABLE} ADD COLUMN ${BookProgressColumns.TOTAL_BLOCK_COUNT} INTEGER",
+            )
         }
     }
