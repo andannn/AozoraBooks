@@ -15,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "me.andannn.aozora"
-        versionCode = 11
-        versionName = "0.0.1-alpha11"
+        versionCode = (project.findProperty("VERSION_CODE") as? String?)?.toIntOrNull() ?: error("No version code found")
+        versionName = project.findProperty("VERSION_NAME") as String? ?: error("No version name found")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
