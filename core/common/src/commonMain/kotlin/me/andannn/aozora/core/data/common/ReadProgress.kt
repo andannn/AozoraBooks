@@ -4,6 +4,19 @@
  */
 package me.andannn.aozora.core.data.common
 
+
+/**
+ * The book progress which is not read.
+ * This number is also present progress of cover page.
+ */
+const val READ_PROGRESS_NONE = -2
+
+/**
+ * The book progress which is completed.
+ * This number is also present progress of bibliographical page.
+ */
+const val READ_PROGRESS_DONE = -1
+
 sealed interface ReadProgress {
     /**
      * Open book first time and not yet start reading.

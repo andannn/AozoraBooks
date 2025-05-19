@@ -41,7 +41,7 @@ object TableOfContentsDialogId : DialogId {
 }
 
 data class OnJumpTo(
-    val lineNumber: Int,
+    val blockIndex: Int,
 ) : DialogAction
 
 @Composable
@@ -80,7 +80,7 @@ fun TableOfContentsDialog(
         modifier = modifier,
         state = state,
         onClickTableOfContent = {
-            onAction(OnJumpTo(it.lineNumber))
+            onAction(OnJumpTo(it.blockIndex))
         },
     )
 }

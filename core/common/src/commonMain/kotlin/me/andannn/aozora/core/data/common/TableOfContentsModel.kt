@@ -7,5 +7,5 @@ package me.andannn.aozora.core.data.common
 data class TableOfContentsModel(
     val headingLevel: Int,
     val title: String,
-    val lineNumber: Int,
+    val blockIndex: Int,
 )

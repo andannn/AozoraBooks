@@ -17,6 +17,8 @@ import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
+import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
@@ -66,7 +68,7 @@ class ReaderOverlayPresenter(
                         val result = popupController.showDialog(TableOfContentsDialogId)
                         Napier.d(tag = TAG) { "on jump to result $result" }
                         if (result is OnJumpTo) {
-                            onJumpTo(result.lineNumber)
+                            onJumpTo(result.blockIndex)
                         }
                     }
                 }
@@ -82,22 +84,20 @@ class ReaderOverlayPresenter(
         }
     }
 
-    private suspend fun onJumpTo(lineNumber: Int) {
+    private suspend fun onJumpTo(blockIndex: Int) {
         val pageIndex =
             bookPageState.pages.indexOfFirst { page ->
                 when (page) {
                     is AozoraPage.AozoraBibliographicalPage -> {
-// TODO
-                        false
+                        blockIndex == READ_PROGRESS_DONE
                     }
 
                     is AozoraPage.AozoraCoverPage -> {
-// TODO
-                        false
+                        blockIndex == READ_PROGRESS_NONE
                     }
 
                     is AozoraPage.AozoraRoughPage -> {
-                        lineNumber in page.pageProgress
+                        blockIndex in page.pageProgress
                     }
                 }
             }
