@@ -8,13 +8,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -105,12 +103,12 @@ private fun ReaderContent(
                 }
             }
         }
-
-        Text(
-            modifier = Modifier.align(Alignment.BottomStart).safeContentPadding(),
-            text = progress.toLabelString(),
-            style = MaterialTheme.typography.labelSmall,
-        )
+//
+//        Text(
+//            modifier = Modifier.padding(start = 12.dp).safeContentPadding().align(Alignment.BottomStart),
+//            text = progress.toLabelString(),
+//            style = MaterialTheme.typography.labelSmall,
+//        )
     }
 }
 

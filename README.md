@@ -60,4 +60,6 @@ running `./gradlew ktLintCheck` to check lint issues.
 running `./gradlew ktLintFormat` to automatically fix lint errors.
 running `./gradlew spotlessCheck` to check copyright.
 running `./gradlew spotlessApply` to add copyright.
+
+### Update License list in app
 running `./gradlew :composeApp:licensee` to update license file.

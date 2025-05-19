@@ -66,12 +66,12 @@ fun LibraryContent(
         if (currentTab == TabItem.BOOK_SHELF) {
             if (notCompletedBooks.isEmpty()) {
                 Column(
-                    Modifier.fillMaxSize().padding(48.dp),
+                    Modifier.fillMaxSize().padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        "まだ本が追加されていません。\n検索して新しい本を追加しましょう。",
+                        "まだ読んでいる本がありません。\n気になる本を探して追加してみましょう。",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -99,7 +99,7 @@ fun LibraryContent(
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        "まだ閲覧済みの本はありません。",
+                        "閲覧済みの本はありません。",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -151,6 +151,6 @@ private fun BookList(
 
 private fun TabItem.label(): String =
     when (this) {
-        TabItem.BOOK_SHELF -> "本棚"
+        TabItem.BOOK_SHELF -> "読書中"
         TabItem.READ_COMPLETE -> "読了"
     }
