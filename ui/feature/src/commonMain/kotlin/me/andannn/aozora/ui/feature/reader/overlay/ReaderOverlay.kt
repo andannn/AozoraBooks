@@ -83,23 +83,27 @@ fun ReaderOverlayContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ProgressSlider(
+        Column(
             modifier =
                 Modifier
                     .graphicsLayer {
                         alpha = animatedAlpha.value
                     }.background(MaterialTheme.colorScheme.background)
                     .padding(24.dp),
-            pageSize = pageSize,
-            enable = animatedAlpha.value != 0f,
-            currentPageIndex = settledPageIndex,
-            onPageChanged = {
-                scope.launch {
-                    Napier.d(tag = TAG) { "on Change it. $it" }
-                    pagerState.scrollToPage(it)
-                }
-            },
-        )
+        ) {
+            ProgressSlider(
+                modifier = Modifier,
+                pageSize = pageSize,
+                enable = animatedAlpha.value != 0f,
+                currentPageIndex = settledPageIndex,
+                onPageChanged = {
+                    scope.launch {
+                        Napier.d(tag = TAG) { "on Change it. $it" }
+                        pagerState.scrollToPage(it)
+                    }
+                },
+            )
+        }
     }
 }
 
