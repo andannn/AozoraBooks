@@ -4,6 +4,9 @@
  */
 package me.andannn.aozora.ui.feature.reader.viewer
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -28,7 +32,6 @@ import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
 import me.andannn.aozora.core.data.common.PageContext
-import me.andannn.aozora.core.data.common.PageMetaData
 import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
@@ -85,6 +88,10 @@ class BookViewerPresenter(
                 snapshotState?.pageList?.size ?: 0
             }
 
+        val density = LocalDensity.current
+        val navigationBarHeight = WindowInsets.navigationBars.getBottom(density)
+        val statusBarHeight = WindowInsets.statusBars.getTop(density)
+
         LaunchedEffect(
             snapshotState?.snapshotVersion,
         ) {
@@ -127,6 +134,8 @@ class BookViewerPresenter(
         ) {
             val pageMetadata =
                 PageContext(
+                    navigationBarHeight = navigationBarHeight,
+                    statusBarHeight = statusBarHeight,
                     originalHeight = screenSize.height,
                     originalWidth = screenSize.width,
                     additionalTopMargin = topMargin,
@@ -150,15 +159,7 @@ class BookViewerPresenter(
                 }
         }
         return BookViewerState(
-            pageMetadata =
-                PageContext(
-                    originalHeight = screenSize.height,
-                    originalWidth = screenSize.width,
-                    additionalTopMargin = topMargin,
-                    fontSizeLevel = fontSize,
-                    fontType = fontType,
-                    lineSpacing = lineSpacing,
-                ),
+            fontType = fontType,
             theme = theme,
             bookPageState =
                 BookPageState(
@@ -179,7 +180,7 @@ data class BookPageState(
 )
 
 data class BookViewerState(
-    val pageMetadata: PageMetaData,
+    val fontType: FontType,
     val bookPageState: BookPageState,
     val theme: ReaderTheme = ReaderTheme.DYNAMIC,
     val evenSink: (BookViewerUiEvent) -> Unit = {},

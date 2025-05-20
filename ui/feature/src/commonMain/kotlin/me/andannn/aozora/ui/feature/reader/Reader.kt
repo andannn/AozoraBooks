@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -34,28 +33,19 @@ fun Reader(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    val savedBook = state.bookCard
-    if (savedBook == null) {
+    val bookCard = state.bookCard
+    if (bookCard == null) {
         Scaffold(modifier.fillMaxSize()) {}
         return
     }
 
-    val bookSource =
-        remember {
-            AozoraBookPageSource(savedBook, scope)
-        }
-    val popupController =
-        remember {
-            DefaultDialogController()
-        }
     CompositionLocalProvider(
-        LocalBookPageSource provides bookSource,
-        LocalPopupController provides popupController,
+        LocalBookPageSource provides AozoraBookPageSource(bookCard, scope),
+        LocalPopupController provides DefaultDialogController(),
     ) {
         ReaderContent(
-            bookCard = savedBook,
+            bookCard = bookCard,
             modifier = modifier,
-            onEvent = state.evenSink,
         )
 
         ActionDialog()
@@ -66,7 +56,6 @@ fun Reader(
 private fun ReaderContent(
     bookCard: CachedBookModel,
     modifier: Modifier = Modifier,
-    onEvent: (ReaderUiEvent) -> Unit,
 ) {
     val localDensity = LocalDensity.current
     BoxWithConstraints(modifier = modifier) {

@@ -20,14 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.pagesource.layout
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
-import me.andannn.aozora.ui.common.util.toPercentString
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
 import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
 
@@ -42,7 +40,7 @@ fun BookViewer(
             pages = state.bookPageState.pages,
             theme = state.theme,
             pagerState = state.bookPageState.pagerState,
-            pageMetadata = state.pageMetadata,
+            fontType = state.fontType,
         )
     }
 }
@@ -53,7 +51,7 @@ private fun ReaderContent(
     pages: ImmutableList<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
-    pageMetadata: PageMetaData,
+    fontType: FontType,
 ) {
     if (pages.isEmpty()) {
         Scaffold(
@@ -70,7 +68,7 @@ private fun ReaderContent(
 
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
-    val fontFamily = getFontFamilyByType(pageMetadata.fontType)
+    val fontFamily = getFontFamilyByType(fontType)
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -103,11 +101,3 @@ private fun ReaderContent(
         }
     }
 }
-
-private fun ReadProgress.toLabelString(): String =
-    when (this) {
-        is ReadProgress.Reading -> progressFactor?.toPercentString() ?: ""
-        ReadProgress.None,
-        ReadProgress.Done,
-        -> ""
-    }
