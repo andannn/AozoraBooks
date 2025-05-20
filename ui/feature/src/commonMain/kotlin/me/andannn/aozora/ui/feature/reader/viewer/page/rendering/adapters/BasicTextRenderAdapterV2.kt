@@ -140,6 +140,7 @@ private val TransformMap =
         'ー' to listOf(TransForm.Rotate(90f)),
         '…' to listOf(TransForm.Rotate(90f)),
         '〜' to listOf(TransForm.Rotate(90f)),
+        '―' to listOf(TransForm.Rotate(90f)),
     )
 
 private fun DrawScope.withCharTransforms(
