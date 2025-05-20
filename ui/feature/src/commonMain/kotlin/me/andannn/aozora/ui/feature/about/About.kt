@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import me.andannn.platform.Platform
 
 @Composable
 fun About(
@@ -35,9 +36,10 @@ fun About(
     modifier: Modifier = Modifier,
 ) {
     AboutContent(
-        modifier = modifier,
         appVersion = state.appVersion,
+        modifier = modifier,
         onEvent = state.evenSink,
+        platform = state.platform,
     )
 }
 
@@ -45,6 +47,7 @@ fun About(
 @Composable
 private fun AboutContent(
     appVersion: String,
+    platform: Platform,
     isAndroid: Boolean = true,
     modifier: Modifier = Modifier,
     onEvent: (AboutUiEvent) -> Unit,
@@ -87,7 +90,7 @@ private fun AboutContent(
                 )
 
                 SettingItem(
-                    title = "${if (isAndroid) "Android" else "iOS"}版 青空読書",
+                    title = "${if (isAndroid) platform.getLabel() else "iOS"}版 青空読書",
                     subTitle = appVersion,
                     imageVector = Icons.Outlined.Apps,
                     onClick = null,
@@ -96,6 +99,12 @@ private fun AboutContent(
         }
     }
 }
+
+private fun Platform.getLabel(): String =
+    when (this) {
+        Platform.ANDROID -> "Android"
+        Platform.IOS -> "iOS"
+    }
 
 @Composable
 private fun SettingItem(

@@ -14,7 +14,9 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.LicenseScreen
+import me.andannn.platform.Platform
 import me.andannn.platform.appVersion
+import me.andannn.platform.platform
 
 @Composable
 fun rememberAboutPresenter(
@@ -38,6 +40,7 @@ class AboutPresenter(
     override fun present(): AboutState =
         AboutState(
             appVersion = appVersion,
+            platform = platform,
         ) { event ->
             when (event) {
                 AboutUiEvent.OnBack -> {
@@ -58,6 +61,7 @@ class AboutPresenter(
 @Stable
 data class AboutState(
     val appVersion: String,
+    val platform: Platform,
     val evenSink: (AboutUiEvent) -> Unit = {},
 ) : CircuitUiState
 

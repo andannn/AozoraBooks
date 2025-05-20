@@ -15,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "me.andannn.aozora"
-        versionCode = 11
-        versionName = "0.0.1-alpha11"
+        versionCode = (project.findProperty("VERSION_CODE") as? String?)?.toIntOrNull() ?: error("No version code found")
+        versionName = project.findProperty("VERSION_NAME") as String? ?: error("No version name found")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -96,4 +96,29 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+tasks.register("updateIosVersion") {
+    group = "versioning"
+    description = "Update iOS Info.plist with versionName and versionCode"
+
+    val plistPath = project.rootDir.resolve("iosApp/iosApp/Info.plist")
+    val versionCode = (project.findProperty("VERSION_CODE") as? String?)?.toIntOrNull() ?: error("No version code found")
+    val versionName = project.findProperty("VERSION_NAME") as String? ?: error("No version name found")
+
+    doLast {
+        val plistFile = plistPath.readText()
+        val updated =
+            plistFile
+                .replace(
+                    Regex("<key>CFBundleShortVersionString</key>\\s*<string>.*?</string>"),
+                    "<key>CFBundleShortVersionString</key>\n\t<string>$versionName</string>",
+                ).replace(
+                    Regex("<key>CFBundleVersion</key>\\s*<string>.*?</string>"),
+                    "<key>CFBundleVersion</key>\n\t<string>$versionCode</string>",
+                )
+
+        plistPath.writeText(updated)
+        println("✅ iOS Info.plist updated to version $versionName ($versionCode)")
+    }
 }

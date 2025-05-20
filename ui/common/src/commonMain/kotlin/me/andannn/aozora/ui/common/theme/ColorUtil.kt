@@ -8,14 +8,13 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import me.andannn.aozora.core.data.common.ReaderTheme
 
-fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color {
-    return when (this) {
+fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color =
+    when (this) {
         ReaderTheme.MONOCHROME -> Grey90
-        ReaderTheme.DYNAMIC -> colorScheme.surfaceContainerHighest
+        ReaderTheme.DYNAMIC -> colorScheme.surfaceContainerHigh
         ReaderTheme.PAPER -> Paper80
         ReaderTheme.GREEN_EYE_CARE -> GreenBackground
     }
-}
 
 fun ReaderTheme.getTextColor(colorScheme: ColorScheme): Color =
     when (this) {

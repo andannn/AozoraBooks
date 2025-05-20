@@ -13,6 +13,8 @@ import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.data.common.FontSizeLevel
 import me.andannn.aozora.core.data.common.FontType
 import me.andannn.aozora.core.data.common.LineSpacing
+import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
+import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
 import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.ReaderTheme
 import me.andannn.aozora.core.data.common.TopMargin
@@ -143,9 +145,6 @@ private fun BookEntity.toModel() =
         zipUrl = zipUrl,
         htmlUrl = htmlUrl,
     )
-
-private const val READ_PROGRESS_NONE = -2
-private const val READ_PROGRESS_DONE = -1
 
 private fun ReadProgress.toDataBaseValue(): Int =
     when (this) {

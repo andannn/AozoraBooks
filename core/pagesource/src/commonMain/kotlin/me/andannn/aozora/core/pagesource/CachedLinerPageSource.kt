@@ -21,6 +21,8 @@ import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
 import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
+import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
 import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.core.data.common.TableOfContentsModel
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
@@ -141,18 +143,39 @@ abstract class CachedLinerPageSource : BookPageSource {
             }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getTableOfContents() =
-        rawSource.getBookInfo().tableOfContentList.map {
-            TableOfContentsModel(
-                headingLevel = it.headingLevel,
-                title = it.title,
-                lineNumber = it.lineNumber,
+    override suspend fun getTableOfContents(): List<TableOfContentsModel> {
+        val bookInfo = rawSource.getBookInfo()
+        val maxHeadingLevel = bookInfo.tableOfContentList.maxOfOrNull { it.headingLevel } ?: 3
+        return sequence {
+            // 表紙
+            yield(
+                TableOfContentsModel(
+                    headingLevel = maxHeadingLevel,
+                    title = "表紙",
+                    blockIndex = READ_PROGRESS_NONE,
+                ),
             )
-        }
-
-    override suspend fun getTotalBlockCount(): Int {
-        return rawSource.getBookInfo().blockCount
+            yieldAll(
+                bookInfo.tableOfContentList
+                    .map {
+                        TableOfContentsModel(
+                            headingLevel = it.headingLevel,
+                            title = it.title,
+                            blockIndex = it.lineNumber,
+                        )
+                    },
+            )
+            yield(
+                TableOfContentsModel(
+                    headingLevel = maxHeadingLevel,
+                    title = "奥付",
+                    blockIndex = READ_PROGRESS_DONE,
+                ),
+            )
+        }.toList()
     }
+
+    override suspend fun getTotalBlockCount(): Int = rawSource.getBookInfo().blockCount
 
     /**
      * return cached block list if available. or return source flow.
