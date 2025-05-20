@@ -2448,7 +2448,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib",
-        "version": "2.1.20",
+        "version": "2.1.21",
         "name": "Kotlin Stdlib",
         "spdxLicenses": [
             {
@@ -2496,7 +2496,7 @@
     {
         "groupId": "org.jetbrains.kotlinx",
         "artifactId": "kotlinx-collections-immutable",
-        "version": "0.3.8",
+        "version": "0.4.0",
         "name": "kotlinx-collections-immutable",
         "spdxLicenses": [
             {
@@ -2512,7 +2512,7 @@
     {
         "groupId": "org.jetbrains.kotlinx",
         "artifactId": "kotlinx-collections-immutable-iossimulatorarm64",
-        "version": "0.3.8",
+        "version": "0.4.0",
         "name": "kotlinx-collections-immutable",
         "spdxLicenses": [
             {
