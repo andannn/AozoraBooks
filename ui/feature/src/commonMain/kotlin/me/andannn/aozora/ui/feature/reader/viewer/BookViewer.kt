@@ -42,7 +42,6 @@ fun BookViewer(
             pages = state.bookPageState.pages,
             theme = state.theme,
             pagerState = state.bookPageState.pagerState,
-            progress = state.bookPageState.progress,
             pageMetadata = state.pageMetadata,
         )
     }
@@ -54,7 +53,6 @@ private fun ReaderContent(
     pages: ImmutableList<AozoraPage>,
     theme: ReaderTheme,
     pagerState: PagerState,
-    progress: ReadProgress,
     pageMetadata: PageMetaData,
 ) {
     if (pages.isEmpty()) {
@@ -103,12 +101,6 @@ private fun ReaderContent(
                 }
             }
         }
-//
-//        Text(
-//            modifier = Modifier.padding(start = 12.dp).safeContentPadding().align(Alignment.BottomStart),
-//            text = progress.toLabelString(),
-//            style = MaterialTheme.typography.labelSmall,
-//        )
     }
 }
 

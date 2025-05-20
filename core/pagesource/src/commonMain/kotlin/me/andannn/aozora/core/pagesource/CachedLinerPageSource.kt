@@ -153,7 +153,7 @@ abstract class CachedLinerPageSource : BookPageSource {
                     headingLevel = maxHeadingLevel,
                     title = "表紙",
                     blockIndex = READ_PROGRESS_NONE,
-                )
+                ),
             )
             yieldAll(
                 bookInfo.tableOfContentList
@@ -163,14 +163,14 @@ abstract class CachedLinerPageSource : BookPageSource {
                             title = it.title,
                             blockIndex = it.lineNumber,
                         )
-                    }
+                    },
             )
             yield(
                 TableOfContentsModel(
                     headingLevel = maxHeadingLevel,
                     title = "奥付",
                     blockIndex = READ_PROGRESS_DONE,
-                )
+                ),
             )
         }.toList()
     }

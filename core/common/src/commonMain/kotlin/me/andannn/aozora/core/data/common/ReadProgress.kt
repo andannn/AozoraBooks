@@ -4,7 +4,6 @@
  */
 package me.andannn.aozora.core.data.common
 
-
 /**
  * The book progress which is not read.
  * This number is also present progress of cover page.
@@ -18,10 +17,14 @@ const val READ_PROGRESS_NONE = -2
 const val READ_PROGRESS_DONE = -1
 
 sealed interface ReadProgress {
+    val progressFactor: Float?
+
     /**
      * Open book first time and not yet start reading.
      */
-    data object None : ReadProgress
+    data object None : ReadProgress {
+        override val progressFactor: Float = 0f
+    }
 
     /**
      * Reading book main content.
@@ -33,7 +36,7 @@ sealed interface ReadProgress {
         val blockIndex: Int,
         val totalBlockCount: Int? = null,
     ) : ReadProgress {
-        val progressFactor: Float?
+        override val progressFactor: Float?
             get() =
                 totalBlockCount?.let {
                     blockIndex.toFloat() / it.toFloat()
@@ -43,5 +46,7 @@ sealed interface ReadProgress {
     /**
      * Read the last page of book
      */
-    data object Done : ReadProgress
+    data object Done : ReadProgress {
+        override val progressFactor: Float = 1f
+    }
 }

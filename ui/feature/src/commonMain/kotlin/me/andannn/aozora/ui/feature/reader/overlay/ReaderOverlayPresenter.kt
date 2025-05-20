@@ -11,14 +11,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.data.UserDataRepository
 import me.andannn.aozora.core.data.common.AozoraPage
 import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
 import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
+import me.andannn.aozora.core.data.common.ReadProgress
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
@@ -26,20 +29,25 @@ import me.andannn.aozora.ui.feature.dialog.OnJumpTo
 import me.andannn.aozora.ui.feature.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.feature.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "ReaderOverlayPresenter"
 
 @Composable
 fun rememberReaderOverlayPresenter(
+    cardId: String,
     bookPageState: BookPageState,
+    settingRepository: UserDataRepository = getKoin().get(),
     navigator: Navigator = LocalNavigator.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(bookPageState, popupController, navigator) {
-    ReaderOverlayPresenter(navigator, bookPageState, popupController)
+    ReaderOverlayPresenter(cardId, navigator, settingRepository, bookPageState, popupController)
 }
 
 class ReaderOverlayPresenter(
+    private val cardId: String,
     private val navigator: Navigator,
+    private val settingRepository: UserDataRepository,
     private val bookPageState: BookPageState,
     private val popupController: PopupController,
 ) : Presenter<ReaderOverlayState> {
@@ -49,7 +57,12 @@ class ReaderOverlayPresenter(
         var showOverlay by remember {
             mutableStateOf(false)
         }
+        val progress by settingRepository
+            .getProgressFlow(cardId)
+            .collectAsRetainedState(ReadProgress.None)
+
         return ReaderOverlayState(
+            progress = progress,
             pagerState = bookPageState.pagerState,
             showOverlay = showOverlay,
         ) { event ->
@@ -108,6 +121,7 @@ class ReaderOverlayPresenter(
 }
 
 data class ReaderOverlayState(
+    val progress: ReadProgress,
     val pagerState: PagerState,
     val showOverlay: Boolean,
     val eventSink: (ReaderOverlayEvent) -> Unit = {},

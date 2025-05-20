@@ -72,9 +72,6 @@ class BookViewerPresenter(
         val lineSpacing by settingRepository
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
-        val progress by settingRepository
-            .getProgressFlow(card.id)
-            .collectAsRetainedState(ReadProgress.None)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot.Ready?>(null)
@@ -167,7 +164,6 @@ class BookViewerPresenter(
                 BookPageState(
                     pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
                     pagerState = pagerState,
-                    progress = progress,
                 ),
         ) { eventSink ->
             when (eventSink) {
@@ -180,7 +176,6 @@ class BookViewerPresenter(
 data class BookPageState(
     val pages: ImmutableList<AozoraPage>,
     val pagerState: PagerState,
-    val progress: ReadProgress,
 )
 
 data class BookViewerState(

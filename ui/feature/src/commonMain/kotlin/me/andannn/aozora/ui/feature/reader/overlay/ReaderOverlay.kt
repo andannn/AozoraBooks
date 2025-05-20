@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -23,13 +24,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.ui.common.util.toPercentString
 import kotlin.math.roundToInt
 
 private const val TAG = "ReaderOverlay"
@@ -41,6 +46,7 @@ fun ReaderOverlay(
 ) {
     ReaderOverlayContent(
         modifier = modifier,
+        progress = state.progress,
         pagerState = state.pagerState,
         showOverlay = state.showOverlay,
         onEvent = state.eventSink,
@@ -50,6 +56,7 @@ fun ReaderOverlay(
 @Composable
 fun ReaderOverlayContent(
     modifier: Modifier = Modifier,
+    progress: ReadProgress,
     pagerState: PagerState,
     showOverlay: Boolean,
     onEvent: (ReaderOverlayEvent) -> Unit = {},
@@ -90,7 +97,15 @@ fun ReaderOverlayContent(
                         alpha = animatedAlpha.value
                     }.background(MaterialTheme.colorScheme.background)
                     .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (progress.progressFactor != null) {
+                Text(
+                    text = progress.progressFactor!!.toPercentString(),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
             ProgressSlider(
                 modifier = Modifier,
                 pageSize = pageSize,
