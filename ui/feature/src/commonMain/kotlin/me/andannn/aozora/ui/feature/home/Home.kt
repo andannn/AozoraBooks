@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 
 @Composable
@@ -46,11 +45,7 @@ fun HomeContent(
 ) {
     val backStack = rememberSaveableBackStack(LibraryNestedScreen)
     val navigator =
-        rememberCircuitNavigator(backStack) {
-        }
-    BackHandler(enabled = backStack.size > 1) {
-        navigator.pop()
-    }
+        rememberCircuitNavigator(backStack, onRootPop = {}, enableBackHandler = true)
 
     val current = backStack.topRecord?.screen
     val isRoot = current == LibraryNestedScreen
