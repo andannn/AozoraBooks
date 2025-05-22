@@ -15,6 +15,7 @@ import me.andannn.aozora.core.data.common.resolveFontStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.collections.get
 import kotlin.math.ceil
+import kotlin.math.floor
 
 data class ElementMeasureResult(
     val size: Size,
@@ -81,12 +82,12 @@ internal class DefaultMeasurer(
                 val lineBreakCount = block.elements.count { it is AozoraElement.LineBreak }
                 val plusLineNumber = (lineBreakCount - 1).coerceAtLeast(0)
 
-                val totalHeight = block.textCount * style.baseSize
                 val indent = block.indent
                 val indentHeight = style.baseSize * indent
                 val availableRenderHeight = renderHeight - indentHeight
+                val availableTextCountPerLine = floor(availableRenderHeight / style.baseSize).toInt()
                 return BlockMeasureResult(
-                    lineCount = ceil(totalHeight / (availableRenderHeight)).toInt() + plusLineNumber,
+                    lineCount = ceil(block.textCount.toFloat() / (availableTextCountPerLine)).toInt() + plusLineNumber,
                     lineHeightPerLine = lineHeight,
                     fontStyle = style,
                     availableRenderHeight = availableRenderHeight,
