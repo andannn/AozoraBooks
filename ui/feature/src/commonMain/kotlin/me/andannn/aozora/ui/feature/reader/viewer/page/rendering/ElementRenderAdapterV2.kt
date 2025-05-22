@@ -77,8 +77,8 @@ class DefaultMeasureHelper(
         fontStyle: FontStyle,
         isNotation: Boolean,
     ): TextLayoutResult {
-        val fontSizePx = if (isNotation) fontStyle.notationSize else fontStyle.baseSize
-        val fontSizeSp = with(density) { fontSizePx.toSp() }
+        val fontSizeDp = if (isNotation) fontStyle.notationSizeDp else fontStyle.baseSizeDp
+        val fontSizeSp = with(density) { fontSizeDp.toSp() }
         return measurer.measure(
             text,
             TextStyle(

@@ -15,8 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
@@ -44,15 +44,17 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 fun rememberBookViewerPresenter(
     card: CachedBookModel,
-    screenSize: Size,
+    screenWidthDp: Dp,
+    screenHeightDp: Dp,
     bookSource: BookPageSource = LocalBookPageSource.current,
     settingRepository: UserDataRepository = getKoin().get(),
-) = remember(card, bookSource, screenSize, settingRepository) {
+) = remember(card, bookSource, screenWidthDp, screenHeightDp, settingRepository) {
     BookViewerPresenter(
-        card,
-        bookSource,
-        screenSize,
-        settingRepository,
+        card = card,
+        bookSource = bookSource,
+        screenWidthDp = screenWidthDp,
+        screenHeightDp = screenHeightDp,
+        settingRepository = settingRepository,
     )
 }
 
@@ -61,7 +63,8 @@ private const val TAG = "ReaderPresenter"
 class BookViewerPresenter(
     private val card: CachedBookModel,
     private val bookSource: BookPageSource,
-    private val screenSize: Size,
+    private val screenWidthDp: Dp,
+    private val screenHeightDp: Dp,
     private val settingRepository: UserDataRepository,
 ) : Presenter<BookViewerState> {
     @Composable
@@ -89,8 +92,10 @@ class BookViewerPresenter(
             }
 
         val density = LocalDensity.current
-        val navigationBarHeight = WindowInsets.navigationBars.getBottom(density)
-        val statusBarHeight = WindowInsets.statusBars.getTop(density)
+        val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
+        val navigationBarHeight = with(density) { navigationBarHeightPx.toDp() }
+        val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
+        val statusBarHeight = with(density) { statusBarHeightPx.toDp() }
 
         LaunchedEffect(
             snapshotState?.snapshotVersion,
@@ -136,8 +141,8 @@ class BookViewerPresenter(
                 PageContext(
                     navigationBarHeight = navigationBarHeight,
                     statusBarHeight = statusBarHeight,
-                    originalHeight = screenSize.height,
-                    originalWidth = screenSize.width,
+                    originalHeight = screenHeightDp,
+                    originalWidth = screenWidthDp,
                     additionalTopMargin = topMargin,
                     fontSizeLevel = fontSize,
                     fontType = fontType,

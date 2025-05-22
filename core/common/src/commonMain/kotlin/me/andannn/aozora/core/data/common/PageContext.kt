@@ -4,31 +4,33 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.Dp
+
 interface PaperLayout {
     /**
      * The original height of the page in pixels.
      */
-    val originalHeight: Float
+    val originalHeight: Dp
 
     /**
      * The original width of the page in pixels.
      */
-    val originalWidth: Float
+    val originalWidth: Dp
 
     /**
      * The render height of the page in pixels.
      */
-    val renderHeight: Float
+    val renderHeight: Dp
 
     /**
      * The render width of the page in pixels.
      */
-    val renderWidth: Float
+    val renderWidth: Dp
 
     /**
      * The offset from original view to render area.
      */
-    val offset: Pair<Float, Float>
+    val offset: Pair<Dp, Dp>
 }
 
 interface RenderSetting {
@@ -61,16 +63,16 @@ interface PageMetaData :
  * Meta data for a render page.
  */
 data class PageContext(
-    private val navigationBarHeight: Int,
-    private val statusBarHeight: Int,
+    private val navigationBarHeight: Dp,
+    private val statusBarHeight: Dp,
     override val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
     override val fontType: FontType = FontType.DEFAULT,
     override val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
     override val fontSizeLevel: FontSizeLevel = FontSizeLevel.LEVEL_4,
-    override val originalHeight: Float,
-    override val originalWidth: Float,
+    override val originalHeight: Dp,
+    override val originalWidth: Dp,
 ) : PageMetaData {
-    override val offset: Pair<Float, Float> by lazy {
+    override val offset: Pair<Dp, Dp> by lazy {
         Pair(
             // x =
             originalWidth * DEFAULT_HORIZONTAL_MARGIN_PERCENT / 2,
@@ -79,11 +81,11 @@ data class PageContext(
         )
     }
 
-    override val renderHeight: Float by lazy {
+    override val renderHeight: Dp by lazy {
         originalHeight * (1 - DEFAULT_VERTICAL_MARGIN_PERCENT) - additionalTopMargin.value - navigationBarHeight - statusBarHeight
     }
 
-    override val renderWidth: Float by lazy {
+    override val renderWidth: Dp by lazy {
         originalWidth * (1 - DEFAULT_HORIZONTAL_MARGIN_PERCENT)
     }
 }

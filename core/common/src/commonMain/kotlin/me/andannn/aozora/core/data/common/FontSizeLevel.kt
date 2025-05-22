@@ -4,15 +4,18 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 enum class FontSizeLevel(
-    val fontSize: Float,
+    val fontSizeDp: Dp,
 ) {
-    LEVEL_1(30f),
-    LEVEL_2(36f),
-    LEVEL_3(42f),
-    LEVEL_4(48f),
-    LEVEL_5(54f),
-    LEVEL_6(60f),
+    LEVEL_1(12.dp),
+    LEVEL_2(14.dp),
+    LEVEL_3(16.dp),
+    LEVEL_4(18.dp),
+    LEVEL_5(20.dp),
+    LEVEL_6(22.dp),
     ;
 
     companion object {

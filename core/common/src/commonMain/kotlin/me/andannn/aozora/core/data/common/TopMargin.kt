@@ -4,12 +4,15 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
 enum class TopMargin(
-    val value: Float,
+    val value: Dp,
 ) {
-    SMALL(10f),
-    MEDIUM(30f),
-    LARGE(60f),
+    SMALL(10.dp),
+    MEDIUM(30.dp),
+    LARGE(60.dp),
     ;
 
     companion object {

@@ -65,7 +65,7 @@ class ReaderPageBuilderTest {
     fun setUp() {
         lineBuilder =
             LineBuilder(
-                maxPx = 100f,
+                maxDp = 100f,
                 measure = {
                     ElementMeasureResult(
                         Size(30f, 30f),
