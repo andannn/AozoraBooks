@@ -12,6 +12,7 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
@@ -36,7 +37,8 @@ fun AozoraBooksApp(
 ) {
     val backStack = rememberSaveableBackStack(HomeScreen)
     val navigator =
-        rememberCircuitNavigator(backStack, onRootPop = {}, enableBackHandler = true)
+        rememberCircuitNavigator(backStack) {
+        }
     val currentScreen = backStack.topRecord?.screen
     LaunchedEffect(currentScreen) {
         if (currentScreen != null) {
@@ -52,6 +54,10 @@ fun AozoraBooksApp(
         LocalPopupController provides PopupController(),
     ) {
         CircuitCompositionLocals(circuit = circuit) {
+            BackHandler(enabled = backStack.size > 1) {
+                navigator.pop()
+            }
+
             NavigableCircuitContent(navigator, backStack)
 
             ActionDialog()
