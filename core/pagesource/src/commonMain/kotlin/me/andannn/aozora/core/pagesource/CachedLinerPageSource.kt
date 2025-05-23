@@ -144,7 +144,13 @@ abstract class CachedLinerPageSource : BookPageSource {
     }
 
     override suspend fun getTableOfContents(): List<TableOfContentsModel> {
-        val bookInfo = rawSource.getBookInfo()
+        val bookInfo =
+            try {
+                rawSource.getBookInfo()
+            } catch (e: Exception) {
+                return emptyList()
+            }
+
         val maxHeadingLevel = bookInfo.tableOfContentList.maxOfOrNull { it.headingLevel } ?: 3
         return sequence {
             // 表紙
@@ -175,7 +181,12 @@ abstract class CachedLinerPageSource : BookPageSource {
         }.toList()
     }
 
-    override suspend fun getTotalBlockCount(): Int = rawSource.getBookInfo().blockCount
+    override suspend fun getTotalBlockCount(): Int? =
+        try {
+            rawSource.getBookInfo().blockCount
+        } catch (e: Exception) {
+            null
+        }
 
     /**
      * return cached block list if available. or return source flow.

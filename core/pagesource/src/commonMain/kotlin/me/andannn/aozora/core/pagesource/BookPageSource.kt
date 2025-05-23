@@ -25,6 +25,7 @@ interface BookPageSource {
      *
      * @param pageMetaData page meta data.
      * @param readingProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
+     * @throws Exception when error occurred.
      */
     fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
@@ -32,14 +33,14 @@ interface BookPageSource {
     ): Flow<PagerSnapShot>
 
     /**
-     * get book meta.
+     * get book meta. return empty list when error occurred.
      */
     suspend fun getTableOfContents(): List<TableOfContentsModel>
 
     /**
-     * get total block count.
+     * get total block count. return null when error occurred.
      */
-    suspend fun getTotalBlockCount(): Int
+    suspend fun getTotalBlockCount(): Int?
 }
 
 sealed interface PagerSnapShot {

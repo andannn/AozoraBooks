@@ -97,10 +97,11 @@ class BookViewerPresenter(
         val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
         val statusBarHeight = with(density) { statusBarHeightPx.toDp() }
 
+        // update progress when page changed.
         LaunchedEffect(
             snapshotState?.snapshotVersion,
         ) {
-            val totalCount = bookSource.getTotalBlockCount()
+            val totalCount = bookSource.getTotalBlockCount() ?: return@LaunchedEffect
             snapshotFlow { pagerState.settledPage }
                 .drop(1)
                 .collect { newIndex ->
