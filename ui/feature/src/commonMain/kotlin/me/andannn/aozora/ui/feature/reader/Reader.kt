@@ -12,9 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import me.andannn.aozora.core.data.common.CachedBookModel
 import me.andannn.aozora.core.pagesource.AozoraBookPageSource
 import me.andannn.aozora.core.pagesource.LocalBookPageSource
@@ -57,17 +55,15 @@ private fun ReaderContent(
     bookCard: CachedBookModel,
     modifier: Modifier = Modifier,
 ) {
-    val localDensity = LocalDensity.current
     BoxWithConstraints(modifier = modifier) {
-        val maxHeight = with(localDensity) { this@BoxWithConstraints.maxHeight.toPx() }
-        val maxWidth = with(localDensity) { maxWidth.toPx() }
-
         val viewerState =
             rememberBookViewerPresenter(
                 card = bookCard,
-                screenSize = Size(maxWidth, maxHeight),
+                screenWidthDp = maxWidth,
+                screenHeightDp = maxHeight,
             ).present()
-        val overlayState = rememberReaderOverlayPresenter(bookCard.id, viewerState.bookPageState).present()
+        val overlayState =
+            rememberReaderOverlayPresenter(bookCard.id, viewerState.bookPageState).present()
 
         Box {
             BookViewer(

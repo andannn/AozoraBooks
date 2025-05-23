@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Density
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.data.common.LayoutPage
 import me.andannn.aozora.core.data.common.Line
@@ -50,11 +51,16 @@ fun PageViewV2(
             modifier
                 .fillMaxSize()
                 .drawWithContent {
-                    val contentWidth = page.contentWidth
-                    val renderWidth = page.pageMetaData.renderWidth
-                    val renderHeight = page.pageMetaData.renderHeight
-                    val offsetX = page.pageMetaData.offset.first
-                    val offsetY = page.pageMetaData.offset.second
+                    val contentWidthDp = page.contentWidth
+                    val renderWidthDp = page.pageMetaData.renderWidth
+                    val renderHeightDp = page.pageMetaData.renderHeight
+                    val offsetXDp = page.pageMetaData.offset.first
+                    val offsetYDp = page.pageMetaData.offset.second
+                    val contentWidth = with(density) { contentWidthDp.toPx() }
+                    val renderWidth = with(density) { renderWidthDp.toPx() }
+                    val renderHeight = with(density) { renderHeightDp.toPx() }
+                    val offsetX = with(density) { offsetXDp.toPx() }
+                    val offsetY = with(density) { offsetYDp.toPx() }
 
                     if (DEBUG_RENDER) {
                         drawRect(
@@ -72,9 +78,10 @@ fun PageViewV2(
                         ) {
                             var currentX = renderWidth
                             for (line in page.lines) {
-                                currentX -= line.lineHeight / 2
-                                drawAozoraLineV2(currentX, line, adapters)
-                                currentX -= line.lineHeight / 2
+                                val lineHeightPx = with(density) { line.lineHeight.toPx() }
+                                currentX -= lineHeightPx / 2
+                                drawAozoraLineV2(currentX, line, adapters, density)
+                                currentX -= lineHeightPx / 2
                             }
                         }
                     }
@@ -86,6 +93,7 @@ fun DrawScope.drawAozoraLineV2(
     x: Float,
     line: Line,
     adapters: List<ElementRenderAdapterV2>,
+    density: Density,
 ) {
     val fontStyle = line.fontStyle
     var currentY = 0f
@@ -103,15 +111,16 @@ fun DrawScope.drawAozoraLineV2(
         }
 
         if (DEBUG_RENDER) {
+            val lineHeightPx = with(density) { line.lineHeight.toPx() }
             drawRect(
                 topLeft =
                     Offset(
-                        x - line.lineHeight / 2,
+                        x - lineHeightPx / 2,
                         currentY,
                     ),
                 size =
                     Size(
-                        line.lineHeight,
+                        lineHeightPx,
                         drawSize.height,
                     ),
                 color = RandomColor,

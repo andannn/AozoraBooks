@@ -4,6 +4,8 @@
  */
 package me.andannn.aozora.core.pagesource.page
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.data.common.AozoraElement
@@ -20,12 +22,12 @@ internal class LayoutPageBuilder(
     private val measurer: ElementMeasurer,
     private val forceAddBlock: Boolean = false,
 ) {
-    private val fullWidth: Float = meta.renderWidth
-    private val fullHeight: Float = meta.renderHeight
+    private val fullWidth: Dp = meta.renderWidth
+    private val fullHeight: Dp = meta.renderHeight
 
     private val lines = mutableListOf<Line>()
 
-    private var currentWidth: Float = 0f
+    private var currentWidth = 0.dp
     private var lineBuilder: LineBuilder? = null
 
     private var isPageBreakAdded = false
@@ -40,6 +42,7 @@ internal class LayoutPageBuilder(
                 tryAddElement(
                     element,
                     lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
+                    maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
                     sizeOf = { element ->
                         measurer.measure(
                             element,
@@ -72,6 +75,7 @@ internal class LayoutPageBuilder(
         element: AozoraElement,
         lineIndent: Int,
         sizeOf: (AozoraElement) -> ElementMeasureResult,
+        maxCharacterPerLine: Int? = null,
     ): FillResult {
         Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
@@ -85,15 +89,16 @@ internal class LayoutPageBuilder(
 
         if (!forceAddBlock && lineBuilder == null) {
             val measureResult = sizeOf(element)
-            if (currentWidth + measureResult.size.width > fullWidth) {
+            if (currentWidth + measureResult.widthDp > fullWidth) {
                 return FillResult.Filled(element)
             }
         }
 
         val lineBuilder =
             lineBuilder ?: LineBuilder(
-                maxPx = fullHeight,
+                maxDp = fullHeight,
                 initialIndent = lineIndent,
+                maxCharacterPerLine = maxCharacterPerLine,
                 measure = sizeOf,
             ).also {
                 lineBuilder = it
@@ -116,7 +121,7 @@ internal class LayoutPageBuilder(
                             // The element is consumed by new line. return continue
                             FillResult.FillContinue
                         } else {
-                            tryAddElement(remainElement, lineIndent, sizeOf)
+                            tryAddElement(remainElement, lineIndent, sizeOf, maxCharacterPerLine)
                         }
                     }
                 }

@@ -4,6 +4,7 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -39,7 +40,7 @@ data class LayoutPage(
     val lines: ImmutableList<Line>,
 ) {
     val contentWidth by lazy {
-        lines.fold(0f) { acc, line ->
+        lines.fold(0.dp) { acc, line ->
             acc + line.lineHeight
         }
     }

@@ -151,6 +151,6 @@ class ElementMatcherTest {
             )
         assertIs<SpecialParagraph>(result)
         assertEquals(2, result.indent)
-        assertEquals(0, result.maxLength)
+        assertEquals(null, result.maxLength)
     }
 }

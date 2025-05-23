@@ -4,7 +4,8 @@
  */
 package me.andannn.aozora.core.pagesource.builder
 
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.data.common.FontSizeLevel
@@ -25,32 +26,33 @@ import kotlin.test.assertEquals
 class ReaderPageBuilderTest {
     private lateinit var lineBuilder: LineBuilder
     private lateinit var pageBuilder: LayoutPageBuilder
-    private val fontStyle = FontStyle(FontType.Companion.DEFAULT, 16f, 16f, 1.5f)
+    private val fontStyle = FontStyle(FontType.Companion.DEFAULT, 16.dp, 16.dp, 1.5f)
 
     private val dummySizeOf: (AozoraElement) -> ElementMeasureResult = {
         val size =
             when (it) {
-                is AozoraElement.Indent -> Size(50f, it.count * 10f)
-                else -> Size(50f, it.length * 10f)
+                is AozoraElement.Indent -> 50.dp to (it.count * 10f).dp
+                else -> 50.dp to (it.length * 10f).dp
             }
         ElementMeasureResult(
-            size,
+            widthDp = size.first,
+            heightDp = size.second,
             fontStyle,
         )
     }
 
     private val dummyPaperLayout =
         object : PageMetaData {
-            override val originalHeight: Float
-                get() = 100f
-            override val originalWidth: Float
-                get() = 100f
-            override val renderHeight: Float
-                get() = 100f
-            override val renderWidth: Float
-                get() = 100f
-            override val offset: Pair<Float, Float>
-                get() = 0f to 0f
+            override val originalHeight: Dp
+                get() = 100.dp
+            override val originalWidth: Dp
+                get() = 100.dp
+            override val renderHeight: Dp
+                get() = 100.dp
+            override val renderWidth: Dp
+                get() = 100.dp
+            override val offset: Pair<Dp, Dp>
+                get() = 0.dp to 0.dp
             override val fontSizeLevel: FontSizeLevel
                 get() = FontSizeLevel.LEVEL_4
             override val lineSpacing: LineSpacing
@@ -65,10 +67,11 @@ class ReaderPageBuilderTest {
     fun setUp() {
         lineBuilder =
             LineBuilder(
-                maxPx = 100f,
+                maxDp = 100.dp,
                 measure = {
                     ElementMeasureResult(
-                        Size(30f, 30f),
+                        widthDp = 30.dp,
+                        heightDp = 30.dp,
                         fontStyle,
                     )
                 },
@@ -78,7 +81,8 @@ class ReaderPageBuilderTest {
                 meta = dummyPaperLayout,
                 measurer = { element, style ->
                     ElementMeasureResult(
-                        Size(50f, 10f * element.length),
+                        50.dp,
+                        (10f * element.length).dp,
                         fontStyle,
                     )
                 },

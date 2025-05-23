@@ -4,7 +4,8 @@
  */
 package me.andannn.aozora.core.pagesource.measure
 
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.AozoraTextStyle
 import me.andannn.aozora.core.data.common.FontStyle
@@ -15,20 +16,23 @@ import me.andannn.aozora.core.data.common.resolveFontStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.collections.get
 import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.min
 
 data class ElementMeasureResult(
-    val size: Size,
+    val widthDp: Dp,
+    val heightDp: Dp,
     val fontStyle: FontStyle? = null,
 )
 
 data class BlockMeasureResult(
     val lineCount: Int,
-    val lineHeightPerLine: Float,
-    val availableRenderHeight: Float,
+    val lineHeightDpPerLine: Dp,
+    val availableTextCountPerLine: Int,
     val fontStyle: FontStyle? = null,
 ) {
-    val totalLineHeight: Float
-        get() = lineCount * lineHeightPerLine
+    val totalLineHeightDp: Dp
+        get() = lineHeightDpPerLine * lineCount
 }
 
 internal fun interface BlockMeasurer {
@@ -61,35 +65,44 @@ internal class DefaultMeasurer(
         when (block) {
             is AozoraBlock.Image -> return BlockMeasureResult(
                 lineCount = 1,
-                lineHeightPerLine = sizeOf(block.elements[0]).size.width,
-                availableRenderHeight = renderHeight,
+                lineHeightDpPerLine = sizeOf(block.elements[0]).widthDp,
+// TODO
+                availableTextCountPerLine = 0,
             )
 
             is AozoraBlock.TextBlock -> {
                 val style =
                     fontStyleCache[block.textStyle] ?: resolveAndSave(block.textStyle)
-                val lineHeight = style.lineHeight
+                val lineHeight = style.lineHeightDp
 
                 if (block.elements.size == 1 && block.elements[0] is AozoraElement.LineBreak) {
+                    val availableRenderHeight = renderHeight
+                    val calculatedCountPerLine = floor(availableRenderHeight / style.baseSizeDp).toInt()
                     return BlockMeasureResult(
                         lineCount = 1,
-                        lineHeightPerLine = lineHeight,
-                        availableRenderHeight = renderHeight,
+                        lineHeightDpPerLine = lineHeight,
+                        availableTextCountPerLine = calculatedCountPerLine,
                     )
                 }
 
                 val lineBreakCount = block.elements.count { it is AozoraElement.LineBreak }
                 val plusLineNumber = (lineBreakCount - 1).coerceAtLeast(0)
 
-                val totalHeight = block.textCount * style.baseSize
                 val indent = block.indent
-                val indentHeight = style.baseSize * indent
+                val indentHeight = style.baseSizeDp * indent
                 val availableRenderHeight = renderHeight - indentHeight
+                val calculatedCountPerLine = floor(availableRenderHeight / style.baseSizeDp).toInt()
+                val availableTextCountPerLine =
+                    if (block.maxCharacterPerLine == null) {
+                        calculatedCountPerLine
+                    } else {
+                        min(calculatedCountPerLine, block.maxCharacterPerLine)
+                    }
                 return BlockMeasureResult(
-                    lineCount = ceil(totalHeight / (availableRenderHeight)).toInt() + plusLineNumber,
-                    lineHeightPerLine = lineHeight,
+                    lineCount = ceil(block.textCount.toFloat() / (availableTextCountPerLine)).toInt() + plusLineNumber,
+                    lineHeightDpPerLine = lineHeight,
                     fontStyle = style,
-                    availableRenderHeight = availableRenderHeight,
+                    availableTextCountPerLine = availableTextCountPerLine,
                 )
             }
         }
@@ -104,45 +117,34 @@ internal class DefaultMeasurer(
             is AozoraElement.BaseText -> {
                 val style = cachedStyle ?: resolveAndSave(aozoraStyle!!)
                 return ElementMeasureResult(
-                    size =
-                        Size(
-                            style.lineHeight,
-                            style.baseSize * element.length,
-                        ),
+                    widthDp = style.lineHeightDp,
+                    heightDp = style.baseSizeDp * element.length,
                     fontStyle = style,
                 )
             }
 
             is AozoraElement.Illustration -> {
+// TODO: support illustration element.
                 return ElementMeasureResult(
-                    size =
-                        Size(
-                            element.width?.toFloat() ?: 0f,
-                            element.height?.toFloat() ?: 0f,
-                        ),
+                    widthDp = 0.dp,
+                    heightDp = 0.dp,
                 )
             }
 
             AozoraElement.LineBreak -> {
-                // TODO: Line break element can be measured ?
                 val style = cachedStyle ?: resolveAndSave(AozoraTextStyle.PARAGRAPH)
                 return ElementMeasureResult(
                     fontStyle = style,
-                    size =
-                        Size(
-                            style.baseSize.toFloat() * style.lineHeightMultiplier,
-                            0f,
-                        ),
+                    widthDp = style.baseSizeDp * style.lineHeightMultiplier,
+                    heightDp = 0.dp,
                 )
             }
 
             is AozoraElement.Indent -> {
                 val style = cachedStyle ?: resolveAndSave(aozoraStyle!!)
                 return ElementMeasureResult(
-                    Size(
-                        style.lineHeight,
-                        style.baseSize.toFloat() * element.count,
-                    ),
+                    widthDp = style.lineHeightDp,
+                    heightDp = style.baseSizeDp * element.count,
                 )
             }
 

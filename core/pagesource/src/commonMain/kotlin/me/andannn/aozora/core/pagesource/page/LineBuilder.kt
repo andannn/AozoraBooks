@@ -4,20 +4,30 @@
  */
 package me.andannn.aozora.core.pagesource.page
 
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.data.common.AozoraElement
 import me.andannn.aozora.core.data.common.FontStyle
 import me.andannn.aozora.core.data.common.Line
 import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.pagesource.util.divide
+import kotlin.math.min
 
 internal class LineBuilder(
-    private val maxPx: Float,
+    private val maxDp: Dp,
     initialIndent: Int = 0,
     private val measure: (AozoraElement) -> ElementMeasureResult,
+    private val maxCharacterPerLine: Int? = null,
 ) {
-    private var currentHeight: Float = 0f
-    private var maxWidth: Float = 0f
+    private var currentHeight: Dp = 0.dp
+
+    // Current character count
+    // Used to limit the number of characters per line
+    // including blank strings like ""
+    // Excluding indent.
+    private var currentCharacterCount: Int = 0
+    private var maxWidth: Dp = 0.dp
     private val elementList = mutableListOf<AozoraElement>()
     private var currentFontStyle: FontStyle? = null
 
@@ -31,14 +41,23 @@ internal class LineBuilder(
         when (element) {
             is AozoraElement.Ruby,
             is AozoraElement.Text,
-
             is AozoraElement.Emphasis,
             -> {
                 val measureResult = measure(element)
-                if (currentHeight + measureResult.size.height > maxPx) {
-                    val remainLength = maxPx - currentHeight
-                    val singleTextHeight = measureResult.size.height.div(element.length)
-                    val remainSlot = remainLength.div(singleTextHeight).toInt()
+                if (currentHeight + measureResult.heightDp > maxDp ||
+                    (maxCharacterPerLine != null && currentCharacterCount + element.length > maxCharacterPerLine)
+                ) {
+                    val remainLength = maxDp - currentHeight
+                    val singleTextHeight = measureResult.heightDp.div(element.length)
+                    val remainSlot =
+                        if (maxCharacterPerLine != null) {
+                            min(
+                                remainLength.div(singleTextHeight).toInt(),
+                                maxCharacterPerLine - currentCharacterCount,
+                            )
+                        } else {
+                            remainLength.div(singleTextHeight).toInt()
+                        }
                     if (remainSlot == 0) {
                         return FillResult.Filled(element)
                     } else {
@@ -98,8 +117,9 @@ internal class LineBuilder(
         measureResult: ElementMeasureResult,
     ) {
         elementList += element
-        currentHeight += measureResult.size.height
-        maxWidth = maxOf(maxWidth, measureResult.size.width)
+        currentHeight += measureResult.heightDp
+        currentCharacterCount += (element as? AozoraElement.BaseText)?.length ?: 0
+        maxWidth = maxOf(maxWidth, measureResult.widthDp)
         if (measureResult.fontStyle != null) {
             currentFontStyle = measureResult.fontStyle
         }

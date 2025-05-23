@@ -12,13 +12,12 @@ import me.andannn.aozora.ui.common.theme.AozoraTheme
 
 @Suppress("ktlint:standard:function-naming")
 fun MainViewController() =
-    ComposeUIViewController(
-        configure = {
-// TODO: Check debug build
-            Napier.base(DebugAntilog())
-        },
-    ) {
+    ComposeUIViewController {
         AozoraTheme {
             AozoraBooksApp()
         }
     }
+
+fun enableDebugLog() {
+    Napier.base(DebugAntilog())
+}

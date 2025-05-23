@@ -4,18 +4,19 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.Dp
 import kotlinx.collections.immutable.ImmutableList
 
 data class Line(
     /**
-     * 每一行的实际高度（像素）。
+     * 每一行的实际高度（Dp）。
      * 常见设置：行高 = fontSize × 行距倍数（如 1.5）
      *
      * 例如：
      * fontSize = 16
      * lineHeight = 24  (即 16 × 1.5)
      */
-    val lineHeight: Float,
+    val lineHeight: Dp,
     /**
      * font style.
      */

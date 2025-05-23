@@ -4,26 +4,28 @@
  */
 package me.andannn.aozora.core.data.common
 
+import androidx.compose.ui.unit.Dp
+
 data class FontStyle(
     /**
      * font type.
      */
     val fontType: FontType,
     /**
-     * base font size in pixels.
+     * base font size in display size(dp).
      */
-    val baseSize: Float,
+    val baseSizeDp: Dp,
     /**
-     * notation font size in pixels.
+     * notation font size in display size(dp).
      */
-    val notationSize: Float,
+    val notationSizeDp: Dp,
     /**
      * line height multiplier.
      */
     val lineHeightMultiplier: Float,
 ) {
-    val lineHeight by lazy {
-        baseSize * lineHeightMultiplier
+    val lineHeightDp by lazy {
+        baseSizeDp * lineHeightMultiplier
     }
 }
 
@@ -32,15 +34,15 @@ fun AozoraTextStyle.resolveFontStyle(
     lineSpacing: LineSpacing,
     fontType: FontType,
 ): FontStyle {
-    val fontSize = fontSizeLevel.fontSize
+    val fontSize = fontSizeLevel.fontSizeDp
 
     fun buildFontStyle(factor: Float): FontStyle {
         val baseSize = fontSize * factor
         val lineHeightMultiplier = lineSpacing.multiplier
         val notationSize = baseSize * (lineHeightMultiplier - 1).div(2)
         return FontStyle(
-            baseSize = baseSize,
-            notationSize = notationSize,
+            baseSizeDp = baseSize,
+            notationSizeDp = notationSize,
             lineHeightMultiplier = lineHeightMultiplier,
             fontType = fontType,
         )

@@ -18,7 +18,7 @@ internal sealed class AozoraBlock(
         override val elements: List<AozoraElement>,
         val textStyle: AozoraTextStyle,
         val indent: Int = 0,
-        val maxTextLength: Int = Int.MAX_VALUE,
+        val maxCharacterPerLine: Int? = null,
     ) : AozoraBlock(blockIndex, elements) {
         val textCount: Int by lazy {
             elements.fold(0) { acc, element ->

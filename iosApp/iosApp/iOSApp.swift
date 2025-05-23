@@ -9,6 +9,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     FirebaseApp.configure()
     MobileAds.shared.start(completionHandler: nil)
 
+    #if DEBUG
+      print("Running in Debug mode")
+      MainViewControllerKt.enableDebugLog()
+    #else
+      print("Running in Release mode")
+    #endif
+
     return true
   }
 }
