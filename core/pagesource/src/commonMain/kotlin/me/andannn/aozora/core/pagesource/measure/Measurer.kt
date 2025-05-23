@@ -115,12 +115,11 @@ internal class DefaultMeasurer(
             }
 
             is AozoraElement.Illustration -> {
-                error("")
-//                return ElementMeasureResult(
-//                    widthDp =
-//                        element.width?.toFloat() ?: 0f,
-//                    heightDp = element.height?.toFloat() ?: 0f,
-//                )
+// TODO: support illustration element.
+                return ElementMeasureResult(
+                    widthDp = 0.dp,
+                    heightDp = 0.dp,
+                )
             }
 
             AozoraElement.LineBreak -> {
