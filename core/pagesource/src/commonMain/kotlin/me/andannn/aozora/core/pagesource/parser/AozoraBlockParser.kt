@@ -39,7 +39,7 @@ internal class DefaultAozoraBlockParser(
                 elements = paragraph.elements + elements[1],
                 indent = paragraph.indent,
                 textStyle = AozoraTextStyle.PARAGRAPH,
-                maxTextLength = paragraph.maxLength,
+                maxCharacterPerLine = paragraph.maxLength,
             )
         } else if (elements.size == 1 && elements[0] is AozoraElement.Illustration) {
             return AozoraBlock.Image(

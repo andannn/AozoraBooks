@@ -17,6 +17,7 @@ import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.collections.get
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.min
 
 data class ElementMeasureResult(
     val widthDp: Dp,
@@ -27,7 +28,7 @@ data class ElementMeasureResult(
 data class BlockMeasureResult(
     val lineCount: Int,
     val lineHeightDpPerLine: Dp,
-    val availableRenderHeightDp: Dp,
+    val availableTextCountPerLine: Int,
     val fontStyle: FontStyle? = null,
 ) {
     val totalLineHeightDp: Dp
@@ -65,7 +66,8 @@ internal class DefaultMeasurer(
             is AozoraBlock.Image -> return BlockMeasureResult(
                 lineCount = 1,
                 lineHeightDpPerLine = sizeOf(block.elements[0]).widthDp,
-                availableRenderHeightDp = renderHeight,
+// TODO
+                availableTextCountPerLine = 0,
             )
 
             is AozoraBlock.TextBlock -> {
@@ -74,10 +76,12 @@ internal class DefaultMeasurer(
                 val lineHeight = style.lineHeightDp
 
                 if (block.elements.size == 1 && block.elements[0] is AozoraElement.LineBreak) {
+                    val availableRenderHeight = renderHeight
+                    val calculatedCountPerLine = floor(availableRenderHeight / style.baseSizeDp).toInt()
                     return BlockMeasureResult(
                         lineCount = 1,
                         lineHeightDpPerLine = lineHeight,
-                        availableRenderHeightDp = renderHeight,
+                        availableTextCountPerLine = calculatedCountPerLine,
                     )
                 }
 
@@ -87,13 +91,18 @@ internal class DefaultMeasurer(
                 val indent = block.indent
                 val indentHeight = style.baseSizeDp * indent
                 val availableRenderHeight = renderHeight - indentHeight
+                val calculatedCountPerLine = floor(availableRenderHeight / style.baseSizeDp).toInt()
                 val availableTextCountPerLine =
-                    floor(availableRenderHeight / style.baseSizeDp).toInt()
+                    if (block.maxCharacterPerLine == null) {
+                        calculatedCountPerLine
+                    } else {
+                        min(calculatedCountPerLine, block.maxCharacterPerLine)
+                    }
                 return BlockMeasureResult(
                     lineCount = ceil(block.textCount.toFloat() / (availableTextCountPerLine)).toInt() + plusLineNumber,
                     lineHeightDpPerLine = lineHeight,
                     fontStyle = style,
-                    availableRenderHeightDp = availableRenderHeight,
+                    availableTextCountPerLine = availableTextCountPerLine,
                 )
             }
         }
@@ -123,7 +132,6 @@ internal class DefaultMeasurer(
             }
 
             AozoraElement.LineBreak -> {
-                // TODO: Line break element can be measured ?
                 val style = cachedStyle ?: resolveAndSave(AozoraTextStyle.PARAGRAPH)
                 return ElementMeasureResult(
                     fontStyle = style,

@@ -42,6 +42,7 @@ internal class LayoutPageBuilder(
                 tryAddElement(
                     element,
                     lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
+                    maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
                     sizeOf = { element ->
                         measurer.measure(
                             element,
@@ -74,6 +75,7 @@ internal class LayoutPageBuilder(
         element: AozoraElement,
         lineIndent: Int,
         sizeOf: (AozoraElement) -> ElementMeasureResult,
+        maxCharacterPerLine: Int? = null,
     ): FillResult {
         Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
@@ -96,6 +98,7 @@ internal class LayoutPageBuilder(
             lineBuilder ?: LineBuilder(
                 maxDp = fullHeight,
                 initialIndent = lineIndent,
+                maxCharacterPerLine = maxCharacterPerLine,
                 measure = sizeOf,
             ).also {
                 lineBuilder = it
@@ -118,7 +121,7 @@ internal class LayoutPageBuilder(
                             // The element is consumed by new line. return continue
                             FillResult.FillContinue
                         } else {
-                            tryAddElement(remainElement, lineIndent, sizeOf)
+                            tryAddElement(remainElement, lineIndent, sizeOf, maxCharacterPerLine)
                         }
                     }
                 }

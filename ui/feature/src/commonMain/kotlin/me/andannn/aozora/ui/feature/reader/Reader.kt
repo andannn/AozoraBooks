@@ -62,7 +62,8 @@ private fun ReaderContent(
                 screenWidthDp = maxWidth,
                 screenHeightDp = maxHeight,
             ).present()
-        val overlayState = rememberReaderOverlayPresenter(bookCard.id, viewerState.bookPageState).present()
+        val overlayState =
+            rememberReaderOverlayPresenter(bookCard.id, viewerState.bookPageState).present()
 
         Box {
             BookViewer(

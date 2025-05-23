@@ -156,7 +156,8 @@ class BookViewerPresenter(
                     when (it) {
                         is PagerSnapShot.Error -> {
                             Napier.e(tag = TAG) { "error: ${it.exception}" }
-                            // TODO: show dialog and close page.
+// TODO: show dialog and close page.
+// TODO: send error message to firebase.
                         }
 
                         is PagerSnapShot.Ready -> snapshotState = it

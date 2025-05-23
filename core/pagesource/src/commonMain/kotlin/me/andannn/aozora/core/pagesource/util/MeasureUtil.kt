@@ -85,7 +85,7 @@ private fun AozoraBlock.divideByLineBreak() =
  */
 internal fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBlock> {
     if (startIndex <= 0) {
-        error("index must be greater than 0")
+        error("index must be greater than 0. startIndex $startIndex")
     }
 
     when (this) {

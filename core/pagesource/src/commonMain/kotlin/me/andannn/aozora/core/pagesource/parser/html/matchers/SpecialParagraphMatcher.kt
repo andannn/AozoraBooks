@@ -21,7 +21,7 @@ object SpecialParagraphMatcher : ElementMatcher {
 
         return AozoraElement.SpecialParagraph(
             indent = (divResult.firstOrNull { it is Div.Indent } as? Div.Indent?)?.indent ?: 0,
-            maxLength = (divResult.firstOrNull { it is Div.Max } as? Div.Max?)?.indent ?: 0,
+            maxLength = (divResult.firstOrNull { it is Div.Max } as? Div.Max?)?.value,
             elements = elements,
         )
     }
@@ -51,7 +51,7 @@ object SpecialParagraphMatcher : ElementMatcher {
         val style = element.attr("style")
         if (style.startsWith("width:")) {
             return Div.Max(
-                indent =
+                value =
                     style.substringAfter("width: ").substringBefore("em").toIntOrNull()
                         ?: return null,
             )
@@ -72,6 +72,6 @@ private sealed interface Div {
     ) : Div
 
     data class Max(
-        val indent: Int,
+        val value: Int,
     ) : Div
 }

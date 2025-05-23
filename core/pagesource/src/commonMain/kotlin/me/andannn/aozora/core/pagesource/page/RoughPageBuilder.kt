@@ -35,8 +35,7 @@ internal class RoughPageBuilder(
                 return FillResult.Filled(remainBlock = block)
             }
             if (measuredResult.fontStyle != null) {
-                val textCountPerLine =
-                    floor(measuredResult.availableRenderHeightDp / measuredResult.fontStyle.baseSizeDp).toInt()
+                val textCountPerLine = measuredResult.availableTextCountPerLine
                 val (left, right) = block.divideByTextIndex(textCountPerLine * availableLineCount)
                 addedBlockList += left
                 return FillResult.Filled(remainBlock = right)

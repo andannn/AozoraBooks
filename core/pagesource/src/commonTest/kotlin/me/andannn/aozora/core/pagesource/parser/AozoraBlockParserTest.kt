@@ -58,6 +58,6 @@ class AozoraBlockParserTest {
         val result = parser.parseLineAsBlock(sampleString2.asRawLine())
         assertIs<AozoraBlock.TextBlock>(result)
         assertEquals(4, result.indent)
-        assertEquals(27, result.maxTextLength)
+        assertEquals(27, result.maxCharacterPerLine)
     }
 }

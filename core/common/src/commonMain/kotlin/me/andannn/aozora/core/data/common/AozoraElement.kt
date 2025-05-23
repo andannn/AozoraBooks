@@ -73,7 +73,7 @@ sealed interface AozoraElement {
      */
     data class SpecialParagraph(
         val indent: Int,
-        val maxLength: Int,
+        val maxLength: Int?,
         val elements: List<AozoraElement> = emptyList(),
         override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText() {
