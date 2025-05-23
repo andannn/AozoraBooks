@@ -39,6 +39,7 @@ import me.andannn.aozora.core.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.LocalBookPageSource
 import me.andannn.aozora.core.pagesource.PagerSnapShot
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
+import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -158,7 +159,9 @@ class BookViewerPresenter(
                         is PagerSnapShot.Error -> {
                             Napier.e(tag = TAG) { "error: ${it.exception}" }
 // TODO: show dialog and close page.
-// TODO: send error message to firebase.
+                            getKoin()
+                                .get<PlatformAnalytics>()
+                                .recordException(it.exception)
                         }
 
                         is PagerSnapShot.Ready -> snapshotState = it
