@@ -6,7 +6,7 @@ package me.andannn.aozora.core.pagesource.page
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.domain.model.AozoraPage
 
 /**
  * create page flow from [blockSequenceFlow].

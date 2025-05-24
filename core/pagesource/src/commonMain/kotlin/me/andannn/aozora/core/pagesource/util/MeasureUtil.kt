@@ -4,7 +4,7 @@
  */
 package me.andannn.aozora.core.pagesource.util
 
-import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 
 /**

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import me.andannn.aozora.core.data.common.FontSizeLevel
-import me.andannn.aozora.core.data.common.FontType
-import me.andannn.aozora.core.data.common.ReaderTheme
-import me.andannn.aozora.core.data.common.TopMargin
+import me.andannn.aozora.core.domain.model.FontSizeLevel
+import me.andannn.aozora.core.domain.model.FontType
+import me.andannn.aozora.core.domain.model.ReaderTheme
+import me.andannn.aozora.core.domain.model.TopMargin
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import kotlin.test.BeforeTest

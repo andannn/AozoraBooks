@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.core.domain.model.BookColumnItem
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 

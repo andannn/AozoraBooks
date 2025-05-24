@@ -20,7 +20,7 @@ import aosora.ui.common.generated.resources.Res
 import aosora.ui.common.generated.resources.download_book_error
 import aosora.ui.common.generated.resources.ok
 import aosora.ui.common.generated.resources.unknown_error
-import me.andannn.aozora.core.pagesource.raw.DownloadBookFailedException
+import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
 import me.andannn.aozora.ui.common.dialog.DialogType

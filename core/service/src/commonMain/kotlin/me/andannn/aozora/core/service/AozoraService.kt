@@ -4,8 +4,8 @@
  */
 package me.andannn.aozora.core.service
 
-import me.andannn.aozora.core.data.common.AozoraBookCard
-import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.BookColumnItem
 
 interface AozoraService {
     suspend fun getPageCountOfKana(kana: String): Int

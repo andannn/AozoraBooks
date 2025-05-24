@@ -5,7 +5,7 @@
 package me.andannn.aozora.core.pagesource.parser.html
 
 import com.fleeksoft.ksoup.nodes.TextNode
-import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.AozoraLineParser
 import me.andannn.aozora.core.pagesource.parser.RawLine
 

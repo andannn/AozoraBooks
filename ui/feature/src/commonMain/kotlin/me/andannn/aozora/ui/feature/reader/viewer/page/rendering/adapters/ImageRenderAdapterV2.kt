@@ -6,8 +6,8 @@ package me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters
 
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 

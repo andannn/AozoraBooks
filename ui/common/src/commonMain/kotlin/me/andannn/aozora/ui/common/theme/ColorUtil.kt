@@ -6,7 +6,7 @@ package me.andannn.aozora.ui.common.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import me.andannn.aozora.core.data.common.ReaderTheme
+import me.andannn.aozora.core.domain.model.ReaderTheme
 
 fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color =
     when (this) {

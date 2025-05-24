@@ -4,7 +4,7 @@
  */
 package me.andannn.aozora.core.pagesource.parser
 
-import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import kotlin.test.Test
 import kotlin.test.assertEquals

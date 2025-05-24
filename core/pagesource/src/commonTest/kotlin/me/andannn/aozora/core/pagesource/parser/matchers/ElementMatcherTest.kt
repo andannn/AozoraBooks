@@ -4,10 +4,10 @@
  */
 package me.andannn.aozora.core.pagesource.parser.matchers
 
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.AozoraElement.SpecialParagraph
-import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.EmphasisStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement.SpecialParagraph
+import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.EmphasisStyle
 import me.andannn.aozora.core.pagesource.parser.html.matchers.EmphasisMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.ImageMatcher

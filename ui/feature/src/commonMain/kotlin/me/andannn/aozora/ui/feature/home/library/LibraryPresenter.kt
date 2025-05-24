@@ -19,9 +19,9 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.BookWithProgress
-import me.andannn.aozora.core.data.common.CachedBookModel
+import me.andannn.aozora.core.domain.model.BookWithProgress
+import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator

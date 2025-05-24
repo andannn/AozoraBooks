@@ -8,9 +8,10 @@ import androidx.paging.PagingSource
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import me.andannn.aozora.core.data.common.AozoraBookCard
-import me.andannn.aozora.core.data.common.BookColumnItem
-import me.andannn.aozora.core.data.common.TitleItem
+import me.andannn.aozora.core.data.BookListPagingSource
+import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.BookColumnItem
+import me.andannn.aozora.core.domain.model.TitleItem
 import me.andannn.aozora.core.service.AozoraService
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -57,14 +57,9 @@ android {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:common"))
+            implementation(project(":core:domain"))
             implementation(project(":core:data"))
             api(project(":core:platform"))
-            implementation(project(":core:service"))
-            implementation(project(":core:datastore"))
-            implementation(project(":core:database"))
-            implementation(project(":core:pagesource"))
-            implementation(project(":ui:common"))
             implementation(project(":ui:feature"))
             implementation(libs.napier)
             implementation(libs.circuit.foundation)

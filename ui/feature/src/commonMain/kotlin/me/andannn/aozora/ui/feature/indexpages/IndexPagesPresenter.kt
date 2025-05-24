@@ -15,8 +15,8 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.data.AozoraContentsRepository
-import me.andannn.aozora.core.data.common.BookColumnItem
+import me.andannn.aozora.core.domain.model.BookColumnItem
+import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.BookCardScreen
 import me.andannn.core.util.rememberRetainedCoroutineScope

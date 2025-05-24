@@ -8,10 +8,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.LayoutPage
-import me.andannn.aozora.core.data.common.Line
-import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.LayoutPage
+import me.andannn.aozora.core.domain.model.Line
+import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
 

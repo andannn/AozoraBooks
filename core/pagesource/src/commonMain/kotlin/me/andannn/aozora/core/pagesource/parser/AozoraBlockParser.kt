@@ -4,8 +4,8 @@
  */
 package me.andannn.aozora.core.pagesource.parser
 
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 
 internal interface AozoraBlockParser {

@@ -4,8 +4,8 @@
  */
 package me.andannn.aozora.core.pagesource.page
 
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.AozoraPage
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraPage
 
 internal sealed interface FillResult {
     data class Filled(

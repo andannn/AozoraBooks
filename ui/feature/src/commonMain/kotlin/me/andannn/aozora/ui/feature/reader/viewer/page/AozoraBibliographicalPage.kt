@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraBibliographicalPage
+import me.andannn.aozora.core.domain.model.AozoraPage.AozoraBibliographicalPage
 import me.andannn.core.util.parseBookSourceAsAnnotatedString
 
 @Composable

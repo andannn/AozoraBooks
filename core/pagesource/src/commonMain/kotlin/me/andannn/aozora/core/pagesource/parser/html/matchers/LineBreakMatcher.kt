@@ -6,7 +6,7 @@ package me.andannn.aozora.core.pagesource.parser.html.matchers
 
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
-import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
 
 internal object LineBreakMatcher : ElementMatcher {

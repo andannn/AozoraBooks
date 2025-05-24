@@ -25,8 +25,9 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.CachedBookModel
+import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
@@ -128,7 +129,7 @@ private suspend fun createBookRawSource(
     if (cachedBook != null) {
         return cachedBook
     }
-    
+
     try {
         card.downloadBookTo(cacheDictionary)
     } catch (e: Exception) {

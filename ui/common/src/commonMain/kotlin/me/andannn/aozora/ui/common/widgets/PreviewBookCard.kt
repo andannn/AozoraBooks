@@ -33,7 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.ui.common.util.toPercentString
 
 @Composable

@@ -7,8 +7,8 @@ package me.andannn.aozora.core.pagesource.page
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
-import me.andannn.aozora.core.data.common.PageMetaData
+import me.andannn.aozora.core.domain.model.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.BlockMeasurer
 import me.andannn.aozora.core.pagesource.util.divideByTextIndex
 import kotlin.math.floor

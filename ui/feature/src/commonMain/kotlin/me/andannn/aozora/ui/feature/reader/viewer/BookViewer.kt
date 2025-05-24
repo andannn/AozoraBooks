@@ -19,15 +19,16 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
-import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.FontType
-import me.andannn.aozora.core.data.common.ReaderTheme
-import me.andannn.aozora.core.pagesource.layout
+import me.andannn.aozora.core.domain.layouthelper.AozoraPageLayoutHelper
+import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.FontType
+import me.andannn.aozora.core.domain.model.ReaderTheme
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
 import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun BookViewer(
@@ -84,9 +85,15 @@ private fun ReaderContent(
             if (page is AozoraPage.AozoraBibliographicalPage) {
                 AozoraBibliographicalPage(page = page, textColor = textColor)
             } else {
+                val layoutHelper =
+                    remember {
+                        getKoin().get<AozoraPageLayoutHelper>()
+                    }
                 val layoutPage =
                     remember(page) {
-                        page?.layout()
+                        with(layoutHelper) {
+                            page?.layout()
+                        }
                     }
 
                 if (layoutPage != null) {

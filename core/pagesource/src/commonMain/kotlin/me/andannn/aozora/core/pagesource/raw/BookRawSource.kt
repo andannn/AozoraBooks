@@ -8,10 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.io.files.Path
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 
-private const val TAG = "BookRawSource"
-
-class DownloadBookFailedException(private val bookTitle: String) : Exception("Download [$bookTitle] failed.")
-
 /**
  * Book raw source.
  */

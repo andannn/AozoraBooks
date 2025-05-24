@@ -10,12 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import me.andannn.aozora.core.data.common.CachedBookModel
-import me.andannn.aozora.core.pagesource.AozoraBookPageSource
-import me.andannn.aozora.core.pagesource.LocalBookPageSource
+import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.pagesource.BookPageSource
+import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.internal.DefaultDialogController
@@ -24,6 +25,7 @@ import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlayEvent
 import me.andannn.aozora.ui.feature.reader.overlay.rememberReaderOverlayPresenter
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
 import me.andannn.aozora.ui.feature.reader.viewer.rememberBookViewerPresenter
+import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun Reader(
@@ -37,8 +39,13 @@ fun Reader(
         return
     }
 
+    val pageSource =
+        remember(bookCard, scope) {
+            getKoin().get<BookPageSource.Factory>().createBookPageSource(bookCard, scope)
+        }
+
     CompositionLocalProvider(
-        LocalBookPageSource provides AozoraBookPageSource(bookCard, scope),
+        LocalBookPageSource provides pageSource,
         LocalPopupController provides DefaultDialogController(),
     ) {
         ReaderContent(

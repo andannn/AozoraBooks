@@ -19,10 +19,10 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.data.AozoraContentsRepository
-import me.andannn.aozora.core.data.LoadResult
-import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.LoadResult
+import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
+import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin

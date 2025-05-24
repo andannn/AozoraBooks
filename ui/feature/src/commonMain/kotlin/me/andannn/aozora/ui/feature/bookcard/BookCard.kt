@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.data.common.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 
