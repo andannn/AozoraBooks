@@ -6,13 +6,13 @@ package me.andannn.aozora.core.pagesource.measure
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.FontStyle
-import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.data.common.PaperLayout
-import me.andannn.aozora.core.data.common.RenderSetting
-import me.andannn.aozora.core.data.common.resolveFontStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.FontStyle
+import me.andannn.aozora.core.domain.model.PageMetaData
+import me.andannn.aozora.core.domain.model.PaperLayout
+import me.andannn.aozora.core.domain.model.RenderSetting
+import me.andannn.aozora.core.domain.model.resolveFontStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import kotlin.collections.get
 import kotlin.math.ceil

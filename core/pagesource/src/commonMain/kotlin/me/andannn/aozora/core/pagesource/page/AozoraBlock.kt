@@ -4,10 +4,10 @@
  */
 package me.andannn.aozora.core.pagesource.page
 
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.AozoraTextStyle
-import me.andannn.aozora.core.data.common.Block
-import me.andannn.aozora.core.data.common.debugText
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.Block
+import me.andannn.aozora.core.domain.model.debugText
 
 internal sealed class AozoraBlock(
     override val blockIndex: Int,

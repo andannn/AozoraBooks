@@ -5,7 +5,7 @@
 package me.andannn.aozora.ui.feature.license
 
 import kotlinx.serialization.json.Json
-import me.andannn.aozora.core.data.common.LibraryInfo
+import me.andannn.aozora.core.domain.model.LibraryInfo
 import me.andannn.aozora.ui.common.util.licenseJson
 
 private val json =

@@ -17,14 +17,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.Clock.System
-import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraCoverPage
-import me.andannn.aozora.core.data.common.AozoraPage.AozoraRoughPage
-import me.andannn.aozora.core.data.common.PageMetaData
-import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
-import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
-import me.andannn.aozora.core.data.common.ReadProgress
-import me.andannn.aozora.core.data.common.TableOfContentsModel
+import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.AozoraPage.AozoraCoverPage
+import me.andannn.aozora.core.domain.model.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.domain.model.PageMetaData
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
+import me.andannn.aozora.core.domain.model.ReadProgress
+import me.andannn.aozora.core.domain.model.TableOfContentsModel
+import me.andannn.aozora.core.domain.pagesource.BookPageSource
+import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.page.RoughPageBuilder
@@ -144,7 +146,14 @@ abstract class CachedLinerPageSource : BookPageSource {
     }
 
     override suspend fun getTableOfContents(): List<TableOfContentsModel> {
-        val bookInfo = rawSource.getBookInfo()
+        val bookInfo =
+            try {
+                rawSource.getBookInfo()
+            } catch (e: Exception) {
+                Napier.e(tag = TAG) { "Get table of contents failed. $e" }
+                return emptyList()
+            }
+
         val maxHeadingLevel = bookInfo.tableOfContentList.maxOfOrNull { it.headingLevel } ?: 3
         return sequence {
             // 表紙
@@ -175,7 +184,12 @@ abstract class CachedLinerPageSource : BookPageSource {
         }.toList()
     }
 
-    override suspend fun getTotalBlockCount(): Int = rawSource.getBookInfo().blockCount
+    override suspend fun getTotalBlockCount(): Int? =
+        try {
+            rawSource.getBookInfo().blockCount
+        } catch (e: Exception) {
+            null
+        }
 
     /**
      * return cached block list if available. or return source flow.

@@ -1,0 +1,70 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package me.andannn.aozora.core.domain.pagesource
+
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.model.PageMetaData
+import me.andannn.aozora.core.domain.model.ReadProgress
+import me.andannn.aozora.core.domain.model.TableOfContentsModel
+
+val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
+    compositionLocalOf { error("no book source") }
+
+/**
+ * Book page source.
+ */
+interface BookPageSource {
+    /**
+     * generated pager snap shot flow by [pageMetaData].
+     *
+     * @param pageMetaData page meta data.
+     * @param readingProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
+     * @throws Exception when error occurred.
+     */
+    fun getPagerSnapShotFlow(
+        pageMetaData: PageMetaData,
+        readingProgress: ReadProgress,
+    ): Flow<PagerSnapShot>
+
+    /**
+     * get book meta. return empty list when error occurred.
+     */
+    suspend fun getTableOfContents(): List<TableOfContentsModel>
+
+    /**
+     * get total block count. return null when error occurred.
+     */
+    suspend fun getTotalBlockCount(): Int?
+
+    interface Factory {
+        fun createDummySource(): BookPageSource
+
+        fun createBookPageSource(
+            card: CachedBookModel,
+            scope: CoroutineScope,
+        ): BookPageSource
+    }
+}
+
+sealed interface PagerSnapShot {
+    /**
+     * Pager snap shot.
+     */
+    data class Ready(
+        val initialIndex: Int?,
+        val pageList: ImmutableList<AozoraPage>,
+        val snapshotVersion: Int,
+    ) : PagerSnapShot
+
+    data class Error(
+        val exception: Throwable,
+    ) : PagerSnapShot
+}

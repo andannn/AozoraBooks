@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.ui.common.util.toPercentString
 import kotlin.math.roundToInt
 

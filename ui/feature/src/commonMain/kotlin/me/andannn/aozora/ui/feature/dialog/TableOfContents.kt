@@ -24,9 +24,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.common.TableOfContentsModel
-import me.andannn.aozora.core.pagesource.BookPageSource
-import me.andannn.aozora.core.pagesource.LocalBookPageSource
+import me.andannn.aozora.core.domain.model.TableOfContentsModel
+import me.andannn.aozora.core.domain.pagesource.BookPageSource
+import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
 import me.andannn.aozora.ui.common.dialog.DialogType

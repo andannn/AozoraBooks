@@ -6,7 +6,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:common"))
+            implementation(project(":core:domain"))
             api(project(":core:platform"))
         }
 
@@ -14,6 +14,11 @@ kotlin {
             implementation(libs.play.services.ads)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    generateResClass = auto
 }
 
 android {

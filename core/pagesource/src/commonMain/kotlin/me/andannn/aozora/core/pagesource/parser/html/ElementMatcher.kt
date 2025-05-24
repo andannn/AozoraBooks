@@ -6,7 +6,7 @@ package me.andannn.aozora.core.pagesource.parser.html
 
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Node
-import me.andannn.aozora.core.data.common.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.matchers.EmphasisMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.ImageMatcher

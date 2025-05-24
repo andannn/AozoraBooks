@@ -12,8 +12,8 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.ImageRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapterV2

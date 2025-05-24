@@ -10,11 +10,11 @@ import com.fleeksoft.ksoup.nodes.TextNode
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import me.andannn.aozora.core.data.common.AozoraBookCard
-import me.andannn.aozora.core.data.common.AuthorData
-import me.andannn.aozora.core.data.common.BookColumnItem
-import me.andannn.aozora.core.data.common.StaffData
-import me.andannn.aozora.core.data.common.TitleItem
+import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AuthorData
+import me.andannn.aozora.core.domain.model.BookColumnItem
+import me.andannn.aozora.core.domain.model.StaffData
+import me.andannn.aozora.core.domain.model.TitleItem
 import me.andannn.aozora.core.service.AozoraService
 
 private const val BASE_URL = "https://www.aozora.gr.jp"

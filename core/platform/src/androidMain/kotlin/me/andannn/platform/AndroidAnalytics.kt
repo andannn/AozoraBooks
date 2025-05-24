@@ -7,6 +7,7 @@ package me.andannn.platform
 import androidx.core.bundle.Bundle
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
+import com.google.firebase.crashlytics.crashlytics
 import io.github.aakira.napier.Napier
 
 private const val TAG = "AndroidAnalytics"
@@ -27,5 +28,9 @@ class AndroidAnalytics : PlatformAnalytics {
                 }
             },
         )
+    }
+
+    override fun recordException(throwable: Throwable) {
+        Firebase.crashlytics.recordException(throwable)
     }
 }

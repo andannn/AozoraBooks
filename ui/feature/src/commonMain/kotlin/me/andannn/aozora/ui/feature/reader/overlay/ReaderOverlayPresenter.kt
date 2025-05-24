@@ -17,11 +17,11 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.AozoraPage
-import me.andannn.aozora.core.data.common.READ_PROGRESS_DONE
-import me.andannn.aozora.core.data.common.READ_PROGRESS_NONE
-import me.andannn.aozora.core.data.common.ReadProgress
+import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
+import me.andannn.aozora.core.domain.model.ReadProgress
+import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator

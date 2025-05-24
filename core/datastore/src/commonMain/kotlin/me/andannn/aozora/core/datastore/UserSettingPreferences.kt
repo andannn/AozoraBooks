@@ -10,11 +10,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.andannn.aozora.core.data.common.FontSizeLevel
-import me.andannn.aozora.core.data.common.FontType
-import me.andannn.aozora.core.data.common.LineSpacing
-import me.andannn.aozora.core.data.common.ReaderTheme
-import me.andannn.aozora.core.data.common.TopMargin
 import me.andannn.aozora.core.datastore.model.PreferencesKeyName
 import me.andannn.aozora.core.datastore.model.UserSettingPref
 import me.andannn.aozora.core.datastore.model.parseFontSizeLevel
@@ -27,6 +22,11 @@ import me.andannn.aozora.core.datastore.model.toFontTypeValue
 import me.andannn.aozora.core.datastore.model.toLineSpacingValue
 import me.andannn.aozora.core.datastore.model.toReaderThemeValue
 import me.andannn.aozora.core.datastore.model.toTopMarginValue
+import me.andannn.aozora.core.domain.model.FontSizeLevel
+import me.andannn.aozora.core.domain.model.FontType
+import me.andannn.aozora.core.domain.model.LineSpacing
+import me.andannn.aozora.core.domain.model.ReaderTheme
+import me.andannn.aozora.core.domain.model.TopMargin
 
 class UserSettingPreferences(
     private val preferences: DataStore<Preferences>,

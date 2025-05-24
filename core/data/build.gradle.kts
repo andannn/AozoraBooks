@@ -5,9 +5,10 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":core:common"))
+            api(project(":core:domain"))
             implementation(project(":core:datastore"))
             implementation(project(":core:database"))
+            implementation(project(":core:pagesource"))
             implementation(project(":core:service"))
             implementation(libs.androidx.paging.common)
         }

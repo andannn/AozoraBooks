@@ -8,7 +8,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.io.core)
-            implementation(project(":core:common"))
+            implementation(project(":core:domain"))
             implementation(project(":core:util"))
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ksoup)

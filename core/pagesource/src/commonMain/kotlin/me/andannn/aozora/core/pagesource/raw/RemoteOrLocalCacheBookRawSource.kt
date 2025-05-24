@@ -25,8 +25,9 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.CachedBookModel
+import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
@@ -38,6 +39,8 @@ import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
 import me.andannn.core.util.unzip
 import org.koin.mp.KoinPlatform.getKoin
+
+private const val TAG = "RemoteOrLocalCacheBookR"
 
 /**
  * Get source from local cached file or fetch from remote.
@@ -126,8 +129,14 @@ private suspend fun createBookRawSource(
     if (cachedBook != null) {
         return cachedBook
     }
-    card.downloadBookTo(cacheDictionary)
-    return getCachedBookModel(cacheDictionary) ?: error("no cache after download")
+
+    try {
+        card.downloadBookTo(cacheDictionary)
+    } catch (e: Exception) {
+        Napier.e(tag = TAG) { "Download failed $e" }
+        throw DownloadBookFailedException(card.title)
+    }
+    return getCachedBookModel(cacheDictionary) ?: throw DownloadBookFailedException(card.title)
 }
 
 /**

@@ -40,7 +40,7 @@ data class OnClickOption(
 ) : DialogAction
 
 @Composable
-fun BookOptionDialog(
+private fun BookOptionDialog(
     modifier: Modifier = Modifier,
     onAction: (DialogAction) -> Unit = {},
 ) {

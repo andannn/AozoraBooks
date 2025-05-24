@@ -10,7 +10,8 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
-import me.andannn.aozora.core.data.common.CachedBookModel
+import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import me.andannn.aozora.core.pagesource.parser.lineSequence
@@ -18,6 +19,15 @@ import me.andannn.aozora.core.pagesource.raw.BookInfo
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
 import me.andannn.aozora.core.pagesource.raw.RemoteOrLocalCacheBookRawSource
 import me.andannn.aozora.core.pagesource.util.validBlock
+
+class BookPageSourceFactory : BookPageSource.Factory {
+    override fun createDummySource(): BookPageSource = DummyBookPageSource()
+
+    override fun createBookPageSource(
+        card: CachedBookModel,
+        scope: CoroutineScope,
+    ): BookPageSource = AozoraBookPageSource(card, scope)
+}
 
 /**
  * Book page source.

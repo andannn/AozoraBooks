@@ -9,4 +9,6 @@ interface PlatformAnalytics {
         event: String,
         params: Map<String, String> = emptyMap(),
     )
+
+    fun recordException(throwable: Throwable)
 }

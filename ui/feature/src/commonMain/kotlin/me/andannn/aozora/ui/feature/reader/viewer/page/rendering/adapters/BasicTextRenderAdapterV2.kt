@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
-import me.andannn.aozora.core.data.common.AozoraElement
-import me.andannn.aozora.core.data.common.FontStyle
+import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2

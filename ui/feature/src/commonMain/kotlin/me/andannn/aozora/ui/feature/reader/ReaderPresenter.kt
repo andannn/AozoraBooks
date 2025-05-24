@@ -11,8 +11,8 @@ import androidx.compose.runtime.remember
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.data.UserDataRepository
-import me.andannn.aozora.core.data.common.CachedBookModel
+import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.repository.UserDataRepository
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable

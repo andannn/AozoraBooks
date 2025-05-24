@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import aosora.ui.common.generated.resources.Res
 import aosora.ui.common.generated.resources.noto_serif_jp_regular
-import me.andannn.aozora.core.data.common.FontType
+import me.andannn.aozora.core.domain.model.FontType
 import org.jetbrains.compose.resources.Font
 
 // Set of Material typography styles to start with

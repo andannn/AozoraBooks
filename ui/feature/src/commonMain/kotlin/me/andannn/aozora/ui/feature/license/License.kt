@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
-import me.andannn.aozora.core.data.common.LibraryInfo
+import me.andannn.aozora.core.domain.model.LibraryInfo
 
 @Composable
 fun License(
