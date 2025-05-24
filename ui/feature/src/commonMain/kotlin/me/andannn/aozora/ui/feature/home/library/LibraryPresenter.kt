@@ -25,9 +25,9 @@ import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.dialog.BookOptionDialogId
 import me.andannn.aozora.ui.feature.dialog.OnClickOption
 import me.andannn.aozora.ui.feature.dialog.OptionItem
+import me.andannn.aozora.ui.feature.dialog.showBookOptionDialog
 import me.andannn.aozora.ui.feature.home.SearchNestedScreen
 import me.andannn.aozora.ui.feature.screens.BookCardScreen
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
@@ -63,7 +63,7 @@ class LibraryPresenter(
             .getAllCompletedBooks()
             .collectAsRetainedState(initial = emptyList())
         var currentTab by rememberRetained {
-            mutableStateOf(TabItem.BOOK_SHELF)
+            mutableStateOf(TabItem.READING)
         }
         val scope = rememberCoroutineScope()
         return LibraryState(
@@ -86,7 +86,10 @@ class LibraryPresenter(
 
                 is LibraryUiEvent.OnCardOptionClick -> {
                     scope.launch {
-                        val result = popupController.showDialog(BookOptionDialogId)
+                        val result =
+                            popupController.showBookOptionDialog(
+                                fromReadingTab = currentTab == TabItem.READING,
+                            )
                         if (result is OnClickOption) {
                             when (result.option) {
                                 OptionItem.OPEN_BOOK_CARD -> {
@@ -100,6 +103,14 @@ class LibraryPresenter(
 
                                 OptionItem.REMOVE_FROM_BOOK_SHELF -> {
                                     userDataRepository.deleteSavedBook(event.card.id)
+                                }
+
+                                OptionItem.MARK_AS_COMPLETED -> {
+                                    userDataRepository.markBookAsCompleted(event.card.id)
+                                }
+
+                                OptionItem.MARK_AS_NOT_COMPLETED -> {
+                                    userDataRepository.markBookAsNotCompleted(event.card.id)
                                 }
                             }
                         }
@@ -135,6 +146,6 @@ sealed interface LibraryUiEvent {
 }
 
 enum class TabItem {
-    BOOK_SHELF,
+    READING,
     READ_COMPLETE,
 }

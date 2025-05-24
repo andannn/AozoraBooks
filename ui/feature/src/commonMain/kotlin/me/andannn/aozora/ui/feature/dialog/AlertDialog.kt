@@ -28,12 +28,11 @@ import me.andannn.aozora.ui.common.dialog.PopupController
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction {
-    return when (throwable) {
+suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction =
+    when (throwable) {
         is DownloadBookFailedException -> showDialog(DownloadBookErrorDialog)
         else -> showDialog(UnKnownErrorDialog)
     }
-}
 
 abstract class AlertDialog(
     val title: StringResource? = null,
@@ -63,7 +62,7 @@ private fun AlertDialog(
         dialogId.title?.let {
             Text(
                 text = stringResource(dialogId.title),
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -83,7 +82,7 @@ private fun AlertDialog(
             dialogId.negative?.let {
                 TextButton(
                     onClick = {
-                        onAction(OnAccept)
+                        onAction(OnDecline)
                     },
                 ) {
                     Text(stringResource(dialogId.negative))
@@ -92,7 +91,7 @@ private fun AlertDialog(
 
             TextButton(
                 onClick = {
-                    onAction(OnDecline)
+                    onAction(OnAccept)
                 },
             ) {
                 Text(stringResource(dialogId.positive))

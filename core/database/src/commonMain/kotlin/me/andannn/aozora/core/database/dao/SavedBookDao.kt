@@ -43,7 +43,7 @@ interface SavedBookDao {
             SELECT * FROM ${Tables.BOOK_TABLE}
             INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
             LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
-            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} != $READ_PROGRESS_DONE OR ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} IS NULL
+            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} != 1 OR ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} IS NULL
             ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
     )
@@ -57,7 +57,7 @@ interface SavedBookDao {
             SELECT * FROM ${Tables.BOOK_TABLE}
             INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
             LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
-            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.PROGRESS_BLOCK_INDEX} == $READ_PROGRESS_DONE
+            WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} == 1
             ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
     )

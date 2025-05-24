@@ -17,4 +17,5 @@ data class CachedBookModel(
 data class BookWithProgress(
     val book: CachedBookModel,
     val progress: ReadProgress,
+    val isUserMarkCompleted: Boolean,
 )

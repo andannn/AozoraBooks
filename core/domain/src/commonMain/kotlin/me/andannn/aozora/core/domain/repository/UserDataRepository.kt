@@ -77,6 +77,16 @@ interface UserDataRepository {
     )
 
     /**
+     * Mark book as completed.
+     */
+    suspend fun markBookAsCompleted(bookCardId: String)
+
+    /**
+     * Mark book as not completed.
+     */
+    suspend fun markBookAsNotCompleted(bookCardId: String)
+
+    /**
      * Get the progress of book.
      */
     suspend fun getProgress(bookCardId: String): ReadProgress
@@ -85,6 +95,11 @@ interface UserDataRepository {
      * Get the progress flow of book.
      */
     fun getProgressFlow(bookCardId: String): Flow<ReadProgress>
+
+    /**
+     * Get the progress flow of book.
+     */
+    fun isUserMarkCompletedFlow(bookCardId: String): Flow<Boolean>
 
     /**
      * Save book to library.

@@ -147,7 +147,11 @@ class DatabaseTest {
             )
             // get Book with progress.
             assertTrue {
-                savedBookDao.getNotCompletedBooksByDesc().first()[0].progress?.progressBlockIndex == 1
+                savedBookDao
+                    .getNotCompletedBooksByDesc()
+                    .first()[0]
+                    .progress
+                    ?.progressBlockIndex == 1
             }
         }
 
@@ -161,21 +165,18 @@ class DatabaseTest {
                     createdDate = 1,
                 ),
             )
-            assertTrue {
-                savedBookDao.getNotCompletedBooksByDesc().first().size == 1
-            }
+            assertEquals(1, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
             savedBookDao.updateProgressOfBook(
                 BookProgressEntity(
                     bookId = "1",
                     progressBlockIndex = READ_PROGRESS_DONE,
                     updateEpochMillisecond = 1,
+                    markCompleted = true,
                 ),
             )
 
-            assertTrue {
-                savedBookDao.getNotCompletedBooksByDesc().first().isEmpty()
-            }
+            assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
             assertTrue {
                 savedBookDao.getCompleteBooksByDesc().first().isNotEmpty()

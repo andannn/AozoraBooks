@@ -78,12 +78,54 @@ internal class UserDataRepositoryImpl(
         bookCardId: String,
         readProgress: ReadProgress,
     ) {
+        val progress = dao.getProgressOfBook(bookCardId)
+        if (progress == null) {
+            dao.updateProgressOfBook(
+                BookProgressEntity(
+                    bookId = bookCardId,
+                    progressBlockIndex = readProgress.toDataBaseValue(),
+                    totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
+                    updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+                ),
+            )
+        } else {
+            dao.updateProgressOfBook(
+                progress.copy(
+                    progressBlockIndex = readProgress.toDataBaseValue(),
+                    totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
+                    updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+                ),
+            )
+        }
+    }
+
+    override suspend fun markBookAsCompleted(bookCardId: String) {
+        val progress = dao.getProgressOfBook(bookCardId)
+        if (progress == null) {
+            dao.updateProgressOfBook(
+                BookProgressEntity(
+                    bookId = bookCardId,
+                    progressBlockIndex = READ_PROGRESS_NONE,
+                    updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+                    markCompleted = true,
+                ),
+            )
+        } else {
+            dao.updateProgressOfBook(
+                progress.copy(
+                    updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+                    markCompleted = true,
+                ),
+            )
+        }
+    }
+
+    override suspend fun markBookAsNotCompleted(bookCardId: String) {
+        val progress = dao.getProgressOfBook(bookCardId) ?: return
         dao.updateProgressOfBook(
-            BookProgressEntity(
-                bookId = bookCardId,
-                progressBlockIndex = readProgress.toDataBaseValue(),
-                totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
+            progress.copy(
                 updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
+                markCompleted = false,
             ),
         )
     }
@@ -93,6 +135,11 @@ internal class UserDataRepositoryImpl(
     override fun getProgressFlow(bookCardId: String): Flow<ReadProgress> =
         dao.getProgressOfBookFlow(bookCardId).map {
             it.toReadProgress()
+        }
+
+    override fun isUserMarkCompletedFlow(bookCardId: String): Flow<Boolean> =
+        dao.getProgressOfBookFlow(bookCardId).map {
+            it?.markCompleted == true
         }
 
     override suspend fun saveBookToLibrary(bookId: String) {
@@ -133,6 +180,7 @@ private fun BookEntityWithProgress.toModel() =
     BookWithProgress(
         book = book.toModel(),
         progress = progress.toReadProgress(),
+        isUserMarkCompleted = progress?.markCompleted == true,
     )
 
 private fun BookEntity.toModel() =

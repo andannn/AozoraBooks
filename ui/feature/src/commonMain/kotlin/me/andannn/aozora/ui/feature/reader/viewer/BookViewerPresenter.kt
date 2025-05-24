@@ -13,10 +13,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.Dp
+import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -44,6 +49,8 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
+import me.andannn.aozora.ui.feature.dialog.OnGoToAppStore
+import me.andannn.aozora.ui.feature.dialog.ReaderCompleteDialogId
 import me.andannn.aozora.ui.feature.dialog.showAlertDialog
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
@@ -53,6 +60,7 @@ fun rememberBookViewerPresenter(
     card: CachedBookModel,
     screenWidthDp: Dp,
     screenHeightDp: Dp,
+    uriHandler: UriHandler = LocalUriHandler.current,
     bookSource: BookPageSource = LocalBookPageSource.current,
     popupController: PopupController = LocalPopupController.current,
     navigator: Navigator = LocalNavigator.current,
@@ -63,9 +71,10 @@ fun rememberBookViewerPresenter(
         bookSource = bookSource,
         popupController = popupController,
         navigator = navigator,
+        uriHandler = uriHandler,
         screenWidthDp = screenWidthDp,
         screenHeightDp = screenHeightDp,
-        settingRepository = settingRepository,
+        userDataRepository = settingRepository,
     )
 }
 
@@ -76,21 +85,28 @@ class BookViewerPresenter(
     private val bookSource: BookPageSource,
     private val screenWidthDp: Dp,
     private val screenHeightDp: Dp,
-    private val settingRepository: UserDataRepository,
+    private val userDataRepository: UserDataRepository,
     private val popupController: PopupController,
     private val navigator: Navigator,
+    private val uriHandler: UriHandler,
 ) : Presenter<BookViewerState> {
     @Composable
     override fun present(): BookViewerState {
-        val fontSize by settingRepository
+        val scope = rememberCoroutineScope()
+        val fontSize by userDataRepository
             .getFontSizeLevel()
             .collectAsRetainedState(FontSizeLevel.DEFAULT)
-        val fontType by settingRepository.getFontFontType().collectAsRetainedState(FontType.DEFAULT)
-        val theme by settingRepository.getReaderTheme().collectAsRetainedState(ReaderTheme.DEFAULT)
-        val topMargin by settingRepository.getTopMargin().collectAsRetainedState(TopMargin.DEFAULT)
-        val lineSpacing by settingRepository
+        val fontType by userDataRepository
+            .getFontFontType()
+            .collectAsRetainedState(FontType.DEFAULT)
+        val theme by userDataRepository.getReaderTheme().collectAsRetainedState(ReaderTheme.DEFAULT)
+        val topMargin by userDataRepository.getTopMargin().collectAsRetainedState(TopMargin.DEFAULT)
+        val lineSpacing by userDataRepository
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
+        val userMarkCompleted by userDataRepository
+            .isUserMarkCompletedFlow(card.id)
+            .collectAsRetainedState(false)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot.Ready?>(null)
@@ -104,11 +120,31 @@ class BookViewerPresenter(
                 snapshotState?.pageList?.size ?: 0
             }
 
+        val isLastPage by rememberUpdatedState(
+            pagerState.currentPage == pagerState.pageCount - 1,
+        )
+
         val density = LocalDensity.current
         val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
         val navigationBarHeight = with(density) { navigationBarHeightPx.toDp() }
         val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
         val statusBarHeight = with(density) { statusBarHeightPx.toDp() }
+
+        BackHandler(
+            enabled = isLastPage && !userMarkCompleted,
+        ) {
+            Napier.d(tag = TAG) { "back pressed when book completed" }
+            scope.launch {
+                userDataRepository.markBookAsCompleted(card.id)
+                val result = popupController.showDialog(ReaderCompleteDialogId)
+                if (result is OnGoToAppStore) {
+                    uriHandler.openUri("https://play.google.com/store/apps/details?id=me.andannn.aozora")
+                    navigator.pop()
+                } else {
+                    navigator.pop()
+                }
+            }
+        }
 
         // update progress when page changed.
         LaunchedEffect(
@@ -138,7 +174,7 @@ class BookViewerPresenter(
                                     )
                                 }
                             }
-                        settingRepository.setProgressOfBook(
+                        userDataRepository.setProgressOfBook(
                             bookCardId = card.id,
                             readProgress = currentProgress,
                         )
@@ -162,7 +198,7 @@ class BookViewerPresenter(
                     fontType = fontType,
                     lineSpacing = lineSpacing,
                 )
-            val savedProgress = settingRepository.getProgress(card.id)
+            val savedProgress = userDataRepository.getProgress(card.id)
             bookSource
                 .getPagerSnapShotFlow(pageMetadata, readingProgress = savedProgress)
                 .distinctUntilChanged()

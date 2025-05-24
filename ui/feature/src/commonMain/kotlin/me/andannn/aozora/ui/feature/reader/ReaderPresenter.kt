@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.repository.UserDataRepository
+import me.andannn.aozora.ui.common.util.KeepScreenOnEffect
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -33,6 +34,9 @@ class ReaderPresenter(
     @Composable
     override fun present(): ReaderState {
         val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)
+
+        KeepScreenOnEffect()
+
         return ReaderState(savedBook) { event ->
             when (event) {
                 else -> {}
