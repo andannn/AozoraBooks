@@ -9,6 +9,7 @@ kotlin {
             implementation(project(":ui:paging-compose"))
             implementation(project(":ui:common"))
             implementation(project(":core:common"))
+            implementation(project(":core:pagesource"))
             implementation(project(":core:platform"))
             implementation(project(":core:util"))
             implementation(project(":core:data"))

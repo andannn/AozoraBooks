@@ -148,6 +148,7 @@ abstract class CachedLinerPageSource : BookPageSource {
             try {
                 rawSource.getBookInfo()
             } catch (e: Exception) {
+                Napier.e(tag = TAG) { "Get table of contents failed. $e" }
                 return emptyList()
             }
 

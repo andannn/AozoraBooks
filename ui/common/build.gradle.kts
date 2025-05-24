@@ -16,6 +16,11 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    generateResClass = auto
+}
+
 android {
     namespace = "me.andannn.aozora.ui.common"
 }

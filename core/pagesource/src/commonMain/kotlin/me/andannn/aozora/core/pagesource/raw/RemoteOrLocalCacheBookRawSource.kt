@@ -39,6 +39,8 @@ import me.andannn.core.util.readString
 import me.andannn.core.util.unzip
 import org.koin.mp.KoinPlatform.getKoin
 
+private const val TAG = "RemoteOrLocalCacheBookR"
+
 /**
  * Get source from local cached file or fetch from remote.
  */
@@ -126,8 +128,14 @@ private suspend fun createBookRawSource(
     if (cachedBook != null) {
         return cachedBook
     }
-    card.downloadBookTo(cacheDictionary)
-    return getCachedBookModel(cacheDictionary) ?: error("no cache after download")
+    
+    try {
+        card.downloadBookTo(cacheDictionary)
+    } catch (e: Exception) {
+        Napier.e(tag = TAG) { "Download failed $e" }
+        throw DownloadBookFailedException(card.title)
+    }
+    return getCachedBookModel(cacheDictionary) ?: throw DownloadBookFailedException(card.title)
 }
 
 /**
