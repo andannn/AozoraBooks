@@ -39,6 +39,8 @@ fun AozoraBooksApp(
     val navigator =
         rememberCircuitNavigator(backStack) {
         }
+
+    // Log screen transition event.
     val currentScreen = backStack.topRecord?.screen
     LaunchedEffect(currentScreen) {
         if (currentScreen != null) {
