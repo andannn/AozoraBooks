@@ -14,6 +14,7 @@ internal object BookProgressColumns {
     const val PROGRESS_BLOCK_INDEX = "progress_block_index"
     const val TOTAL_BLOCK_COUNT = "total_block_count"
     const val UPDATE_EPOCH_MILLISECOND = "update_epoch_millisecond"
+    const val MARK_COMPLETED = "mark_completed"
 }
 
 @Entity(tableName = Tables.BOOK_PROGRESS_TABLE)
@@ -27,4 +28,6 @@ data class BookProgressEntity(
     val updateEpochMillisecond: Long,
     @ColumnInfo(name = BookProgressColumns.TOTAL_BLOCK_COUNT)
     val totalBlockCount: Int? = null,
+    @ColumnInfo(name = BookProgressColumns.MARK_COMPLETED)
+    val markCompleted: Boolean? = null,
 )

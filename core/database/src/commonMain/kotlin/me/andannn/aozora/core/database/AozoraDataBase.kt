@@ -31,7 +31,7 @@ internal object Tables {
         SavedBookEntity::class,
         BookProgressEntity::class,
     ],
-    version = 3,
+    version = 4,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class AozoraDataBase : RoomDatabase() {
@@ -47,7 +47,11 @@ internal expect object MelodifyDataBaseConstructor : RoomDatabaseConstructor<Aoz
 internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
     apply {
         setQueryCoroutineContext(Dispatchers.IO)
-        addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+        addMigrations(
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
+        )
     }
 
 internal val MIGRATION_1_2 =
@@ -90,6 +94,15 @@ internal val MIGRATION_2_3 =
         override fun migrate(connection: SQLiteConnection) {
             connection.execSQL(
                 "ALTER TABLE ${Tables.BOOK_PROGRESS_TABLE} ADD COLUMN ${BookProgressColumns.TOTAL_BLOCK_COUNT} INTEGER",
+            )
+        }
+    }
+
+internal val MIGRATION_3_4 =
+    object : Migration(3, 4) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                "ALTER TABLE ${Tables.BOOK_PROGRESS_TABLE} ADD COLUMN ${BookProgressColumns.MARK_COMPLETED} INTEGER",
             )
         }
     }

@@ -22,6 +22,7 @@ private fun PreviewBookCardPreview() {
                 title = "吾輩は猫である",
                 author = "夏目漱石",
                 progress = ReadProgress.None,
+                userMarkRead = false,
             )
         }
     }
@@ -35,6 +36,7 @@ private fun PreviewBookCardPreviewLongDark() {
             title = "吾輩は猫である 吾輩は猫である 吾輩は猫である 吾輩は猫である",
             author = "夏目漱石 夏目漱石 夏目漱石 夏目漱石 夏目漱石",
             progress = ReadProgress.Done,
+            userMarkRead = false,
         )
     }
 }

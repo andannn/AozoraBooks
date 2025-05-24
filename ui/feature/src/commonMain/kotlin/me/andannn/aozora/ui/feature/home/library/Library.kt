@@ -63,7 +63,7 @@ fun LibraryContent(
             }
         }
 
-        if (currentTab == TabItem.BOOK_SHELF) {
+        if (currentTab == TabItem.READING) {
             if (notCompletedBooks.isEmpty()) {
                 Column(
                     Modifier.fillMaxSize().padding(24.dp),
@@ -138,6 +138,7 @@ private fun BookList(
                 title = card.title,
                 author = card.authorName.toString(),
                 progress = progress,
+                userMarkRead = bookWithProgress.isUserMarkCompleted,
                 onClick = {
                     onEvent.invoke(LibraryUiEvent.OnCardClick(card.id))
                 },
@@ -151,6 +152,6 @@ private fun BookList(
 
 private fun TabItem.label(): String =
     when (this) {
-        TabItem.BOOK_SHELF -> "読書中"
+        TabItem.READING -> "読書中"
         TabItem.READ_COMPLETE -> "読了"
     }

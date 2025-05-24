@@ -20,7 +20,6 @@ import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.internal.DefaultDialogController
-import me.andannn.aozora.ui.common.util.KeepScreenOnEffect
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlay
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlayEvent
 import me.andannn.aozora.ui.feature.reader.overlay.rememberReaderOverlayPresenter
@@ -49,8 +48,6 @@ fun Reader(
         LocalBookPageSource provides pageSource,
         LocalPopupController provides DefaultDialogController(),
     ) {
-        KeepScreenOnEffect()
-
         ReaderContent(
             bookCard = bookCard,
             modifier = modifier,

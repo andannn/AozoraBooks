@@ -42,18 +42,17 @@ fun PreviewBookCard(
     title: String,
     author: String,
     progress: ReadProgress,
+    userMarkRead: Boolean,
     onClick: () -> Unit = {},
     onOptionClick: () -> Unit = {},
 ) {
     val progressText =
-        remember(progress) {
-            when (progress) {
-                ReadProgress.Done -> "既読"
-                ReadProgress.None -> "未読"
+        remember(progress, userMarkRead) {
+            return@remember when (progress) {
+                ReadProgress.Done -> "100%"
+                ReadProgress.None -> "0%"
                 is ReadProgress.Reading ->
-                    "読書中 ${
-                        progress.progressFactor?.toPercentString() ?: ""
-                    }"
+                    progress.progressFactor?.toPercentString() ?: ""
             }
         }
     Surface(
