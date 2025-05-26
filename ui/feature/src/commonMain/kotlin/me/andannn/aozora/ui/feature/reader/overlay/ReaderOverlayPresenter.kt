@@ -10,7 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
+import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -25,7 +29,9 @@ import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.dialog.OnGoToAppStore
 import me.andannn.aozora.ui.feature.dialog.OnJumpTo
+import me.andannn.aozora.ui.feature.dialog.ReaderCompleteDialogId
 import me.andannn.aozora.ui.feature.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.feature.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
@@ -40,26 +46,60 @@ fun rememberReaderOverlayPresenter(
     settingRepository: UserDataRepository = getKoin().get(),
     navigator: Navigator = LocalNavigator.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(bookPageState, popupController, navigator) {
-    ReaderOverlayPresenter(cardId, navigator, settingRepository, bookPageState, popupController)
+    uriHandler: UriHandler = LocalUriHandler.current,
+) = remember(bookPageState, popupController, navigator, uriHandler) {
+    ReaderOverlayPresenter(
+        cardId,
+        navigator,
+        settingRepository,
+        bookPageState,
+        popupController,
+        uriHandler,
+    )
 }
 
 class ReaderOverlayPresenter(
     private val cardId: String,
     private val navigator: Navigator,
-    private val settingRepository: UserDataRepository,
+    private val userDataRepository: UserDataRepository,
     private val bookPageState: BookPageState,
     private val popupController: PopupController,
+    private val uriHandler: UriHandler,
 ) : Presenter<ReaderOverlayState> {
     @Composable
     override fun present(): ReaderOverlayState {
-        val scope = rememberCoroutineScope()
         var showOverlay by remember {
             mutableStateOf(false)
         }
-        val progress by settingRepository
+        val progress by userDataRepository
             .getProgressFlow(cardId)
             .collectAsRetainedState(ReadProgress.None)
+
+        val scope = rememberCoroutineScope()
+        val userMarkCompleted by userDataRepository
+            .isUserMarkCompletedFlow(cardId)
+            .collectAsRetainedState(false)
+        val isLastPage by rememberUpdatedState(
+            bookPageState.pagerState.currentPage == bookPageState.pagerState.pageCount - 1,
+        )
+
+        suspend fun markCompletedAndShowAlertDialog() {
+            userDataRepository.markBookAsCompleted(cardId)
+            val result = popupController.showDialog(ReaderCompleteDialogId)
+            if (result is OnGoToAppStore) {
+                uriHandler.openUri("https://play.google.com/store/apps/details?id=me.andannn.aozora")
+                navigator.pop()
+            } else {
+                navigator.pop()
+            }
+        }
+
+        BackHandler(enabled = isLastPage && !userMarkCompleted) {
+            Napier.d(tag = TAG) { "back pressed when book completed" }
+            scope.launch {
+                markCompletedAndShowAlertDialog()
+            }
+        }
 
         return ReaderOverlayState(
             progress = progress,
@@ -91,7 +131,13 @@ class ReaderOverlayPresenter(
                 }
 
                 ReaderOverlayEvent.OnBack -> {
-                    navigator.pop()
+                    scope.launch {
+                        if (isLastPage && !userMarkCompleted) {
+                            markCompletedAndShowAlertDialog()
+                        } else {
+                            navigator.pop()
+                        }
+                    }
                 }
             }
         }
