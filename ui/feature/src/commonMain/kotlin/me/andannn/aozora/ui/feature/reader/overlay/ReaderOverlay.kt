@@ -91,35 +91,40 @@ fun ReaderOverlayContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Column(
+        Surface(
             modifier =
                 Modifier
                     .graphicsLayer {
                         alpha = animatedAlpha.value
-                    }.background(MaterialTheme.colorScheme.background)
-                    .padding(24.dp)
-                    .navigationBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                    },
         ) {
-            if (progress.progressFactor != null) {
-                Text(
-                    text = progress.progressFactor!!.toPercentString(),
-                    style = MaterialTheme.typography.labelLarge,
+            Column(
+                modifier =
+                    Modifier
+                        .padding(24.dp)
+                        .navigationBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (progress.progressFactor != null) {
+                    Text(
+                        text = progress.progressFactor!!.toPercentString(),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                ProgressSlider(
+                    modifier = Modifier,
+                    pageSize = pageSize,
+                    enable = animatedAlpha.value != 0f,
+                    currentPageIndex = settledPageIndex,
+                    onPageChanged = {
+                        scope.launch {
+                            Napier.d(tag = TAG) { "on Change it. $it" }
+                            pagerState.scrollToPage(it)
+                        }
+                    },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
-            ProgressSlider(
-                modifier = Modifier,
-                pageSize = pageSize,
-                enable = animatedAlpha.value != 0f,
-                currentPageIndex = settledPageIndex,
-                onPageChanged = {
-                    scope.launch {
-                        Napier.d(tag = TAG) { "on Change it. $it" }
-                        pagerState.scrollToPage(it)
-                    }
-                },
-            )
         }
     }
 }
