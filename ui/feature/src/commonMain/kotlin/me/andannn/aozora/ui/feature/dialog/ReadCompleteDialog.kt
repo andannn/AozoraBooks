@@ -20,6 +20,8 @@ import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
 import me.andannn.aozora.ui.common.dialog.DialogType
 import me.andannn.aozora.ui.common.dialog.Dismissed
+import me.andannn.platform.Platform
+import me.andannn.platform.platform
 
 object ReaderCompleteDialogId : DialogId {
     override val dialogType: DialogType = DialogType.AlertDialog
@@ -46,30 +48,39 @@ private fun ReaderCompletedDialog(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "この本は読了済みとして記録されました。\n\nもしよろしければ、アプリの評価やご感想を Google Play にてお寄せいただけると嬉しいです。",
+            text = "この本は読了済みとして記録されました。\n\nよろしければ、${platform.getStoreString()} での評価やご感想をお聞かせください！",
             style = MaterialTheme.typography.bodyMedium,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row {
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(
-                onClick = {
-                    onAction(Dismissed)
-                },
-            ) {
-                Text("後で")
-            }
+        // TODO: Only support android now.
+        if (platform == Platform.ANDROID) {
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(
+                    onClick = {
+                        onAction(Dismissed)
+                    },
+                ) {
+                    Text("後で")
+                }
 
-            TextButton(
-                onClick = {
-                    onAction(OnGoToAppStore)
-                },
-            ) {
-                Text("アプリを評価する")
+                TextButton(
+                    onClick = {
+                        onAction(OnGoToAppStore)
+                    },
+                ) {
+                    Text("アプリを評価する")
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
+
+private fun Platform.getStoreString() =
+    when (this) {
+        Platform.IOS -> "App Store"
+        Platform.ANDROID -> "Google Play"
+    }

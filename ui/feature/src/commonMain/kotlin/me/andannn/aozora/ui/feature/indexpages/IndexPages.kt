@@ -32,6 +32,7 @@ import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.BookColumnItem
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
+import me.andannn.platform.showPlatformAd
 
 @Composable
 fun IndexPages(
@@ -89,7 +90,7 @@ fun IndexPagesStateContent(
                         HorizontalDivider()
                     }
 
-                    if (index % 20 == 0) {
+                    if (index % 20 == 0 && showPlatformAd) {
                         BannerAdView(
                             modifier = Modifier.fillMaxWidth(),
                             adType = AdType.LEADERBOARD,

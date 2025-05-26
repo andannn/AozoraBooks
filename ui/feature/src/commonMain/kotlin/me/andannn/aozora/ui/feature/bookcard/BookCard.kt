@@ -42,6 +42,7 @@ import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
+import me.andannn.platform.showPlatformAd
 
 private const val TAG = "BookCard"
 
@@ -173,11 +174,13 @@ private fun BookCardContent(
                 }
             }
 
-            item {
-                BannerAdView(
-                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                    adType = AdType.LEADERBOARD,
-                )
+            if (showPlatformAd) {
+                item {
+                    BannerAdView(
+                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                        adType = AdType.LEADERBOARD,
+                    )
+                }
             }
 
             item {
