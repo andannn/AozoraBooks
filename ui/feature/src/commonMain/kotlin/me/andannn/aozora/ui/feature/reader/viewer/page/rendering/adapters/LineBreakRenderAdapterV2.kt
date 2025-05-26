@@ -23,7 +23,7 @@ class LineBreakRenderAdapterV2(
         element: AozoraElement,
         fontStyle: FontStyle?,
     ): Size? {
-        element as? AozoraElement.LineBreak ?: return null
+        if (element !is AozoraElement.LineBreak) return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }

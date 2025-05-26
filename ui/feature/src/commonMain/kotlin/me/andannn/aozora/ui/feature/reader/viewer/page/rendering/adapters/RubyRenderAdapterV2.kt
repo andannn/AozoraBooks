@@ -22,7 +22,7 @@ class RubyRenderAdapterV2(
         element: AozoraElement,
         fontStyle: FontStyle?,
     ): Size? {
-        element as? AozoraElement.Ruby ?: return null
+        if (element !is AozoraElement.Ruby) return null
         if (fontStyle == null) {
             error("Ruby element must have a font style")
         }
