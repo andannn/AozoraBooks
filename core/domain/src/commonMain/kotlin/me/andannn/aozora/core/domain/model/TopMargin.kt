@@ -10,9 +10,9 @@ import androidx.compose.ui.unit.dp
 enum class TopMargin(
     val value: Dp,
 ) {
-    SMALL(10.dp),
-    MEDIUM(30.dp),
-    LARGE(60.dp),
+    SMALL(5.dp),
+    MEDIUM(10.dp),
+    LARGE(15.dp),
     ;
 
     companion object {

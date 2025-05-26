@@ -29,6 +29,7 @@ import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.util.SystemUiVisibilityEffect
 import me.andannn.aozora.ui.feature.dialog.OnGoToAppStore
 import me.andannn.aozora.ui.feature.dialog.OnJumpTo
 import me.andannn.aozora.ui.feature.dialog.ReaderCompleteDialogId
@@ -100,6 +101,8 @@ class ReaderOverlayPresenter(
                 markCompletedAndShowAlertDialog()
             }
         }
+
+        SystemUiVisibilityEffect(visible = showOverlay)
 
         return ReaderOverlayState(
             progress = progress,

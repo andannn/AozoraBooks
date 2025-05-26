@@ -13,6 +13,7 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.repository.UserDataRepository
+import me.andannn.aozora.ui.common.util.ImmersiveModeEffect
 import me.andannn.aozora.ui.common.util.KeepScreenOnEffect
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -36,6 +37,7 @@ class ReaderPresenter(
         val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)
 
         KeepScreenOnEffect()
+        ImmersiveModeEffect()
 
         return ReaderState(savedBook) { event ->
             when (event) {

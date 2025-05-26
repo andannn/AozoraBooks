@@ -11,6 +11,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import io.github.aakira.napier.Napier
 
+private const val TAG = "KeepScreenOnEffect"
+
 @Composable
 actual fun KeepScreenOnEffect() {
     val activity = LocalContext.current as Activity

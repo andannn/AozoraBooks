@@ -10,6 +10,8 @@ import androidx.compose.runtime.LaunchedEffect
 import io.github.aakira.napier.Napier
 import platform.UIKit.UIApplication
 
+private const val TAG = "KeepScreenOnEffect"
+
 @Composable
 actual fun KeepScreenOnEffect() {
     LaunchedEffect(Unit) {
