@@ -20,7 +20,7 @@ class PageBreakRenderAdapterV2 : ElementRenderAdapterV2 {
         element: AozoraElement,
         fontStyle: FontStyle?,
     ): Size? {
-        element as? AozoraElement.PageBreak ?: return null
+        if (element !is AozoraElement.PageBreak) return null
         if (DEBUG_RENDER) {
             drawLine(
                 color = RandomColor,

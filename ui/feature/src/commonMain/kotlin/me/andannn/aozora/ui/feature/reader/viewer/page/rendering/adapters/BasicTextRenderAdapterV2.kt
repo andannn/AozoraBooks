@@ -35,7 +35,7 @@ abstract class BasicTextRenderAdapterV2(
         element: AozoraElement,
         fontStyle: FontStyle?,
     ): Size? {
-        element as? AozoraElement.BaseText ?: return null
+        if (element !is AozoraElement.BaseText) return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
@@ -141,6 +141,8 @@ private val TransformMap =
         '…' to listOf(TransForm.Rotate(90f)),
         '〜' to listOf(TransForm.Rotate(90f)),
         '―' to listOf(TransForm.Rotate(90f)),
+        '『' to listOf(TransForm.Rotate(90f)),
+        '』' to listOf(TransForm.Rotate(90f)),
     )
 
 private fun DrawScope.withCharTransforms(
