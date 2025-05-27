@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
@@ -69,7 +70,7 @@ class ReaderOverlayPresenter(
 ) : Presenter<ReaderOverlayState> {
     @Composable
     override fun present(): ReaderOverlayState {
-        var showOverlay by remember {
+        var showOverlay by rememberSaveable {
             mutableStateOf(false)
         }
         val progress by userDataRepository
