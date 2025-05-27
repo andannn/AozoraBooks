@@ -15,4 +15,5 @@ actual val appVersion: String
         val versionCode = packageInfo.versionCode
         return "$versionName ($versionCode)"
     }
+
 actual val platform: Platform = Platform.ANDROID
