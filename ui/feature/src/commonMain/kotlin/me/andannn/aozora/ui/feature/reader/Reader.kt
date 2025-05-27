@@ -85,8 +85,9 @@ private fun ReaderContent(
                                     isConsumedByPager = true
                                 }
                                 if (!changeEvent.pressed) {
-                                    if (!isConsumedByPager) {
+                                    if (!isConsumedByPager && !changeEvent.isConsumed) {
                                         overlayState.eventSink.invoke(ReaderOverlayEvent.OnToggleOverlay)
+                                        changeEvent.consume()
                                     }
                                     isConsumedByPager = false
                                 }

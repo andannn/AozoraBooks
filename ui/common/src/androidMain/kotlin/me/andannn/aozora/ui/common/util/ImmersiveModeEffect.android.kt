@@ -8,7 +8,6 @@ import android.app.Activity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
@@ -25,11 +24,9 @@ private const val TAG = "ImmersiveModeEffect"
 @Composable
 actual fun ImmersiveModeEffect(modifier: Modifier) {
     val activity = LocalContext.current as Activity
-    val windowInsetsController =
-        remember {
-            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
-        }
     LaunchedEffect(Unit) {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
         Napier.d(tag = TAG) { "set systemBarsBehavior BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE" }
         windowInsetsController.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -38,6 +35,8 @@ actual fun ImmersiveModeEffect(modifier: Modifier) {
     DisposableEffect(Unit) {
         onDispose {
             Napier.d(tag = TAG) { "set systemBarsBehavior BEHAVIOR_DEFAULT" }
+            val windowInsetsController =
+                WindowCompat.getInsetsController(activity.window, activity.window.decorView)
             windowInsetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
@@ -48,11 +47,10 @@ actual fun ImmersiveModeEffect(modifier: Modifier) {
 @Composable
 actual fun SystemUiVisibilityEffect(visible: Boolean) {
     val activity = LocalContext.current as Activity
-    val windowInsetsController =
-        remember {
-            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
-        }
     LaunchedEffect(visible) {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+
         if (visible) {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         } else {
