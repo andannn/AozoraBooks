@@ -68,4 +68,4 @@ jobs:
             composeApp/build/outputs/apk/release/composeApp-release.apk
             composeApp/build/outputs/bundle/release/composeApp-release.aab
           repo_token: "${{ secrets.TOKEN }}"
-          prerelease: true
+          prerelease: false
