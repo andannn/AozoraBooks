@@ -18,6 +18,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -108,10 +109,15 @@ class BookViewerPresenter(
 
         val density = LocalDensity.current
         val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
-        val navigationBarHeight = with(density) { navigationBarHeightPx.toDp() }
+        val navigationBarHeight =
+            rememberRetained {
+                with(density) { navigationBarHeightPx.toDp() }
+            }
         val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
-        val statusBarHeight = with(density) { statusBarHeightPx.toDp() }
-
+        val statusBarHeight =
+            rememberRetained {
+                with(density) { statusBarHeightPx.toDp() }
+            }
         // update progress when page changed.
         LaunchedEffect(
             snapshotState?.snapshotVersion,

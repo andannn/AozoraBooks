@@ -11,7 +11,7 @@ import me.andannn.aozora.core.domain.model.ReaderTheme
 fun ReaderTheme.getBackgroundColor(colorScheme: ColorScheme): Color =
     when (this) {
         ReaderTheme.MONOCHROME -> Grey90
-        ReaderTheme.DYNAMIC -> colorScheme.surfaceContainerHigh
+        ReaderTheme.DYNAMIC -> colorScheme.surfaceVariant
         ReaderTheme.PAPER -> Paper80
         ReaderTheme.GREEN_EYE_CARE -> GreenBackground
     }

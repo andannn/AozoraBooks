@@ -23,6 +23,10 @@ enum class FontSizeLevel(
     }
 }
 
+fun FontSizeLevel.isLargest(): Boolean = this.ordinal == FontSizeLevel.entries.size - 1
+
+fun FontSizeLevel.isSmallest(): Boolean = this.ordinal == 0
+
 fun FontSizeLevel.next(): FontSizeLevel {
     val nextIndex = (this.ordinal + 1) % FontSizeLevel.entries.size
     return FontSizeLevel.entries[nextIndex]

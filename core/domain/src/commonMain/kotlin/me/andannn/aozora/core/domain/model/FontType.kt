@@ -5,8 +5,8 @@
 package me.andannn.aozora.core.domain.model
 
 enum class FontType {
-    NOTO_SANS,
     NOTO_SERIF,
+    NOTO_SANS,
     ;
 
     companion object {

@@ -28,13 +28,13 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.slack.circuit.retained.rememberRetained
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.ReadProgress
@@ -77,11 +77,11 @@ fun ReaderOverlayContent(
         val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
         val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
         val statusBarHeight =
-            remember {
+            rememberRetained {
                 with(density) { statusBarHeightPx.toDp() }
             }
         val navigationBarHeight =
-            remember {
+            rememberRetained {
                 with(density) { navigationBarHeightPx.toDp() }
             }
 

@@ -44,6 +44,11 @@ interface BookPageSource {
      */
     suspend fun getTotalBlockCount(): Int?
 
+    /**
+     * close this source.
+     */
+    fun close()
+
     interface Factory {
         fun createDummySource(): BookPageSource
 
