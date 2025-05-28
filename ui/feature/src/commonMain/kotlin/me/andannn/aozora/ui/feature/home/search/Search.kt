@@ -6,7 +6,8 @@ package me.andannn.aozora.ui.feature.home.search
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,22 +45,9 @@ fun SearchContent(
     onEvent: (SearchUiEvent) -> Unit,
 ) {
     LazyVerticalGrid(
-        modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 8.dp),
-        columns = GridCells.Fixed(10),
+        modifier = modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = 320.dp),
     ) {
-//        item(span = { GridItemSpan(maxLineSpan) }) {
-//            Text(
-//                modifier = Modifier.padding(12.dp),
-//                text = "作家別",
-//                style = MaterialTheme.typography.headlineSmall,
-//            )
-//        }
-//
-//        item(span = { GridItemSpan(maxLineSpan) }) {
-//            HorizontalDivider()
-//        }
-
         item(span = { GridItemSpan(maxLineSpan) }) {
             Text(
                 modifier = Modifier.padding(12.dp),
@@ -69,23 +56,17 @@ fun SearchContent(
             )
         }
 
-        items(
-            items = KanaItemList,
-        ) { item ->
-            if (item != null) {
-                SearchKanaItem(
-                    kana = item.kanaLabel,
-                    onClick = {
-                        onEvent.invoke(SearchUiEvent.OnClickKanaItem(item.kana))
-                    },
-                )
-            } else {
-                Spacer(modifier = Modifier)
-            }
+        item {
+            SearchByKanaArea(
+                modifier = Modifier.padding(8.dp),
+                onKanaItemClicked = {
+                    onEvent.invoke(SearchUiEvent.OnClickKanaItem(it.kana))
+                },
+            )
         }
 
         if (showPlatformAd) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item {
                 BannerAdView(
                     modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
                     adType = AdType.MEDIUM_RECTANGLE,
@@ -112,6 +93,32 @@ private fun SearchKanaItem(
                 modifier = Modifier.align(Alignment.Center),
                 text = kana,
             )
+        }
+    }
+}
+
+@Composable
+private fun SearchByKanaArea(
+    modifier: Modifier = Modifier,
+    onKanaItemClicked: (KanaItem) -> Unit,
+) {
+    Column(modifier) {
+        KanaItemList.chunked(10).forEach { lineItems ->
+            Row(Modifier.fillMaxWidth()) {
+                lineItems.forEach { item ->
+                    if (item != null) {
+                        SearchKanaItem(
+                            modifier = Modifier.weight(1f),
+                            kana = item.kanaLabel,
+                            onClick = {
+                                onKanaItemClicked.invoke(item)
+                            },
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+            }
         }
     }
 }
