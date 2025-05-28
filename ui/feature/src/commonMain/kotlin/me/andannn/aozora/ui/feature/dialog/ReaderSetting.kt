@@ -44,6 +44,8 @@ import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
 import me.andannn.aozora.core.domain.model.ReaderTheme
 import me.andannn.aozora.core.domain.model.TopMargin
+import me.andannn.aozora.core.domain.model.isLargest
+import me.andannn.aozora.core.domain.model.isSmallest
 import me.andannn.aozora.core.domain.model.next
 import me.andannn.aozora.core.domain.model.pre
 import me.andannn.aozora.core.domain.repository.UserDataRepository
@@ -327,7 +329,7 @@ fun Heading(
     Text(
         modifier = modifier.padding(horizontal = 18.dp, vertical = 8.dp),
         text = text,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
     )
 }
 
@@ -372,7 +374,7 @@ private fun FontSetting(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        AdjustFontSizeSlider(
+        AdjustFontSizeArea(
             fontSizeLevel = fontSizeLevel,
             onChangeSize = onChangeSize,
         )
@@ -380,7 +382,7 @@ private fun FontSetting(
 }
 
 @Composable
-fun AdjustFontSizeSlider(
+fun AdjustFontSizeArea(
     modifier: Modifier = Modifier,
     fontSizeLevel: FontSizeLevel,
     onChangeSize: (FontSizeLevel) -> Unit = {},
@@ -391,19 +393,21 @@ fun AdjustFontSizeSlider(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedButton(
+            enabled = !fontSizeLevel.isSmallest(),
             onClick = {
                 onChangeSize.invoke(fontSizeLevel.pre())
             },
         ) {
-            Text("A-", style = MaterialTheme.typography.titleLarge)
+            Text("A-")
         }
         Text(fontSizeLevel.label)
         OutlinedButton(
+            enabled = !fontSizeLevel.isLargest(),
             onClick = {
                 onChangeSize.invoke(fontSizeLevel.next())
             },
         ) {
-            Text("A+", style = MaterialTheme.typography.titleLarge)
+            Text("A+")
         }
     }
 }
@@ -421,7 +425,7 @@ private fun FontItem(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
-            modifier = Modifier.size(72.dp),
+            modifier = Modifier.size(64.dp),
             onClick = onClick,
             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
             shape = CircleShape,
@@ -448,6 +452,7 @@ private fun FontItem(
         Text(
             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             text = fontType.label,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }
@@ -468,7 +473,7 @@ private fun ThemeItem(
         modifier = modifier,
     ) {
         Surface(
-            modifier = Modifier.size(72.dp),
+            modifier = Modifier.size(64.dp),
             shape = CircleShape,
             color = bgColor,
             border = border,
