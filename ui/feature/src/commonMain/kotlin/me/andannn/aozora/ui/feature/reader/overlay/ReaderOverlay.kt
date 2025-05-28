@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.slack.circuit.retained.rememberRetained
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.ui.common.util.toPercentString
 import kotlin.math.roundToInt
 
@@ -50,7 +49,6 @@ fun ReaderOverlay(
 ) {
     ReaderOverlayContent(
         modifier = modifier,
-        progress = state.progress,
         pagerState = state.pagerState,
         showOverlay = state.showOverlay,
         onEvent = state.eventSink,
@@ -60,7 +58,6 @@ fun ReaderOverlay(
 @Composable
 fun ReaderOverlayContent(
     modifier: Modifier = Modifier,
-    progress: ReadProgress,
     pagerState: PagerState,
     showOverlay: Boolean,
     onEvent: (ReaderOverlayEvent) -> Unit = {},
@@ -120,13 +117,11 @@ fun ReaderOverlayContent(
                         .padding(bottom = navigationBarHeight),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                if (progress.progressFactor != null) {
-                    Text(
-                        text = progress.progressFactor!!.toPercentString(),
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                Text(
+                    text = (settledPageIndex.toFloat() / (pageSize - 1)).toPercentString(),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 ProgressSlider(
                     modifier = Modifier,
                     pageSize = pageSize,
