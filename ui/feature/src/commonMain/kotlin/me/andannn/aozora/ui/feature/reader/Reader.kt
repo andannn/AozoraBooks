@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -43,6 +44,12 @@ fun Reader(
         remember(bookCard, scope) {
             getKoin().get<BookPageSource.Factory>().createBookPageSource(bookCard, scope)
         }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            pageSource.close()
+        }
+    }
 
     CompositionLocalProvider(
         LocalBookPageSource provides pageSource,

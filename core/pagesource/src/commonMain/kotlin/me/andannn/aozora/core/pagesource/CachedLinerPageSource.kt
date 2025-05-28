@@ -6,16 +6,19 @@ package me.andannn.aozora.core.pagesource
 
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.datetime.Clock.System
 import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.AozoraPage.AozoraCoverPage
@@ -40,11 +43,17 @@ private const val TAG = "CachedLinerPageSource"
  * the parsed result is cached in this class.
  * use catch when [getPagerSnapShotFlow] is called if available,
  */
-abstract class CachedLinerPageSource : BookPageSource {
-    internal abstract val rawSource: BookRawSource
-    private val cachedBlockList = mutableListOf<AozoraBlock>()
-    private var isCachedCompleted: Boolean = false
+internal class CachedLinerPageSource(
+    private val rawSource: BookRawSource,
+) : BookPageSource {
     private var version: Int = 0
+    private val job = Job()
+    private val shardBlockHotFlow: SharedFlow<AozoraBlock> =
+        rawSource.getRawSource().shareIn(
+            CoroutineScope(Dispatchers.IO + job),
+            replay = Int.MAX_VALUE,
+            started = SharingStarted.Eagerly,
+        )
 
     override fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
@@ -56,16 +65,14 @@ abstract class CachedLinerPageSource : BookPageSource {
             val version = version++
 
             val bookInfoData = rawSource.getBookInfo()
-            bookInfoData.tableOfContentList
             val loadedPages = mutableListOf<AozoraPage>()
             var initialPageIndex: Int? = null
-            var startMilliseconds = System.now().toEpochMilliseconds()
+            val startMilliseconds = System.now().toEpochMilliseconds()
             Napier.d(tag = TAG) { "start load page. " }
 
             createPageFlow(
                 bookInfoData = bookInfoData,
                 pageMetaData = pageMetaData,
-                rawSourceProvider = { rawSource.getRawSource() },
             ).collectIndexed { index, page ->
                 loadedPages.add(page)
 
@@ -115,11 +122,10 @@ abstract class CachedLinerPageSource : BookPageSource {
     private fun createPageFlow(
         bookInfoData: BookInfo,
         pageMetaData: PageMetaData,
-        rawSourceProvider: suspend () -> Flow<AozoraBlock>,
     ): Flow<AozoraPage> {
         val pageFlow: Flow<AozoraPage> =
             createPageFlowFromSequence(
-                blockSequenceFlow = cachedOrSource(rawSourceProvider),
+                blockSequenceFlow = shardBlockHotFlow,
                 builderFactory = {
                     RoughPageBuilder(meta = pageMetaData, measurer = DefaultMeasurer(pageMetaData))
                 },
@@ -142,7 +148,7 @@ abstract class CachedLinerPageSource : BookPageSource {
                         html = rawSource.getBookInfo().bibliographicalInformation,
                     ),
                 )
-            }.flowOn(Dispatchers.IO)
+            }
     }
 
     override suspend fun getTableOfContents(): List<TableOfContentsModel> {
@@ -191,27 +197,7 @@ abstract class CachedLinerPageSource : BookPageSource {
             null
         }
 
-    /**
-     * return cached block list if available. or return source flow.
-     */
-    private fun cachedOrSource(rawSourceProvider: suspend () -> Flow<AozoraBlock>): Flow<AozoraBlock> =
-        channelFlow {
-            if (isCachedCompleted) {
-                Napier.d(tag = TAG) { "Using cached source." }
-                cachedBlockList.forEach { block ->
-                    send(block)
-                }
-                return@channelFlow
-            }
-
-            cachedBlockList.clear()
-
-            Napier.d(tag = TAG) { "Using raw source" }
-            rawSourceProvider().collect { block ->
-                cachedBlockList.add(block)
-                send(block)
-            }
-
-            isCachedCompleted = true
-        }
+    override fun close() {
+        job.cancel()
+    }
 }

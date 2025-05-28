@@ -16,7 +16,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
 import kotlinx.io.buffered
@@ -65,26 +67,28 @@ internal class RemoteOrLocalCacheBookRawSource(
         }
     }
 
-    override suspend fun getRawSource(): Flow<AozoraBlock> {
-        val parser = DefaultAozoraBlockParser(HtmlLineParser)
+    override fun getRawSource(): Flow<AozoraBlock> =
+        flow {
+            val parser = DefaultAozoraBlockParser(HtmlLineParser)
 
-        val bookModel = waitBookModelOrThrow()
-        val filePath =
-            bookModel.contentHtmlPath
-                ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
+            val bookModel = waitBookModelOrThrow()
+            val filePath =
+                bookModel.contentHtmlPath
+                    ?: throw IllegalArgumentException("Either contentHtmlPath or contentPlainTextPath must be specified.")
 
-        val source = SystemFileSystem.source(filePath)
-        return SystemFileSystem
-            .source(filePath)
-            .buffered()
-            .lineSequence()
-            .map { parser.parseLineAsBlock(it) }
-            .validBlock()
-            .asFlow()
-            .onCompletion {
-                source.close()
-            }
-    }
+            val source = SystemFileSystem.source(filePath)
+            emitAll(
+                source
+                    .buffered()
+                    .lineSequence()
+                    .map { parser.parseLineAsBlock(it) }
+                    .validBlock()
+                    .asFlow()
+                    .onCompletion {
+                        source.close()
+                    },
+            )
+        }
 
     override suspend fun getBookInfo(): BookInfo {
         val bookModel = waitBookModelOrThrow()

@@ -15,7 +15,7 @@ internal interface BookRawSource {
     /**
      * get raw source of book.
      */
-    suspend fun getRawSource(): Flow<AozoraBlock>
+    fun getRawSource(): Flow<AozoraBlock>
 
     /**
      * get image uri by path.
