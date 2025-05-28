@@ -4,6 +4,11 @@
  */
 package me.andannn.aozora.app
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -12,8 +17,12 @@ import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.NavigableCircuitContent
+import com.slack.circuit.foundation.animation.AnimatedNavEvent
+import com.slack.circuit.foundation.animation.AnimatedNavState
+import com.slack.circuit.foundation.animation.AnimatedScreenTransform
 import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.screen.Screen
 import com.slack.circuit.runtime.ui.Ui
@@ -22,6 +31,8 @@ import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.home.LibraryNestedScreen
+import me.andannn.aozora.ui.feature.home.SearchNestedScreen
 import me.andannn.aozora.ui.feature.screens.HomeScreen
 import me.andannn.aozora.ui.feature.screens.RoutePresenterFactory
 import me.andannn.aozora.ui.feature.screens.RouteUiFactory
@@ -79,6 +90,7 @@ private fun buildCircuitMobile() =
             ),
     )
 
+@OptIn(ExperimentalCircuitApi::class)
 internal fun buildCircuit(
     presenterFactory: List<Presenter.Factory> = emptyList(),
     uiFactory: List<Ui.Factory> = emptyList(),
@@ -87,7 +99,13 @@ internal fun buildCircuit(
         .Builder()
         .addPresenterFactories(presenterFactory)
         .addUiFactories(uiFactory)
-        .build()
+        .addAnimatedScreenTransforms(
+            transforms =
+                mapOf(
+                    SearchNestedScreen::class to CustomScreenAnimatedTransform,
+                    LibraryNestedScreen::class to CustomScreenAnimatedTransform,
+                ),
+        ).build()
 
 private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
     logEvent(
@@ -97,4 +115,17 @@ private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
                 "screen" to screen.toString(),
             ),
     )
+}
+
+@OptIn(ExperimentalCircuitApi::class)
+object CustomScreenAnimatedTransform : AnimatedScreenTransform {
+    override fun AnimatedContentTransitionScope<AnimatedNavState>.enterTransition(animatedNavEvent: AnimatedNavEvent): EnterTransition? {
+        // Coming from `HomeScreen` we override the transition to slide in horizontally.
+        return if (initialState.screen is SearchNestedScreen || initialState.screen is LibraryNestedScreen) fadeIn() else null
+    }
+
+    override fun AnimatedContentTransitionScope<AnimatedNavState>.exitTransition(animatedNavEvent: AnimatedNavEvent): ExitTransition? {
+        // Going to `HomeScreen` we override the transition fade out.
+        return if (initialState.screen is SearchNestedScreen || initialState.screen is LibraryNestedScreen) fadeOut() else null
+    }
 }

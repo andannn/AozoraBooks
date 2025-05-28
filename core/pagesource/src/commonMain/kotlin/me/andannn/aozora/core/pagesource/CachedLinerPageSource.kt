@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.transformWhile
 import kotlinx.datetime.Clock.System
 import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.AozoraPage.AozoraCoverPage
@@ -48,12 +50,18 @@ internal class CachedLinerPageSource(
 ) : BookPageSource {
     private var version: Int = 0
     private val job = Job()
-    private val shardBlockHotFlow: SharedFlow<AozoraBlock> =
-        rawSource.getRawSource().shareIn(
-            CoroutineScope(Dispatchers.IO + job),
-            replay = Int.MAX_VALUE,
-            started = SharingStarted.Eagerly,
-        )
+    private val shardBlockHotFlow: SharedFlow<ParseEvent> =
+        rawSource
+            .getRawSource()
+            .map {
+                ParseEvent.Block(it) as ParseEvent
+            }.onCompletion {
+                emit(ParseEvent.Completed)
+            }.shareIn(
+                CoroutineScope(Dispatchers.IO + job),
+                replay = Int.MAX_VALUE,
+                started = SharingStarted.Eagerly,
+            )
 
     override fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
@@ -123,9 +131,20 @@ internal class CachedLinerPageSource(
         bookInfoData: BookInfo,
         pageMetaData: PageMetaData,
     ): Flow<AozoraPage> {
+        val coldFlow =
+            shardBlockHotFlow.transformWhile { state ->
+                when (state) {
+                    is ParseEvent.Block -> {
+                        emit(state.block)
+                        true
+                    }
+
+                    ParseEvent.Completed -> false
+                }
+            }
         val pageFlow: Flow<AozoraPage> =
             createPageFlowFromSequence(
-                blockSequenceFlow = shardBlockHotFlow,
+                blockSequenceFlow = coldFlow,
                 builderFactory = {
                     RoughPageBuilder(meta = pageMetaData, measurer = DefaultMeasurer(pageMetaData))
                 },
@@ -200,4 +219,12 @@ internal class CachedLinerPageSource(
     override fun close() {
         job.cancel()
     }
+}
+
+private sealed interface ParseEvent {
+    data class Block(
+        val block: AozoraBlock,
+    ) : ParseEvent
+
+    data object Completed : ParseEvent
 }

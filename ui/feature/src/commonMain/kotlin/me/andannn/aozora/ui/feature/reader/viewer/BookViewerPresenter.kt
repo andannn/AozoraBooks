@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalDensity
@@ -94,6 +95,10 @@ class BookViewerPresenter(
         val lineSpacing by userDataRepository
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
+        val savedBookCard by userDataRepository
+            .getSavedBookById(card.id)
+            .collectAsRetainedState(null)
+        val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot.Ready?>(null)
@@ -121,7 +126,14 @@ class BookViewerPresenter(
         // update progress when page changed.
         LaunchedEffect(
             snapshotState?.snapshotVersion,
+            isAddedToShelf,
         ) {
+            if (!isAddedToShelf) {
+                Napier.d(tag = TAG) { "book not added to shelf, skip" }
+                return@LaunchedEffect
+            }
+
+            Napier.d(tag = TAG) { "start observing page change event." }
             val totalCount = bookSource.getTotalBlockCount() ?: return@LaunchedEffect
             snapshotFlow { pagerState.settledPage }
                 .drop(1)

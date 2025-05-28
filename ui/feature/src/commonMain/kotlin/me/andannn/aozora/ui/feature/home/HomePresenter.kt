@@ -14,29 +14,22 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.ui.common.dialog.LocalPopupController
-import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.AboutScreen
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 
 @Composable
-fun rememberHomePresenter(
-    navigator: Navigator = LocalNavigator.current,
-    popupController: PopupController = LocalPopupController.current,
-) = remember(
-    navigator,
-    popupController,
-) {
-    HomePresenter(
-        navigator = navigator,
-        popupController = popupController,
-    )
-}
+fun rememberHomePresenter(navigator: Navigator = LocalNavigator.current) =
+    remember(
+        navigator,
+    ) {
+        HomePresenter(
+            navigator = navigator,
+        )
+    }
 
 class HomePresenter(
     private val navigator: Navigator,
-    private val popupController: PopupController,
 ) : Presenter<HomeState> {
     @Composable
     override fun present(): HomeState {

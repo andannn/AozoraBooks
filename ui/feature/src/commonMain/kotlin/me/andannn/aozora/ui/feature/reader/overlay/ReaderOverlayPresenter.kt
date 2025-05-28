@@ -25,7 +25,6 @@ import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
-import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
@@ -73,10 +72,6 @@ class ReaderOverlayPresenter(
         var showOverlay by rememberSaveable {
             mutableStateOf(false)
         }
-        val progress by userDataRepository
-            .getProgressFlow(cardId)
-            .collectAsRetainedState(ReadProgress.None)
-
         val scope = rememberCoroutineScope()
         val userMarkCompleted by userDataRepository
             .isUserMarkCompletedFlow(cardId)
@@ -84,6 +79,10 @@ class ReaderOverlayPresenter(
         val isLastPage by rememberUpdatedState(
             bookPageState.pagerState.currentPage == bookPageState.pagerState.pageCount - 1,
         )
+        val savedBookCard by userDataRepository
+            .getSavedBookById(cardId)
+            .collectAsRetainedState(null)
+        val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         suspend fun markCompletedAndShowAlertDialog() {
             userDataRepository.markBookAsCompleted(cardId)
@@ -96,7 +95,7 @@ class ReaderOverlayPresenter(
             }
         }
 
-        BackHandler(enabled = isLastPage && !userMarkCompleted) {
+        BackHandler(enabled = isAddedToShelf && isLastPage && !userMarkCompleted) {
             Napier.d(tag = TAG) { "back pressed when book completed" }
             scope.launch {
                 markCompletedAndShowAlertDialog()
@@ -106,7 +105,6 @@ class ReaderOverlayPresenter(
         SystemUiVisibilityEffect(visible = showOverlay)
 
         return ReaderOverlayState(
-            progress = progress,
             pagerState = bookPageState.pagerState,
             showOverlay = showOverlay,
         ) { event ->
@@ -136,7 +134,7 @@ class ReaderOverlayPresenter(
 
                 ReaderOverlayEvent.OnBack -> {
                     scope.launch {
-                        if (isLastPage && !userMarkCompleted) {
+                        if (isAddedToShelf && isLastPage && !userMarkCompleted) {
                             markCompletedAndShowAlertDialog()
                         } else {
                             navigator.pop()
@@ -171,7 +169,6 @@ class ReaderOverlayPresenter(
 }
 
 data class ReaderOverlayState(
-    val progress: ReadProgress,
     val pagerState: PagerState,
     val showOverlay: Boolean,
     val eventSink: (ReaderOverlayEvent) -> Unit = {},
