@@ -27,7 +27,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
@@ -108,11 +107,9 @@ fun TableOfContentsDialogContent(
         }
         val maxHeadingLevel = state.tableOfContentsList.minOfOrNull { it.headingLevel }
 
-        Napier.d { "JQN state.tableOfContentsList ${state.tableOfContentsList}" }
-
         items(
             items = state.tableOfContentsList,
-            key = { it.hashCode() },
+            key = { "${it.title}_${it.headingLevel}_${it.blockIndex}" },
         ) { tableOfContent ->
             TableOfContentItem(
                 modifier = modifier.fillMaxWidth(),
