@@ -154,7 +154,7 @@ abstract class CachedLinerPageSource : BookPageSource {
                 return emptyList()
             }
 
-        val maxHeadingLevel = bookInfo.tableOfContentList.maxOfOrNull { it.headingLevel } ?: 3
+        val maxHeadingLevel = bookInfo.tableOfContentList.minOfOrNull { it.headingLevel } ?: 3
         return sequence {
             // 表紙
             yield(

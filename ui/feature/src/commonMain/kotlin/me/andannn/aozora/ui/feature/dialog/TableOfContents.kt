@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +23,11 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
@@ -91,16 +95,25 @@ fun TableOfContentsDialogContent(
     modifier: Modifier = Modifier,
     onClickTableOfContent: (TableOfContentsModel) -> Unit = {},
 ) {
-    Column(modifier = modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
-            text = "目次",
-            style = MaterialTheme.typography.titleLarge,
-        )
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        item {
+            Column {
+                Text(
+                    modifier = Modifier.padding(start = 12.dp, top = 8.dp, bottom = 8.dp),
+                    text = "目次",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
         val maxHeadingLevel = state.tableOfContentsList.minOfOrNull { it.headingLevel }
-        Spacer(modifier = Modifier.height(24.dp))
 
-        state.tableOfContentsList.forEach { tableOfContent ->
+        Napier.d { "JQN state.tableOfContentsList ${state.tableOfContentsList}" }
+
+        items(
+            items = state.tableOfContentsList,
+            key = { it.hashCode() },
+        ) { tableOfContent ->
             TableOfContentItem(
                 modifier = modifier.fillMaxWidth(),
                 spacerCount = maxHeadingLevel?.let { tableOfContent.headingLevel - it },
@@ -111,7 +124,9 @@ fun TableOfContentsDialogContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }
 
@@ -128,7 +143,7 @@ fun TableOfContentItem(
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
-        Text(tableOfContent.title, style = getHeadingLevel(tableOfContent.headingLevel))
+        Text(tableOfContent.title, style = getHeadingLevel(tableOfContent.headingLevel), maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
