@@ -4,7 +4,10 @@
  */
 package me.andannn.core.util
 
+import kotlinx.io.Source
+import kotlinx.io.buffered
 import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.SYSTEM
@@ -12,10 +15,38 @@ import okio.buffer
 import okio.openZip
 import okio.use
 
+
+/**
+ * Write a [Source] to a [Path].
+ */
+fun Source.writeToPath(path: Path) {
+    path.parent?.let { SystemFileSystem.createDirectories(it) }
+
+    SystemFileSystem.sink(path).buffered().use { sink ->
+        this.use { source ->
+            val buffer = ByteArray(8192)
+            while (true) {
+                val bytesRead = source.readAtMostTo(buffer, 0, buffer.size)
+                when {
+                    bytesRead == -1 -> break
+                    bytesRead > 0 -> sink.write(buffer, 0, bytesRead)
+                    else -> continue // bytesRead == 0, non-blocking case
+                }
+            }
+        }
+    }
+}
+
+fun Path.createParentDirectories() {
+    this.parent?.let { parent ->
+        SystemFileSystem.createDirectories(parent)
+    }
+}
+
 /**
  * Unzip a zip file to a target directory.
  */
-fun Path.unzip(targetDirectory: Path) {
+fun Path.unzipTo(targetDirectory: Path) {
     val zipFileSystem = FileSystem.SYSTEM.openZip(this.toString().toPath())
     val fileSystem = FileSystem.SYSTEM
     val paths =

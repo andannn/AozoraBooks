@@ -116,7 +116,8 @@ internal val MIGRATION_4_5 =
             connection.execSQL(
                 """
                 CREATE TABLE book_table (
-                    book_id TEXT PRIMARY KEY NOT NULL,
+                    book_id TEXT KEY NOT NULL,
+                    author_id TEXT NOT NULL,
                     title TEXT NOT NULL,
                     title_kana TEXT NOT NULL,
                     title_sort_kana TEXT,
@@ -130,7 +131,6 @@ internal val MIGRATION_4_5 =
                     publish_date TEXT,
                     last_update_date TEXT,
                     card_url TEXT NOT NULL,
-                    author_id TEXT NOT NULL,
                     author_last_name TEXT NOT NULL,
                     author_first_name TEXT NOT NULL,
                     author_last_name_kana TEXT,
@@ -170,9 +170,29 @@ internal val MIGRATION_4_5 =
                     html_file_last_update TEXT,
                     html_file_encoding TEXT,
                     html_file_charset TEXT,
-                    html_file_revision TEXT
+                    html_file_revision TEXT,
+                    PRIMARY KEY (book_id, author_id)
                 )
                 """.trimIndent(),
             )
+
+            connection.execSQL("""
+            CREATE TABLE IF NOT EXISTS new_saved_book (
+                book_id TEXT NOT NULL PRIMARY KEY,
+                created_date INTEGER NOT NULL
+            )
+        """.trimIndent())
+
+            // 2. 将旧表数据复制到新表
+            connection.execSQL("""
+            INSERT INTO new_saved_book (book_id, created_date)
+            SELECT book_id, created_date FROM saved_book_table
+        """.trimIndent())
+
+            // 3. 删除旧表
+            connection.execSQL("DROP TABLE saved_book_table")
+
+            // 4. 重命名新表为旧表名
+            connection.execSQL("ALTER TABLE new_saved_book RENAME TO saved_book_table")
         }
     }

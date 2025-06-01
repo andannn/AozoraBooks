@@ -138,9 +138,11 @@ internal object BookColumns {
  * | XHTML/HTMLファイル文字集合| html_file_charset              |
  * | XHTML/HTMLファイル修正回数| html_file_revision             |
  */
-@Entity(tableName = BOOK_TABLE)
+@Entity(
+    tableName = BOOK_TABLE,
+    primaryKeys = [BookColumns.BOOK_ID, BookColumns.AUTHOR_ID],
+)
 data class BookEntity(
-    @PrimaryKey
     @ColumnInfo(name = BookColumns.BOOK_ID)
     val bookId: String,
     @ColumnInfo(name = BookColumns.TITLE)

@@ -11,4 +11,5 @@ object PreferencesKeyName {
     const val LINE_SPACING_KEY_NAME = "line_spacing"
     const val READER_THEME_KEY_NAME = "reader_theme"
     const val FONT_TYPE_KEY_NAME = "font_type"
+    const val LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME = "last_successful_sync_time"
 }

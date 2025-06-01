@@ -124,4 +124,14 @@ class UserSettingPreferencesTest {
             preferences.setFontType(FontType.NOTO_SERIF)
             assertEquals(FontType.NOTO_SERIF, preferences.userData.first().fontType)
         }
+
+    @Test
+    fun setLastSuccessfulSyncTime() =
+        testScope.runTest {
+            assertEquals(null, preferences.userData.first().lastSuccessfulSyncTime)
+
+            val time = randomInt.toString()
+            preferences.setLastSuccessfulSyncTime(time)
+            assertEquals(time, preferences.userData.first().lastSuccessfulSyncTime)
+        }
 }

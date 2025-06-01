@@ -59,6 +59,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:domain"))
             implementation(project(":core:data"))
+            implementation(project(":core:syncer"))
             api(project(":core:platform"))
             implementation(project(":ui:feature"))
             implementation(libs.napier)

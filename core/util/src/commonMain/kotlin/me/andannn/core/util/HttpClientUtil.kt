@@ -38,9 +38,3 @@ suspend fun HttpClient.downloadTo(
         }
     }
 }
-
-private fun Path.createParentDirectories() {
-    this.parent?.let { parent ->
-        SystemFileSystem.createDirectories(parent)
-    }
-}

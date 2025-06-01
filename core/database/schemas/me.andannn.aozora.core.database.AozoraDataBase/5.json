@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "0ee03aa2999a48b98a78d1d2594f56a2",
+    "identityHash": "54c4b599125a36ec93402f7435b4ee74",
     "entities": [
       {
         "tableName": "book_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `title_sort_kana` TEXT, `subtitle` TEXT, `subtitle_kana` TEXT, `original_title` TEXT, `first_appearance` TEXT, `category_no` TEXT, `orthography` TEXT, `work_copyright_flag` TEXT, `publish_date` TEXT, `last_update_date` TEXT, `card_url` TEXT NOT NULL, `author_id` TEXT NOT NULL, `author_last_name` TEXT NOT NULL, `author_first_name` TEXT NOT NULL, `author_last_name_kana` TEXT, `author_first_name_kana` TEXT, `author_last_name_sort_kana` TEXT, `author_first_name_sort_kana` TEXT, `author_last_name_romaji` TEXT, `author_first_name_romaji` TEXT, `author_role_flag` TEXT, `author_birth` TEXT, `author_death` TEXT, `author_copyright_flag` TEXT, `source_book1` TEXT, `source_publisher1` TEXT, `source_pub_year1` TEXT, `input_edition1` TEXT, `proof_edition1` TEXT, `parent_source_book1` TEXT, `parent_source_publisher1` TEXT, `parent_source_pub_year1` TEXT, `source_book2` TEXT, `source_publisher2` TEXT, `source_pub_year2` TEXT, `input_edition2` TEXT, `proof_edition2` TEXT, `parent_source_book2` TEXT, `parent_source_publisher2` TEXT, `parent_source_pub_year2` TEXT, `input_by` TEXT, `proof_by` TEXT, `text_file_url` TEXT, `text_file_last_update` TEXT, `text_file_encoding` TEXT, `text_file_charset` TEXT, `text_file_revision` TEXT, `html_file_url` TEXT, `html_file_last_update` TEXT, `html_file_encoding` TEXT, `html_file_charset` TEXT, `html_file_revision` TEXT, PRIMARY KEY(`book_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `title_sort_kana` TEXT, `subtitle` TEXT, `subtitle_kana` TEXT, `original_title` TEXT, `first_appearance` TEXT, `category_no` TEXT, `orthography` TEXT, `work_copyright_flag` TEXT, `publish_date` TEXT, `last_update_date` TEXT, `card_url` TEXT NOT NULL, `author_id` TEXT NOT NULL, `author_last_name` TEXT NOT NULL, `author_first_name` TEXT NOT NULL, `author_last_name_kana` TEXT, `author_first_name_kana` TEXT, `author_last_name_sort_kana` TEXT, `author_first_name_sort_kana` TEXT, `author_last_name_romaji` TEXT, `author_first_name_romaji` TEXT, `author_role_flag` TEXT, `author_birth` TEXT, `author_death` TEXT, `author_copyright_flag` TEXT, `source_book1` TEXT, `source_publisher1` TEXT, `source_pub_year1` TEXT, `input_edition1` TEXT, `proof_edition1` TEXT, `parent_source_book1` TEXT, `parent_source_publisher1` TEXT, `parent_source_pub_year1` TEXT, `source_book2` TEXT, `source_publisher2` TEXT, `source_pub_year2` TEXT, `input_edition2` TEXT, `proof_edition2` TEXT, `parent_source_book2` TEXT, `parent_source_publisher2` TEXT, `parent_source_pub_year2` TEXT, `input_by` TEXT, `proof_by` TEXT, `text_file_url` TEXT, `text_file_last_update` TEXT, `text_file_encoding` TEXT, `text_file_charset` TEXT, `text_file_revision` TEXT, `html_file_url` TEXT, `html_file_last_update` TEXT, `html_file_encoding` TEXT, `html_file_charset` TEXT, `html_file_revision` TEXT, PRIMARY KEY(`book_id`, `author_id`))",
         "fields": [
           {
             "fieldPath": "bookId",
@@ -294,16 +294,17 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "book_id"
+            "book_id",
+            "author_id"
           ]
         }
       },
       {
         "tableName": "saved_book_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`), FOREIGN KEY(`book_id`) REFERENCES `book_table`(`book_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
         "fields": [
           {
-            "fieldPath": "bookId",
+            "fieldPath": "authorId",
             "columnName": "book_id",
             "affinity": "TEXT",
             "notNull": true
@@ -320,20 +321,7 @@
           "columnNames": [
             "book_id"
           ]
-        },
-        "foreignKeys": [
-          {
-            "table": "book_table",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "book_id"
-            ],
-            "referencedColumns": [
-              "book_id"
-            ]
-          }
-        ]
+        }
       },
       {
         "tableName": "book_progress_table",
@@ -378,7 +366,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ee03aa2999a48b98a78d1d2594f56a2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54c4b599125a36ec93402f7435b4ee74')"
     ]
   }
 }

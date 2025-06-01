@@ -39,7 +39,7 @@ import me.andannn.aozora.core.pagesource.parser.lineSequence
 import me.andannn.aozora.core.pagesource.util.validBlock
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
-import me.andannn.core.util.unzip
+import me.andannn.core.util.unzipTo
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "RemoteOrLocalCacheBookR"
@@ -212,7 +212,7 @@ private suspend fun downloadAndUnZip(
             async {
                 val tempZipFilePath = Path("$savePath/temp.zip")
                 client.downloadTo(zipUrl, tempZipFilePath)
-                tempZipFilePath.unzip(savePath)
+                tempZipFilePath.unzipTo(savePath)
                 SystemFileSystem.delete(tempZipFilePath)
             }
         }
