@@ -8,7 +8,7 @@ It supports advanced layout features like ruby annotations and vertical text, an
 ## Download
 
 <a href="https://play.google.com/store/apps/details?id=me.andannn.aozora" target="_blank">
-<img src="composeApp/src/androidMain/ic_launcher-playstore.png" width=240 />
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
 </a>
 
 ## Features
