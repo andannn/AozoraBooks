@@ -13,8 +13,8 @@ import me.andannn.aozora.core.domain.model.LoadResult
 interface AozoraContentsRepository {
     fun getBookListPagingFlow(kana: String): Flow<PagingData<BookColumnItem>>
 
-    suspend fun getBookCard(
+    fun getBookCard(
         cardId: String,
-        groupId: String,
-    ): LoadResult<AozoraBookCard>
+        authorId: String,
+    ): Flow<AozoraBookCard?>
 }

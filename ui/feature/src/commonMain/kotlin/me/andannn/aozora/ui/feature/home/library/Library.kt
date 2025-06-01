@@ -136,7 +136,7 @@ private fun BookList(
             PreviewBookCard(
                 modifier = Modifier.animateItem(),
                 title = card.title,
-                author = card.authorName.toString(),
+                author = card.author.toString(),
                 progress = progress,
                 userMarkRead = bookWithProgress.isUserMarkCompleted,
                 onClick = {

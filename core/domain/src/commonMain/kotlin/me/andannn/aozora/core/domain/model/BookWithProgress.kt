@@ -4,18 +4,8 @@
  */
 package me.andannn.aozora.core.domain.model
 
-data class CachedBookModel(
-    val id: String,
-    val groupId: String,
-    val title: String,
-    val titleKana: String,
-    val authorName: String?,
-    val zipUrl: String?,
-    val htmlUrl: String?,
-)
-
 data class BookWithProgress(
-    val book: CachedBookModel,
+    val book: AozoraBookCard,
     val progress: ReadProgress,
     val isUserMarkCompleted: Boolean,
 )

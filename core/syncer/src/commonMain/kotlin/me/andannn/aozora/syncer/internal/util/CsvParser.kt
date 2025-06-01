@@ -27,6 +27,6 @@ private fun Source.asCsvDataSequence(): Sequence<List<String>> =
             }
 
             val line = this@asCsvDataSequence.readLine() ?: continue
-            yield(line.split(","))
+            yield(line.split(",").map { it.trim('"') })
         }
     }

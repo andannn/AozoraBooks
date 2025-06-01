@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.dialog.ActionDialog
@@ -66,7 +66,7 @@ fun Reader(
 
 @Composable
 private fun ReaderContent(
-    bookCard: CachedBookModel,
+    bookCard: AozoraBookCard,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {

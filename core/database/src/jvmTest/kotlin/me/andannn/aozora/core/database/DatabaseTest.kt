@@ -182,6 +182,18 @@ class DatabaseTest {
                 savedBookDao.getCompleteBooksByDesc().first().isNotEmpty()
             }
         }
+
+    @Test
+    fun getBookEntityById() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            val result = savedBookDao.getBookByBookIdAndAuthorId(
+                bookId = "056078",
+                authorId = "001257"
+            )
+            assertEquals("056078", result.first()?.bookId)
+        }
+
 }
 
 private val bookEntities =
@@ -301,7 +313,7 @@ private val bookEntities =
             htmlFileRevision = null,
         ),
         BookEntity(
-            bookId = "3",
+            bookId = "056078",
             title = "title3",
             titleKana = "titleKana3",
             titleSortKana = null,
@@ -315,7 +327,7 @@ private val bookEntities =
             publishDate = null,
             lastUpdateDate = null,
             cardUrl = "authorUrl3",
-            authorId = "3",
+            authorId = "001257",
             authorLastName = "author3",
             authorFirstName = "",
             authorLastNameKana = null,

@@ -66,9 +66,11 @@ class IndexPagesPresenter(
 
                 is IndexPagesUiEvent.OnBookClick -> {
                     val url = event.book.title.link
-                    Napier.d(tag = TAG) { "goto url $url" }
                     val id = url.substringAfterLast("/card").removeSuffix(".html")
+                        .padStart(6, '0')
                     val groupId = url.substringAfterLast("/cards/").substringBefore("/")
+                        .padStart(6, '0')
+                    Napier.d(tag = TAG) { "goto url $url groupId $groupId id $id" }
                     navigator.goTo(
                         BookCardScreen(
                             bookCardId = id,

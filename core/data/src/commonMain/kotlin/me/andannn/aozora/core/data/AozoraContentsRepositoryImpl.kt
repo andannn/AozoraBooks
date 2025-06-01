@@ -8,11 +8,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import io.github.aakira.napier.Napier
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import me.andannn.aozora.core.data.mapper.toModel
 import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookColumnItem
-import me.andannn.aozora.core.domain.model.LoadResult
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.service.AozoraService
 
@@ -28,17 +32,13 @@ internal class AozoraContentsRepositoryImpl(
             pagingSourceFactory = { BookListPagingSource(kana, aozoraService) },
         ).flow
 
-    // TODO: read from database instead of network
-    override suspend fun getBookCard(
+    override fun getBookCard(
         cardId: String,
-        groupId: String,
-    ): LoadResult<AozoraBookCard> {
-        try {
-            val bookCard = aozoraService.getBookCard(groupId = groupId, cardId = cardId)
-            return LoadResult.Success(bookCard)
-        } catch (e: Exception) {
-            Napier.e { "getBookCard: $e" }
-            return LoadResult.Error(e)
-        }
+        authorId: String,
+    ): Flow<AozoraBookCard?> {
+        return savedBookDao.getBookByBookIdAndAuthorId(bookId = cardId, authorId = authorId)
+            .map {
+                it?.toModel()
+            }
     }
 }

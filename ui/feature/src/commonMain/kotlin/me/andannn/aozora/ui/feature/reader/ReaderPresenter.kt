@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.util.ImmersiveModeEffect
 import me.andannn.aozora.ui.common.util.KeepScreenOnEffect
@@ -49,7 +49,7 @@ class ReaderPresenter(
 
 @Stable
 data class ReaderState(
-    val bookCard: CachedBookModel?,
+    val bookCard: AozoraBookCard?,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

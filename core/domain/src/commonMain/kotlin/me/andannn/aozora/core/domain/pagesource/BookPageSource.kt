@@ -9,8 +9,8 @@ import androidx.compose.runtime.compositionLocalOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraPage
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
@@ -53,7 +53,7 @@ interface BookPageSource {
         fun createDummySource(): BookPageSource
 
         fun createBookPageSource(
-            card: CachedBookModel,
+            card: AozoraBookCard,
             scope: CoroutineScope,
         ): BookPageSource
     }

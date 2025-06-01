@@ -24,7 +24,8 @@ class CsvParserTest {
                     """.trimIndent(),
                 )
             }
-        val result = buffer.parseAsBookModel()
-        assertEquals(3, result.toList().size)
+        val result = buffer.parseAsBookModel().toList()
+        assertEquals(3, result.size)
+        assertEquals("059898", result.first().bookId)
     }
 }

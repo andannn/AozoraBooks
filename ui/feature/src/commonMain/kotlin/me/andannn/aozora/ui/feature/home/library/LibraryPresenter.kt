@@ -19,8 +19,8 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
@@ -135,7 +135,7 @@ sealed interface LibraryUiEvent {
     ) : LibraryUiEvent
 
     data class OnCardOptionClick(
-        val card: CachedBookModel,
+        val card: AozoraBookCard,
     ) : LibraryUiEvent
 
     data class OnTabRowClick(

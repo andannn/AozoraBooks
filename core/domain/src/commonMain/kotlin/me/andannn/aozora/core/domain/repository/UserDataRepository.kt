@@ -5,8 +5,8 @@
 package me.andannn.aozora.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
@@ -124,7 +124,7 @@ interface UserDataRepository {
     /**
      * Get saved book by id.
      */
-    fun getSavedBookById(id: String): Flow<CachedBookModel?>
+    fun getSavedBookById(id: String): Flow<AozoraBookCard?>
 
-    fun getBookCache(bookId: String): Flow<CachedBookModel?>
+    fun getBookCache(bookId: String): Flow<AozoraBookCard?>
 }

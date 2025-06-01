@@ -7,14 +7,14 @@ package me.andannn.aozora.core.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
+import me.andannn.aozora.core.data.mapper.toModel
 import me.andannn.aozora.core.database.dao.SavedBookDao
 import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
-import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
 import me.andannn.aozora.core.datastore.UserSettingPreferences
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
@@ -165,7 +165,7 @@ internal class UserDataRepositoryImpl(
         dao.deleteSavedBook(bookId)
     }
 
-    override fun getSavedBookById(id: String): Flow<CachedBookModel?> =
+    override fun getSavedBookById(id: String): Flow<AozoraBookCard?> =
         dao.getSavedBookById(id).map {
             it?.toModel()
         }
@@ -181,17 +181,6 @@ private fun BookEntityWithProgress.toModel() =
         book = book.toModel(),
         progress = progress.toReadProgress(),
         isUserMarkCompleted = progress?.markCompleted == true,
-    )
-
-private fun BookEntity.toModel() =
-    CachedBookModel(
-        id = bookId,
-        groupId = authorId,
-        title = title,
-        titleKana = titleKana,
-        authorName = authorFirstName + authorLastName,
-        zipUrl = textFileUrl,
-        htmlUrl = htmlFileUrl,
     )
 
 private fun ReadProgress.toDataBaseValue(): Int =
