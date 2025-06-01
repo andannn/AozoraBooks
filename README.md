@@ -5,6 +5,12 @@ It supports advanced layout features like ruby annotations and vertical text, an
 
 ⚠️ This project is in a very early stage of development. 
 
+## Download
+
+<a href="https://play.google.com/store/apps/details?id=me.andannn.aozora" target="_blank">
+<img src="composeApp/src/androidMain/ic_launcher-playstore.png" width=240 />
+</a>
+
 ## Features
 
 - Support for Aozora Bunko HTML format, including:
