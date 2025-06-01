@@ -31,7 +31,7 @@ internal object Tables {
         SavedBookEntity::class,
         BookProgressEntity::class,
     ],
-    version = 4,
+    version = 5,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class AozoraDataBase : RoomDatabase() {
@@ -51,6 +51,7 @@ internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
             MIGRATION_1_2,
             MIGRATION_2_3,
             MIGRATION_3_4,
+            MIGRATION_4_5,
         )
     }
 
@@ -103,6 +104,75 @@ internal val MIGRATION_3_4 =
         override fun migrate(connection: SQLiteConnection) {
             connection.execSQL(
                 "ALTER TABLE ${Tables.BOOK_PROGRESS_TABLE} ADD COLUMN ${BookProgressColumns.MARK_COMPLETED} INTEGER",
+            )
+        }
+    }
+
+internal val MIGRATION_4_5 =
+    object : Migration(4, 5) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("DROP TABLE IF EXISTS book_table")
+
+            connection.execSQL(
+                """
+                CREATE TABLE book_table (
+                    book_id TEXT PRIMARY KEY NOT NULL,
+                    title TEXT NOT NULL,
+                    title_kana TEXT NOT NULL,
+                    title_sort_kana TEXT,
+                    subtitle TEXT,
+                    subtitle_kana TEXT,
+                    original_title TEXT,
+                    first_appearance TEXT,
+                    category_no TEXT,
+                    orthography TEXT,
+                    work_copyright_flag TEXT,
+                    publish_date TEXT,
+                    last_update_date TEXT,
+                    card_url TEXT NOT NULL,
+                    author_id TEXT NOT NULL,
+                    author_last_name TEXT NOT NULL,
+                    author_first_name TEXT NOT NULL,
+                    author_last_name_kana TEXT,
+                    author_first_name_kana TEXT,
+                    author_last_name_sort_kana TEXT,
+                    author_first_name_sort_kana TEXT,
+                    author_last_name_romaji TEXT,
+                    author_first_name_romaji TEXT,
+                    author_role_flag TEXT,
+                    author_birth TEXT,
+                    author_death TEXT,
+                    author_copyright_flag TEXT,
+                    source_book1 TEXT,
+                    source_publisher1 TEXT,
+                    source_pub_year1 TEXT,
+                    input_edition1 TEXT,
+                    proof_edition1 TEXT,
+                    parent_source_book1 TEXT,
+                    parent_source_publisher1 TEXT,
+                    parent_source_pub_year1 TEXT,
+                    source_book2 TEXT,
+                    source_publisher2 TEXT,
+                    source_pub_year2 TEXT,
+                    input_edition2 TEXT,
+                    proof_edition2 TEXT,
+                    parent_source_book2 TEXT,
+                    parent_source_publisher2 TEXT,
+                    parent_source_pub_year2 TEXT,
+                    input_by TEXT,
+                    proof_by TEXT,
+                    text_file_url TEXT,
+                    text_file_last_update TEXT,
+                    text_file_encoding TEXT,
+                    text_file_charset TEXT,
+                    text_file_revision TEXT,
+                    html_file_url TEXT,
+                    html_file_last_update TEXT,
+                    html_file_encoding TEXT,
+                    html_file_charset TEXT,
+                    html_file_revision TEXT
+                )
+                """.trimIndent(),
             )
         }
     }

@@ -186,12 +186,12 @@ private fun BookEntityWithProgress.toModel() =
 private fun BookEntity.toModel() =
     CachedBookModel(
         id = bookId,
-        groupId = groupId,
+        groupId = authorId,
         title = title,
         titleKana = titleKana,
-        authorName = author,
-        zipUrl = zipUrl,
-        htmlUrl = htmlUrl,
+        authorName = authorFirstName + authorLastName,
+        zipUrl = textFileUrl,
+        htmlUrl = htmlFileUrl,
     )
 
 private fun ReadProgress.toDataBaseValue(): Int =
