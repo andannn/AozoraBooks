@@ -27,6 +27,7 @@ internal fun BookEntity.toModel() =
                 input = inputBy,
                 proofreading = proofBy,
             ),
+        subTitle = subtitle,
         authorDataList =
             listOf(
                 AuthorData(

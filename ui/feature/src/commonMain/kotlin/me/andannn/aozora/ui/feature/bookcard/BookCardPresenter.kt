@@ -11,9 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
@@ -57,11 +59,17 @@ class BookCardPresenter(
     @Composable
     override fun present(): BookCardState {
         val scope = rememberCoroutineScope()
-        val bookCardInfo by aozoraContentsRepository
-            .getBookCard(
-                cardId = bookId,
-                authorId = groupId,
-            ).collectAsRetainedState(null)
+        val bookCardInfo by
+            produceRetainedState<AozoraBookCard?>(null) {
+                aozoraContentsRepository
+                    .getBookCard(
+                        cardId = bookId,
+                        authorId = groupId,
+                    ).filterNotNull()
+                    .collect {
+                        value = it
+                    }
+            }
         val savedBookCard by userDataRepository
             .getSavedBookById(bookId)
             .collectAsRetainedState(null)

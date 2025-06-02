@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import me.andannn.aozora.core.domain.model.BookColumnItem
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
@@ -52,7 +52,7 @@ fun IndexPages(
 fun IndexPagesStateContent(
     modifier: Modifier = Modifier,
     label: String,
-    pagingData: LazyPagingItems<BookColumnItem>,
+    pagingData: LazyPagingItems<AozoraBookCard>,
     onEvent: (IndexPagesUiEvent) -> Unit,
 ) {
     Scaffold(
@@ -82,6 +82,7 @@ fun IndexPagesStateContent(
                     pagingData[index]?.let {
                         BookColumnItemView(
                             modifier = Modifier.fillMaxWidth(),
+                            index = index,
                             item = it,
                             onClick = {
                                 onEvent.invoke(IndexPagesUiEvent.OnBookClick(it))
@@ -134,7 +135,8 @@ fun IndexPagesStateContent(
 
 @Composable
 private fun BookColumnItemView(
-    item: BookColumnItem,
+    item: AozoraBookCard,
+    index: Int,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
@@ -142,19 +144,19 @@ private fun BookColumnItemView(
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            Text("No.${item.index}", style = MaterialTheme.typography.labelLarge)
+            Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
             Text(
-                item.title.title,
+                item.title,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            if (item.title.subTitle != null) {
-                Text(item.title.subTitle!!, style = MaterialTheme.typography.bodyMedium)
+            if (item.subTitle != null) {
+                Text(item.subTitle!!, style = MaterialTheme.typography.bodyMedium)
             }
             Text("著者：" + item.author, style = MaterialTheme.typography.bodySmall)
-            if (item.translator != null) {
-                Text("訳者：" + item.translator!!, style = MaterialTheme.typography.bodySmall)
-            }
+//            if (item.translator != null) {
+//                Text("訳者：" + item.translator!!, style = MaterialTheme.typography.bodySmall)
+//            }
         }
     }
 }

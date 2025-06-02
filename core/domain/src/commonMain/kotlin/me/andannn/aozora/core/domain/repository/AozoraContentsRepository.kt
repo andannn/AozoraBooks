@@ -7,10 +7,9 @@ package me.andannn.aozora.core.domain.repository
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.BookColumnItem
 
 interface AozoraContentsRepository {
-    fun getBookListPagingFlow(kana: String): Flow<PagingData<BookColumnItem>>
+    fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>>
 
     fun getBookCard(
         cardId: String,

@@ -8,8 +8,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import me.andannn.aozora.app.AozoraBooksApp
 import me.andannn.aozora.syncer.SyncWorkHelper
+import me.andannn.aozora.syncer.internal.util.getCsvZipLastModifiedTime
 import me.andannn.aozora.ui.common.theme.AozoraTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +21,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         SyncWorkHelper.registerPeriodicSyncWork(this)
-
+        lifecycleScope.launch {
+            getCsvZipLastModifiedTime()
+        }
         setContent {
             AozoraTheme(
                 dynamicColor = false,

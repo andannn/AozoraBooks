@@ -15,12 +15,11 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.domain.model.BookColumnItem
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.BookCardScreen
 import me.andannn.core.util.rememberRetainedCoroutineScope
-import me.andannn.core.util.romajiToKana
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -45,10 +44,7 @@ class IndexPagesPresenter(
 ) : Presenter<IndexPagesState> {
     @Composable
     override fun present(): IndexPagesState {
-        val kanaLabel =
-            remember {
-                kana.romajiToKana(isKatakana = true)
-            }
+        Napier.d(tag = TAG) { "present $kana" }
         val scope = rememberRetainedCoroutineScope()
         val pagingDataFlow =
             rememberRetained {
@@ -56,7 +52,7 @@ class IndexPagesPresenter(
             }
         val pagingData = pagingDataFlow.collectAsLazyPagingItems()
         return IndexPagesState(
-            kanaLabel,
+            kana,
             pagingData,
         ) { event ->
             when (event) {
@@ -65,18 +61,11 @@ class IndexPagesPresenter(
                 }
 
                 is IndexPagesUiEvent.OnBookClick -> {
-                    val url = event.book.title.link
-                    val id =
-                        url.substringAfterLast("/card").removeSuffix(".html")
-                            .padStart(6, '0')
-                    val groupId =
-                        url.substringAfterLast("/cards/").substringBefore("/")
-                            .padStart(6, '0')
-                    Napier.d(tag = TAG) { "goto url $url groupId $groupId id $id" }
+                    Napier.d(tag = TAG) { "goto book card ${event.book.id} groupId ${event.book.groupId}" }
                     navigator.goTo(
                         BookCardScreen(
-                            bookCardId = id,
-                            groupId = groupId,
+                            bookCardId = event.book.id,
+                            groupId = event.book.groupId,
                         ),
                     )
                 }
@@ -88,12 +77,14 @@ class IndexPagesPresenter(
 @Stable
 data class IndexPagesState(
     val kanaLabel: String,
-    val pagingData: LazyPagingItems<BookColumnItem>,
+    val pagingData: LazyPagingItems<AozoraBookCard>,
     val evenSink: (IndexPagesUiEvent) -> Unit = {},
 ) : CircuitUiState
 
 sealed interface IndexPagesUiEvent {
     data object OnBack : IndexPagesUiEvent
 
-    data class OnBookClick(val book: BookColumnItem) : IndexPagesUiEvent
+    data class OnBookClick(
+        val book: AozoraBookCard,
+    ) : IndexPagesUiEvent
 }

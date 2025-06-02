@@ -4,6 +4,7 @@
  */
 package me.andannn.aozora.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -36,11 +37,24 @@ interface SavedBookDao {
     fun getBookById(bookId: String): Flow<BookEntity?>
 
     /**
+     * Get paging source of sorted by kana
+     */
+    @Query(
+        """
+        SELECT * FROM ${Tables.BOOK_TABLE} 
+        WHERE ${BookColumns.TITLE_SORT_KANA} LIKE :kana || '%'
+        ORDER BY ${BookColumns.TITLE_SORT_KANA} ASC
+        """,
+    )
+    fun kanaPagingSource(kana: String): PagingSource<Int, BookEntity>
+
+    /**
      * Get a book by id
      */
     @Query(
         """
-            SELECT * FROM ${Tables.BOOK_TABLE} WHERE ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = :bookId AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = :authorId
+            SELECT * FROM ${Tables.BOOK_TABLE}
+            WHERE ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = :bookId AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = :authorId
         """,
     )
     fun getBookByBookIdAndAuthorId(

@@ -132,7 +132,7 @@ object RoutePresenterFactory : Presenter.Factory {
 
             is SearchNestedScreen -> {
                 presenterOf {
-                    rememberSearchPresenter(nestedNavigator = navigator).present()
+                    rememberSearchPresenter().present()
                 }
             }
 

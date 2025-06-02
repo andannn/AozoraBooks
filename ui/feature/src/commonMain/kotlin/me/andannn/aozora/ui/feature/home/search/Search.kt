@@ -60,7 +60,7 @@ fun SearchContent(
             SearchByKanaArea(
                 modifier = Modifier.padding(8.dp),
                 onKanaItemClicked = {
-                    onEvent.invoke(SearchUiEvent.OnClickKanaItem(it.kana))
+                    onEvent.invoke(SearchUiEvent.OnClickKanaItem(it))
                 },
             )
         }
@@ -179,5 +179,5 @@ private val KanaItemList =
         KanaItem("mo", "も"),
         KanaItem("yo", "よ"),
         KanaItem("ro", "ろ"),
-        KanaItem("zz", "他"),
+        null,
     )

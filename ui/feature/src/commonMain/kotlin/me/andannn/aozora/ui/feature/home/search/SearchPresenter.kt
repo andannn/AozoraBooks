@@ -14,10 +14,7 @@ import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.screens.IndexPageScreen
 
 @Composable
-fun rememberSearchPresenter(
-    nestedNavigator: Navigator,
-    navigator: Navigator = LocalNavigator.current,
-): SearchPresenter =
+fun rememberSearchPresenter(navigator: Navigator = LocalNavigator.current): SearchPresenter =
     remember(
         navigator,
     ) {
@@ -34,7 +31,7 @@ class SearchPresenter(
         SearchState { event ->
             when (event) {
                 is SearchUiEvent.OnClickKanaItem -> {
-                    navigator.goTo(IndexPageScreen(kana = event.kana))
+                    navigator.goTo(IndexPageScreen(kana = event.kana.kanaLabel))
                 }
             }
         }
@@ -47,6 +44,6 @@ data class SearchState(
 
 sealed interface SearchUiEvent {
     data class OnClickKanaItem(
-        val kana: String,
+        val kana: KanaItem,
     ) : SearchUiEvent
 }

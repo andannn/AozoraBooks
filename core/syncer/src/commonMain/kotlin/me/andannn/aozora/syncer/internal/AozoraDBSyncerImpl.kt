@@ -6,6 +6,7 @@ package me.andannn.aozora.syncer.internal
 
 import aosora.core.syncer.generated.resources.Res
 import io.github.aakira.napier.Napier
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.first
 import kotlinx.io.Buffer
 import kotlinx.io.buffered
@@ -16,11 +17,15 @@ import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.datastore.UserSettingPreferences
 import me.andannn.aozora.syncer.AozoraDBSyncer
 import me.andannn.aozora.syncer.SyncResult
+import me.andannn.aozora.syncer.internal.util.CSV_ZIP_URL
+import me.andannn.aozora.syncer.internal.util.getCsvZipLastModifiedTime
 import me.andannn.aozora.syncer.internal.util.parseAsBookModel
 import me.andannn.aozora.syncer.internal.util.toEntity
+import me.andannn.core.util.downloadTo
 import me.andannn.core.util.unzipTo
 import me.andannn.core.util.writeToPath
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.koin.mp.KoinPlatform.getKoin
 
 private const val BUNDLED_CSV_FILE_LAST_MODIFIED_TIME = "Sat, 31 May 2025 18:03:00 GMT"
 
@@ -44,6 +49,17 @@ internal class AozoraDBSyncerImpl(
                 return SyncResult.Retry
             }
 
+            val serverLastModifiedTime = getCsvZipLastModifiedTime()
+            if (lastSuccessfulSyncTime == serverLastModifiedTime) {
+                Napier.d(tag = TAG) { "sync time is same as server time. No need to sync." }
+                return SyncResult.Success
+            }
+
+            Napier.d(tag = TAG) { "Sync with server data E" }
+            syncWithAozoraServerData()
+            saveLastSuccessfulSyncTime(serverLastModifiedTime)
+            Napier.d(tag = TAG) { "Sync with server data X" }
+
             Napier.d(tag = TAG) { "sync end." }
             return SyncResult.Success
         } catch (e: Exception) {
@@ -60,13 +76,19 @@ internal class AozoraDBSyncerImpl(
         unzipCsvAndInsertToDB()
     }
 
+    private suspend fun syncWithAozoraServerData() {
+        val csvZipPath = Path(getCachedCsvPath(), CSV_TEMP_ZIP_FILE_NAME)
+        getKoin().get<HttpClient>().downloadTo(CSV_ZIP_URL, csvZipPath)
+
+        unzipCsvAndInsertToDB()
+    }
+
     private suspend fun unzipCsvAndInsertToDB() {
         val csvDictionary = getCachedCsvPath()
         val zipPath = Path(csvDictionary, CSV_TEMP_ZIP_FILE_NAME)
         zipPath.unzipTo(csvDictionary)
         val csvFile = SystemFileSystem.list(csvDictionary).firstOrNull { it.name.endsWith(".csv") }
         if (csvFile == null) {
-            Napier.e(tag = TAG) { "csv file not found" }
             error("csv file not found after unzip")
         }
 

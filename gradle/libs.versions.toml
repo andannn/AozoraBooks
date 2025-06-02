@@ -88,6 +88,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 play-services-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "playServicesAds" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
+room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidxRoom" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "androidxRoom" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }

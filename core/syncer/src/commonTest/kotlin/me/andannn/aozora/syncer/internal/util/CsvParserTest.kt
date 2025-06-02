@@ -2,11 +2,10 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.syncer
+package me.andannn.aozora.syncer.internal.util
 
 import kotlinx.io.Buffer
 import kotlinx.io.writeString
-import me.andannn.aozora.syncer.internal.util.parseAsBookModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
