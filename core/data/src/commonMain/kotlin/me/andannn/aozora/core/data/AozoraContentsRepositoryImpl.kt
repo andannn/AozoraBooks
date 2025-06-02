@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import me.andannn.aozora.core.data.mapper.toModel
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.service.AozoraService
@@ -24,7 +24,7 @@ private const val TAG = "AozoraContentsRepository"
 
 internal class AozoraContentsRepositoryImpl(
     private val aozoraService: AozoraService,
-    private val savedBookDao: SavedBookDao,
+    private val savedBookDao: BookLibraryDao,
 ) : AozoraContentsRepository {
     override fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>> =
         Pager(

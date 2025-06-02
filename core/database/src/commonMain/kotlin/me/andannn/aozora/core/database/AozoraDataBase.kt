@@ -13,7 +13,8 @@ import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.dao.BookLibraryDao
+import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
@@ -21,6 +22,7 @@ import me.andannn.aozora.core.database.entity.SavedBookEntity
 
 internal object Tables {
     const val BOOK_TABLE = "book_table"
+    const val AUTHOR_TABLE = "author_table"
     const val SAVED_BOOK_TABLE = "saved_book_table"
     const val BOOK_PROGRESS_TABLE = "book_progress_table"
 }
@@ -30,12 +32,13 @@ internal object Tables {
         BookEntity::class,
         SavedBookEntity::class,
         BookProgressEntity::class,
+        AuthorEntity::class,
     ],
     version = 5,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class AozoraDataBase : RoomDatabase() {
-    abstract fun savedBookDao(): SavedBookDao
+    abstract fun savedBookDao(): BookLibraryDao
 }
 
 // The Room compiler generates the `actual` implementations.

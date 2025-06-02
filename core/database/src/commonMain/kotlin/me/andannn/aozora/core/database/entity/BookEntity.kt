@@ -8,18 +8,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import me.andannn.aozora.core.database.Tables.BOOK_TABLE
 
-// internal object BookColumns {
-//    const val BOOK_ID = "book_id"
-//    const val TITLE = "title"
-//    const val TITLE_KANA = "title_kana"
-//    const val GROUP_ID = "group_id"  //  -> AUTHOR_ID
-//    const val AUTHOR = "author"   //  -> Deleted
-//    const val AUTHOR_URL = "author_url" // -> Deleted
-//    const val ZIP_URL = "zip_url"     // -> TEXT_FILE_URL
-//    const val HTML_URL = "html_url"   // -> HTML_FILE_URL
-//    const val SAVED_DATE = "saved_date"  // -> Deleted
-// }
-
 internal object BookColumns {
     const val BOOK_ID = "book_id"
     const val TITLE = "title"

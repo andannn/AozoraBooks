@@ -6,7 +6,7 @@ package me.andannn.aozora.core.database.di
 
 import androidx.room.RoomDatabase
 import me.andannn.aozora.core.database.AozoraDataBase
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.setUpDatabase
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -23,7 +23,7 @@ val databaseModule =
                         .setUpDatabase()
                         .build()
                 }
-                single<SavedBookDao> { get<AozoraDataBase>().savedBookDao() }
+                single<BookLibraryDao> { get<AozoraDataBase>().savedBookDao() }
             },
         )
     }

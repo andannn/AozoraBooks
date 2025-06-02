@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.dao.READ_PROGRESS_DONE
-import me.andannn.aozora.core.database.dao.SavedBookDao
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -29,7 +29,7 @@ class DatabaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
 
-    private val savedBookDao: SavedBookDao
+    private val savedBookDao: BookLibraryDao
         get() = database.savedBookDao()
 
     @Test

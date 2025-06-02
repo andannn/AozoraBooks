@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "54c4b599125a36ec93402f7435b4ee74",
+    "identityHash": "9dc5fa78494cbf642983c4c2e5e1a74f",
     "entities": [
       {
         "tableName": "book_table",
@@ -304,7 +304,7 @@
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
         "fields": [
           {
-            "fieldPath": "authorId",
+            "fieldPath": "bookId",
             "columnName": "book_id",
             "affinity": "TEXT",
             "notNull": true
@@ -362,11 +362,86 @@
             "saved_book_id"
           ]
         }
+      },
+      {
+        "tableName": "author_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`author_id` TEXT NOT NULL, `last_name` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name_kana` TEXT, `first_name_kana` TEXT, `last_name_sort_kana` TEXT, `first_name_sort_kana` TEXT, `last_name_romaji` TEXT, `first_name_romaji` TEXT, `birth` TEXT, `death` TEXT, `copyright_flag` TEXT, PRIMARY KEY(`author_id`))",
+        "fields": [
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNameKana",
+            "columnName": "last_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameKana",
+            "columnName": "first_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastNameSortKana",
+            "columnName": "last_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameSortKana",
+            "columnName": "first_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastNameRomaji",
+            "columnName": "last_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameRomaji",
+            "columnName": "first_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "birth",
+            "columnName": "birth",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "death",
+            "columnName": "death",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "copyrightFlag",
+            "columnName": "copyright_flag",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "author_id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54c4b599125a36ec93402f7435b4ee74')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9dc5fa78494cbf642983c4c2e5e1a74f')"
     ]
   }
 }

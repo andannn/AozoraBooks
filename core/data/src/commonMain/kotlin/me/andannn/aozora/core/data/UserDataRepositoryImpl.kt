@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import me.andannn.aozora.core.data.mapper.toModel
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -27,7 +27,7 @@ import me.andannn.aozora.core.domain.repository.UserDataRepository
 
 internal class UserDataRepositoryImpl(
     private val preferences: UserSettingPreferences,
-    private val dao: SavedBookDao,
+    private val dao: BookLibraryDao,
 ) : UserDataRepository {
     override fun getFontSizeLevel(): Flow<FontSizeLevel> =
         preferences.userData.map {

@@ -12,7 +12,8 @@ import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.dao.BookLibraryDao
+import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.datastore.UserSettingPreferences
 import me.andannn.aozora.syncer.AozoraDBSyncer
@@ -35,7 +36,7 @@ private const val BUNDLED_CSV_FILE_LAST_MODIFIED_TIME = "Sat, 31 May 2025 18:03:
 private const val TAG = "AozoraDBSyncer"
 
 internal class AozoraDBSyncerImpl(
-    private val dao: SavedBookDao,
+    private val dao: BookLibraryDao,
     private val userSettingPreferences: UserSettingPreferences,
     private val analytics: PlatformAnalytics,
 ) : AozoraDBSyncer {
@@ -111,12 +112,20 @@ internal class AozoraDBSyncerImpl(
     }
 
     private suspend fun Sequence<BookEntity>.insertToDB() {
-        var insertCount = 0
+        val insertedAuthorIds = mutableSetOf<String>()
+
         this.chunked(2000).forEach { bookList ->
-            dao.upsertBookList(bookList)
-            insertCount += bookList.size
+            val authorListToUpsert = mutableListOf<AuthorEntity>()
+            for (book in bookList) {
+                val authorId = book.authorId
+                if (insertedAuthorIds.add(authorId)) {
+                    val author = book.toAuthorEntity()
+                    authorListToUpsert.add(author)
+                }
+            }
+
+            dao.upsertBookAndAuthorList(bookList, authorListToUpsert)
         }
-        Napier.d(tag = TAG) { "insert count: $insertCount" }
     }
 
     private suspend fun saveLastSuccessfulSyncTime(time: String) {
@@ -130,3 +139,19 @@ private suspend fun bundledCsvZip(): ByteArray = Res.readBytes("files/csv/list_p
 private const val CSV_TEMP_ZIP_FILE_NAME = "temp.zip"
 
 internal expect fun getCachedCsvPath(): Path
+
+private fun BookEntity.toAuthorEntity() =
+    AuthorEntity(
+        authorId = authorId,
+        lastName = authorLastName,
+        firstName = authorFirstName,
+        lastNameKana = authorLastNameKana,
+        firstNameKana = authorFirstNameKana,
+        lastNameSortKana = authorLastNameSortKana,
+        firstNameSortKana = authorFirstNameSortKana,
+        lastNameRomaji = authorLastNameRomaji,
+        firstNameRomaji = authorFirstNameRomaji,
+        birth = authorBirth,
+        death = authorDeath,
+        copyrightFlag = authorCopyrightFlag,
+    )

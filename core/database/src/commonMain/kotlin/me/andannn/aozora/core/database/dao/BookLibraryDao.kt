@@ -9,9 +9,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.database.Tables
 import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
+import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookColumns
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressColumns
@@ -23,12 +25,27 @@ import me.andannn.aozora.core.database.entity.SavedBookEntity
  * The DAO for [BookEntity]
  */
 @Dao
-interface SavedBookDao {
+interface BookLibraryDao {
     /**
-     * Insert a saved book
+     * Insert book entities
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertBookList(bookEntities: List<BookEntity>)
+
+    /**
+     * Insert a author entities
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAuthorList(authorEntities: List<AuthorEntity>)
+
+    @Transaction
+    suspend fun upsertBookAndAuthorList(
+        bookEntities: List<BookEntity>,
+        authorEntities: List<AuthorEntity>,
+    ) {
+        upsertBookList(bookEntities)
+        upsertAuthorList(authorEntities)
+    }
 
     /**
      * Get a book by id
