@@ -39,7 +39,9 @@ interface SavedBookDao {
      * Get a book by id
      */
     @Query(
-        "SELECT * FROM ${Tables.BOOK_TABLE} WHERE ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = :bookId AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = :authorId",
+        """
+            SELECT * FROM ${Tables.BOOK_TABLE} WHERE ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = :bookId AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = :authorId
+        """,
     )
     fun getBookByBookIdAndAuthorId(
         bookId: String,

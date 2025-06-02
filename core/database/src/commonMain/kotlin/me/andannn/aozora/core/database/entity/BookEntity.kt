@@ -6,7 +6,6 @@ package me.andannn.aozora.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import me.andannn.aozora.core.database.Tables.BOOK_TABLE
 
 // internal object BookColumns {

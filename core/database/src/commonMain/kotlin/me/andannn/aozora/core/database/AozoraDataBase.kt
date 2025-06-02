@@ -176,23 +176,24 @@ internal val MIGRATION_4_5 =
                 """.trimIndent(),
             )
 
-            connection.execSQL("""
-            CREATE TABLE IF NOT EXISTS new_saved_book (
-                book_id TEXT NOT NULL PRIMARY KEY,
-                created_date INTEGER NOT NULL
+            connection.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS new_saved_book (
+                    book_id TEXT NOT NULL PRIMARY KEY,
+                    created_date INTEGER NOT NULL
+                )
+                """.trimIndent(),
             )
-        """.trimIndent())
 
-            // 2. 将旧表数据复制到新表
-            connection.execSQL("""
-            INSERT INTO new_saved_book (book_id, created_date)
-            SELECT book_id, created_date FROM saved_book_table
-        """.trimIndent())
+            connection.execSQL(
+                """
+                INSERT INTO new_saved_book (book_id, created_date)
+                SELECT book_id, created_date FROM saved_book_table
+                """.trimIndent(),
+            )
 
-            // 3. 删除旧表
             connection.execSQL("DROP TABLE saved_book_table")
 
-            // 4. 重命名新表为旧表名
             connection.execSQL("ALTER TABLE new_saved_book RENAME TO saved_book_table")
         }
     }

@@ -46,9 +46,10 @@ class Utf8UtilTest {
 
     @Test
     fun writeSourceToPathTest() {
-        val source = Path("src/commonTest/resources/test.zip").let {
-            SystemFileSystem.source(it).buffered()
-        }
+        val source =
+            Path("src/commonTest/resources/test.zip").let {
+                SystemFileSystem.source(it).buffered()
+            }
 
         source.writeToPath(Path(testPath, "target.zip"))
     }

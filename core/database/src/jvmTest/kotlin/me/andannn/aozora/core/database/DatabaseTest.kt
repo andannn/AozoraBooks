@@ -187,13 +187,13 @@ class DatabaseTest {
     fun getBookEntityById() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
-            val result = savedBookDao.getBookByBookIdAndAuthorId(
-                bookId = "056078",
-                authorId = "001257"
-            )
+            val result =
+                savedBookDao.getBookByBookIdAndAuthorId(
+                    bookId = "056078",
+                    authorId = "001257",
+                )
             assertEquals("056078", result.first()?.bookId)
         }
-
 }
 
 private val bookEntities =
@@ -212,9 +212,9 @@ private val bookEntities =
             workCopyrightFlag = null,
             publishDate = null,
             lastUpdateDate = null,
-            cardUrl = "authorUrl", // 对应旧字段 authorUrl
-            authorId = "1", // 对应旧字段 groupId
-            authorLastName = "author", // 旧字段 author
+            cardUrl = "authorUrl",
+            authorId = "1",
+            authorLastName = "author",
             authorFirstName = "",
             authorLastNameKana = null,
             authorFirstNameKana = null,
@@ -244,12 +244,12 @@ private val bookEntities =
             parentSourcePubYear2 = null,
             inputBy = null,
             proofBy = null,
-            textFileUrl = "zipUrl", // 对应旧字段 zipUrl
+            textFileUrl = "zipUrl",
             textFileLastUpdate = null,
             textFileEncoding = null,
             textFileCharset = null,
             textFileRevision = null,
-            htmlFileUrl = "htmlUrl", // 对应旧字段 htmlUrl
+            htmlFileUrl = "htmlUrl",
             htmlFileLastUpdate = null,
             htmlFileEncoding = null,
             htmlFileCharset = null,
