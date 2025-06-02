@@ -18,12 +18,15 @@ import me.andannn.aozora.core.datastore.UserSettingPreferences
 import me.andannn.aozora.syncer.AozoraDBSyncer
 import me.andannn.aozora.syncer.SyncResult
 import me.andannn.aozora.syncer.internal.util.CSV_ZIP_URL
+import me.andannn.aozora.syncer.internal.util.SyncEvent
 import me.andannn.aozora.syncer.internal.util.getCsvZipLastModifiedTime
+import me.andannn.aozora.syncer.internal.util.logSyncEvent
 import me.andannn.aozora.syncer.internal.util.parseAsBookModel
 import me.andannn.aozora.syncer.internal.util.toEntity
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.unzipTo
 import me.andannn.core.util.writeToPath
+import me.andannn.platform.PlatformAnalytics
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -34,6 +37,7 @@ private const val TAG = "AozoraDBSyncer"
 internal class AozoraDBSyncerImpl(
     private val dao: SavedBookDao,
     private val userSettingPreferences: UserSettingPreferences,
+    private val analytics: PlatformAnalytics,
 ) : AozoraDBSyncer {
     override suspend fun sync(): SyncResult {
         try {
@@ -46,24 +50,29 @@ internal class AozoraDBSyncerImpl(
                 saveLastSuccessfulSyncTime(BUNDLED_CSV_FILE_LAST_MODIFIED_TIME)
                 // Retry to sync with remote data source.
                 Napier.d(tag = TAG) { "Sync with bundled data X" }
+
+                analytics.logSyncEvent(SyncEvent.SuccessBundle)
                 return SyncResult.Retry
             }
 
             val serverLastModifiedTime = getCsvZipLastModifiedTime()
             if (lastSuccessfulSyncTime == serverLastModifiedTime) {
                 Napier.d(tag = TAG) { "sync time is same as server time. No need to sync." }
+                analytics.logSyncEvent(SyncEvent.Skip)
                 return SyncResult.Success
             }
 
             Napier.d(tag = TAG) { "Sync with server data E" }
             syncWithAozoraServerData()
             saveLastSuccessfulSyncTime(serverLastModifiedTime)
+            analytics.logSyncEvent(SyncEvent.SuccessServer)
             Napier.d(tag = TAG) { "Sync with server data X" }
 
             Napier.d(tag = TAG) { "sync end." }
             return SyncResult.Success
         } catch (e: Exception) {
             Napier.e(tag = TAG) { "sync error. $e" }
+            analytics.logSyncEvent(SyncEvent.Fail)
             return SyncResult.Fail(e)
         }
     }

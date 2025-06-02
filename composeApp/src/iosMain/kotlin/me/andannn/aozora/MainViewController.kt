@@ -9,6 +9,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import me.andannn.aozora.app.AozoraBooksApp
 import me.andannn.aozora.syncer.AozoraDBSyncer
 import me.andannn.aozora.syncer.SyncResult
@@ -21,6 +22,7 @@ fun MainViewController() =
         LaunchedEffect(Dispatchers.Default) {
             val syncer = getKoin().get<AozoraDBSyncer>()
             val result = syncer.sync()
+            delay(2000)
             when (result) {
                 SyncResult.Retry -> {
                     // Only retry once.
