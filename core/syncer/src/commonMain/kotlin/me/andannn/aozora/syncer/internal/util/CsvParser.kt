@@ -27,6 +27,40 @@ private fun Source.asCsvDataSequence(): Sequence<List<String>> =
             }
 
             val line = this@asCsvDataSequence.readLine() ?: continue
-            yield(line.split(",").map { it.trim('"') })
+            yield(parseCsvLine(line))
         }
     }
+
+private fun parseCsvLine(line: String): List<String> {
+    val result = mutableListOf<String>()
+    var current = StringBuilder()
+    var inQuotes = false
+    var i = 0
+
+    while (i < line.length) {
+        val c = line[i]
+        when {
+            c == '"' -> {
+                if (inQuotes && i + 1 < line.length && line[i + 1] == '"') {
+                    // Double quote inside quoted field → interpreted as one quote
+                    current.append('"')
+                    i++ // skip next quote
+                } else {
+                    inQuotes = !inQuotes
+                }
+            }
+
+            c == ',' && !inQuotes -> {
+                result.add(current.toString())
+                current = StringBuilder()
+            }
+
+            else -> {
+                current.append(c)
+            }
+        }
+        i++
+    }
+    result.add(current.toString())
+    return result
+}
