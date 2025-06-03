@@ -14,6 +14,9 @@ import com.slack.circuit.runtime.ui.ui
 import me.andannn.aozora.ui.feature.about.About
 import me.andannn.aozora.ui.feature.about.AboutState
 import me.andannn.aozora.ui.feature.about.rememberAboutPresenter
+import me.andannn.aozora.ui.feature.authorpages.AuthorPages
+import me.andannn.aozora.ui.feature.authorpages.AuthorPagesState
+import me.andannn.aozora.ui.feature.authorpages.rememberAuthorPagesPresenter
 import me.andannn.aozora.ui.feature.bookcard.BookCard
 import me.andannn.aozora.ui.feature.bookcard.BookCardState
 import me.andannn.aozora.ui.feature.bookcard.rememberBookCardPresenter
@@ -88,6 +91,12 @@ object RouteUiFactory : Ui.Factory {
                     About(state, modifier)
                 }
 
+            is AuthorPagesScreen -> {
+                ui<AuthorPagesState> { state, modifier ->
+                    AuthorPages(state, modifier)
+                }
+            }
+
             else -> null
         }
 }
@@ -145,6 +154,12 @@ object RoutePresenterFactory : Presenter.Factory {
                 presenterOf {
                     rememberAboutPresenter().present()
                 }
+
+            is AuthorPagesScreen -> {
+                presenterOf {
+                    rememberAuthorPagesPresenter(screen.code).present()
+                }
+            }
 
             else -> null
         }

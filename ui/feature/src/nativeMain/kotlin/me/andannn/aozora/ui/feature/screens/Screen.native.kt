@@ -24,3 +24,7 @@ actual data class BookCardScreen actual constructor(
     actual val bookCardId: String,
     actual val groupId: String,
 ) : Screen
+
+actual data class AuthorPagesScreen actual constructor(
+    actual val code: String,
+) : Screen

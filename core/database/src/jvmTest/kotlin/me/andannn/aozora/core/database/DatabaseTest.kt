@@ -12,6 +12,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.dao.READ_PROGRESS_DONE
+import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -194,6 +195,17 @@ class DatabaseTest {
                 )
             assertEquals("056078", result.first()?.bookId)
         }
+
+    @Test
+    fun getAuthorWithBooks() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertAuthorList(authorList)
+            val result = savedBookDao.getAuthorWithBooks("001257")
+            assertEquals("author3", result.first()?.author?.lastName)
+            assertEquals(1, result.first()?.books?.size)
+            assertEquals(bookEntities[2], result.first()?.books?.first())
+        }
 }
 
 private val bookEntities =
@@ -368,5 +380,23 @@ private val bookEntities =
             htmlFileEncoding = null,
             htmlFileCharset = null,
             htmlFileRevision = null,
+        ),
+    )
+
+private val authorList =
+    listOf(
+        AuthorEntity(
+            authorId = "001257",
+            lastName = "author3",
+            firstName = "",
+            lastNameKana = null,
+            firstNameKana = null,
+            lastNameSortKana = null,
+            firstNameSortKana = null,
+            lastNameRomaji = null,
+            firstNameRomaji = null,
+            birth = null,
+            death = null,
+            copyrightFlag = null,
         ),
     )

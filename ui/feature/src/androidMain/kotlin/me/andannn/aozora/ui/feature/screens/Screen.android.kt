@@ -31,3 +31,8 @@ actual data class BookCardScreen actual constructor(
     actual val bookCardId: String,
     actual val groupId: String,
 ) : Screen
+
+@Parcelize
+actual data class AuthorPagesScreen actual constructor(
+    actual val code: String,
+) : Screen

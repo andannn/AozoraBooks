@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import me.andannn.aozora.core.database.Tables
 
-internal object AuthorColumns {
+object AuthorColumns {
     const val AUTHOR_ID = "author_id"
     const val LAST_NAME = "last_name"
     const val FIRST_NAME = "first_name"

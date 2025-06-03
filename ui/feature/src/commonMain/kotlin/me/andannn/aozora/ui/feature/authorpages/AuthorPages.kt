@@ -1,8 +1,4 @@
-/*
- * Copyright 2025, the AozoraBooks project contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-package me.andannn.aozora.ui.feature.indexpages
+package me.andannn.aozora.ui.feature.authorpages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,43 +19,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AuthorModel
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
 @Composable
-fun IndexPages(
-    state: IndexPagesState,
+fun AuthorPages(
+    state: AuthorPagesState,
     modifier: Modifier = Modifier,
 ) {
-    IndexPagesStateContent(
+    AuthorPagesContent(
         modifier = modifier,
+        kanaLineLabel = state.kanaLineItem.kanaLabel,
         pagingData = state.pagingData,
-        label = state.kanaLabel,
         onEvent = state.evenSink,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IndexPagesStateContent(
-    modifier: Modifier = Modifier,
-    label: String,
-    pagingData: LazyPagingItems<AozoraBookCard>,
-    onEvent: (IndexPagesUiEvent) -> Unit,
+private fun AuthorPagesContent(
+    modifier: Modifier,
+    kanaLineLabel: String,
+    pagingData: LazyPagingItems<AuthorModel>,
+    onEvent: (AuthorPagesUiEvent) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {
-                    Text("作品一覧：$label")
+                    Text("作家リスト：$kanaLineLabel")
                 },
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            onEvent.invoke(IndexPagesUiEvent.OnBack)
+                            onEvent.invoke(AuthorPagesUiEvent.OnBack)
                         },
                     ) {
                         Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
@@ -74,12 +70,12 @@ fun IndexPagesStateContent(
             items(pagingData.itemCount) { index ->
                 Column {
                     pagingData[index]?.let {
-                        BookColumnItemView(
+                        AuthorColumnItemView(
                             modifier = Modifier.fillMaxWidth(),
                             index = index,
                             item = it,
                             onClick = {
-                                onEvent.invoke(IndexPagesUiEvent.OnBookClick(it))
+                                onEvent.invoke(AuthorPagesUiEvent.OnAuthorClick(it))
                             },
                         )
                         HorizontalDivider()
@@ -99,11 +95,11 @@ fun IndexPagesStateContent(
 }
 
 @Composable
-private fun BookColumnItemView(
-    item: AozoraBookCard,
+private fun AuthorColumnItemView(
+    modifier: Modifier,
     index: Int,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
+    item: AuthorModel,
+    onClick: () -> Unit,
 ) {
     Surface(modifier = modifier, onClick = onClick) {
         Column(
@@ -111,14 +107,10 @@ private fun BookColumnItemView(
         ) {
             Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
             Text(
-                item.title,
+                item.lastName + " " + item.firstName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            if (item.subTitle != null) {
-                Text(item.subTitle!!, style = MaterialTheme.typography.bodyMedium)
-            }
-            Text("著者：" + item.author, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

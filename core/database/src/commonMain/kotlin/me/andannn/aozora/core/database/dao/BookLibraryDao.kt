@@ -9,10 +9,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.RoomRawQuery
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.database.Tables
+import me.andannn.aozora.core.database.embedded.AuthorWithBooks
 import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
+import me.andannn.aozora.core.database.entity.AuthorColumns
 import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookColumns
 import me.andannn.aozora.core.database.entity.BookEntity
@@ -21,9 +25,6 @@ import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookColumn
 import me.andannn.aozora.core.database.entity.SavedBookEntity
 
-/**
- * The DAO for [BookEntity]
- */
 @Dao
 interface BookLibraryDao {
     /**
@@ -64,6 +65,14 @@ interface BookLibraryDao {
         """,
     )
     fun kanaPagingSource(kana: String): PagingSource<Int, BookEntity>
+
+    /**
+     * get paging source of author which start by kana line.
+     */
+    fun authorPagingSource(kanaList: List<String>): PagingSource<Int, AuthorEntity> = authorPagingSource(buildKanaLineStartQuery(kanaList))
+
+    @RawQuery(observedEntities = [AuthorEntity::class])
+    fun authorPagingSource(kanaLineStartQuery: RoomRawQuery): PagingSource<Int, AuthorEntity>
 
     /**
      * Get a book by id
@@ -107,6 +116,14 @@ interface BookLibraryDao {
     )
     fun getCompleteBooksByDesc(): Flow<List<BookEntityWithProgress>>
 
+    @Query(
+        """
+        SELECT * FROM ${Tables.AUTHOR_TABLE}
+        WHERE ${AuthorColumns.AUTHOR_ID} = :authorId
+        """,
+    )
+    fun getAuthorWithBooks(authorId: String): Flow<AuthorWithBooks?>
+
     /**
      * Get a saved book by id
      */
@@ -136,6 +153,12 @@ interface BookLibraryDao {
 
     @Query("SELECT * FROM ${Tables.BOOK_PROGRESS_TABLE} WHERE ${BookProgressColumns.BOOK_ID} = :bookId")
     fun getProgressOfBookFlow(bookId: String): Flow<BookProgressEntity?>
+}
+
+private fun buildKanaLineStartQuery(kanaList: List<String>): RoomRawQuery {
+    val whereClause = kanaList.joinToString(" OR ") { "${AuthorColumns.LAST_NAME_SORT_KANA} LIKE '$it%'" }
+    val sql = "SELECT * FROM ${Tables.AUTHOR_TABLE} WHERE $whereClause ORDER BY ${AuthorColumns.LAST_NAME_SORT_KANA} ASC"
+    return RoomRawQuery(sql)
 }
 
 internal const val READ_PROGRESS_NONE = -2

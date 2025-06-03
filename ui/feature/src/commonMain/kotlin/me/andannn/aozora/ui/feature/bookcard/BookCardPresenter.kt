@@ -9,7 +9,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState

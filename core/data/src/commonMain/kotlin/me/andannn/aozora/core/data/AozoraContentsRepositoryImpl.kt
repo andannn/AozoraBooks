@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.map
 import me.andannn.aozora.core.data.mapper.toModel
 import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AuthorModel
+import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.service.AozoraService
 
@@ -28,8 +30,16 @@ internal class AozoraContentsRepositoryImpl(
 ) : AozoraContentsRepository {
     override fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>> =
         Pager(
-            config = PagingConfig(pageSize = 50),
+            config = PagingConfig(pageSize = LOAD_SIZE),
             pagingSourceFactory = { savedBookDao.kanaPagingSource(kana) },
+        ).flow.map { pagingData ->
+            pagingData.map { it.toModel() }
+        }
+
+    override fun getAuthorsPagingFlow(kanaLineItem: KanaLineItem): Flow<PagingData<AuthorModel>> =
+        Pager(
+            config = PagingConfig(pageSize = LOAD_SIZE),
+            pagingSourceFactory = { savedBookDao.authorPagingSource(kanaLineItem.kanaList) },
         ).flow.map { pagingData ->
             pagingData.map { it.toModel() }
         }
@@ -70,5 +80,9 @@ internal class AozoraContentsRepositoryImpl(
                 null
             }
         emit(authorData)
+    }
+
+    companion object {
+        private const val LOAD_SIZE = 50
     }
 }

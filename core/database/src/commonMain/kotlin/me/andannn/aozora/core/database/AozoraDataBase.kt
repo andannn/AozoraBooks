@@ -20,7 +20,7 @@ import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
 
-internal object Tables {
+object Tables {
     const val BOOK_TABLE = "book_table"
     const val AUTHOR_TABLE = "author_table"
     const val SAVED_BOOK_TABLE = "saved_book_table"

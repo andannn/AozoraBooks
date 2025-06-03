@@ -24,6 +24,12 @@ expect class IndexPageScreen : Screen {
     val kana: String
 }
 
+expect class AuthorPagesScreen : Screen {
+    constructor(code: String)
+
+    val code: String
+}
+
 expect class BookCardScreen : Screen {
     constructor(bookCardId: String, groupId: String)
 

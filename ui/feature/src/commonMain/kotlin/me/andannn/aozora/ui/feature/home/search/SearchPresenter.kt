@@ -10,7 +10,9 @@ import androidx.compose.runtime.remember
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.screens.AuthorPagesScreen
 import me.andannn.aozora.ui.feature.screens.IndexPageScreen
 
 @Composable
@@ -33,6 +35,10 @@ class SearchPresenter(
                 is SearchUiEvent.OnClickKanaItem -> {
                     navigator.goTo(IndexPageScreen(kana = event.kana.kanaLabel))
                 }
+
+                is SearchUiEvent.OnClickKanaLineItem -> {
+                    navigator.goTo(AuthorPagesScreen(code = event.lineItem.code))
+                }
             }
         }
 }
@@ -45,5 +51,9 @@ data class SearchState(
 sealed interface SearchUiEvent {
     data class OnClickKanaItem(
         val kana: KanaItem,
+    ) : SearchUiEvent
+
+    data class OnClickKanaLineItem(
+        val lineItem: KanaLineItem,
     ) : SearchUiEvent
 }
