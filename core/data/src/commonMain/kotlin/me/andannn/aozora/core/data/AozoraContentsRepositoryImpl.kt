@@ -74,7 +74,6 @@ internal class AozoraContentsRepositoryImpl(
         cardId: String,
         authorId: String,
     ) = flow {
-        emit(null)
         val authorData =
             try {
                 aozoraService.getBookCardAuthorDataList(

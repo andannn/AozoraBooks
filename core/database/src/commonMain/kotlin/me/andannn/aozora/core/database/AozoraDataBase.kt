@@ -198,5 +198,24 @@ internal val MIGRATION_4_5 =
             connection.execSQL("DROP TABLE saved_book_table")
 
             connection.execSQL("ALTER TABLE new_saved_book RENAME TO saved_book_table")
+
+            connection.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS author_table (
+                    author_id TEXT NOT NULL PRIMARY KEY,
+                    last_name TEXT NOT NULL,
+                    first_name TEXT NOT NULL,
+                    last_name_kana TEXT,
+                    first_name_kana TEXT,
+                    last_name_sort_kana TEXT,
+                    first_name_sort_kana TEXT,
+                    last_name_romaji TEXT,
+                    first_name_romaji TEXT,
+                    birth TEXT,
+                    death TEXT,
+                    copyright_flag TEXT
+                )
+                """.trimIndent(),
+            )
         }
     }
