@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "9dc5fa78494cbf642983c4c2e5e1a74f",
+    "identityHash": "778eed1e1a6429c29690d9f5eca5ad0c",
     "entities": [
       {
         "tableName": "book_table",
@@ -437,11 +437,113 @@
             "author_id"
           ]
         }
+      },
+      {
+        "tableName": "author_fts_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`last_name` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name_kana` TEXT, `first_name_kana` TEXT, content=`author_table`)",
+        "fields": [
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNameKana",
+            "columnName": "last_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameKana",
+            "columnName": "first_name_kana",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "author_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_BEFORE_UPDATE BEFORE UPDATE ON `author_table` BEGIN DELETE FROM `author_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_BEFORE_DELETE BEFORE DELETE ON `author_table` BEGIN DELETE FROM `author_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_AFTER_UPDATE AFTER UPDATE ON `author_table` BEGIN INSERT INTO `author_fts_table`(`docid`, `last_name`, `first_name`, `last_name_kana`, `first_name_kana`) VALUES (NEW.`rowid`, NEW.`last_name`, NEW.`first_name`, NEW.`last_name_kana`, NEW.`first_name_kana`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_AFTER_INSERT AFTER INSERT ON `author_table` BEGIN INSERT INTO `author_fts_table`(`docid`, `last_name`, `first_name`, `last_name_kana`, `first_name_kana`) VALUES (NEW.`rowid`, NEW.`last_name`, NEW.`first_name`, NEW.`last_name_kana`, NEW.`first_name_kana`); END"
+        ]
+      },
+      {
+        "tableName": "book_fts_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `subtitle` TEXT, `subtitle_kana` TEXT, content=`book_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleKana",
+            "columnName": "title_kana",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subtitle",
+            "columnName": "subtitle",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subtitleKana",
+            "columnName": "subtitle_kana",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "book_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_BEFORE_UPDATE BEFORE UPDATE ON `book_table` BEGIN DELETE FROM `book_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_BEFORE_DELETE BEFORE DELETE ON `book_table` BEGIN DELETE FROM `book_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_AFTER_UPDATE AFTER UPDATE ON `book_table` BEGIN INSERT INTO `book_fts_table`(`docid`, `title`, `title_kana`, `subtitle`, `subtitle_kana`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`title_kana`, NEW.`subtitle`, NEW.`subtitle_kana`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_AFTER_INSERT AFTER INSERT ON `book_table` BEGIN INSERT INTO `book_fts_table`(`docid`, `title`, `title_kana`, `subtitle`, `subtitle_kana`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`title_kana`, NEW.`subtitle`, NEW.`subtitle_kana`); END"
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9dc5fa78494cbf642983c4c2e5e1a74f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '778eed1e1a6429c29690d9f5eca5ad0c')"
     ]
   }
 }

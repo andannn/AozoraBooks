@@ -206,12 +206,28 @@ class DatabaseTest {
             assertEquals(1, result.first()?.books?.size)
             assertEquals(bookEntities[2], result.first()?.books?.first())
         }
+
+    @Test
+    fun searchBookByKeywordTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            val result = savedBookDao.searchBook("titleK*")
+            println(result)
+        }
+
+    @Test
+    fun searchAuthorByKeywordTest() =
+        testScope.runTest {
+            savedBookDao.upsertAuthorList(authorList)
+            val result = savedBookDao.searchAuthor("南部*")
+            println(result)
+        }
 }
 
 private val bookEntities =
     listOf(
         BookEntity(
-            bookId = "1",
+            bookId = "12353",
             title = "title",
             titleKana = "titleKana",
             titleSortKana = null,
@@ -268,7 +284,7 @@ private val bookEntities =
             htmlFileRevision = null,
         ),
         BookEntity(
-            bookId = "2",
+            bookId = "212353",
             title = "title2",
             titleKana = "titleKana2",
             titleSortKana = null,
@@ -388,9 +404,23 @@ private val authorList =
         AuthorEntity(
             authorId = "001257",
             lastName = "author3",
-            firstName = "",
+            firstName = "firstName",
             lastNameKana = null,
             firstNameKana = null,
+            lastNameSortKana = null,
+            firstNameSortKana = null,
+            lastNameRomaji = null,
+            firstNameRomaji = null,
+            birth = null,
+            death = null,
+            copyrightFlag = null,
+        ),
+        AuthorEntity(
+            authorId = "001256",
+            lastName = "南部",
+            firstName = "修太郎",
+            lastNameKana = "なんぶ",
+            firstNameKana = "しゅうたろう",
             lastNameSortKana = null,
             firstNameSortKana = null,
             lastNameRomaji = null,

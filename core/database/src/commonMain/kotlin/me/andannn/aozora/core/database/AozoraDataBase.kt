@@ -19,10 +19,14 @@ import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
+import me.andannn.aozora.core.database.entity.fts.AuthorFtsEntity
+import me.andannn.aozora.core.database.entity.fts.BookFtsEntity
 
 object Tables {
     const val BOOK_TABLE = "book_table"
+    const val BOOK_FTS_TABLE = "book_fts_table"
     const val AUTHOR_TABLE = "author_table"
+    const val AUTHOR_FTS_TABLE = "author_fts_table"
     const val SAVED_BOOK_TABLE = "saved_book_table"
     const val BOOK_PROGRESS_TABLE = "book_progress_table"
 }
@@ -33,6 +37,8 @@ object Tables {
         SavedBookEntity::class,
         BookProgressEntity::class,
         AuthorEntity::class,
+        AuthorFtsEntity::class,
+        BookFtsEntity::class,
     ],
     version = 5,
 )
