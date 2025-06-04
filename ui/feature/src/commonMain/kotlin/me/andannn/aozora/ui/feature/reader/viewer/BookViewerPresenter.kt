@@ -44,9 +44,9 @@ import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
-import me.andannn.aozora.ui.feature.dialog.showAlertDialog
+import me.andannn.aozora.ui.feature.common.dialog.showAlertDialog
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -57,7 +57,7 @@ fun rememberBookViewerPresenter(
     screenHeightDp: Dp,
     bookSource: BookPageSource = LocalBookPageSource.current,
     popupController: PopupController = LocalPopupController.current,
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     settingRepository: UserDataRepository = getKoin().get(),
 ) = remember(card, bookSource, screenWidthDp, screenHeightDp, settingRepository) {
     BookViewerPresenter(

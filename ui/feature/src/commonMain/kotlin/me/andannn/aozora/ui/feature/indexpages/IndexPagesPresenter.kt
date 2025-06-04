@@ -17,8 +17,8 @@ import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.screens.BookCardScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
 import me.andannn.core.util.rememberRetainedCoroutineScope
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -26,7 +26,7 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberIndexPagesPresenter(
     kana: String,
     aozoraRepository: AozoraContentsRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
 ) = remember(
     kana,
     aozoraRepository,

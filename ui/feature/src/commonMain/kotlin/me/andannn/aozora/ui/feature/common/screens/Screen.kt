@@ -2,11 +2,16 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.ui.feature.screens
+package me.andannn.aozora.ui.feature.common.screens
 
+import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 
 expect object HomeScreen : Screen
+
+expect object LibraryNestedScreen : Screen
+
+expect object SearchNestedScreen : Screen
 
 expect object LicenseScreen : Screen
 
@@ -41,4 +46,22 @@ expect class AuthorScreen : Screen {
     constructor(authorId: String)
 
     val authorId: String
+}
+
+expect class SearchInputScreen : Screen {
+    constructor(initialParam: String?)
+
+    val initialParam: String?
+}
+
+expect class SearchInputResult : PopResult {
+    constructor(inputText: String)
+
+    val inputText: String
+}
+
+expect class SearchResultScreen : Screen {
+    constructor(query: String)
+
+    val query: String
 }

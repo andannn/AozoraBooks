@@ -28,13 +28,13 @@ import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.common.util.SystemUiVisibilityEffect
-import me.andannn.aozora.ui.feature.dialog.OnGoToAppStore
-import me.andannn.aozora.ui.feature.dialog.OnJumpTo
-import me.andannn.aozora.ui.feature.dialog.ReaderCompleteDialogId
-import me.andannn.aozora.ui.feature.dialog.ReaderSettingDialogId
-import me.andannn.aozora.ui.feature.dialog.TableOfContentsDialogId
+import me.andannn.aozora.ui.feature.common.dialog.OnGoToAppStore
+import me.andannn.aozora.ui.feature.common.dialog.OnJumpTo
+import me.andannn.aozora.ui.feature.common.dialog.ReaderCompleteDialogId
+import me.andannn.aozora.ui.feature.common.dialog.ReaderSettingDialogId
+import me.andannn.aozora.ui.feature.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -45,7 +45,7 @@ fun rememberReaderOverlayPresenter(
     cardId: String,
     bookPageState: BookPageState,
     settingRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
     uriHandler: UriHandler = LocalUriHandler.current,
 ) = remember(bookPageState, popupController, navigator, uriHandler) {

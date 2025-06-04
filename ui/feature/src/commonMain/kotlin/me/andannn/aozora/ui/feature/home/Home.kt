@@ -4,29 +4,36 @@
  */
 package me.andannn.aozora.ui.feature.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Book
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.runtime.popUntil
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
+import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
+import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
+import me.andannn.aozora.ui.feature.common.screens.SearchResultScreen
+import kotlin.reflect.KClass
 
 @Composable
 fun Home(
@@ -52,40 +59,56 @@ fun HomeContent(
         navigator.pop()
     }
 
-    val current = backStack.topRecord?.screen
-    val isRoot = current == LibraryNestedScreen
+    val current = backStack.topRecord?.screen ?: LibraryNestedScreen
     val currentNavigation =
-        when (current) {
-            LibraryNestedScreen -> NavigationItem.LIBRARY
-            SearchNestedScreen -> NavigationItem.SEARCH
-            else -> NavigationItem.LIBRARY
-        }
+        nestedNavigationMap.entries
+            .first {
+                it.value.any { screen ->
+                    screen.screenClass == current::class
+                }
+            }.key
+
+    val showNavigationBar by rememberUpdatedState(
+        current !is SearchInputScreen,
+    )
     Scaffold(
         modifier = modifier,
-        topBar = {
-            AozoraAppBar(
-                currentNavigation,
-                onClickMore = {
-                    onEvent.invoke(HomeUiEvent.OnClickMore)
-                },
-            )
-        },
         bottomBar = {
-            AozoraNavigationBar(
-                selectedItem = currentNavigation,
-                onSelectItem = {
-                    if (it == currentNavigation) return@AozoraNavigationBar
-
-                    if (isRoot) {
-                        navigator.goTo(it.toScreen())
+            AnimatedContent(
+                showNavigationBar,
+                transitionSpec = {
+                    if (targetState) {
+                        slideInVertically { it } togetherWith slideOutVertically { -it }
                     } else {
-                        navigator.pop()
+                        slideInVertically { -it } togetherWith slideOutVertically { it }
                     }
                 },
-            )
+            ) { showNavigationBar ->
+                if (showNavigationBar) {
+                    AozoraNavigationBar(
+                        selectedItem = currentNavigation,
+                        onSelectItem = {
+                            val nestRoot = nestedNavigationMap[it]!!.first { it.isRoot }
+                            val alreadyInStack =
+                                backStack.iterator().asSequence().firstOrNull { record ->
+                                    record.screen::class == nestRoot.screenClass
+                                } != null
+                            if (alreadyInStack) {
+                                navigator.popUntil { screen ->
+                                    screen::class == nestRoot.screenClass
+                                }
+                            } else {
+                                navigator.goTo(classToScreenObj(nestRoot.screenClass))
+                            }
+                        },
+                    )
+                }
+            }
         },
     ) {
-        Box(modifier = Modifier.padding(it)) {
+        CompositionLocalProvider(
+            LocalNavigator provides navigator,
+        ) {
             NavigableCircuitContent(
                 navigator = navigator,
                 backStack = backStack,
@@ -94,40 +117,8 @@ fun HomeContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AozoraAppBar(
-    currentNavigation: NavigationItem,
-    modifier: Modifier = Modifier,
-    onClickMore: () -> Unit = {},
-) {
-    TopAppBar(
-        modifier = modifier,
-        title = {
-            if (currentNavigation == NavigationItem.LIBRARY) {
-                Text("青空読書")
-            } else {
-                Text(currentNavigation.label)
-            }
-        },
-        actions = {
-            if (currentNavigation == NavigationItem.LIBRARY) {
-                IconButton(
-                    modifier = Modifier.padding(end = 12.dp),
-                    onClick = onClickMore,
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.MoreVert,
-                        contentDescription = null,
-                    )
-                }
-            }
-        },
-    )
-}
-
-@Composable
-fun AozoraNavigationBar(
+private fun AozoraNavigationBar(
     modifier: Modifier = Modifier,
     selectedItem: NavigationItem = NavigationItem.LIBRARY,
     onSelectItem: (NavigationItem) -> Unit = {},
@@ -144,6 +135,9 @@ fun AozoraNavigationBar(
                         contentDescription = null,
                     )
                 },
+                label = {
+                    Text(item.label)
+                },
                 selected = isSelected,
                 onClick = {
                     onSelectItem(item)
@@ -153,34 +147,54 @@ fun AozoraNavigationBar(
     }
 }
 
-enum class NavigationItem {
+private enum class NavigationItem {
     LIBRARY,
     SEARCH,
 }
 
-fun NavigationItem.toScreen() =
-    when (this) {
-        NavigationItem.LIBRARY -> LibraryNestedScreen
-        NavigationItem.SEARCH -> SearchNestedScreen
+private data class ScreenWithRole(
+    val screenClass: KClass<*>,
+    val isRoot: Boolean,
+)
+
+private val nestedNavigationMap =
+    mapOf(
+        NavigationItem.LIBRARY to
+            listOf(
+                ScreenWithRole(LibraryNestedScreen::class, isRoot = true),
+            ),
+        NavigationItem.SEARCH to
+            listOf(
+                ScreenWithRole(SearchNestedScreen::class, isRoot = true),
+                ScreenWithRole(SearchInputScreen::class, isRoot = false),
+                ScreenWithRole(SearchResultScreen::class, isRoot = false),
+            ),
+    )
+
+private fun classToScreenObj(screenClass: KClass<*>) =
+    when (screenClass) {
+        LibraryNestedScreen::class -> LibraryNestedScreen
+        SearchNestedScreen::class -> SearchNestedScreen
+        else -> error("Unknown screen class: $screenClass")
     }
 
-val NavigationItem.icon
+private val NavigationItem.icon
     get() =
         when (this) {
             NavigationItem.LIBRARY -> Icons.Outlined.Book
             NavigationItem.SEARCH -> Icons.Outlined.Search
         }
 
-val NavigationItem.selectedIcon
+private val NavigationItem.selectedIcon
     get() =
         when (this) {
             NavigationItem.LIBRARY -> Icons.Filled.Book
             NavigationItem.SEARCH -> Icons.Filled.Search
         }
 
-val NavigationItem.label
+private val NavigationItem.label
     get() =
         when (this) {
-            NavigationItem.LIBRARY -> "Library"
+            NavigationItem.LIBRARY -> "本棚"
             NavigationItem.SEARCH -> "検索"
         }

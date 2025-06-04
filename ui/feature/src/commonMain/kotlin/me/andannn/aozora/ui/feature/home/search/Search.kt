@@ -14,11 +14,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,48 +53,76 @@ fun SearchContent(
     modifier: Modifier = Modifier,
     onEvent: (SearchUiEvent) -> Unit,
 ) {
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(minSize = 320.dp),
-    ) {
-        item {
-            Column {
-                Text(
-                    modifier = Modifier.padding(12.dp),
-                    text = "作品別",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                SearchByKanaArea(
-                    modifier = Modifier.padding(8.dp),
-                    onKanaItemClicked = {
-                        onEvent.invoke(SearchUiEvent.OnClickKanaItem(it))
-                    },
-                )
+    Column(modifier.systemBarsPadding()) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Surface(
+            modifier =
+                Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            shape = CircleShape,
+            onClick = {
+                onEvent.invoke(SearchUiEvent.OnSearchBarClick)
+            },
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(Modifier.width(16.dp))
+                Icon(Icons.Outlined.Search, contentDescription = null)
+                Spacer(Modifier.width(16.dp))
+                Text(text = "作家・作品を検索", color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
-        item {
-            Column {
-                Text(
-                    modifier = Modifier.padding(12.dp),
-                    text = "作家別",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                SearchByAuthorArea(
-                    modifier = Modifier.padding(8.dp),
-                    onKanaLineItemClicked = {
-                        onEvent.invoke(SearchUiEvent.OnClickKanaLineItem(it))
-                    },
-                )
-            }
-        }
+        Spacer(modifier = Modifier.height(8.dp))
 
-        if (showPlatformAd) {
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+            columns = GridCells.Adaptive(minSize = 320.dp),
+        ) {
             item {
-                BannerAdView(
-                    modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
-                    adType = AdType.MEDIUM_RECTANGLE,
-                )
+                Column {
+                    Text(
+                        modifier = Modifier.padding(12.dp),
+                        text = "作品別",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    SearchByKanaArea(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onKanaItemClicked = {
+                            onEvent.invoke(SearchUiEvent.OnClickKanaItem(it))
+                        },
+                    )
+                }
+            }
+
+            item {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(12.dp),
+                        text = "作家別",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    SearchByAuthorArea(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onKanaLineItemClicked = {
+                            onEvent.invoke(SearchUiEvent.OnClickKanaLineItem(it))
+                        },
+                    )
+                }
+            }
+
+            if (showPlatformAd) {
+                item {
+                    BannerAdView(
+                        modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
+                        adType = AdType.MEDIUM_RECTANGLE,
+                    )
+                }
             }
         }
     }

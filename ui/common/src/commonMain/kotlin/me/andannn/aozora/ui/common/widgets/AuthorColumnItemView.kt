@@ -13,14 +13,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AuthorData
 
 @Composable
-fun BookColumnItemView(
-    item: AozoraBookCard,
+fun AuthorColumnItemView(
     index: Int?,
-    modifier: Modifier = Modifier,
+    item: AuthorData,
     onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxWidth(), onClick = onClick) {
         Column(
@@ -30,14 +30,10 @@ fun BookColumnItemView(
                 Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
             }
             Text(
-                item.title,
+                item.authorName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            if (item.subTitle != null) {
-                Text(item.subTitle!!, style = MaterialTheme.typography.bodyMedium)
-            }
-            Text("著者：" + item.author, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

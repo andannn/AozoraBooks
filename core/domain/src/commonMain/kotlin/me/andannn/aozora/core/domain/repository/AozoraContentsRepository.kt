@@ -22,4 +22,8 @@ interface AozoraContentsRepository {
     ): Flow<AozoraBookCard?>
 
     fun getAuthorDataWithBooks(authorId: String): Flow<AuthorWithBooks?>
+
+    suspend fun searchBooks(query: String): List<AozoraBookCard>
+
+    suspend fun searchAuthors(query: String): List<AuthorData>
 }

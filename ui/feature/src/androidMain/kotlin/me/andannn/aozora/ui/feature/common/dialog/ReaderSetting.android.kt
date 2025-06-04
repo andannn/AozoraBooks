@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.ui.feature.dialog
+package me.andannn.aozora.ui.feature.common.dialog
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

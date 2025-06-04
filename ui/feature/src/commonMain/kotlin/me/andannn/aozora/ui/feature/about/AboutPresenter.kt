@@ -12,15 +12,15 @@ import androidx.compose.ui.platform.UriHandler
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.screens.LicenseScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.screens.LicenseScreen
 import me.andannn.platform.Platform
 import me.andannn.platform.appVersion
 import me.andannn.platform.platform
 
 @Composable
 fun rememberAboutPresenter(
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     uriHandler: UriHandler = LocalUriHandler.current,
 ) = remember(
     navigator,

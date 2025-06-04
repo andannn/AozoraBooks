@@ -19,9 +19,9 @@ import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.domain.repository.UserDataRepository
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.screens.AuthorScreen
-import me.andannn.aozora.ui.feature.screens.ReaderScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
+import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -30,7 +30,7 @@ fun rememberBookCardPresenter(
     bookId: String,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
 ) = remember(
     groupId,
     bookId,

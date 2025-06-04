@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.ui.feature.screens
+package me.andannn.aozora.ui.feature.common.screens
 
 import com.slack.circuit.runtime.CircuitContext
 import com.slack.circuit.runtime.Navigator
@@ -25,8 +25,6 @@ import me.andannn.aozora.ui.feature.bookcard.BookCardState
 import me.andannn.aozora.ui.feature.bookcard.rememberBookCardPresenter
 import me.andannn.aozora.ui.feature.home.Home
 import me.andannn.aozora.ui.feature.home.HomeState
-import me.andannn.aozora.ui.feature.home.LibraryNestedScreen
-import me.andannn.aozora.ui.feature.home.SearchNestedScreen
 import me.andannn.aozora.ui.feature.home.library.Library
 import me.andannn.aozora.ui.feature.home.library.LibraryState
 import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
@@ -34,6 +32,12 @@ import me.andannn.aozora.ui.feature.home.rememberHomePresenter
 import me.andannn.aozora.ui.feature.home.search.Search
 import me.andannn.aozora.ui.feature.home.search.SearchState
 import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
+import me.andannn.aozora.ui.feature.home.searchinput.SearchInput
+import me.andannn.aozora.ui.feature.home.searchinput.SearchInputState
+import me.andannn.aozora.ui.feature.home.searchinput.rememberSearchInputPresenter
+import me.andannn.aozora.ui.feature.home.searchresult.SearchResult
+import me.andannn.aozora.ui.feature.home.searchresult.SearchResultState
+import me.andannn.aozora.ui.feature.home.searchresult.rememberSearchResultPresenter
 import me.andannn.aozora.ui.feature.indexpages.IndexPages
 import me.andannn.aozora.ui.feature.indexpages.IndexPagesState
 import me.andannn.aozora.ui.feature.indexpages.rememberIndexPagesPresenter
@@ -106,6 +110,18 @@ object RouteUiFactory : Ui.Factory {
                 }
             }
 
+            is SearchInputScreen -> {
+                ui<SearchInputState> { state, modifier ->
+                    SearchInput(state, modifier)
+                }
+            }
+
+            is SearchResultScreen -> {
+                ui<SearchResultState> { state, modifier ->
+                    SearchResult(state, modifier)
+                }
+            }
+
             else -> null
         }
 }
@@ -175,6 +191,17 @@ object RoutePresenterFactory : Presenter.Factory {
                     rememberAuthorPresenter(screen.authorId).present()
                 }
             }
+
+            is SearchInputScreen -> {
+                presenterOf {
+                    rememberSearchInputPresenter(screen.initialParam).present()
+                }
+            }
+
+            is SearchResultScreen ->
+                presenterOf {
+                    rememberSearchResultPresenter(screen.query).present()
+                }
 
             else -> null
         }

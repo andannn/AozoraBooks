@@ -24,20 +24,21 @@ import me.andannn.aozora.core.domain.model.BookWithProgress
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.dialog.OnClickOption
-import me.andannn.aozora.ui.feature.dialog.OptionItem
-import me.andannn.aozora.ui.feature.dialog.showBookOptionDialog
-import me.andannn.aozora.ui.feature.home.SearchNestedScreen
-import me.andannn.aozora.ui.feature.screens.BookCardScreen
-import me.andannn.aozora.ui.feature.screens.ReaderScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.dialog.OnClickOption
+import me.andannn.aozora.ui.feature.common.dialog.OptionItem
+import me.andannn.aozora.ui.feature.common.dialog.showBookOptionDialog
+import me.andannn.aozora.ui.feature.common.screens.AboutScreen
+import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
+import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
+import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberLibraryPresenter(
     nestedNavigator: Navigator,
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(
     nestedNavigator,
@@ -116,6 +117,10 @@ class LibraryPresenter(
                         }
                     }
                 }
+
+                LibraryUiEvent.OnClickMore -> {
+                    navigator.goTo(AboutScreen)
+                }
             }
         }
     }
@@ -143,6 +148,8 @@ sealed interface LibraryUiEvent {
     ) : LibraryUiEvent
 
     data object OnGoToSearch : LibraryUiEvent
+
+    data object OnClickMore : LibraryUiEvent
 }
 
 enum class TabItem {

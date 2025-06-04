@@ -14,16 +14,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AuthorData
+import me.andannn.aozora.ui.common.widgets.AuthorColumnItemView
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
@@ -94,27 +92,6 @@ private fun AuthorPagesContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun AuthorColumnItemView(
-    modifier: Modifier,
-    index: Int,
-    item: AuthorData,
-    onClick: () -> Unit,
-) {
-    Surface(modifier = modifier, onClick = onClick) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        ) {
-            Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
-            Text(
-                item.authorName,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
         }
     }
 }

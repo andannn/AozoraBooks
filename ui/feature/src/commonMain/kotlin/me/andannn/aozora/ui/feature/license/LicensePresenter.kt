@@ -16,11 +16,11 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.model.LibraryInfo
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.navigator.RootNavigator
 
 @Composable
 fun rememberLicensePresenter(
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     uriHandler: UriHandler = LocalUriHandler.current,
 ) = remember(
     navigator,

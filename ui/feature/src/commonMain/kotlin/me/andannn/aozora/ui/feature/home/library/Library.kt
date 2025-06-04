@@ -13,11 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +47,7 @@ fun Library(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryContent(
     modifier: Modifier,
@@ -48,68 +56,91 @@ fun LibraryContent(
     completedBooks: List<BookWithProgress>,
     onEvent: (LibraryUiEvent) -> Unit,
 ) {
-    Column(modifier = modifier) {
-        TabRow(selectedTabIndex = currentTab.ordinal) {
-            TabItem.entries.forEach {
-                Tab(
-                    selected = currentTab == it,
-                    onClick = {
-                        onEvent.invoke(LibraryUiEvent.OnTabRowClick(it))
-                    },
-                    text = {
-                        Text(it.label())
-                    },
-                )
-            }
-        }
-
-        if (currentTab == TabItem.READING) {
-            if (notCompletedBooks.isEmpty()) {
-                Column(
-                    Modifier.fillMaxSize().padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        "まだ読んでいる本がありません。\n気になる本を探して追加してみましょう。",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Spacer(Modifier.height(16.dp))
-                    OutlinedButton(
-                        onClick = {
-                            onEvent.invoke(LibraryUiEvent.OnGoToSearch)
-                        },
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                modifier = modifier,
+                title = {
+                    Text("青空読書")
+                },
+                actions = {
+                    IconButton(
+                        modifier = Modifier.padding(end = 12.dp),
+                        onClick = {},
                     ) {
-                        Text("本を検索する")
+                        Icon(
+                            imageVector = Icons.Outlined.MoreVert,
+                            contentDescription = null,
+                        )
                     }
+                },
+            )
+        },
+    ) {
+        Column(modifier = modifier.padding(it)) {
+            TabRow(selectedTabIndex = currentTab.ordinal) {
+                TabItem.entries.forEach {
+                    Tab(
+                        selected = currentTab == it,
+                        onClick = {
+                            onEvent.invoke(LibraryUiEvent.OnTabRowClick(it))
+                        },
+                        text = {
+                            Text(it.label())
+                        },
+                    )
                 }
-            } else {
-                BookList(
-                    modifier = Modifier,
-                    bookList = notCompletedBooks,
-                    onEvent = onEvent,
-                )
             }
-        } else {
-            if (completedBooks.isEmpty()) {
-                Column(
-                    Modifier.fillMaxSize().padding(48.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        "閲覧済みの本はありません。",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
+
+            if (currentTab == TabItem.READING) {
+                if (notCompletedBooks.isEmpty()) {
+                    Column(
+                        Modifier.fillMaxSize().padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "まだ読んでいる本がありません。\n気になる本を探して追加してみましょう。",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        OutlinedButton(
+                            onClick = {
+                                onEvent.invoke(LibraryUiEvent.OnGoToSearch)
+                            },
+                        ) {
+                            Text("本を検索する")
+                        }
+                    }
+                } else {
+                    BookList(
+                        modifier = Modifier,
+                        bookList = notCompletedBooks,
+                        onEvent = onEvent,
                     )
                 }
             } else {
-                BookList(
-                    modifier = Modifier,
-                    bookList = completedBooks,
-                    onEvent = onEvent,
-                )
+                if (completedBooks.isEmpty()) {
+                    Column(
+                        Modifier.fillMaxSize().padding(48.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            "閲覧済みの本はありません。",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                } else {
+                    BookList(
+                        modifier = Modifier,
+                        bookList = completedBooks,
+                        onEvent = onEvent,
+                    )
+                }
             }
         }
     }

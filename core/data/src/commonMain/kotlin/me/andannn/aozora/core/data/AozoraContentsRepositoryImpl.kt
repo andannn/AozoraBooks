@@ -27,12 +27,12 @@ private const val TAG = "AozoraContentsRepository"
 
 internal class AozoraContentsRepositoryImpl(
     private val aozoraService: AozoraService,
-    private val savedBookDao: BookLibraryDao,
+    private val dao: BookLibraryDao,
 ) : AozoraContentsRepository {
     override fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>> =
         Pager(
             config = PagingConfig(pageSize = LOAD_SIZE),
-            pagingSourceFactory = { savedBookDao.kanaPagingSource(kana) },
+            pagingSourceFactory = { dao.kanaPagingSource(kana) },
         ).flow.map { pagingData ->
             pagingData.map { it.toModel() }
         }
@@ -40,7 +40,7 @@ internal class AozoraContentsRepositoryImpl(
     override fun getAuthorsPagingFlow(kanaLineItem: KanaLineItem): Flow<PagingData<AuthorData>> =
         Pager(
             config = PagingConfig(pageSize = LOAD_SIZE),
-            pagingSourceFactory = { savedBookDao.authorPagingSource(kanaLineItem.kanaList) },
+            pagingSourceFactory = { dao.authorPagingSource(kanaLineItem.kanaList) },
         ).flow.map { pagingData ->
             pagingData.map { it.toModel() }
         }
@@ -51,7 +51,7 @@ internal class AozoraContentsRepositoryImpl(
     ): Flow<AozoraBookCard?> =
         combine(
             getBookCardAuthorDataListOrNullFlow(cardId, authorId),
-            savedBookDao
+            dao
                 .getBookByBookIdAndAuthorId(
                     bookId = cardId,
                     authorId = authorId,
@@ -66,8 +66,18 @@ internal class AozoraContentsRepositoryImpl(
         }
 
     override fun getAuthorDataWithBooks(authorId: String): Flow<AuthorWithBooks?> =
-        savedBookDao.getAuthorWithBooks(authorId).map {
+        dao.getAuthorWithBooks(authorId).map {
             it?.toModel()
+        }
+
+    override suspend fun searchBooks(query: String) =
+        dao.searchBook(query).map {
+            it.toModel()
+        }
+
+    override suspend fun searchAuthors(query: String) =
+        dao.searchAuthor(query).map {
+            it.toModel()
         }
 
     private fun getBookCardAuthorDataListOrNullFlow(
