@@ -1,3 +1,7 @@
+/*
+ * Copyright 2025, the AozoraBooks project contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package me.andannn.aozora.ui.feature.authorpages
 
 import androidx.compose.foundation.layout.Column
@@ -19,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import me.andannn.aozora.core.domain.model.AuthorModel
+import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
@@ -42,7 +46,7 @@ fun AuthorPages(
 private fun AuthorPagesContent(
     modifier: Modifier,
     kanaLineLabel: String,
-    pagingData: LazyPagingItems<AuthorModel>,
+    pagingData: LazyPagingItems<AuthorData>,
     onEvent: (AuthorPagesUiEvent) -> Unit,
 ) {
     Scaffold(
@@ -98,7 +102,7 @@ private fun AuthorPagesContent(
 private fun AuthorColumnItemView(
     modifier: Modifier,
     index: Int,
-    item: AuthorModel,
+    item: AuthorData,
     onClick: () -> Unit,
 ) {
     Surface(modifier = modifier, onClick = onClick) {
@@ -107,7 +111,7 @@ private fun AuthorColumnItemView(
         ) {
             Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
             Text(
-                item.lastName + " " + item.firstName,
+                item.authorName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
             )

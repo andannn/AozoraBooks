@@ -20,6 +20,7 @@ import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.screens.AuthorScreen
 import me.andannn.aozora.ui.feature.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -98,6 +99,12 @@ class BookCardPresenter(
                         ReaderScreen(cardId = bookId),
                     )
                 }
+
+                is BookCardUiEvent.OnClickAuthor -> {
+                    navigator.goTo(
+                        AuthorScreen(authorId = event.authorId),
+                    )
+                }
             }
         }
     }
@@ -116,4 +123,8 @@ sealed interface BookCardUiEvent {
     data object OnAddToShelf : BookCardUiEvent
 
     data object OnClickRead : BookCardUiEvent
+
+    data class OnClickAuthor(
+        val authorId: String,
+    ) : BookCardUiEvent
 }

@@ -61,11 +61,11 @@ class IndexPagesPresenter(
                 }
 
                 is IndexPagesUiEvent.OnBookClick -> {
-                    Napier.d(tag = TAG) { "goto book card ${event.book.id} groupId ${event.book.groupId}" }
+                    Napier.d(tag = TAG) { "goto book card ${event.book.id} groupId ${event.book.authorId}" }
                     navigator.goTo(
                         BookCardScreen(
                             bookCardId = event.book.id,
-                            groupId = event.book.groupId,
+                            groupId = event.book.authorId,
                         ),
                     )
                 }

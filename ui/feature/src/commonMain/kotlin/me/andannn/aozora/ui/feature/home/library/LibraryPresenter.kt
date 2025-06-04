@@ -96,7 +96,7 @@ class LibraryPresenter(
                                     navigator.goTo(
                                         BookCardScreen(
                                             bookCardId = event.card.id,
-                                            groupId = event.card.groupId,
+                                            groupId = event.card.authorId,
                                         ),
                                     )
                                 }

@@ -36,3 +36,9 @@ expect class BookCardScreen : Screen {
     val bookCardId: String
     val groupId: String
 }
+
+expect class AuthorScreen : Screen {
+    constructor(authorId: String)
+
+    val authorId: String
+}

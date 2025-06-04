@@ -12,7 +12,7 @@ import me.andannn.aozora.core.domain.model.StaffData
 internal fun BookEntity.toModel() =
     AozoraBookCard(
         id = bookId,
-        groupId = authorId,
+        authorId = authorId,
         title = title,
         titleKana = titleKana,
         author = "$authorLastName $authorFirstName",
@@ -31,6 +31,7 @@ internal fun BookEntity.toModel() =
         authorDataList =
             listOf(
                 AuthorData(
+                    authorId = authorId,
                     category = authorRoleFlag ?: "",
                     authorName = "$authorLastName $authorFirstName",
                     authorNameKana = "$authorLastNameSortKana $authorFirstNameKana",

@@ -14,17 +14,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.aozora.ui.common.widgets.BookColumnItemView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -94,31 +92,6 @@ fun IndexPagesStateContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun BookColumnItemView(
-    item: AozoraBookCard,
-    index: Int,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-) {
-    Surface(modifier = modifier, onClick = onClick) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-        ) {
-            Text("No.${index + 1}", style = MaterialTheme.typography.labelLarge)
-            Text(
-                item.title,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            if (item.subTitle != null) {
-                Text(item.subTitle!!, style = MaterialTheme.typography.bodyMedium)
-            }
-            Text("著者：" + item.author, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

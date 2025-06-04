@@ -15,10 +15,11 @@ import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.domain.model.AuthorModel
+import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.screens.AuthorScreen
 import me.andannn.core.util.rememberRetainedCoroutineScope
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -60,7 +61,9 @@ class AuthorPagesPresenter(
                     navigator.pop()
                 }
 
-                is AuthorPagesUiEvent.OnAuthorClick -> TODO()
+                is AuthorPagesUiEvent.OnAuthorClick -> {
+                    navigator.goTo(AuthorScreen(event.author.authorId))
+                }
             }
         }
     }
@@ -69,7 +72,7 @@ class AuthorPagesPresenter(
 @Stable
 data class AuthorPagesState(
     val kanaLineItem: KanaLineItem,
-    val pagingData: LazyPagingItems<AuthorModel>,
+    val pagingData: LazyPagingItems<AuthorData>,
     val evenSink: (AuthorPagesUiEvent) -> Unit = {},
 ) : CircuitUiState
 
@@ -77,6 +80,6 @@ sealed interface AuthorPagesUiEvent {
     data object OnBack : AuthorPagesUiEvent
 
     data class OnAuthorClick(
-        val author: AuthorModel,
+        val author: AuthorData,
     ) : AuthorPagesUiEvent
 }

@@ -14,6 +14,7 @@ import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.BookColumnItem
 import me.andannn.aozora.core.domain.model.TitleItem
 import me.andannn.aozora.core.service.AozoraService
+import me.andannn.core.util.removePrefixRecursive
 
 private const val BASE_URL = "https://www.aozora.gr.jp"
 
@@ -42,14 +43,6 @@ internal class AozoraServiceImpl(
         val url = getBookCardUrlBy(groupId, cardId.removePrefixRecursive("0"))
         val responseText = httpClient.get(url).bodyAsText()
         return parseAuthorData(responseText)
-    }
-
-    private fun String.removePrefixRecursive(prefix: String): String {
-        var result = this
-        while (result.startsWith(prefix)) {
-            result = result.removePrefix(prefix)
-        }
-        return result
     }
 }
 
@@ -108,6 +101,7 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
         }
     val descriptionWikiUrl = descriptionElement?.select("a")?.last()?.attr("href")
     return AuthorData(
+        authorId = parseAuthorIdFromUrl(authorUrl),
         category = category,
         authorName = authorName!!,
         authorUrl = authorUrl,
@@ -119,6 +113,8 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
         descriptionWikiUrl = descriptionWikiUrl,
     )
 }
+
+private fun parseAuthorIdFromUrl(authorUrl: String): String = authorUrl.substringAfterLast("/person").removeSuffix(".html").padStart(6, '0')
 
 internal fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
     val html = Ksoup.parse(htmlString)

@@ -5,20 +5,14 @@
 package me.andannn.aozora.core.data.mapper
 
 import me.andannn.aozora.core.database.entity.AuthorEntity
-import me.andannn.aozora.core.domain.model.AuthorModel
+import me.andannn.aozora.core.domain.model.AuthorData
 
 internal fun AuthorEntity.toModel() =
-    AuthorModel(
+    AuthorData(
         authorId = authorId,
-        lastName = lastName,
-        firstName = firstName,
-        lastNameKana = lastNameKana,
-        firstNameKana = firstNameKana,
-        lastNameSortKana = lastNameSortKana,
-        firstNameSortKana = firstNameSortKana,
-        lastNameRomaji = lastNameRomaji,
-        firstNameRomaji = firstNameRomaji,
         birth = birth,
         death = death,
-        copyrightFlag = copyrightFlag,
+        authorName = "$lastName $firstName",
+        authorNameKana = "$lastNameKana $firstNameKana",
+        authorNameRomaji = "$lastNameRomaji $firstNameRomaji",
     )
