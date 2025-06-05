@@ -76,6 +76,7 @@ internal class UserDataRepositoryImpl(
 
     override suspend fun setProgressOfBook(
         bookCardId: String,
+        authorId: String,
         readProgress: ReadProgress,
     ) {
         val progress = dao.getProgressOfBook(bookCardId)
@@ -83,6 +84,7 @@ internal class UserDataRepositoryImpl(
             dao.updateProgressOfBook(
                 BookProgressEntity(
                     bookId = bookCardId,
+                    authorId = authorId,
                     progressBlockIndex = readProgress.toDataBaseValue(),
                     totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
                     updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
@@ -99,12 +101,16 @@ internal class UserDataRepositoryImpl(
         }
     }
 
-    override suspend fun markBookAsCompleted(bookCardId: String) {
+    override suspend fun markBookAsCompleted(
+        bookCardId: String,
+        authorId: String,
+    ) {
         val progress = dao.getProgressOfBook(bookCardId)
         if (progress == null) {
             dao.updateProgressOfBook(
                 BookProgressEntity(
                     bookId = bookCardId,
+                    authorId = authorId,
                     progressBlockIndex = READ_PROGRESS_NONE,
                     updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
                     markCompleted = true,
@@ -142,10 +148,14 @@ internal class UserDataRepositoryImpl(
             it?.markCompleted == true
         }
 
-    override suspend fun saveBookToLibrary(bookId: String) {
+    override suspend fun saveBookToLibrary(
+        bookId: String,
+        authorId: String,
+    ) {
         dao.upsertSavedBook(
             SavedBookEntity(
                 bookId = bookId,
+                authorId = authorId,
                 createdDate = Clock.System.now().toEpochMilliseconds(),
             ),
         )
@@ -161,19 +171,27 @@ internal class UserDataRepositoryImpl(
             it.map(BookEntityWithProgress::toModel)
         }
 
-    override suspend fun deleteSavedBook(bookId: String) {
-        dao.deleteSavedBook(bookId)
+    override suspend fun deleteSavedBook(
+        bookId: String,
+        authorId: String,
+    ) {
+        dao.deleteSavedBook(bookId, authorId)
     }
 
-    override fun getSavedBookById(id: String): Flow<AozoraBookCard?> =
-        dao.getSavedBookById(id).map {
+    override fun getSavedBookById(
+        bookId: String,
+        authorId: String,
+    ): Flow<AozoraBookCard?> =
+        dao.getSavedBookById(bookId, authorId).map {
             it?.toModel()
         }
 
-    override fun getBookCache(bookId: String) =
-        dao.getBookById(bookId).map {
-            it?.toModel()
-        }
+    override fun getBookCache(
+        bookId: String,
+        authorId: String,
+    ) = dao.getBookByBookIdAndAuthorId(bookId, authorId).map {
+        it?.toModel()
+    }
 }
 
 private fun BookEntityWithProgress.toModel() =

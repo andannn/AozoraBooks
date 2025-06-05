@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,7 +66,9 @@ fun LibraryContent(
                 actions = {
                     IconButton(
                         modifier = Modifier.padding(end = 12.dp),
-                        onClick = {},
+                        onClick = {
+                            onEvent.invoke(LibraryUiEvent.OnClickMore)
+                        },
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.MoreVert,
@@ -158,9 +159,9 @@ private fun BookList(
         contentPadding = PaddingValues(vertical = 12.dp, horizontal = 18.dp),
     ) {
         items(
-            items = bookList,
-            key = { it.book.id },
-        ) { bookWithProgress ->
+            bookList.size,
+        ) { index ->
+            val bookWithProgress = bookList[index]
             val card = bookWithProgress.book
             val progress = bookWithProgress.progress
 
@@ -171,7 +172,7 @@ private fun BookList(
                 progress = progress,
                 userMarkRead = bookWithProgress.isUserMarkCompleted,
                 onClick = {
-                    onEvent.invoke(LibraryUiEvent.OnCardClick(card.id))
+                    onEvent.invoke(LibraryUiEvent.OnCardClick(card))
                 },
                 onOptionClick = {
                     onEvent.invoke(LibraryUiEvent.OnCardOptionClick(card))

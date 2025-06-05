@@ -18,9 +18,10 @@ expect object LicenseScreen : Screen
 expect object AboutScreen : Screen
 
 expect class ReaderScreen : Screen {
-    constructor(cardId: String)
+    constructor(cardId: String, authorId: String)
 
     val cardId: String
+    val authorId: String
 }
 
 expect class IndexPageScreen : Screen {

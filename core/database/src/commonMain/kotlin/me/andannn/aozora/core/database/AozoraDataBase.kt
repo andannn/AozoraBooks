@@ -120,8 +120,10 @@ internal val MIGRATION_3_4 =
 internal val MIGRATION_4_5 =
     object : Migration(4, 5) {
         override fun migrate(connection: SQLiteConnection) {
+            /**
+             * Drop old book table and create new.
+             */
             connection.execSQL("DROP TABLE IF EXISTS book_table")
-
             connection.execSQL(
                 """
                 CREATE TABLE book_table (
@@ -185,25 +187,32 @@ internal val MIGRATION_4_5 =
                 """.trimIndent(),
             )
 
+            connection.execSQL("DROP TABLE IF EXISTS saved_book_table")
             connection.execSQL(
                 """
-                CREATE TABLE IF NOT EXISTS new_saved_book (
-                    book_id TEXT NOT NULL PRIMARY KEY,
-                    created_date INTEGER NOT NULL
+                CREATE TABLE IF NOT EXISTS saved_book_table (
+                    book_id TEXT NOT NULL,
+                    author_id TEXT NOT NULL,
+                    created_date INTEGER NOT NULL,
+                    PRIMARY KEY (book_id, author_id)
                 )
                 """.trimIndent(),
             )
 
+            connection.execSQL("DROP TABLE IF EXISTS book_progress_table")
             connection.execSQL(
                 """
-                INSERT INTO new_saved_book (book_id, created_date)
-                SELECT book_id, created_date FROM saved_book_table
+                CREATE TABLE IF NOT EXISTS book_progress_table (
+                    saved_book_id TEXT NOT NULL,
+                    saved_author_id TEXT NOT NULL,
+                    progress_block_index INTEGER NOT NULL,
+                    update_epoch_millisecond INTEGER NOT NULL,
+                    total_block_count INTEGER,
+                    mark_completed INTEGER,
+                    PRIMARY KEY (saved_book_id, saved_author_id)
+                )
                 """.trimIndent(),
             )
-
-            connection.execSQL("DROP TABLE saved_book_table")
-
-            connection.execSQL("ALTER TABLE new_saved_book RENAME TO saved_book_table")
 
             connection.execSQL(
                 """
@@ -220,6 +229,32 @@ internal val MIGRATION_4_5 =
                     birth TEXT,
                     death TEXT,
                     copyright_flag TEXT
+                )
+                """.trimIndent(),
+            )
+
+            connection.execSQL(
+                """
+                CREATE VIRTUAL TABLE IF NOT EXISTS author_fts_table
+                USING fts4(
+                    first_name,
+                    first_name_kana,
+                    last_name,
+                    last_name_kana,
+                    content=`author_table`
+                )
+                """.trimIndent(),
+            )
+
+            connection.execSQL(
+                """
+                CREATE VIRTUAL TABLE IF NOT EXISTS book_fts_table
+                USING fts4(
+                  title,
+                  title_kana,
+                  subtitle,
+                  subtitle_kana,
+                  content=`book_table`
                 )
                 """.trimIndent(),
             )

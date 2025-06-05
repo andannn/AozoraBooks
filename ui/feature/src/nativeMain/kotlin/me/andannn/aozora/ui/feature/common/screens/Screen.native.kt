@@ -19,6 +19,7 @@ actual data object AboutScreen : Screen
 
 actual data class ReaderScreen actual constructor(
     actual val cardId: String,
+    actual val authorId: String,
 ) : Screen
 
 actual data class IndexPageScreen actual constructor(

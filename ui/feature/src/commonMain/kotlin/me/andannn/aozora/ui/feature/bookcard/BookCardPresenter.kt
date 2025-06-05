@@ -71,7 +71,7 @@ class BookCardPresenter(
                     }
             }
         val savedBookCard by userDataRepository
-            .getSavedBookById(bookId)
+            .getSavedBookById(bookId, authorId = groupId)
             .collectAsRetainedState(null)
 
         return BookCardState(
@@ -85,10 +85,12 @@ class BookCardPresenter(
                         if (savedBookCard != null) {
                             userDataRepository.deleteSavedBook(
                                 savedBookCard!!.id,
+                                savedBookCard!!.authorId,
                             )
                         } else {
                             userDataRepository.saveBookToLibrary(
                                 bookCardInfo?.id ?: error("bookCardInfo is null"),
+                                bookCardInfo?.authorId ?: error("bookCardInfo is null"),
                             )
                         }
                     }
@@ -96,7 +98,7 @@ class BookCardPresenter(
 
                 BookCardUiEvent.OnClickRead -> {
                     navigator.goTo(
-                        ReaderScreen(cardId = bookId),
+                        ReaderScreen(cardId = bookId, authorId = groupId),
                     )
                 }
 

@@ -73,13 +73,17 @@ interface UserDataRepository {
      */
     suspend fun setProgressOfBook(
         bookCardId: String,
+        authorId: String,
         readProgress: ReadProgress,
     )
 
     /**
      * Mark book as completed.
      */
-    suspend fun markBookAsCompleted(bookCardId: String)
+    suspend fun markBookAsCompleted(
+        bookCardId: String,
+        authorId: String,
+    )
 
     /**
      * Mark book as not completed.
@@ -104,7 +108,10 @@ interface UserDataRepository {
     /**
      * Save book to library.
      */
-    suspend fun saveBookToLibrary(bookId: String)
+    suspend fun saveBookToLibrary(
+        bookId: String,
+        authorId: String,
+    )
 
     /**
      * Get all book which is not completed.
@@ -119,12 +126,21 @@ interface UserDataRepository {
     /**
      * Delete saved book.
      */
-    suspend fun deleteSavedBook(bookId: String)
+    suspend fun deleteSavedBook(
+        bookId: String,
+        authorId: String,
+    )
 
     /**
      * Get saved book by id.
      */
-    fun getSavedBookById(id: String): Flow<AozoraBookCard?>
+    fun getSavedBookById(
+        bookId: String,
+        authorId: String,
+    ): Flow<AozoraBookCard?>
 
-    fun getBookCache(bookId: String): Flow<AozoraBookCard?>
+    fun getBookCache(
+        bookId: String,
+        authorId: String,
+    ): Flow<AozoraBookCard?>
 }

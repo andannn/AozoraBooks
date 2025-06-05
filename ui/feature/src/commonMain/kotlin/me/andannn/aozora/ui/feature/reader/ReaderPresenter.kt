@@ -20,21 +20,23 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 fun rememberReaderPresenter(
     cardId: String,
+    authorId: String,
     userDataRepository: UserDataRepository = getKoin().get(),
 ) = remember(
     cardId,
     userDataRepository,
 ) {
-    ReaderPresenter(cardId, userDataRepository)
+    ReaderPresenter(cardId, authorId, userDataRepository)
 }
 
 class ReaderPresenter(
     private val cardId: String,
+    private val authorId: String,
     private val userDataRepository: UserDataRepository,
 ) : Presenter<ReaderState> {
     @Composable
     override fun present(): ReaderState {
-        val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)
+        val savedBook by userDataRepository.getBookCache(cardId, authorId).collectAsRetainedState(null)
 
         KeepScreenOnEffect()
         ImmersiveModeEffect()

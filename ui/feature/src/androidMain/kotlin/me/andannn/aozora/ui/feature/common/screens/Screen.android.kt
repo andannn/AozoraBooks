@@ -26,6 +26,7 @@ actual data object AboutScreen : Screen
 @Parcelize
 actual data class ReaderScreen actual constructor(
     actual val cardId: String,
+    actual val authorId: String,
 ) : Screen
 
 @Parcelize

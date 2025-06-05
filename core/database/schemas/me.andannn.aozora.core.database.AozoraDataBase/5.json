@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "778eed1e1a6429c29690d9f5eca5ad0c",
+    "identityHash": "6a904f3aa8ab757e45090aa636f128a4",
     "entities": [
       {
         "tableName": "book_table",
@@ -301,11 +301,17 @@
       },
       {
         "tableName": "saved_book_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `author_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`, `author_id`))",
         "fields": [
           {
             "fieldPath": "bookId",
             "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -319,17 +325,24 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "book_id"
+            "book_id",
+            "author_id"
           ]
         }
       },
       {
         "tableName": "book_progress_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`saved_book_id` TEXT NOT NULL, `progress_block_index` INTEGER NOT NULL, `update_epoch_millisecond` INTEGER NOT NULL, `total_block_count` INTEGER, `mark_completed` INTEGER, PRIMARY KEY(`saved_book_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`saved_book_id` TEXT NOT NULL, `saved_author_id` TEXT NOT NULL, `progress_block_index` INTEGER NOT NULL, `update_epoch_millisecond` INTEGER NOT NULL, `total_block_count` INTEGER, `mark_completed` INTEGER, PRIMARY KEY(`saved_book_id`, `saved_author_id`))",
         "fields": [
           {
             "fieldPath": "bookId",
             "columnName": "saved_book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "saved_author_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -359,7 +372,8 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "saved_book_id"
+            "saved_book_id",
+            "saved_author_id"
           ]
         }
       },
@@ -543,7 +557,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '778eed1e1a6429c29690d9f5eca5ad0c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6a904f3aa8ab757e45090aa636f128a4')"
     ]
   }
 }

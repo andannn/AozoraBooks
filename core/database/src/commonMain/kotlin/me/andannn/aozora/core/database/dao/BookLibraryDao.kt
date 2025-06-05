@@ -49,17 +49,6 @@ interface BookLibraryDao {
     }
 
     /**
-     * Get a book by id
-     */
-    @Query(
-        """
-        SELECT * 
-        FROM ${Tables.BOOK_TABLE} WHERE ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = :bookId
-        """,
-    )
-    fun getBookById(bookId: String): Flow<BookEntity?>
-
-    /**
      * Get paging source of sorted by kana
      */
     @Query(
@@ -102,8 +91,8 @@ interface BookLibraryDao {
         """
             SELECT * 
             FROM ${Tables.BOOK_TABLE}
-            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
-            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
+            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID} AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.AUTHOR_ID}
+            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID} AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.AUTHOR_ID}
             WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} != 1 OR ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} IS NULL
             ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
@@ -117,8 +106,8 @@ interface BookLibraryDao {
         """
             SELECT * 
             FROM ${Tables.BOOK_TABLE}
-            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID}
-            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID}
+            INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID} AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.AUTHOR_ID}
+            LEFT JOIN ${Tables.BOOK_PROGRESS_TABLE} ON ${Tables.BOOK_TABLE}.${BookColumns.BOOK_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.BOOK_ID} AND ${Tables.BOOK_TABLE}.${BookColumns.AUTHOR_ID} = ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.AUTHOR_ID}
             WHERE ${Tables.BOOK_PROGRESS_TABLE}.${BookProgressColumns.MARK_COMPLETED} == 1
             ORDER BY ${SavedBookColumn.CREATED_DATE} DESC
         """,
@@ -139,19 +128,25 @@ interface BookLibraryDao {
      */
     @Query(
         """
-        SELECT * 
-        FROM ${Tables.BOOK_TABLE}
-        WHERE ${BookColumns.BOOK_ID} = :bookId
-            AND ${BookColumns.BOOK_ID} IN (SELECT ${SavedBookColumn.BOOK_ID} FROM ${Tables.SAVED_BOOK_TABLE})
-    """,
+        SELECT b.*
+        FROM ${Tables.BOOK_TABLE} b
+        INNER JOIN ${Tables.SAVED_BOOK_TABLE} ON b.${BookColumns.BOOK_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.BOOK_ID} AND b.${BookColumns.AUTHOR_ID} = ${Tables.SAVED_BOOK_TABLE}.${SavedBookColumn.AUTHOR_ID}
+        WHERE b.${BookColumns.BOOK_ID} = :bookId AND b.${BookColumns.AUTHOR_ID} = :authorId
+        """,
     )
-    fun getSavedBookById(bookId: String): Flow<BookEntity?>
+    fun getSavedBookById(
+        bookId: String,
+        authorId: String,
+    ): Flow<BookEntity?>
 
     /**
      * Delete a saved book
      */
-    @Query("DELETE FROM ${Tables.SAVED_BOOK_TABLE} WHERE ${SavedBookColumn.BOOK_ID} = :bookId")
-    suspend fun deleteSavedBook(bookId: String)
+    @Query("DELETE FROM ${Tables.SAVED_BOOK_TABLE} WHERE ${SavedBookColumn.BOOK_ID} = :bookId AND ${SavedBookColumn.AUTHOR_ID} = :authorId")
+    suspend fun deleteSavedBook(
+        bookId: String,
+        authorId: String,
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSavedBook(savedBookEntity: SavedBookEntity)

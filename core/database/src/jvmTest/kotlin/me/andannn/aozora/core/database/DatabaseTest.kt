@@ -39,13 +39,14 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
             assertEquals(1, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
-            savedBookDao.deleteSavedBook("1")
+            savedBookDao.deleteSavedBook("12353", "1")
             assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
         }
 
@@ -55,22 +56,23 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
             assertEquals(
-                "1",
-                savedBookDao.getSavedBookById("1").first()?.bookId,
+                "12353",
+                savedBookDao.getSavedBookById("12353", "1").first()?.bookId,
             )
             savedBookDao.upsertBookList(bookEntities)
             assertEquals(
-                "1",
-                savedBookDao.getSavedBookById("1").first()?.bookId,
+                "12353",
+                savedBookDao.getSavedBookById("12353", "1").first()?.bookId,
             )
-            savedBookDao.deleteSavedBook("1")
+            savedBookDao.deleteSavedBook("12353", "1")
             assertTrue {
-                savedBookDao.getSavedBookById("1").first() == null
+                savedBookDao.getSavedBookById("12353", "1").first() == null
             }
         }
 
@@ -80,23 +82,25 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "2",
+                    bookId = "056078",
+                    authorId = "001257",
                     createdDate = 2,
                 ),
             )
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "212353",
+                    authorId = "2",
                     createdDate = 1,
                 ),
             )
             val savedBooks = savedBookDao.getNotCompletedBooksByDesc().first()
             println(savedBooks)
             assertTrue {
-                savedBooks[0].book.bookId == "2"
+                savedBooks[0].book.bookId == "056078"
             }
             assertTrue {
-                savedBooks[1].book.bookId == "1"
+                savedBooks[1].book.bookId == "212353"
             }
         }
 
@@ -106,6 +110,7 @@ class DatabaseTest {
             val progressEntity =
                 BookProgressEntity(
                     bookId = "1",
+                    authorId = "2",
                     progressBlockIndex = 1,
                     updateEpochMillisecond = 1,
                 )
@@ -126,7 +131,8 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
@@ -141,7 +147,8 @@ class DatabaseTest {
 
             savedBookDao.updateProgressOfBook(
                 BookProgressEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     progressBlockIndex = 1,
                     updateEpochMillisecond = 1,
                 ),
@@ -162,7 +169,8 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
@@ -170,7 +178,8 @@ class DatabaseTest {
 
             savedBookDao.updateProgressOfBook(
                 BookProgressEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     progressBlockIndex = READ_PROGRESS_DONE,
                     updateEpochMillisecond = 1,
                     markCompleted = true,
@@ -179,9 +188,10 @@ class DatabaseTest {
 
             assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
-            assertTrue {
-                savedBookDao.getCompleteBooksByDesc().first().isNotEmpty()
-            }
+            assertEquals(
+                1,
+                savedBookDao.getCompleteBooksByDesc().first().size,
+            )
         }
 
     @Test
@@ -204,7 +214,14 @@ class DatabaseTest {
             val result = savedBookDao.getAuthorWithBooks("001257")
             assertEquals("author3", result.first()?.author?.lastName)
             assertEquals(1, result.first()?.books?.size)
-            assertEquals(bookEntities[2], result.first()?.books?.first())
+            assertEquals(
+                "056078",
+                result
+                    .first()
+                    ?.books
+                    ?.first()
+                    ?.bookId,
+            )
         }
 
     @Test
@@ -228,6 +245,7 @@ private val bookEntities =
     listOf(
         BookEntity(
             bookId = "12353",
+            authorId = "1",
             title = "title",
             titleKana = "titleKana",
             titleSortKana = null,
@@ -241,7 +259,63 @@ private val bookEntities =
             publishDate = null,
             lastUpdateDate = null,
             cardUrl = "authorUrl",
-            authorId = "1",
+            authorLastName = "author",
+            authorFirstName = "",
+            authorLastNameKana = null,
+            authorFirstNameKana = null,
+            authorLastNameSortKana = null,
+            authorFirstNameSortKana = null,
+            authorLastNameRomaji = null,
+            authorFirstNameRomaji = null,
+            authorRoleFlag = null,
+            authorBirth = null,
+            authorDeath = null,
+            authorCopyrightFlag = null,
+            sourceBook1 = null,
+            sourcePublisher1 = null,
+            sourcePubYear1 = null,
+            inputEdition1 = null,
+            proofEdition1 = null,
+            parentSourceBook1 = null,
+            parentSourcePublisher1 = null,
+            parentSourcePubYear1 = null,
+            sourceBook2 = null,
+            sourcePublisher2 = null,
+            sourcePubYear2 = null,
+            inputEdition2 = null,
+            proofEdition2 = null,
+            parentSourceBook2 = null,
+            parentSourcePublisher2 = null,
+            parentSourcePubYear2 = null,
+            inputBy = null,
+            proofBy = null,
+            textFileUrl = "zipUrl",
+            textFileLastUpdate = null,
+            textFileEncoding = null,
+            textFileCharset = null,
+            textFileRevision = null,
+            htmlFileUrl = "htmlUrl",
+            htmlFileLastUpdate = null,
+            htmlFileEncoding = null,
+            htmlFileCharset = null,
+            htmlFileRevision = null,
+        ),
+        BookEntity(
+            bookId = "12353",
+            authorId = "2",
+            title = "title",
+            titleKana = "titleKana",
+            titleSortKana = null,
+            subtitle = null,
+            subtitleKana = null,
+            originalTitle = null,
+            firstAppearance = null,
+            categoryNo = null,
+            orthography = null,
+            workCopyrightFlag = null,
+            publishDate = null,
+            lastUpdateDate = null,
+            cardUrl = "authorUrl",
             authorLastName = "author",
             authorFirstName = "",
             authorLastNameKana = null,
@@ -285,6 +359,7 @@ private val bookEntities =
         ),
         BookEntity(
             bookId = "212353",
+            authorId = "2",
             title = "title2",
             titleKana = "titleKana2",
             titleSortKana = null,
@@ -298,7 +373,6 @@ private val bookEntities =
             publishDate = null,
             lastUpdateDate = null,
             cardUrl = "authorUrl2",
-            authorId = "2",
             authorLastName = "author2",
             authorFirstName = "",
             authorLastNameKana = null,
@@ -342,6 +416,7 @@ private val bookEntities =
         ),
         BookEntity(
             bookId = "056078",
+            authorId = "001257",
             title = "title3",
             titleKana = "titleKana3",
             titleSortKana = null,
@@ -355,7 +430,6 @@ private val bookEntities =
             publishDate = null,
             lastUpdateDate = null,
             cardUrl = "authorUrl3",
-            authorId = "001257",
             authorLastName = "author3",
             authorFirstName = "",
             authorLastNameKana = null,

@@ -43,14 +43,16 @@ private const val TAG = "ReaderOverlayPresenter"
 @Composable
 fun rememberReaderOverlayPresenter(
     cardId: String,
+    authorId: String,
     bookPageState: BookPageState,
     settingRepository: UserDataRepository = getKoin().get(),
     navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
     uriHandler: UriHandler = LocalUriHandler.current,
-) = remember(bookPageState, popupController, navigator, uriHandler) {
+) = remember(cardId, authorId, settingRepository, bookPageState, popupController, navigator, uriHandler) {
     ReaderOverlayPresenter(
         cardId,
+        authorId,
         navigator,
         settingRepository,
         bookPageState,
@@ -61,6 +63,7 @@ fun rememberReaderOverlayPresenter(
 
 class ReaderOverlayPresenter(
     private val cardId: String,
+    private val authorId: String,
     private val navigator: Navigator,
     private val userDataRepository: UserDataRepository,
     private val bookPageState: BookPageState,
@@ -80,12 +83,12 @@ class ReaderOverlayPresenter(
             bookPageState.pagerState.currentPage == bookPageState.pagerState.pageCount - 1,
         )
         val savedBookCard by userDataRepository
-            .getSavedBookById(cardId)
+            .getSavedBookById(bookId = cardId, authorId = authorId)
             .collectAsRetainedState(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         suspend fun markCompletedAndShowAlertDialog() {
-            userDataRepository.markBookAsCompleted(cardId)
+            userDataRepository.markBookAsCompleted(cardId, authorId)
             val result = popupController.showDialog(ReaderCompleteDialogId)
             if (result is OnGoToAppStore) {
                 uriHandler.openUri("https://play.google.com/store/apps/details?id=me.andannn.aozora")

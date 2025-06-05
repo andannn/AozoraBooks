@@ -74,7 +74,7 @@ class LibraryPresenter(
         ) { event ->
             when (event) {
                 is LibraryUiEvent.OnCardClick -> {
-                    navigator.goTo(ReaderScreen(event.cardId))
+                    navigator.goTo(ReaderScreen(event.card.id, event.card.authorId))
                 }
 
                 is LibraryUiEvent.OnTabRowClick -> {
@@ -103,11 +103,17 @@ class LibraryPresenter(
                                 }
 
                                 OptionItem.REMOVE_FROM_BOOK_SHELF -> {
-                                    userDataRepository.deleteSavedBook(event.card.id)
+                                    userDataRepository.deleteSavedBook(
+                                        event.card.id,
+                                        event.card.authorId,
+                                    )
                                 }
 
                                 OptionItem.MARK_AS_COMPLETED -> {
-                                    userDataRepository.markBookAsCompleted(event.card.id)
+                                    userDataRepository.markBookAsCompleted(
+                                        event.card.id,
+                                        event.card.authorId,
+                                    )
                                 }
 
                                 OptionItem.MARK_AS_NOT_COMPLETED -> {
@@ -136,7 +142,7 @@ data class LibraryState(
 
 sealed interface LibraryUiEvent {
     data class OnCardClick(
-        val cardId: String,
+        val card: AozoraBookCard,
     ) : LibraryUiEvent
 
     data class OnCardOptionClick(

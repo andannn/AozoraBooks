@@ -140,7 +140,7 @@ object RoutePresenterFactory : Presenter.Factory {
 
             is ReaderScreen ->
                 presenterOf {
-                    rememberReaderPresenter(screen.cardId).present()
+                    rememberReaderPresenter(screen.cardId, screen.authorId).present()
                 }
 
             is IndexPageScreen -> {

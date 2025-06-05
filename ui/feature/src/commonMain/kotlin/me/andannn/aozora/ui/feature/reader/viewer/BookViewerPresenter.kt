@@ -96,7 +96,7 @@ class BookViewerPresenter(
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
         val savedBookCard by userDataRepository
-            .getSavedBookById(card.id)
+            .getSavedBookById(bookId = card.id, authorId = card.authorId)
             .collectAsRetainedState(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
@@ -160,6 +160,7 @@ class BookViewerPresenter(
                             }
                         userDataRepository.setProgressOfBook(
                             bookCardId = card.id,
+                            authorId = card.authorId,
                             readProgress = currentProgress,
                         )
                     }
