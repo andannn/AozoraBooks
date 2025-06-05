@@ -29,15 +29,11 @@ androidxDatastore = "1.1.3"
 pagingCommonVersion = "3.3.6"
 playServicesAds = "24.3.0"
 spotless = "7.0.4"
-appcompat = "1.7.0"
-material = "1.12.0"
 androidxRoom = "2.7.1"
 sqliteBundled = "2.5.1"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
 licensee = "1.13.0"
-appcompatVersion = "1.7.0"
-materialVersion = "1.12.0"
 workRuntimeKtx = "2.10.0"
 
 [libraries]
@@ -104,8 +100,6 @@ jetbrainsCompose-gradlePlugin = { group = "org.jetbrains.compose", name = "compo
 ktlint-gradlePlugin = { group = "org.jlleitschuh.gradle", name = "ktlint-gradle", version.ref = "ktlint" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 licensee-gradlePlugin = { group = "app.cash.licensee", name = "licensee-gradle-plugin", version.ref = "licensee" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompatVersion" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
