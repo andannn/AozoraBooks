@@ -106,7 +106,10 @@ internal class RemoteOrLocalCacheBookRawSource(
     private suspend fun waitBookModelOrThrow(): BookModel {
         val state = bookModelStateFlow.first { it != SourceState.Loading }
         when (state) {
-            is SourceState.Error -> throw state.e
+            is SourceState.Error -> throw IllegalStateException(
+                state.e.toString(),
+            )
+
             is SourceState.Success -> return state.source
             SourceState.Loading -> error("Never")
         }
@@ -115,7 +118,7 @@ internal class RemoteOrLocalCacheBookRawSource(
 
 private sealed interface SourceState {
     data class Error(
-        val e: Exception,
+        val e: Throwable,
     ) : SourceState
 
     data class Success(
