@@ -9,12 +9,13 @@ package me.andannn.aozora.core.domain.model
  */
 data class AozoraBookCard(
     val id: String,
-    val groupId: String,
     val title: String,
     val titleKana: String,
+    val authorId: String,
     val author: String?,
     val authorUrl: String?,
     val zipUrl: String?,
+    val subTitle: String? = null,
     val htmlUrl: String? = null,
     val category: String? = null,
     val source: String? = null,
@@ -26,18 +27,6 @@ data class AozoraBookCard(
 data class StaffData(
     val proofreading: String?,
     val input: String?,
-)
-
-data class AuthorData(
-    val category: String,
-    val authorName: String,
-    val authorNameKana: String?,
-    val authorNameRomaji: String?,
-    val birth: String? = null,
-    val death: String? = null,
-    val authorUrl: String? = null,
-    val description: String? = null,
-    val descriptionWikiUrl: String? = null,
 )
 
 data class TitleItem(

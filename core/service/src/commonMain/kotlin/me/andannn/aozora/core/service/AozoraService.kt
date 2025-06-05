@@ -4,7 +4,7 @@
  */
 package me.andannn.aozora.core.service
 
-import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.BookColumnItem
 
 interface AozoraService {
@@ -15,8 +15,8 @@ interface AozoraService {
         page: Int,
     ): List<BookColumnItem>
 
-    suspend fun getBookCard(
+    suspend fun getBookCardAuthorDataList(
         groupId: String,
         cardId: String,
-    ): AozoraBookCard
+    ): List<AuthorData>
 }

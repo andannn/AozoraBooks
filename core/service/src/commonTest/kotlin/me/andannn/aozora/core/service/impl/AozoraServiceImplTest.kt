@@ -32,16 +32,4 @@ class AozoraServiceImplTest {
             )
         assertEquals(10, result)
     }
-
-    @Test
-    fun parseBookCardTest() {
-        val result =
-            parseBookCard(
-                "https://www.aozora.gr.jp/cards/000035/card52463.html",
-                cardId = "52463",
-                groupId = "000035",
-                Path("src/commonTest/resources/test2.html").readString("Utf-8"),
-            )
-        println(result)
-    }
 }

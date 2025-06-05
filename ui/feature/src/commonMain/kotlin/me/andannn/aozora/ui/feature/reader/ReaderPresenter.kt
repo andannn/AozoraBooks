@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
-import me.andannn.aozora.core.domain.model.CachedBookModel
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.util.ImmersiveModeEffect
 import me.andannn.aozora.ui.common.util.KeepScreenOnEffect
@@ -20,21 +20,23 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 fun rememberReaderPresenter(
     cardId: String,
+    authorId: String,
     userDataRepository: UserDataRepository = getKoin().get(),
 ) = remember(
     cardId,
     userDataRepository,
 ) {
-    ReaderPresenter(cardId, userDataRepository)
+    ReaderPresenter(cardId, authorId, userDataRepository)
 }
 
 class ReaderPresenter(
     private val cardId: String,
+    private val authorId: String,
     private val userDataRepository: UserDataRepository,
 ) : Presenter<ReaderState> {
     @Composable
     override fun present(): ReaderState {
-        val savedBook by userDataRepository.getBookCache(cardId).collectAsRetainedState(null)
+        val savedBook by userDataRepository.getBookCache(cardId, authorId).collectAsRetainedState(null)
 
         KeepScreenOnEffect()
         ImmersiveModeEffect()
@@ -49,7 +51,7 @@ class ReaderPresenter(
 
 @Stable
 data class ReaderState(
-    val bookCard: CachedBookModel?,
+    val bookCard: AozoraBookCard?,
     val evenSink: (ReaderUiEvent) -> Unit = {},
 ) : CircuitUiState
 

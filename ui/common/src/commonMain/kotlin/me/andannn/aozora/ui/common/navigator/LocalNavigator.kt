@@ -9,4 +9,4 @@ import androidx.compose.runtime.compositionLocalOf
 import com.slack.circuit.runtime.Navigator
 
 val LocalNavigator: ProvidableCompositionLocal<Navigator> =
-    compositionLocalOf { error("no popup controller") }
+    compositionLocalOf { error("no local navigator") }

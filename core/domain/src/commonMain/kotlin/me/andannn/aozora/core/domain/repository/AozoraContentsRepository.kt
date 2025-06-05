@@ -7,14 +7,23 @@ package me.andannn.aozora.core.domain.repository
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.BookColumnItem
-import me.andannn.aozora.core.domain.model.LoadResult
+import me.andannn.aozora.core.domain.model.AuthorData
+import me.andannn.aozora.core.domain.model.AuthorWithBooks
+import me.andannn.aozora.core.domain.model.KanaLineItem
 
 interface AozoraContentsRepository {
-    fun getBookListPagingFlow(kana: String): Flow<PagingData<BookColumnItem>>
+    fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>>
 
-    suspend fun getBookCard(
+    fun getAuthorsPagingFlow(kanaLineItem: KanaLineItem): Flow<PagingData<AuthorData>>
+
+    fun getBookCard(
         cardId: String,
-        groupId: String,
-    ): LoadResult<AozoraBookCard>
+        authorId: String,
+    ): Flow<AozoraBookCard?>
+
+    fun getAuthorDataWithBooks(authorId: String): Flow<AuthorWithBooks?>
+
+    suspend fun searchBooks(query: String): List<AozoraBookCard>
+
+    suspend fun searchAuthors(query: String): List<AuthorData>
 }

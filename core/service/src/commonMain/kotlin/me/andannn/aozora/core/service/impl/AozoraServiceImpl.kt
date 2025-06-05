@@ -10,12 +10,11 @@ import com.fleeksoft.ksoup.nodes.TextNode
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.BookColumnItem
-import me.andannn.aozora.core.domain.model.StaffData
 import me.andannn.aozora.core.domain.model.TitleItem
 import me.andannn.aozora.core.service.AozoraService
+import me.andannn.core.util.removePrefixRecursive
 
 private const val BASE_URL = "https://www.aozora.gr.jp"
 
@@ -37,18 +36,13 @@ internal class AozoraServiceImpl(
         return parseBookListFromOpeningBooks(responseText)
     }
 
-    override suspend fun getBookCard(
+    override suspend fun getBookCardAuthorDataList(
         groupId: String,
         cardId: String,
-    ): AozoraBookCard {
-        val url = getBookCardUrlBy(groupId, cardId)
+    ): List<AuthorData> {
+        val url = getBookCardUrlBy(groupId, cardId.removePrefixRecursive("0"))
         val responseText = httpClient.get(url).bodyAsText()
-        return parseBookCard(
-            url = url,
-            cardId = cardId,
-            groupId = groupId,
-            htmlString = responseText,
-        )
+        return parseAuthorData(responseText)
     }
 }
 
@@ -62,82 +56,15 @@ private fun getBookCardUrlBy(
     cardId: String,
 ): String = "$BASE_URL/cards/$groupId/card$cardId.html"
 
-internal fun parseBookCard(
-    url: String,
-    cardId: String,
-    groupId: String,
-    htmlString: String,
-): AozoraBookCard {
+internal fun parseAuthorData(htmlString: String): List<AuthorData> {
     val html = Ksoup.parse(htmlString)
-
-    val titleElement = html.selectFirst("table[summary=タイトルデータ] > tbody")
-    val title = titleElement?.child(0)?.child(1)?.text()
-    val titleKana = titleElement?.child(1)?.child(1)?.text()
-    val authorElement = titleElement?.select("a")
-    val author = authorElement?.text()
-    val authorUrl = BASE_URL + authorElement!!.attr("href").removePrefix("../..")
-
-    val bookDataElement = html.selectFirst("table[summary=作品データ] > tbody")
-    val childrenTextList =
-        bookDataElement?.children()?.map { it.text().trim() }?.filterNot { it.isBlank() }
-            ?: listOf()
-
-    val category = subTextOfList(childrenTextList, value = "分類：")
-    val source = subTextOfList(childrenTextList, value = "初出：")
-    val characterType = subTextOfList(childrenTextList, value = "文字遣い種別：")
-
-    val staffElement = html.selectFirst("table[summary=工作員データ] > tbody")
-    val staffTextList =
-        staffElement?.children()?.map { it.text().trim() }?.filterNot { it.isBlank() }
-            ?: listOf()
-    val input = subTextOfList(staffTextList, value = "入力：")
-    val proofreading = subTextOfList(staffTextList, value = "校正：")
-
     val authorDataElements = html.select("table[summary=作家データ] > tbody")
     val authDataList =
         authorDataElements.map {
             parseAuthorDataElement(it)
         }
 
-    val downloadElement = html.selectFirst("table[summary=ダウンロードデータ] > tbody")
-    val zipFileUrl =
-        downloadElement!!
-            .children()
-            .firstOrNull {
-                it.text().contains("テキストファイル")
-            }?.selectFirst("a")
-            ?.attr("href")
-    val htmlFileUrl =
-        downloadElement
-            .children()
-            .firstOrNull {
-                it.text().contains("HTMLファイル")
-            }?.selectFirst("a")
-            ?.attr("href")
-
-// TODO: make resolve helper function.
-    val zipDownloadUrl = zipFileUrl?.let { url.replaceAfterLast("/", "") + it.removePrefix(".") }
-    val htmlDownloadUrl = htmlFileUrl?.let { url.replaceAfterLast("/", "") + it.removePrefix(".") }
-
-    return AozoraBookCard(
-        id = cardId,
-        groupId = groupId,
-        title = title!!,
-        titleKana = titleKana!!,
-        author = author,
-        authorUrl = authorUrl,
-        category = category,
-        source = source,
-        authorDataList = authDataList,
-        zipUrl = zipDownloadUrl,
-        htmlUrl = htmlDownloadUrl,
-        characterType = characterType,
-        staffData =
-            StaffData(
-                input = input,
-                proofreading = proofreading,
-            ),
-    )
+    return authDataList
 }
 
 private fun parseAuthorDataElement(element: Element): AuthorData {
@@ -174,6 +101,7 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
         }
     val descriptionWikiUrl = descriptionElement?.select("a")?.last()?.attr("href")
     return AuthorData(
+        authorId = parseAuthorIdFromUrl(authorUrl),
         category = category,
         authorName = authorName!!,
         authorUrl = authorUrl,
@@ -185,6 +113,8 @@ private fun parseAuthorDataElement(element: Element): AuthorData {
         descriptionWikiUrl = descriptionWikiUrl,
     )
 }
+
+private fun parseAuthorIdFromUrl(authorUrl: String): String = authorUrl.substringAfterLast("/person").removeSuffix(".html").padStart(6, '0')
 
 internal fun parseBookListFromOpeningBooks(htmlString: String): List<BookColumnItem> {
     val html = Ksoup.parse(htmlString)

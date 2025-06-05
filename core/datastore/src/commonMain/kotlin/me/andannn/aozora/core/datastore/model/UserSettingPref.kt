@@ -16,6 +16,7 @@ data class UserSettingPref(
     val lineSpacing: LineSpacing,
     val readerTheme: ReaderTheme,
     val fontType: FontType,
+    val lastSuccessfulSyncTime: String?,
 )
 
 fun TopMargin.toTopMarginValue() =

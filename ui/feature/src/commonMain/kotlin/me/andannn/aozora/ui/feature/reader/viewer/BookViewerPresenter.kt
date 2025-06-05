@@ -29,8 +29,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraPage
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
@@ -44,20 +44,20 @@ import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
-import me.andannn.aozora.ui.feature.dialog.showAlertDialog
+import me.andannn.aozora.ui.feature.common.dialog.showAlertDialog
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberBookViewerPresenter(
-    card: CachedBookModel,
+    card: AozoraBookCard,
     screenWidthDp: Dp,
     screenHeightDp: Dp,
     bookSource: BookPageSource = LocalBookPageSource.current,
     popupController: PopupController = LocalPopupController.current,
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     settingRepository: UserDataRepository = getKoin().get(),
 ) = remember(card, bookSource, screenWidthDp, screenHeightDp, settingRepository) {
     BookViewerPresenter(
@@ -74,7 +74,7 @@ fun rememberBookViewerPresenter(
 private const val TAG = "ReaderPresenter"
 
 class BookViewerPresenter(
-    private val card: CachedBookModel,
+    private val card: AozoraBookCard,
     private val bookSource: BookPageSource,
     private val screenWidthDp: Dp,
     private val screenHeightDp: Dp,
@@ -96,7 +96,7 @@ class BookViewerPresenter(
             .getLineSpacing()
             .collectAsRetainedState(LineSpacing.DEFAULT)
         val savedBookCard by userDataRepository
-            .getSavedBookById(card.id)
+            .getSavedBookById(bookId = card.id, authorId = card.authorId)
             .collectAsRetainedState(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
@@ -160,6 +160,7 @@ class BookViewerPresenter(
                             }
                         userDataRepository.setProgressOfBook(
                             bookCardId = card.id,
+                            authorId = card.authorId,
                             readProgress = currentProgress,
                         )
                     }

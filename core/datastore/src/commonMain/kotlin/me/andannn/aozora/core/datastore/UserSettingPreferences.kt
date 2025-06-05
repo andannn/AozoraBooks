@@ -8,6 +8,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.andannn.aozora.core.datastore.model.PreferencesKeyName
@@ -55,6 +56,8 @@ class UserSettingPreferences(
                         preferences[intPreferencesKey(PreferencesKeyName.FONT_TYPE_KEY_NAME)]?.let {
                             parseFontType(it)
                         } ?: FontType.DEFAULT,
+                    lastSuccessfulSyncTime =
+                        preferences[stringPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
                 )
             }
 
@@ -90,6 +93,13 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[intPreferencesKey(PreferencesKeyName.FONT_TYPE_KEY_NAME)] =
                 fontType.toFontTypeValue()
+        }
+    }
+
+    suspend fun setLastSuccessfulSyncTime(time: String) {
+        preferences.edit { preferences ->
+            preferences[stringPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)] =
+                time
         }
     }
 }

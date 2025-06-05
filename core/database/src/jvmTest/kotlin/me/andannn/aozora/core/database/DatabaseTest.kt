@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.dao.READ_PROGRESS_DONE
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -29,7 +30,7 @@ class DatabaseTest {
     private val dispatcher = StandardTestDispatcher()
     private val testScope = TestScope(dispatcher)
 
-    private val savedBookDao: SavedBookDao
+    private val savedBookDao: BookLibraryDao
         get() = database.savedBookDao()
 
     @Test
@@ -38,13 +39,14 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
             assertEquals(1, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
-            savedBookDao.deleteSavedBook("1")
+            savedBookDao.deleteSavedBook("12353", "1")
             assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
         }
 
@@ -54,22 +56,23 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
             assertEquals(
-                "1",
-                savedBookDao.getSavedBookById("1").first()?.bookId,
+                "12353",
+                savedBookDao.getSavedBookById("12353", "1").first()?.bookId,
             )
             savedBookDao.upsertBookList(bookEntities)
             assertEquals(
-                "1",
-                savedBookDao.getSavedBookById("1").first()?.bookId,
+                "12353",
+                savedBookDao.getSavedBookById("12353", "1").first()?.bookId,
             )
-            savedBookDao.deleteSavedBook("1")
+            savedBookDao.deleteSavedBook("12353", "1")
             assertTrue {
-                savedBookDao.getSavedBookById("1").first() == null
+                savedBookDao.getSavedBookById("12353", "1").first() == null
             }
         }
 
@@ -79,23 +82,25 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "2",
+                    bookId = "056078",
+                    authorId = "001257",
                     createdDate = 2,
                 ),
             )
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "212353",
+                    authorId = "2",
                     createdDate = 1,
                 ),
             )
             val savedBooks = savedBookDao.getNotCompletedBooksByDesc().first()
             println(savedBooks)
             assertTrue {
-                savedBooks[0].book.bookId == "2"
+                savedBooks[0].book.bookId == "056078"
             }
             assertTrue {
-                savedBooks[1].book.bookId == "1"
+                savedBooks[1].book.bookId == "212353"
             }
         }
 
@@ -105,6 +110,7 @@ class DatabaseTest {
             val progressEntity =
                 BookProgressEntity(
                     bookId = "1",
+                    authorId = "2",
                     progressBlockIndex = 1,
                     updateEpochMillisecond = 1,
                 )
@@ -125,7 +131,8 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
@@ -140,7 +147,8 @@ class DatabaseTest {
 
             savedBookDao.updateProgressOfBook(
                 BookProgressEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     progressBlockIndex = 1,
                     updateEpochMillisecond = 1,
                 ),
@@ -161,7 +169,8 @@ class DatabaseTest {
             savedBookDao.upsertBookList(bookEntities)
             savedBookDao.upsertSavedBook(
                 SavedBookEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     createdDate = 1,
                 ),
             )
@@ -169,7 +178,8 @@ class DatabaseTest {
 
             savedBookDao.updateProgressOfBook(
                 BookProgressEntity(
-                    bookId = "1",
+                    bookId = "12353",
+                    authorId = "1",
                     progressBlockIndex = READ_PROGRESS_DONE,
                     updateEpochMillisecond = 1,
                     markCompleted = true,
@@ -178,45 +188,319 @@ class DatabaseTest {
 
             assertEquals(0, savedBookDao.getNotCompletedBooksByDesc().first().size)
 
-            assertTrue {
-                savedBookDao.getCompleteBooksByDesc().first().isNotEmpty()
-            }
+            assertEquals(
+                1,
+                savedBookDao.getCompleteBooksByDesc().first().size,
+            )
+        }
+
+    @Test
+    fun getBookEntityById() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            val result =
+                savedBookDao.getBookByBookIdAndAuthorId(
+                    bookId = "056078",
+                    authorId = "001257",
+                )
+            assertEquals("056078", result.first()?.bookId)
+        }
+
+    @Test
+    fun getAuthorWithBooks() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertAuthorList(authorList)
+            val result = savedBookDao.getAuthorWithBooks("001257")
+            assertEquals("author3", result.first()?.author?.lastName)
+            assertEquals(1, result.first()?.books?.size)
+            assertEquals(
+                "056078",
+                result
+                    .first()
+                    ?.books
+                    ?.first()
+                    ?.bookId,
+            )
+        }
+
+    @Test
+    fun searchBookByKeywordTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            val result = savedBookDao.searchBook("titleK*")
+            println(result)
+        }
+
+    @Test
+    fun searchAuthorByKeywordTest() =
+        testScope.runTest {
+            savedBookDao.upsertAuthorList(authorList)
+            val result = savedBookDao.searchAuthor("南部*")
+            println(result)
         }
 }
 
 private val bookEntities =
     listOf(
         BookEntity(
-            bookId = "1",
-            groupId = "1",
+            bookId = "12353",
+            authorId = "1",
             title = "title",
             titleKana = "titleKana",
-            author = "author",
-            authorUrl = "authorUrl",
-            zipUrl = "zipUrl",
-            htmlUrl = "htmlUrl",
-            savedDateInEpochMillisecond = 1L,
+            titleSortKana = null,
+            subtitle = null,
+            subtitleKana = null,
+            originalTitle = null,
+            firstAppearance = null,
+            categoryNo = null,
+            orthography = null,
+            workCopyrightFlag = null,
+            publishDate = null,
+            lastUpdateDate = null,
+            cardUrl = "authorUrl",
+            authorLastName = "author",
+            authorFirstName = "",
+            authorLastNameKana = null,
+            authorFirstNameKana = null,
+            authorLastNameSortKana = null,
+            authorFirstNameSortKana = null,
+            authorLastNameRomaji = null,
+            authorFirstNameRomaji = null,
+            authorRoleFlag = null,
+            authorBirth = null,
+            authorDeath = null,
+            authorCopyrightFlag = null,
+            sourceBook1 = null,
+            sourcePublisher1 = null,
+            sourcePubYear1 = null,
+            inputEdition1 = null,
+            proofEdition1 = null,
+            parentSourceBook1 = null,
+            parentSourcePublisher1 = null,
+            parentSourcePubYear1 = null,
+            sourceBook2 = null,
+            sourcePublisher2 = null,
+            sourcePubYear2 = null,
+            inputEdition2 = null,
+            proofEdition2 = null,
+            parentSourceBook2 = null,
+            parentSourcePublisher2 = null,
+            parentSourcePubYear2 = null,
+            inputBy = null,
+            proofBy = null,
+            textFileUrl = "zipUrl",
+            textFileLastUpdate = null,
+            textFileEncoding = null,
+            textFileCharset = null,
+            textFileRevision = null,
+            htmlFileUrl = "htmlUrl",
+            htmlFileLastUpdate = null,
+            htmlFileEncoding = null,
+            htmlFileCharset = null,
+            htmlFileRevision = null,
         ),
         BookEntity(
-            bookId = "2",
-            groupId = "2",
+            bookId = "12353",
+            authorId = "2",
+            title = "title",
+            titleKana = "titleKana",
+            titleSortKana = null,
+            subtitle = null,
+            subtitleKana = null,
+            originalTitle = null,
+            firstAppearance = null,
+            categoryNo = null,
+            orthography = null,
+            workCopyrightFlag = null,
+            publishDate = null,
+            lastUpdateDate = null,
+            cardUrl = "authorUrl",
+            authorLastName = "author",
+            authorFirstName = "",
+            authorLastNameKana = null,
+            authorFirstNameKana = null,
+            authorLastNameSortKana = null,
+            authorFirstNameSortKana = null,
+            authorLastNameRomaji = null,
+            authorFirstNameRomaji = null,
+            authorRoleFlag = null,
+            authorBirth = null,
+            authorDeath = null,
+            authorCopyrightFlag = null,
+            sourceBook1 = null,
+            sourcePublisher1 = null,
+            sourcePubYear1 = null,
+            inputEdition1 = null,
+            proofEdition1 = null,
+            parentSourceBook1 = null,
+            parentSourcePublisher1 = null,
+            parentSourcePubYear1 = null,
+            sourceBook2 = null,
+            sourcePublisher2 = null,
+            sourcePubYear2 = null,
+            inputEdition2 = null,
+            proofEdition2 = null,
+            parentSourceBook2 = null,
+            parentSourcePublisher2 = null,
+            parentSourcePubYear2 = null,
+            inputBy = null,
+            proofBy = null,
+            textFileUrl = "zipUrl",
+            textFileLastUpdate = null,
+            textFileEncoding = null,
+            textFileCharset = null,
+            textFileRevision = null,
+            htmlFileUrl = "htmlUrl",
+            htmlFileLastUpdate = null,
+            htmlFileEncoding = null,
+            htmlFileCharset = null,
+            htmlFileRevision = null,
+        ),
+        BookEntity(
+            bookId = "212353",
+            authorId = "2",
             title = "title2",
             titleKana = "titleKana2",
-            author = "author2",
-            authorUrl = "authorUrl2",
-            zipUrl = "zipUrl2",
-            htmlUrl = "htmlUrl2",
-            savedDateInEpochMillisecond = 2L,
+            titleSortKana = null,
+            subtitle = null,
+            subtitleKana = null,
+            originalTitle = null,
+            firstAppearance = null,
+            categoryNo = null,
+            orthography = null,
+            workCopyrightFlag = null,
+            publishDate = null,
+            lastUpdateDate = null,
+            cardUrl = "authorUrl2",
+            authorLastName = "author2",
+            authorFirstName = "",
+            authorLastNameKana = null,
+            authorFirstNameKana = null,
+            authorLastNameSortKana = null,
+            authorFirstNameSortKana = null,
+            authorLastNameRomaji = null,
+            authorFirstNameRomaji = null,
+            authorRoleFlag = null,
+            authorBirth = null,
+            authorDeath = null,
+            authorCopyrightFlag = null,
+            sourceBook1 = null,
+            sourcePublisher1 = null,
+            sourcePubYear1 = null,
+            inputEdition1 = null,
+            proofEdition1 = null,
+            parentSourceBook1 = null,
+            parentSourcePublisher1 = null,
+            parentSourcePubYear1 = null,
+            sourceBook2 = null,
+            sourcePublisher2 = null,
+            sourcePubYear2 = null,
+            inputEdition2 = null,
+            proofEdition2 = null,
+            parentSourceBook2 = null,
+            parentSourcePublisher2 = null,
+            parentSourcePubYear2 = null,
+            inputBy = null,
+            proofBy = null,
+            textFileUrl = "zipUrl2",
+            textFileLastUpdate = null,
+            textFileEncoding = null,
+            textFileCharset = null,
+            textFileRevision = null,
+            htmlFileUrl = "htmlUrl2",
+            htmlFileLastUpdate = null,
+            htmlFileEncoding = null,
+            htmlFileCharset = null,
+            htmlFileRevision = null,
         ),
         BookEntity(
-            bookId = "3",
-            groupId = "3",
+            bookId = "056078",
+            authorId = "001257",
             title = "title3",
             titleKana = "titleKana3",
-            author = "author3",
-            authorUrl = "authorUrl3",
-            zipUrl = "zipUrl3",
-            htmlUrl = "htmlUrl3",
-            savedDateInEpochMillisecond = 3L,
+            titleSortKana = null,
+            subtitle = null,
+            subtitleKana = null,
+            originalTitle = null,
+            firstAppearance = null,
+            categoryNo = null,
+            orthography = null,
+            workCopyrightFlag = null,
+            publishDate = null,
+            lastUpdateDate = null,
+            cardUrl = "authorUrl3",
+            authorLastName = "author3",
+            authorFirstName = "",
+            authorLastNameKana = null,
+            authorFirstNameKana = null,
+            authorLastNameSortKana = null,
+            authorFirstNameSortKana = null,
+            authorLastNameRomaji = null,
+            authorFirstNameRomaji = null,
+            authorRoleFlag = null,
+            authorBirth = null,
+            authorDeath = null,
+            authorCopyrightFlag = null,
+            sourceBook1 = null,
+            sourcePublisher1 = null,
+            sourcePubYear1 = null,
+            inputEdition1 = null,
+            proofEdition1 = null,
+            parentSourceBook1 = null,
+            parentSourcePublisher1 = null,
+            parentSourcePubYear1 = null,
+            sourceBook2 = null,
+            sourcePublisher2 = null,
+            sourcePubYear2 = null,
+            inputEdition2 = null,
+            proofEdition2 = null,
+            parentSourceBook2 = null,
+            parentSourcePublisher2 = null,
+            parentSourcePubYear2 = null,
+            inputBy = null,
+            proofBy = null,
+            textFileUrl = "zipUrl3",
+            textFileLastUpdate = null,
+            textFileEncoding = null,
+            textFileCharset = null,
+            textFileRevision = null,
+            htmlFileUrl = "htmlUrl3",
+            htmlFileLastUpdate = null,
+            htmlFileEncoding = null,
+            htmlFileCharset = null,
+            htmlFileRevision = null,
+        ),
+    )
+
+private val authorList =
+    listOf(
+        AuthorEntity(
+            authorId = "001257",
+            lastName = "author3",
+            firstName = "firstName",
+            lastNameKana = null,
+            firstNameKana = null,
+            lastNameSortKana = null,
+            firstNameSortKana = null,
+            lastNameRomaji = null,
+            firstNameRomaji = null,
+            birth = null,
+            death = null,
+            copyrightFlag = null,
+        ),
+        AuthorEntity(
+            authorId = "001256",
+            lastName = "南部",
+            firstName = "修太郎",
+            lastNameKana = "なんぶ",
+            firstNameKana = "しゅうたろう",
+            lastNameSortKana = null,
+            firstNameSortKana = null,
+            lastNameRomaji = null,
+            firstNameRomaji = null,
+            birth = null,
+            death = null,
+            copyrightFlag = null,
         ),
     )

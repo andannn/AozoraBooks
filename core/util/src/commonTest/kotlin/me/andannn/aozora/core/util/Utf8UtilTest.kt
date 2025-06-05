@@ -6,11 +6,13 @@ package me.andannn.aozora.core.util
 
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemTemporaryDirectory
 import me.andannn.core.util.readString
-import me.andannn.core.util.unzip
+import me.andannn.core.util.unzipTo
+import me.andannn.core.util.writeToPath
 import kotlin.random.Random
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,6 +41,16 @@ class Utf8UtilTest {
 
     @Test
     fun unzipFileTest() {
-        Path("src/commonTest/resources/test.zip").unzip(testPath)
+        Path("src/commonTest/resources/test.zip").unzipTo(testPath)
+    }
+
+    @Test
+    fun writeSourceToPathTest() {
+        val source =
+            Path("src/commonTest/resources/test.zip").let {
+                SystemFileSystem.source(it).buffered()
+            }
+
+        source.writeToPath(Path(testPath, "target.zip"))
     }
 }

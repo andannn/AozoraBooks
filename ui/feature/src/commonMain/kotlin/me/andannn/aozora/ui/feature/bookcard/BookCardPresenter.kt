@@ -5,26 +5,23 @@
 package me.andannn.aozora.ui.feature.bookcard
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.rememberRetained
+import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
-import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.LoadResult
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.domain.repository.UserDataRepository
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.screens.ReaderScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
+import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -33,7 +30,7 @@ fun rememberBookCardPresenter(
     bookId: String,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
 ) = remember(
     groupId,
     bookId,
@@ -62,25 +59,21 @@ class BookCardPresenter(
     @Composable
     override fun present(): BookCardState {
         val scope = rememberCoroutineScope()
-        var bookCardInfo by rememberRetained {
-            mutableStateOf<AozoraBookCard?>(null)
-        }
-        val savedBookCard by userDataRepository
-            .getSavedBookById(bookId)
-            .collectAsRetainedState(null)
-        LaunchedEffect(Unit) {
-            Napier.d(tag = TAG) { "present groupId $groupId, bookId $bookId" }
-            val result = aozoraContentsRepository.getBookCard(cardId = bookId, groupId = groupId)
-            when (result) {
-                is LoadResult.Error -> {
-                    Napier.e(tag = TAG) { "present error ${result.throwable}" }
-                }
-
-                is LoadResult.Success -> {
-                    bookCardInfo = result.data
-                }
+        val bookCardInfo by
+            produceRetainedState<AozoraBookCard?>(null) {
+                aozoraContentsRepository
+                    .getBookCard(
+                        cardId = bookId,
+                        authorId = groupId,
+                    ).filterNotNull()
+                    .collect {
+                        value = it
+                    }
             }
-        }
+        val savedBookCard by userDataRepository
+            .getSavedBookById(bookId, authorId = groupId)
+            .collectAsRetainedState(null)
+
         return BookCardState(
             bookCardInfo = bookCardInfo,
             isAddedToShelf = savedBookCard != null,
@@ -92,10 +85,12 @@ class BookCardPresenter(
                         if (savedBookCard != null) {
                             userDataRepository.deleteSavedBook(
                                 savedBookCard!!.id,
+                                savedBookCard!!.authorId,
                             )
                         } else {
                             userDataRepository.saveBookToLibrary(
                                 bookCardInfo?.id ?: error("bookCardInfo is null"),
+                                bookCardInfo?.authorId ?: error("bookCardInfo is null"),
                             )
                         }
                     }
@@ -103,7 +98,13 @@ class BookCardPresenter(
 
                 BookCardUiEvent.OnClickRead -> {
                     navigator.goTo(
-                        ReaderScreen(cardId = bookId),
+                        ReaderScreen(cardId = bookId, authorId = groupId),
+                    )
+                }
+
+                is BookCardUiEvent.OnClickAuthor -> {
+                    navigator.goTo(
+                        AuthorScreen(authorId = event.authorId),
                     )
                 }
             }
@@ -124,4 +125,8 @@ sealed interface BookCardUiEvent {
     data object OnAddToShelf : BookCardUiEvent
 
     data object OnClickRead : BookCardUiEvent
+
+    data class OnClickAuthor(
+        val authorId: String,
+    ) : BookCardUiEvent
 }

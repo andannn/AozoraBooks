@@ -30,12 +30,12 @@ import io.github.aakira.napier.Napier
 import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.home.LibraryNestedScreen
-import me.andannn.aozora.ui.feature.home.SearchNestedScreen
-import me.andannn.aozora.ui.feature.screens.HomeScreen
-import me.andannn.aozora.ui.feature.screens.RoutePresenterFactory
-import me.andannn.aozora.ui.feature.screens.RouteUiFactory
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.screens.HomeScreen
+import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
+import me.andannn.aozora.ui.feature.common.screens.RoutePresenterFactory
+import me.andannn.aozora.ui.feature.common.screens.RouteUiFactory
+import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -63,7 +63,7 @@ fun AozoraBooksApp(
         }
     }
     CompositionLocalProvider(
-        LocalNavigator provides navigator,
+        RootNavigator provides navigator,
         LocalPopupController provides PopupController(),
     ) {
         CircuitCompositionLocals(circuit = circuit) {

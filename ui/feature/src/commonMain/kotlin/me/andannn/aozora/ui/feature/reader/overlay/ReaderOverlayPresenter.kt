@@ -28,13 +28,13 @@ import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.common.util.SystemUiVisibilityEffect
-import me.andannn.aozora.ui.feature.dialog.OnGoToAppStore
-import me.andannn.aozora.ui.feature.dialog.OnJumpTo
-import me.andannn.aozora.ui.feature.dialog.ReaderCompleteDialogId
-import me.andannn.aozora.ui.feature.dialog.ReaderSettingDialogId
-import me.andannn.aozora.ui.feature.dialog.TableOfContentsDialogId
+import me.andannn.aozora.ui.feature.common.dialog.OnGoToAppStore
+import me.andannn.aozora.ui.feature.common.dialog.OnJumpTo
+import me.andannn.aozora.ui.feature.common.dialog.ReaderCompleteDialogId
+import me.andannn.aozora.ui.feature.common.dialog.ReaderSettingDialogId
+import me.andannn.aozora.ui.feature.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -43,14 +43,16 @@ private const val TAG = "ReaderOverlayPresenter"
 @Composable
 fun rememberReaderOverlayPresenter(
     cardId: String,
+    authorId: String,
     bookPageState: BookPageState,
     settingRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
     uriHandler: UriHandler = LocalUriHandler.current,
-) = remember(bookPageState, popupController, navigator, uriHandler) {
+) = remember(cardId, authorId, settingRepository, bookPageState, popupController, navigator, uriHandler) {
     ReaderOverlayPresenter(
         cardId,
+        authorId,
         navigator,
         settingRepository,
         bookPageState,
@@ -61,6 +63,7 @@ fun rememberReaderOverlayPresenter(
 
 class ReaderOverlayPresenter(
     private val cardId: String,
+    private val authorId: String,
     private val navigator: Navigator,
     private val userDataRepository: UserDataRepository,
     private val bookPageState: BookPageState,
@@ -80,12 +83,12 @@ class ReaderOverlayPresenter(
             bookPageState.pagerState.currentPage == bookPageState.pagerState.pageCount - 1,
         )
         val savedBookCard by userDataRepository
-            .getSavedBookById(cardId)
+            .getSavedBookById(bookId = cardId, authorId = authorId)
             .collectAsRetainedState(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         suspend fun markCompletedAndShowAlertDialog() {
-            userDataRepository.markBookAsCompleted(cardId)
+            userDataRepository.markBookAsCompleted(cardId, authorId)
             val result = popupController.showDialog(ReaderCompleteDialogId)
             if (result is OnGoToAppStore) {
                 uriHandler.openUri("https://play.google.com/store/apps/details?id=me.andannn.aozora")

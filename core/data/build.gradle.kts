@@ -11,6 +11,7 @@ kotlin {
             implementation(project(":core:pagesource"))
             implementation(project(":core:service"))
             implementation(libs.androidx.paging.common)
+            implementation(libs.room.runtime)
         }
     }
 }

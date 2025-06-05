@@ -7,14 +7,14 @@ package me.andannn.aozora.core.data
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import me.andannn.aozora.core.database.dao.SavedBookDao
+import me.andannn.aozora.core.data.mapper.toModel
+import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.embedded.BookEntityWithProgress
-import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
 import me.andannn.aozora.core.datastore.UserSettingPreferences
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
@@ -27,7 +27,7 @@ import me.andannn.aozora.core.domain.repository.UserDataRepository
 
 internal class UserDataRepositoryImpl(
     private val preferences: UserSettingPreferences,
-    private val dao: SavedBookDao,
+    private val dao: BookLibraryDao,
 ) : UserDataRepository {
     override fun getFontSizeLevel(): Flow<FontSizeLevel> =
         preferences.userData.map {
@@ -76,6 +76,7 @@ internal class UserDataRepositoryImpl(
 
     override suspend fun setProgressOfBook(
         bookCardId: String,
+        authorId: String,
         readProgress: ReadProgress,
     ) {
         val progress = dao.getProgressOfBook(bookCardId)
@@ -83,6 +84,7 @@ internal class UserDataRepositoryImpl(
             dao.updateProgressOfBook(
                 BookProgressEntity(
                     bookId = bookCardId,
+                    authorId = authorId,
                     progressBlockIndex = readProgress.toDataBaseValue(),
                     totalBlockCount = (readProgress as? ReadProgress.Reading)?.totalBlockCount,
                     updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
@@ -99,12 +101,16 @@ internal class UserDataRepositoryImpl(
         }
     }
 
-    override suspend fun markBookAsCompleted(bookCardId: String) {
+    override suspend fun markBookAsCompleted(
+        bookCardId: String,
+        authorId: String,
+    ) {
         val progress = dao.getProgressOfBook(bookCardId)
         if (progress == null) {
             dao.updateProgressOfBook(
                 BookProgressEntity(
                     bookId = bookCardId,
+                    authorId = authorId,
                     progressBlockIndex = READ_PROGRESS_NONE,
                     updateEpochMillisecond = Clock.System.now().toEpochMilliseconds(),
                     markCompleted = true,
@@ -142,10 +148,14 @@ internal class UserDataRepositoryImpl(
             it?.markCompleted == true
         }
 
-    override suspend fun saveBookToLibrary(bookId: String) {
+    override suspend fun saveBookToLibrary(
+        bookId: String,
+        authorId: String,
+    ) {
         dao.upsertSavedBook(
             SavedBookEntity(
                 bookId = bookId,
+                authorId = authorId,
                 createdDate = Clock.System.now().toEpochMilliseconds(),
             ),
         )
@@ -161,19 +171,27 @@ internal class UserDataRepositoryImpl(
             it.map(BookEntityWithProgress::toModel)
         }
 
-    override suspend fun deleteSavedBook(bookId: String) {
-        dao.deleteSavedBook(bookId)
+    override suspend fun deleteSavedBook(
+        bookId: String,
+        authorId: String,
+    ) {
+        dao.deleteSavedBook(bookId, authorId)
     }
 
-    override fun getSavedBookById(id: String): Flow<CachedBookModel?> =
-        dao.getSavedBookById(id).map {
+    override fun getSavedBookById(
+        bookId: String,
+        authorId: String,
+    ): Flow<AozoraBookCard?> =
+        dao.getSavedBookById(bookId, authorId).map {
             it?.toModel()
         }
 
-    override fun getBookCache(bookId: String) =
-        dao.getBookById(bookId).map {
-            it?.toModel()
-        }
+    override fun getBookCache(
+        bookId: String,
+        authorId: String,
+    ) = dao.getBookByBookIdAndAuthorId(bookId, authorId).map {
+        it?.toModel()
+    }
 }
 
 private fun BookEntityWithProgress.toModel() =
@@ -181,17 +199,6 @@ private fun BookEntityWithProgress.toModel() =
         book = book.toModel(),
         progress = progress.toReadProgress(),
         isUserMarkCompleted = progress?.markCompleted == true,
-    )
-
-private fun BookEntity.toModel() =
-    CachedBookModel(
-        id = bookId,
-        groupId = groupId,
-        title = title,
-        titleKana = titleKana,
-        authorName = author,
-        zipUrl = zipUrl,
-        htmlUrl = htmlUrl,
     )
 
 private fun ReadProgress.toDataBaseValue(): Int =

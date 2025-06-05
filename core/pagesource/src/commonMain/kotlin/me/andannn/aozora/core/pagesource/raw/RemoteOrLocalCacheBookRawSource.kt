@@ -28,8 +28,8 @@ import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
@@ -39,7 +39,7 @@ import me.andannn.aozora.core.pagesource.parser.lineSequence
 import me.andannn.aozora.core.pagesource.util.validBlock
 import me.andannn.core.util.downloadTo
 import me.andannn.core.util.readString
-import me.andannn.core.util.unzip
+import me.andannn.core.util.unzipTo
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "RemoteOrLocalCacheBookR"
@@ -48,7 +48,7 @@ private const val TAG = "RemoteOrLocalCacheBookR"
  * Get source from local cached file or fetch from remote.
  */
 internal class RemoteOrLocalCacheBookRawSource(
-    card: CachedBookModel,
+    card: AozoraBookCard,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
     private val cacheDictionary: Path = getCachedPatchById(card.id),
@@ -129,7 +129,7 @@ private sealed interface SourceState {
 }
 
 private suspend fun createBookRawSource(
-    card: CachedBookModel,
+    card: AozoraBookCard,
     cacheDictionary: Path,
 ): BookModel {
     val cachedBook = getCachedBookModel(cacheDictionary)
@@ -161,7 +161,7 @@ internal expect fun getCachedPatchById(id: String): Path
  *
  * @throws IllegalArgumentException If htmlUrl is null.
  */
-private suspend fun CachedBookModel.downloadBookTo(folder: Path) {
+private suspend fun AozoraBookCard.downloadBookTo(folder: Path) {
     downloadAndUnZip(zipUrl, htmlUrl, folder)
 
     val htmlPath = SystemFileSystem.list(folder).firstOrNull { it.name.endsWith(".html") }
@@ -215,7 +215,7 @@ private suspend fun downloadAndUnZip(
             async {
                 val tempZipFilePath = Path("$savePath/temp.zip")
                 client.downloadTo(zipUrl, tempZipFilePath)
-                tempZipFilePath.unzip(savePath)
+                tempZipFilePath.unzipTo(savePath)
                 SystemFileSystem.delete(tempZipFilePath)
             }
         }

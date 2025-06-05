@@ -19,25 +19,26 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
-import me.andannn.aozora.core.domain.model.CachedBookModel
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.feature.dialog.OnClickOption
-import me.andannn.aozora.ui.feature.dialog.OptionItem
-import me.andannn.aozora.ui.feature.dialog.showBookOptionDialog
-import me.andannn.aozora.ui.feature.home.SearchNestedScreen
-import me.andannn.aozora.ui.feature.screens.BookCardScreen
-import me.andannn.aozora.ui.feature.screens.ReaderScreen
+import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.feature.common.dialog.OnClickOption
+import me.andannn.aozora.ui.feature.common.dialog.OptionItem
+import me.andannn.aozora.ui.feature.common.dialog.showBookOptionDialog
+import me.andannn.aozora.ui.feature.common.screens.AboutScreen
+import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
+import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
+import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberLibraryPresenter(
     nestedNavigator: Navigator,
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = LocalNavigator.current,
+    navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(
     nestedNavigator,
@@ -73,7 +74,7 @@ class LibraryPresenter(
         ) { event ->
             when (event) {
                 is LibraryUiEvent.OnCardClick -> {
-                    navigator.goTo(ReaderScreen(event.cardId))
+                    navigator.goTo(ReaderScreen(event.card.id, event.card.authorId))
                 }
 
                 is LibraryUiEvent.OnTabRowClick -> {
@@ -96,17 +97,23 @@ class LibraryPresenter(
                                     navigator.goTo(
                                         BookCardScreen(
                                             bookCardId = event.card.id,
-                                            groupId = event.card.groupId,
+                                            groupId = event.card.authorId,
                                         ),
                                     )
                                 }
 
                                 OptionItem.REMOVE_FROM_BOOK_SHELF -> {
-                                    userDataRepository.deleteSavedBook(event.card.id)
+                                    userDataRepository.deleteSavedBook(
+                                        event.card.id,
+                                        event.card.authorId,
+                                    )
                                 }
 
                                 OptionItem.MARK_AS_COMPLETED -> {
-                                    userDataRepository.markBookAsCompleted(event.card.id)
+                                    userDataRepository.markBookAsCompleted(
+                                        event.card.id,
+                                        event.card.authorId,
+                                    )
                                 }
 
                                 OptionItem.MARK_AS_NOT_COMPLETED -> {
@@ -115,6 +122,10 @@ class LibraryPresenter(
                             }
                         }
                     }
+                }
+
+                LibraryUiEvent.OnClickMore -> {
+                    navigator.goTo(AboutScreen)
                 }
             }
         }
@@ -131,11 +142,11 @@ data class LibraryState(
 
 sealed interface LibraryUiEvent {
     data class OnCardClick(
-        val cardId: String,
+        val card: AozoraBookCard,
     ) : LibraryUiEvent
 
     data class OnCardOptionClick(
-        val card: CachedBookModel,
+        val card: AozoraBookCard,
     ) : LibraryUiEvent
 
     data class OnTabRowClick(
@@ -143,6 +154,8 @@ sealed interface LibraryUiEvent {
     ) : LibraryUiEvent
 
     data object OnGoToSearch : LibraryUiEvent
+
+    data object OnClickMore : LibraryUiEvent
 }
 
 enum class TabItem {

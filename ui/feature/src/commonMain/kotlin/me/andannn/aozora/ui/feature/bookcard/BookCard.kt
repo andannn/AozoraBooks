@@ -4,7 +4,6 @@
  */
 package me.andannn.aozora.ui.feature.bookcard
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -27,21 +26,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.aozora.ui.common.widgets.ClickableOrText
+import me.andannn.aozora.ui.common.widgets.Heading
+import me.andannn.aozora.ui.common.widgets.ItemRow
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -151,9 +148,9 @@ private fun BookCardContent(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             value = bookCardInfo.author ?: "null",
                             onClick = {
-                                bookCardInfo.authorUrl?.let {
-                                    Napier.d(tag = TAG) { "onClick: $it" }
-                                }
+                                onEvent.invoke(
+                                    BookCardUiEvent.OnClickAuthor(bookCardInfo.authorId),
+                                )
                             },
                         )
                     }
@@ -191,18 +188,16 @@ private fun BookCardContent(
             val authorDataList = bookCardInfo.authorDataList
             authorDataList.forEachIndexed { index, authorData ->
                 item {
-                    ItemRow(title = "分類：", value = authorData.category)
+                    authorData.category?.let {
+                        ItemRow(title = "分類：", value = it)
+                    }
 
                     ItemRow(
                         title = "作家名：",
                         value = authorData.authorName,
-                        onClick =
-                            authorData.authorUrl?.let {
-                                {
-// TODO:
-                                    Napier.d(tag = TAG) { "onClick: $it" }
-                                }
-                            },
+                        onClick = {
+                            onEvent.invoke(BookCardUiEvent.OnClickAuthor(authorData.authorId))
+                        },
                     )
                     authorData.authorNameKana?.let {
                         ItemRow(title = "作家名読み：", value = it)
@@ -272,87 +267,6 @@ private fun BookCardContent(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun Heading(
-    modifier: Modifier = Modifier,
-    text: String,
-) {
-    Column(
-        modifier = modifier.padding(vertical = 12.dp),
-    ) {
-        Surface(
-            modifier = modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surfaceVariant,
-        ) {
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp).padding(start = 12.dp),
-                text = text,
-                style = MaterialTheme.typography.titleLarge,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ItemRow(
-    modifier: Modifier = Modifier,
-    title: String,
-    value: String,
-    onClick: (() -> Unit)? = null,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp),
-    ) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            color = MaterialTheme.colorScheme.inverseSurface,
-        )
-        ClickableOrText(
-            modifier = Modifier.weight(2f),
-            value = value,
-            onClick = onClick,
-        )
-    }
-}
-
-@Composable
-private fun ClickableOrText(
-    modifier: Modifier = Modifier,
-    value: String,
-    onClick: (() -> Unit)? = null,
-) {
-    Box(modifier) {
-        if (onClick != null) {
-            val annotatedString =
-                buildAnnotatedString {
-                    withStyle(
-                        style =
-                            SpanStyle(
-                                color = MaterialTheme.colorScheme.primary,
-                                textDecoration = TextDecoration.Underline,
-                            ),
-                    ) {
-                        append(value)
-                    }
-                }
-            Text(
-                modifier =
-                    Modifier.clickable(
-                        onClick = onClick,
-                        indication = null,
-                        interactionSource = null,
-                    ),
-                text = annotatedString,
-            )
-        } else {
-            Text(
-                text = value,
-            )
         }
     }
 }

@@ -7,16 +7,24 @@ package me.andannn.aozora.ui.feature.home.search
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
@@ -44,54 +53,95 @@ fun SearchContent(
     modifier: Modifier = Modifier,
     onEvent: (SearchUiEvent) -> Unit,
 ) {
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(minSize = 320.dp),
-    ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
-            Text(
-                modifier = Modifier.padding(12.dp),
-                text = "作品別",
-                style = MaterialTheme.typography.headlineSmall,
-            )
+    Column(modifier.systemBarsPadding()) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Surface(
+            modifier =
+                Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            shape = CircleShape,
+            onClick = {
+                onEvent.invoke(SearchUiEvent.OnSearchBarClick)
+            },
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(Modifier.width(16.dp))
+                Icon(Icons.Outlined.Search, contentDescription = null)
+                Spacer(Modifier.width(16.dp))
+                Text(text = "作家・作品を検索", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
 
-        item {
-            SearchByKanaArea(
-                modifier = Modifier.padding(8.dp),
-                onKanaItemClicked = {
-                    onEvent.invoke(SearchUiEvent.OnClickKanaItem(it.kana))
-                },
-            )
-        }
+        Spacer(modifier = Modifier.height(8.dp))
 
-        if (showPlatformAd) {
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+            columns = GridCells.Adaptive(minSize = 320.dp),
+        ) {
             item {
-                BannerAdView(
-                    modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
-                    adType = AdType.MEDIUM_RECTANGLE,
-                )
+                Column {
+                    Text(
+                        modifier = Modifier.padding(12.dp),
+                        text = "作品別",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    SearchByKanaArea(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onKanaItemClicked = {
+                            onEvent.invoke(SearchUiEvent.OnClickKanaItem(it))
+                        },
+                    )
+                }
+            }
+
+            item {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(12.dp),
+                        text = "作家別",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    SearchByAuthorArea(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        onKanaLineItemClicked = {
+                            onEvent.invoke(SearchUiEvent.OnClickKanaLineItem(it))
+                        },
+                    )
+                }
+            }
+
+            if (showPlatformAd) {
+                item {
+                    BannerAdView(
+                        modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
+                        adType = AdType.MEDIUM_RECTANGLE,
+                    )
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SearchKanaItem(
+private fun SearchByAuthorArea(
     modifier: Modifier = Modifier,
-    kana: String,
-    onClick: () -> Unit,
+    onKanaLineItemClicked: (KanaLineItem) -> Unit = {},
 ) {
-    Surface(
-        modifier = modifier.aspectRatio(1f).padding(2.dp),
-        onClick = onClick,
-        shape = CircleShape,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-    ) {
-        Box(Modifier.fillMaxSize()) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = kana,
+    FlowRow(modifier) {
+        KanaLineItem.entries.forEach { item ->
+            SearchKanaItem(
+                modifier = Modifier.size(48.dp),
+                kana = item.kanaLabel,
+                onClick = {
+                    onKanaLineItemClicked.invoke(item)
+                },
             )
         }
     }
@@ -108,7 +158,7 @@ private fun SearchByKanaArea(
                 lineItems.forEach { item ->
                     if (item != null) {
                         SearchKanaItem(
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.aspectRatio(1f).weight(1f),
                             kana = item.kanaLabel,
                             onClick = {
                                 onKanaItemClicked.invoke(item)
@@ -119,6 +169,27 @@ private fun SearchByKanaArea(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SearchKanaItem(
+    modifier: Modifier = Modifier,
+    kana: String,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = modifier.padding(2.dp),
+        onClick = onClick,
+        shape = CircleShape,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Box(Modifier) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = kana,
+            )
         }
     }
 }
@@ -179,5 +250,5 @@ private val KanaItemList =
         KanaItem("mo", "も"),
         KanaItem("yo", "よ"),
         KanaItem("ro", "ろ"),
-        KanaItem("zz", "他"),
+        null,
     )
