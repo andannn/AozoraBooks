@@ -57,6 +57,8 @@ internal class CachedLinerPageSource(
                 ParseEvent.Block(it) as ParseEvent
             }.onCompletion {
                 emit(ParseEvent.Completed)
+            }.catch {
+                emit(ParseEvent.Error(it))
             }.shareIn(
                 CoroutineScope(Dispatchers.IO + job),
                 replay = Int.MAX_VALUE,
@@ -140,6 +142,7 @@ internal class CachedLinerPageSource(
                     }
 
                     ParseEvent.Completed -> false
+                    is ParseEvent.Error -> throw IllegalStateException("Parse error", state.t)
                 }
             }
         val pageFlow: Flow<AozoraPage> =
@@ -227,4 +230,8 @@ private sealed interface ParseEvent {
     ) : ParseEvent
 
     data object Completed : ParseEvent
+
+    data class Error(
+        val t: Throwable,
+    ) : ParseEvent
 }
