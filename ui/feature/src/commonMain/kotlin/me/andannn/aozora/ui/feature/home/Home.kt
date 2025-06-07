@@ -29,6 +29,8 @@ import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.popUntil
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
+import me.andannn.aozora.ui.feature.common.screens.AuthorPagesScreen
+import me.andannn.aozora.ui.feature.common.screens.IndexPageScreen
 import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
 import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
 import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
@@ -168,6 +170,9 @@ private val nestedNavigationMap =
                 ScreenWithRole(SearchNestedScreen::class, isRoot = true),
                 ScreenWithRole(SearchInputScreen::class, isRoot = false),
                 ScreenWithRole(SearchResultScreen::class, isRoot = false),
+                ScreenWithRole(SearchResultScreen::class, isRoot = false),
+                ScreenWithRole(IndexPageScreen::class, isRoot = false),
+                ScreenWithRole(AuthorPagesScreen::class, isRoot = false),
             ),
     )
 

@@ -6,9 +6,7 @@ package me.andannn.aozora.ui.feature.home.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.slack.circuit.foundation.rememberAnsweringNavigator
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -54,11 +52,11 @@ class SearchPresenter(
         return SearchState { event ->
             when (event) {
                 is SearchUiEvent.OnClickKanaItem -> {
-                    rootNavigator.goTo(IndexPageScreen(kana = event.kana.kanaLabel))
+                    localNavigator.goTo(IndexPageScreen(kana = event.kana.kanaLabel))
                 }
 
                 is SearchUiEvent.OnClickKanaLineItem -> {
-                    rootNavigator.goTo(AuthorPagesScreen(code = event.lineItem.code))
+                    localNavigator.goTo(AuthorPagesScreen(code = event.lineItem.code))
                 }
 
                 SearchUiEvent.OnSearchBarClick -> {
