@@ -4,6 +4,7 @@
  */
 package me.andannn.aozora.ui.feature.home.searchinput
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -11,6 +12,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -47,12 +50,15 @@ class SearchInputPresenter(
     override fun present(): SearchInputState {
         var inputText by rememberSaveable { mutableStateOf(initialParam) }
         return SearchInputState(
-            inputText = inputText,
+            inputText = TextFieldValue(
+                text = inputText ?: "",
+                selection = TextRange(inputText?.length ?: 0),
+            ),
         ) { event ->
             when (event) {
                 SearchInputUiEvent.Back -> localNavigator.pop()
                 is SearchInputUiEvent.OnValueChange -> {
-                    inputText = event.value
+                    inputText = event.value.text
                 }
 
                 SearchInputUiEvent.OnConfirmSearch -> {
@@ -67,7 +73,7 @@ class SearchInputPresenter(
 
 @Stable
 data class SearchInputState(
-    val inputText: String?,
+    val inputText: TextFieldValue,
     val evenSink: (SearchInputUiEvent) -> Unit = {},
 ) : CircuitUiState
 
@@ -77,6 +83,6 @@ sealed interface SearchInputUiEvent {
     data object OnConfirmSearch : SearchInputUiEvent
 
     data class OnValueChange(
-        val value: String,
+        val value: TextFieldValue,
     ) : SearchInputUiEvent
 }
