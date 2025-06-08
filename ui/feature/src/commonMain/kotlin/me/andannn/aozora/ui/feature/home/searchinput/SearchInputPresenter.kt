@@ -4,7 +4,6 @@
  */
 package me.andannn.aozora.ui.feature.home.searchinput
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -14,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -48,21 +48,25 @@ class SearchInputPresenter(
 ) : Presenter<SearchInputState> {
     @Composable
     override fun present(): SearchInputState {
-        var inputText by rememberSaveable { mutableStateOf(initialParam) }
+        var inputText by rememberRetained {
+            mutableStateOf(
+                TextFieldValue(
+                    text = initialParam ?: "",
+                    selection = TextRange(initialParam?.length ?: 0),
+                ),
+            )
+        }
         return SearchInputState(
-            inputText = TextFieldValue(
-                text = inputText ?: "",
-                selection = TextRange(inputText?.length ?: 0),
-            ),
+            inputText = inputText,
         ) { event ->
             when (event) {
                 SearchInputUiEvent.Back -> localNavigator.pop()
                 is SearchInputUiEvent.OnValueChange -> {
-                    inputText = event.value.text
+                    inputText = event.value
                 }
 
                 SearchInputUiEvent.OnConfirmSearch -> {
-                    val query = inputText ?: return@SearchInputState
+                    val query = inputText.text
                     localNavigator.pop()
                     localNavigator.goTo(SearchResultScreen(query = query))
                 }

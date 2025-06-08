@@ -76,7 +76,7 @@ private fun AuthorContent(
         }
 
         LazyColumn(
-            Modifier.padding(it),
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
         ) {
             item {
                 Row(

@@ -24,6 +24,7 @@ import me.andannn.aozora.core.domain.model.BookWithProgress
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.dialog.OnClickOption
 import me.andannn.aozora.ui.feature.common.dialog.OptionItem
@@ -36,23 +37,23 @@ import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun rememberLibraryPresenter(
-    nestedNavigator: Navigator,
+    localNavigator: Navigator = LocalNavigator.current,
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = RootNavigator.current,
+    rootNavigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(
-    nestedNavigator,
+    localNavigator,
     userDataRepository,
-    navigator,
+    rootNavigator,
     popupController,
 ) {
-    LibraryPresenter(nestedNavigator, userDataRepository, navigator, popupController)
+    LibraryPresenter(localNavigator, userDataRepository, rootNavigator, popupController)
 }
 
 class LibraryPresenter(
-    private val nestedNavigator: Navigator,
+    private val localNavigator: Navigator,
     private val userDataRepository: UserDataRepository,
-    private val navigator: Navigator,
+    private val rootNavigator: Navigator,
     private val popupController: PopupController,
 ) : Presenter<LibraryState> {
     @Composable
@@ -74,7 +75,7 @@ class LibraryPresenter(
         ) { event ->
             when (event) {
                 is LibraryUiEvent.OnCardClick -> {
-                    navigator.goTo(ReaderScreen(event.card.id, event.card.authorId))
+                    rootNavigator.goTo(ReaderScreen(event.card.id, event.card.authorId))
                 }
 
                 is LibraryUiEvent.OnTabRowClick -> {
@@ -82,7 +83,7 @@ class LibraryPresenter(
                 }
 
                 LibraryUiEvent.OnGoToSearch -> {
-                    nestedNavigator.goTo(SearchNestedScreen)
+                    localNavigator.goTo(SearchNestedScreen)
                 }
 
                 is LibraryUiEvent.OnCardOptionClick -> {
@@ -94,7 +95,7 @@ class LibraryPresenter(
                         if (result is OnClickOption) {
                             when (result.option) {
                                 OptionItem.OPEN_BOOK_CARD -> {
-                                    navigator.goTo(
+                                    localNavigator.goTo(
                                         BookCardScreen(
                                             bookCardId = event.card.id,
                                             groupId = event.card.authorId,
@@ -125,7 +126,7 @@ class LibraryPresenter(
                 }
 
                 LibraryUiEvent.OnClickMore -> {
-                    navigator.goTo(AboutScreen)
+                    rootNavigator.goTo(AboutScreen)
                 }
             }
         }

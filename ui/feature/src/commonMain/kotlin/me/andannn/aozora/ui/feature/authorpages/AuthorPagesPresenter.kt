@@ -18,6 +18,7 @@ import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
 import me.andannn.core.util.rememberRetainedCoroutineScope
@@ -27,7 +28,7 @@ import org.koin.mp.KoinPlatform.getKoin
 fun rememberAuthorPagesPresenter(
     code: String,
     aozoraRepository: AozoraContentsRepository = getKoin().get(),
-    navigator: Navigator = RootNavigator.current,
+    navigator: Navigator = LocalNavigator.current,
 ) = remember(
     code,
     aozoraRepository,

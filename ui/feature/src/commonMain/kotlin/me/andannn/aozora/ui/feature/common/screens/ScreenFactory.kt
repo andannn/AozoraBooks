@@ -160,7 +160,7 @@ object RoutePresenterFactory : Presenter.Factory {
 
             is LibraryNestedScreen -> {
                 presenterOf {
-                    rememberLibraryPresenter(nestedNavigator = navigator).present()
+                    rememberLibraryPresenter().present()
                 }
             }
 

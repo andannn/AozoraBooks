@@ -57,7 +57,7 @@ private fun SearchResultContent(
     Scaffold(
         modifier = modifier,
     ) {
-        Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
+        Column(modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding())) {
             Surface(
                 modifier =
                     Modifier

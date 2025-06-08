@@ -67,7 +67,7 @@ private fun AuthorPagesContent(
         },
     ) {
         LazyColumn(
-            modifier = Modifier.padding(it),
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
         ) {
             items(pagingData.itemCount) { index ->
                 Column {

@@ -83,9 +83,9 @@ class SearchResultPresenter(
         ) { event ->
             when (event) {
                 SearchResultUiEvent.Back -> localNavigator.pop()
-                is SearchResultUiEvent.OnAuthorClick -> rootNavigator.goTo(AuthorScreen(event.author.authorId))
+                is SearchResultUiEvent.OnAuthorClick -> localNavigator.goTo(AuthorScreen(event.author.authorId))
                 is SearchResultUiEvent.OnBookClick ->
-                    rootNavigator.goTo(
+                    localNavigator.goTo(
                         BookCardScreen(
                             event.book.id,
                             event.book.authorId,

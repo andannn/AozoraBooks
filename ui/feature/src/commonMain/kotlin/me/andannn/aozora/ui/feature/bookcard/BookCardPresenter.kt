@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.domain.repository.UserDataRepository
+import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
 import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
@@ -30,20 +31,23 @@ fun rememberBookCardPresenter(
     bookId: String,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     userDataRepository: UserDataRepository = getKoin().get(),
-    navigator: Navigator = RootNavigator.current,
+    rootNavigator: Navigator = RootNavigator.current,
+    localNavigator: Navigator = LocalNavigator.current,
 ) = remember(
     groupId,
     bookId,
     aozoraContentsRepository,
     userDataRepository,
-    navigator,
+    rootNavigator,
+    localNavigator,
 ) {
     BookCardPresenter(
         groupId = groupId,
         bookId = bookId,
         aozoraContentsRepository = aozoraContentsRepository,
         userDataRepository = userDataRepository,
-        navigator = navigator,
+        rootNavigator = rootNavigator,
+        localNavigator = localNavigator,
     )
 }
 
@@ -53,7 +57,8 @@ class BookCardPresenter(
     private val groupId: String,
     private val bookId: String,
     private val aozoraContentsRepository: AozoraContentsRepository,
-    private val navigator: Navigator,
+    private val rootNavigator: Navigator,
+    private val localNavigator: Navigator,
     private val userDataRepository: UserDataRepository,
 ) : Presenter<BookCardState> {
     @Composable
@@ -79,7 +84,7 @@ class BookCardPresenter(
             isAddedToShelf = savedBookCard != null,
         ) { event ->
             when (event) {
-                BookCardUiEvent.Back -> navigator.pop()
+                BookCardUiEvent.Back -> localNavigator.pop()
                 BookCardUiEvent.OnAddToShelf -> {
                     scope.launch {
                         if (savedBookCard != null) {
@@ -97,13 +102,13 @@ class BookCardPresenter(
                 }
 
                 BookCardUiEvent.OnClickRead -> {
-                    navigator.goTo(
+                    rootNavigator.goTo(
                         ReaderScreen(cardId = bookId, authorId = groupId),
                     )
                 }
 
                 is BookCardUiEvent.OnClickAuthor -> {
-                    navigator.goTo(
+                    localNavigator.goTo(
                         AuthorScreen(authorId = event.authorId),
                     )
                 }
