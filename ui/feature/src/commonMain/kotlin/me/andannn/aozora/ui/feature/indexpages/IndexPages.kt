@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -23,6 +23,7 @@ import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.BookColumnItemView
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -60,14 +61,14 @@ fun IndexPagesStateContent(
                             onEvent.invoke(IndexPagesUiEvent.OnBack)
                         },
                     ) {
-                        Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
             )
         },
     ) {
         LazyColumn(
-            modifier = Modifier.padding(it),
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
         ) {
             items(pagingData.itemCount) { index ->
                 Column {
@@ -91,6 +92,10 @@ fun IndexPagesStateContent(
                         HorizontalDivider()
                     }
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

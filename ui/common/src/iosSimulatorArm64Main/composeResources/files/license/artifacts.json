@@ -385,6 +385,38 @@
     },
     {
         "groupId": "androidx.room",
+        "artifactId": "room-paging",
+        "version": "2.7.1",
+        "name": "Room Paging",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://cs.android.com/androidx/platform/frameworks/support"
+        }
+    },
+    {
+        "groupId": "androidx.room",
+        "artifactId": "room-paging-iossimulatorarm64",
+        "version": "2.7.1",
+        "name": "Room Paging",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://cs.android.com/androidx/platform/frameworks/support"
+        }
+    },
+    {
+        "groupId": "androidx.room",
         "artifactId": "room-runtime",
         "version": "2.7.1",
         "name": "Room-Runtime",
@@ -674,7 +706,7 @@
     {
         "groupId": "com.fleeksoft.ksoup",
         "artifactId": "ksoup",
-        "version": "0.2.3",
+        "version": "0.2.4",
         "name": "ksoup",
         "unknownLicenses": [
             {
@@ -689,7 +721,7 @@
     {
         "groupId": "com.fleeksoft.ksoup",
         "artifactId": "ksoup-iossimulatorarm64",
-        "version": "0.2.3",
+        "version": "0.2.4",
         "name": "ksoup",
         "unknownLicenses": [
             {
@@ -960,7 +992,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio",
-        "version": "3.11.0",
+        "version": "3.12.0",
         "name": "okio",
         "spdxLicenses": [
             {
@@ -976,7 +1008,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio-iossimulatorarm64",
-        "version": "3.11.0",
+        "version": "3.12.0",
         "name": "okio",
         "spdxLicenses": [
             {

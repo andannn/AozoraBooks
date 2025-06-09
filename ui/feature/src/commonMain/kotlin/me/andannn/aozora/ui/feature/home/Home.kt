@@ -8,6 +8,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Search
@@ -21,19 +22,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.popUntil
+import com.slack.circuit.runtime.screen.Screen
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
 import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
 import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
-import me.andannn.aozora.ui.feature.common.screens.SearchResultScreen
-import kotlin.reflect.KClass
 
 @Composable
 fun Home(
@@ -61,21 +63,34 @@ fun HomeContent(
 
     val current = backStack.topRecord?.screen ?: LibraryNestedScreen
     val currentNavigation =
-        nestedNavigationMap.entries
-            .first {
-                it.value.any { screen ->
-                    screen.screenClass == current::class
+        remember(current) {
+            val backStackList = backStack.iterator().asSequence().toList()
+            val lastBaseRecord =
+                backStackList.firstOrNull { record ->
+                    record.screen.isNestBase
                 }
-            }.key
+            lastBaseRecord?.screen?.toNavigationItem()!!
+        }
 
     val showNavigationBar by rememberUpdatedState(
         current !is SearchInputScreen,
     )
     Scaffold(
         modifier = modifier,
-        bottomBar = {
+    ) {
+        Box {
+            CompositionLocalProvider(
+                LocalNavigator provides navigator,
+            ) {
+                NavigableCircuitContent(
+                    navigator = navigator,
+                    backStack = backStack,
+                )
+            }
+
             AnimatedContent(
-                showNavigationBar,
+                modifier = Modifier.align(Alignment.BottomStart),
+                targetState = showNavigationBar,
                 transitionSpec = {
                     if (targetState) {
                         slideInVertically { it } togetherWith slideOutVertically { -it }
@@ -88,31 +103,22 @@ fun HomeContent(
                     AozoraNavigationBar(
                         selectedItem = currentNavigation,
                         onSelectItem = {
-                            val nestRoot = nestedNavigationMap[it]!!.first { it.isRoot }
+                            val nestRootScreen = baseNavigationMap[it]!!
                             val alreadyInStack =
                                 backStack.iterator().asSequence().firstOrNull { record ->
-                                    record.screen::class == nestRoot.screenClass
+                                    record.screen == nestRootScreen
                                 } != null
                             if (alreadyInStack) {
                                 navigator.popUntil { screen ->
-                                    screen::class == nestRoot.screenClass
+                                    screen == nestRootScreen
                                 }
                             } else {
-                                navigator.goTo(classToScreenObj(nestRoot.screenClass))
+                                navigator.goTo(nestRootScreen)
                             }
                         },
                     )
                 }
             }
-        },
-    ) {
-        CompositionLocalProvider(
-            LocalNavigator provides navigator,
-        ) {
-            NavigableCircuitContent(
-                navigator = navigator,
-                backStack = backStack,
-            )
         }
     }
 }
@@ -152,30 +158,25 @@ private enum class NavigationItem {
     SEARCH,
 }
 
-private data class ScreenWithRole(
-    val screenClass: KClass<*>,
-    val isRoot: Boolean,
-)
-
-private val nestedNavigationMap =
+private val baseNavigationMap =
     mapOf(
-        NavigationItem.LIBRARY to
-            listOf(
-                ScreenWithRole(LibraryNestedScreen::class, isRoot = true),
-            ),
-        NavigationItem.SEARCH to
-            listOf(
-                ScreenWithRole(SearchNestedScreen::class, isRoot = true),
-                ScreenWithRole(SearchInputScreen::class, isRoot = false),
-                ScreenWithRole(SearchResultScreen::class, isRoot = false),
-            ),
+        NavigationItem.LIBRARY to LibraryNestedScreen,
+        NavigationItem.SEARCH to SearchNestedScreen,
     )
 
-private fun classToScreenObj(screenClass: KClass<*>) =
-    when (screenClass) {
-        LibraryNestedScreen::class -> LibraryNestedScreen
-        SearchNestedScreen::class -> SearchNestedScreen
-        else -> error("Unknown screen class: $screenClass")
+private val Screen.isNestBase
+    get() =
+        when (this) {
+            is LibraryNestedScreen -> true
+            is SearchNestedScreen -> true
+            else -> false
+        }
+
+private fun Screen.toNavigationItem() =
+    when (this) {
+        LibraryNestedScreen -> NavigationItem.LIBRARY
+        SearchNestedScreen -> NavigationItem.SEARCH
+        else -> error("$this is not nest root screen")
     }
 
 private val NavigationItem.icon
