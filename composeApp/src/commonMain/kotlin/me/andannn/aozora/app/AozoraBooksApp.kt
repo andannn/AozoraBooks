@@ -31,7 +31,6 @@ import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.RootNavigator
-import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
 import me.andannn.aozora.ui.feature.common.screens.HomeScreen
 import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
 import me.andannn.aozora.ui.feature.common.screens.RoutePresenterFactory

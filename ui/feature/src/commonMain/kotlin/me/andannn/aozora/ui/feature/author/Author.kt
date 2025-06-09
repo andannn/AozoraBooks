@@ -27,6 +27,7 @@ import me.andannn.aozora.ui.common.widgets.BookColumnItemView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
 import me.andannn.aozora.ui.common.widgets.ItemRow
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.core.util.removePrefixRecursive
 
 @Composable
@@ -130,6 +131,10 @@ private fun AuthorContent(
                         )
                     },
                 )
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

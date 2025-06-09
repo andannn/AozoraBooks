@@ -23,6 +23,7 @@ import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.ui.common.widgets.AuthorColumnItemView
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -91,6 +92,10 @@ private fun AuthorPagesContent(
                         HorizontalDivider()
                     }
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

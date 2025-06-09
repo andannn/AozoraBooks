@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.ui.common.widgets.AuthorColumnItemView
 import me.andannn.aozora.ui.common.widgets.BookColumnItemView
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 
 @Composable
 fun SearchResult(
@@ -144,19 +144,26 @@ private fun SearchResultContent(
                                 )
                             }
                         }
+
+                        item {
+                            NavigationBarAnchor()
+                        }
                     }
                 }
 
                 LoadState.NoResult -> {
-                    Box(
+                    Column(
                         modifier = Modifier.fillMaxSize(),
                     ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center).padding(horizontal = 16.dp),
-                            text = "作家や作品が見つかりませんでした。キーワードを変えてもう一度お試しください。",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
+                        Box(modifier = Modifier.weight(1f)) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center).padding(horizontal = 16.dp),
+                                text = "作家や作品が見つかりませんでした。キーワードを変えてもう一度お試しください。",
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                        NavigationBarAnchor()
                     }
                 }
             }

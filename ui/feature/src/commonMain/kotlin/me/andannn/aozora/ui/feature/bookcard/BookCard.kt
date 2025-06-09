@@ -39,6 +39,7 @@ import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
 import me.andannn.aozora.ui.common.widgets.ItemRow
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -266,6 +267,10 @@ private fun BookCardContent(
                         ItemRow(title = "校正：", value = it)
                     }
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

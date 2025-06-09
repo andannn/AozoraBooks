@@ -17,7 +17,6 @@ import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorWithBooks
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
 import org.koin.mp.KoinPlatform.getKoin
 

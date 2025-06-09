@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.BookWithProgress
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
@@ -178,6 +179,10 @@ private fun BookList(
                     onEvent.invoke(LibraryUiEvent.OnCardOptionClick(card))
                 },
             )
+        }
+
+        item {
+            NavigationBarAnchor()
         }
     }
 }

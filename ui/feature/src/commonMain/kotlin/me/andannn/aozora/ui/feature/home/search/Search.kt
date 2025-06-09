@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.ui.common.widgets.BannerAdView
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -123,6 +124,10 @@ fun SearchContent(
                         adType = AdType.MEDIUM_RECTANGLE,
                     )
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

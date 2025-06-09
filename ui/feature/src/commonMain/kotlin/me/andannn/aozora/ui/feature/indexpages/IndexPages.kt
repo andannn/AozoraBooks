@@ -23,6 +23,7 @@ import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.BookColumnItemView
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -91,6 +92,10 @@ fun IndexPagesStateContent(
                         HorizontalDivider()
                     }
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }
