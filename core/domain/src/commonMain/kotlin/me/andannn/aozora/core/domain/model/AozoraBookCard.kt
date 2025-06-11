@@ -7,7 +7,7 @@ package me.andannn.aozora.core.domain.model
 /**
  * Book card from aozora website.
  */
-data class AozoraBookCard(
+data class AozoraBookCard constructor(
     val id: String,
     val title: String,
     val titleKana: String,

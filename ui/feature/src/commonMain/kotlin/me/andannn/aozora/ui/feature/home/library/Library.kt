@@ -169,6 +169,7 @@ private fun BookList(
             PreviewBookCard(
                 modifier = Modifier.animateItem(),
                 title = card.title,
+                subTitle = card.subTitle,
                 author = card.author.toString(),
                 progress = progress,
                 userMarkRead = bookWithProgress.isUserMarkCompleted,
