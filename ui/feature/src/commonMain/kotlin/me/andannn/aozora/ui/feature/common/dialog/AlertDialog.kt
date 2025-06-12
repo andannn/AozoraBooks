@@ -16,10 +16,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import aosora.ui.common.generated.resources.*
 import aosora.ui.common.generated.resources.Res
-import aosora.ui.common.generated.resources.download_book_error
-import aosora.ui.common.generated.resources.ok
-import aosora.ui.common.generated.resources.unknown_error
+import io.github.aakira.napier.Napier
+import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
@@ -28,11 +28,14 @@ import me.andannn.aozora.ui.common.dialog.PopupController
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction =
-    when (throwable) {
+suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction {
+    Napier.d { "JQN $throwable" }
+    return when (throwable) {
+        is CopyRightRetainedException -> showDialog(CopyRightRetainedDialog)
         is DownloadBookFailedException -> showDialog(DownloadBookErrorDialog)
         else -> showDialog(UnKnownErrorDialog)
     }
+}
 
 abstract class AlertDialog(
     val title: StringResource? = null,
@@ -103,6 +106,12 @@ private fun AlertDialog(
 
 data object DownloadBookErrorDialog : AlertDialog(
     message = Res.string.download_book_error,
+    positive = Res.string.ok,
+)
+
+data object CopyRightRetainedDialog : AlertDialog(
+    title = Res.string.copyright_retained_title,
+    message = Res.string.copyright_retained_msg,
     positive = Res.string.ok,
 )
 
