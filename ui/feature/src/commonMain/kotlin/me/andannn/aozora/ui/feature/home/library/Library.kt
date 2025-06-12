@@ -115,6 +115,7 @@ fun LibraryContent(
                         ) {
                             Text("本を検索する")
                         }
+                        NavigationBarAnchor()
                     }
                 } else {
                     BookList(

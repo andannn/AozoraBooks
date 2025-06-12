@@ -11,6 +11,7 @@ data class AozoraBookCard constructor(
     val id: String,
     val title: String,
     val titleKana: String,
+    val haveCopyRight: Boolean,
     val authorId: String,
     val author: String?,
     val authorUrl: String?,

@@ -22,6 +22,7 @@ internal fun BookEntity.toModel() =
         category = categoryNo,
         source = firstAppearance,
         characterType = orthography,
+        haveCopyRight = this.workCopyrightFlag == "あり",
         staffData =
             StaffData(
                 input = inputBy,

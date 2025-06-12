@@ -29,6 +29,7 @@ private fun BookColumnItemViewPreview() {
                     source = null,
                     characterType = null,
                     staffData = null,
+                    haveCopyRight = false,
                     authorDataList = emptyList(),
                 ),
             index = 1,
