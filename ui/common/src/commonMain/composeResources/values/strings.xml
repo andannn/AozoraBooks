@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="open_by_browser">ブラウさーで開く</string>
     <string name="copyright_retained_title">本文は表示できません</string>
     <string name="copyright_retained_msg">この作品は著作権が現在も存続しているため、本文を表示することができません。</string>
     <string name="download_book_error">ダウンロードに失敗しました。ネットワークを確認して、もう一度お試しください。</string>

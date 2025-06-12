@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import aosora.ui.common.generated.resources.*
 import aosora.ui.common.generated.resources.Res
-import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.ui.common.dialog.DialogAction
@@ -28,14 +27,12 @@ import me.andannn.aozora.ui.common.dialog.PopupController
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction {
-    Napier.d { "JQN $throwable" }
-    return when (throwable) {
+suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction =
+    when (throwable) {
         is CopyRightRetainedException -> showDialog(CopyRightRetainedDialog)
         is DownloadBookFailedException -> showDialog(DownloadBookErrorDialog)
         else -> showDialog(UnKnownErrorDialog)
     }
-}
 
 abstract class AlertDialog(
     val title: StringResource? = null,
@@ -112,7 +109,7 @@ data object DownloadBookErrorDialog : AlertDialog(
 data object CopyRightRetainedDialog : AlertDialog(
     title = Res.string.copyright_retained_title,
     message = Res.string.copyright_retained_msg,
-    positive = Res.string.ok,
+    positive = Res.string.open_by_browser,
 )
 
 data object UnKnownErrorDialog : AlertDialog(

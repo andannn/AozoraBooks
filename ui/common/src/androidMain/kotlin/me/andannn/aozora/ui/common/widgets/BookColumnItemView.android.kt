@@ -30,6 +30,7 @@ private fun BookColumnItemViewPreview() {
                     characterType = null,
                     staffData = null,
                     haveCopyRight = false,
+                    cardUrl = "",
                     authorDataList = emptyList(),
                 ),
             index = 1,

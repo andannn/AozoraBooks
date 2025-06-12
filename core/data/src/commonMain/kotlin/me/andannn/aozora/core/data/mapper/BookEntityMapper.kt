@@ -29,6 +29,7 @@ internal fun BookEntity.toModel() =
                 proofreading = proofBy,
             ),
         subTitle = subtitle,
+        cardUrl = cardUrl,
         authorDataList =
             listOf(
                 AuthorData(

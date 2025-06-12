@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,12 +38,14 @@ suspend fun PopupController.showBookOptionDialog(fromReadingTab: Boolean): Dialo
                 OptionItem.OPEN_BOOK_CARD,
                 OptionItem.REMOVE_FROM_BOOK_SHELF,
                 OptionItem.MARK_AS_COMPLETED,
+                OptionItem.OPEN_AOZORA_BOOK_CARD_WEB_PAGE,
             )
         } else {
             listOf(
                 OptionItem.OPEN_BOOK_CARD,
                 OptionItem.REMOVE_FROM_BOOK_SHELF,
                 OptionItem.MARK_AS_NOT_COMPLETED,
+                OptionItem.OPEN_AOZORA_BOOK_CARD_WEB_PAGE,
             )
         }
     return showDialog(BookOptionDialogId(options))
@@ -85,6 +89,7 @@ enum class OptionItem {
     OPEN_BOOK_CARD,
     REMOVE_FROM_BOOK_SHELF,
     MARK_AS_COMPLETED,
+    OPEN_AOZORA_BOOK_CARD_WEB_PAGE,
     MARK_AS_NOT_COMPLETED,
 }
 
@@ -94,6 +99,7 @@ fun OptionItem.label() =
         OptionItem.REMOVE_FROM_BOOK_SHELF -> "本棚から削除"
         OptionItem.MARK_AS_COMPLETED -> "読了にする"
         OptionItem.MARK_AS_NOT_COMPLETED -> "読了にしない"
+        OptionItem.OPEN_AOZORA_BOOK_CARD_WEB_PAGE -> "ブラウさーで開く"
     }
 
 fun OptionItem.icon() =
@@ -102,6 +108,7 @@ fun OptionItem.icon() =
         OptionItem.REMOVE_FROM_BOOK_SHELF -> Icons.Filled.Delete
         OptionItem.MARK_AS_COMPLETED -> Icons.Filled.BookmarkAdd
         OptionItem.MARK_AS_NOT_COMPLETED -> Icons.Filled.BookmarkRemove
+        OptionItem.OPEN_AOZORA_BOOK_CARD_WEB_PAGE -> Icons.AutoMirrored.Filled.OpenInNew
     }
 
 @Composable

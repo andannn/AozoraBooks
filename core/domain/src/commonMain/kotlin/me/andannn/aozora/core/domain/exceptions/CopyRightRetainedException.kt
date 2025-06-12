@@ -7,5 +7,5 @@ package me.andannn.aozora.core.domain.exceptions
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 
 class CopyRightRetainedException(
-    bookCard: AozoraBookCard,
+    val bookCard: AozoraBookCard,
 ) : Exception("${bookCard.id} have copyRight and no html.")
