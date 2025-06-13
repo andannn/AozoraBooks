@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
@@ -31,10 +32,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.ReadProgress
-import me.andannn.aozora.ui.common.util.toPercentString
 
 @Composable
 fun PreviewBookCard(
@@ -43,16 +45,17 @@ fun PreviewBookCard(
     author: String,
     progress: ReadProgress,
     userMarkRead: Boolean,
+    subTitle: String? = null,
     onClick: () -> Unit = {},
     onOptionClick: () -> Unit = {},
 ) {
-    val progressText =
+    val progressFactor =
         remember(progress, userMarkRead) {
             return@remember when (progress) {
-                ReadProgress.Done -> "100%"
-                ReadProgress.None -> "0%"
+                ReadProgress.Done -> 1f
+                ReadProgress.None -> 0f
                 is ReadProgress.Reading ->
-                    progress.progressFactor?.toPercentString() ?: ""
+                    progress.progressFactor ?: 0f
             }
         }
     Surface(
@@ -108,19 +111,47 @@ fun PreviewBookCard(
             Column(
                 modifier = Modifier.fillMaxHeight().weight(1f),
             ) {
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                subTitle?.let {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = subTitle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = author,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = progressText,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(end = 16.dp)
+                            .height(4.dp)
+                            .clip(shape = CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
+                ) {
+                    Spacer(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(progressFactor)
+                                .align(Alignment.BottomStart)
+                                .fillMaxHeight()
+                                .background(
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.secondary,
+                                ),
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
             }
 
             IconButton(

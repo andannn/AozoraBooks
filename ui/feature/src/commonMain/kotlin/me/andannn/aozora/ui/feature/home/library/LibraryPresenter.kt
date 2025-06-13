@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
@@ -40,20 +42,23 @@ fun rememberLibraryPresenter(
     localNavigator: Navigator = LocalNavigator.current,
     userDataRepository: UserDataRepository = getKoin().get(),
     rootNavigator: Navigator = RootNavigator.current,
+    uriHandler: UriHandler = LocalUriHandler.current,
     popupController: PopupController = LocalPopupController.current,
 ) = remember(
     localNavigator,
     userDataRepository,
     rootNavigator,
+    uriHandler,
     popupController,
 ) {
-    LibraryPresenter(localNavigator, userDataRepository, rootNavigator, popupController)
+    LibraryPresenter(localNavigator, userDataRepository, rootNavigator, uriHandler, popupController)
 }
 
 class LibraryPresenter(
     private val localNavigator: Navigator,
     private val userDataRepository: UserDataRepository,
     private val rootNavigator: Navigator,
+    private val uriHandler: UriHandler,
     private val popupController: PopupController,
 ) : Presenter<LibraryState> {
     @Composable
@@ -119,6 +124,10 @@ class LibraryPresenter(
 
                                 OptionItem.MARK_AS_NOT_COMPLETED -> {
                                     userDataRepository.markBookAsNotCompleted(event.card.id)
+                                }
+
+                                OptionItem.OPEN_AOZORA_BOOK_CARD_WEB_PAGE -> {
+                                    uriHandler.openUri(event.card.cardUrl)
                                 }
                             }
                         }

@@ -142,7 +142,7 @@ internal class CachedLinerPageSource(
                     }
 
                     ParseEvent.Completed -> false
-                    is ParseEvent.Error -> throw IllegalStateException("Parse error", state.t)
+                    is ParseEvent.Error -> throw state.t
                 }
             }
         val pageFlow: Flow<AozoraPage> =

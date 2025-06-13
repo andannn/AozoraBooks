@@ -30,6 +30,22 @@ private fun PreviewBookCardPreview() {
 
 @Preview
 @Composable
+private fun PreviewBookCardWithSubTitlePreview() {
+    AozoraTheme {
+        Surface(modifier = Modifier.padding(12.dp)) {
+            PreviewBookCard(
+                title = "吾輩は猫である",
+                subTitle = "subTitle subTitle subTitle subTitle",
+                author = "夏目漱石",
+                progress = ReadProgress.None,
+                userMarkRead = false,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
 private fun PreviewBookCardPreviewLongDark() {
     AozoraTheme(darkTheme = true) {
         PreviewBookCard(
