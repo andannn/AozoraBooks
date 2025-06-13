@@ -72,13 +72,13 @@ fun IndexPagesStateContent(
         ) {
             items(pagingData.itemCount) { index ->
                 Column {
-                    pagingData[index]?.let {
+                    pagingData[index]?.let { card ->
                         BookColumnItemView(
                             modifier = Modifier.fillMaxWidth(),
                             index = index,
-                            item = it,
+                            item = card,
                             onClick = {
-                                onEvent.invoke(IndexPagesUiEvent.OnBookClick(it))
+                                onEvent.invoke(IndexPagesUiEvent.OnBookClick(card))
                             },
                         )
                         HorizontalDivider()
