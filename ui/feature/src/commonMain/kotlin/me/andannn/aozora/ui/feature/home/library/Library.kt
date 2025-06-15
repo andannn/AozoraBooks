@@ -115,6 +115,7 @@ fun LibraryContent(
                         ) {
                             Text("本を検索する")
                         }
+                        NavigationBarAnchor()
                     }
                 } else {
                     BookList(
@@ -169,6 +170,7 @@ private fun BookList(
             PreviewBookCard(
                 modifier = Modifier.animateItem(),
                 title = card.title,
+                subTitle = card.subTitle,
                 author = card.author.toString(),
                 progress = progress,
                 userMarkRead = bookWithProgress.isUserMarkCompleted,

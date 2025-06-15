@@ -5,7 +5,9 @@
 package me.andannn.aozora.ui.common.widgets
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,6 +39,15 @@ fun BookColumnItemView(
             if (item.subTitle != null) {
                 Text(item.subTitle!!, style = MaterialTheme.typography.bodyMedium)
             }
+            if (item.haveCopyRight) {
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "＊著作権存続＊",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            Spacer(Modifier.height(2.dp))
             Text("著者：" + item.author, style = MaterialTheme.typography.bodySmall)
         }
     }

@@ -17,9 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import aosora.ui.common.generated.resources.Res
+import aosora.ui.common.generated.resources.copyright_retained_msg
+import aosora.ui.common.generated.resources.copyright_retained_title
 import aosora.ui.common.generated.resources.download_book_error
 import aosora.ui.common.generated.resources.ok
+import aosora.ui.common.generated.resources.open_by_browser
 import aosora.ui.common.generated.resources.unknown_error
+import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.ui.common.dialog.DialogAction
 import me.andannn.aozora.ui.common.dialog.DialogId
@@ -30,6 +34,7 @@ import org.jetbrains.compose.resources.stringResource
 
 suspend fun PopupController.showAlertDialog(throwable: Throwable): DialogAction =
     when (throwable) {
+        is CopyRightRetainedException -> showDialog(CopyRightRetainedDialog)
         is DownloadBookFailedException -> showDialog(DownloadBookErrorDialog)
         else -> showDialog(UnKnownErrorDialog)
     }
@@ -104,6 +109,12 @@ private fun AlertDialog(
 data object DownloadBookErrorDialog : AlertDialog(
     message = Res.string.download_book_error,
     positive = Res.string.ok,
+)
+
+data object CopyRightRetainedDialog : AlertDialog(
+    title = Res.string.copyright_retained_title,
+    message = Res.string.copyright_retained_msg,
+    positive = Res.string.open_by_browser,
 )
 
 data object UnKnownErrorDialog : AlertDialog(

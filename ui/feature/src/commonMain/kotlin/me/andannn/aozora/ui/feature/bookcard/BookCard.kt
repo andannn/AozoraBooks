@@ -85,7 +85,9 @@ private fun BookCardContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("図書カード：No.${bookCardInfo.id}")
+                    Text(
+                        "図書カード：No.${bookCardInfo.id}",
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -171,6 +173,13 @@ private fun BookCardContent(
                 }
                 bookCardInfo.characterType?.let {
                     ItemRow(title = "文字遣い種別：", value = it)
+                }
+                bookCardInfo.takeIf { it.haveCopyRight }?.let {
+                    Text(
+                        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp),
+                        text = "＊著作権存続＊",
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
             }
 

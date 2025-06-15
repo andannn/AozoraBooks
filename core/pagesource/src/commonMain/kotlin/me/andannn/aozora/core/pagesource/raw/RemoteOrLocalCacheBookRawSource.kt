@@ -27,6 +27,7 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
+import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraElement
@@ -106,10 +107,7 @@ internal class RemoteOrLocalCacheBookRawSource(
     private suspend fun waitBookModelOrThrow(): BookModel {
         val state = bookModelStateFlow.first { it != SourceState.Loading }
         when (state) {
-            is SourceState.Error -> throw IllegalStateException(
-                state.e.toString(),
-            )
-
+            is SourceState.Error -> throw state.e
             is SourceState.Success -> return state.source
             SourceState.Loading -> error("Never")
         }
@@ -135,6 +133,11 @@ private suspend fun createBookRawSource(
     val cachedBook = getCachedBookModel(cacheDictionary)
     if (cachedBook != null) {
         return cachedBook
+    }
+
+    if (card.htmlUrl == null && card.haveCopyRight) {
+        // The book hase no html file and have copyright.
+        throw CopyRightRetainedException(card)
     }
 
     try {
