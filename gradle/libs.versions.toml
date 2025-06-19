@@ -34,7 +34,7 @@ sqliteBundled = "2.5.1"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
 licensee = "1.13.0"
-workRuntimeKtx = "2.10.1"
+workRuntimeKtx = "2.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
