@@ -19,7 +19,7 @@ import platform.Foundation.dataWithBytes
 
 private val charsetToDecoderMap =
     mapOf(
-        "UTF_8" to NSUTF8StringEncoding,
+        "UTF-8" to NSUTF8StringEncoding,
         "Shift_JIS" to NSShiftJISStringEncoding,
     )
 
@@ -32,7 +32,7 @@ fun ByteArray.toNSData(): NSData =
         NSData.dataWithBytes(it.addressOf(0), size.toULong())
     }
 
-actual fun readStringFromSource(
+internal actual fun readStringFromSource(
     source: Source,
     charset: String,
 ): String {

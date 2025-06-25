@@ -11,16 +11,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 @Suppress("ktlint:standard:max-line-length")
-abstract class AozoraSourceParserTest {
-    val sample1: String
+class AozoraSourceParserTest {
+    private val sample1: String
         get() = "小山の妻君は<br />"
-    val sample2: String
+    private val sample2: String
         get() =
             "ふと気が付いて見ると書生はいない。たくさんおった兄弟が一<ruby><rb>疋</rb><rp>（</rp><rt>ぴき</rt><rp>）</rp></ruby>" +
                 "も見えぬ。<ruby><rb>肝心</rb><rp>（</rp><rt>かんじん</rt><rp>）</rp></ruby>の母親"
-    val sample3: String
+    private val sample3: String
         get() = "藤吉は<strong class=\"SESAME_DOT\">むっくり</strong>起き上った。"
-    val parser: AozoraLineParser
+    private val parser: AozoraLineParser
         get() = HtmlLineParser
 
     private fun String.asRawLine() = RawLine(0L, 0L, this)
