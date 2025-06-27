@@ -4,53 +4,69 @@
  */
 package me.andannn.aozora.core.util
 
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
+import kotlinx.io.Buffer
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemTemporaryDirectory
-import me.andannn.core.util.readString
+import kotlinx.io.readString
+import kotlinx.io.writeString
+import me.andannn.core.util.readStringFromSource
 import me.andannn.core.util.unzipTo
 import me.andannn.core.util.writeToPath
-import kotlin.random.Random
-import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class Utf8UtilTest {
-    private val dispatcher = StandardTestDispatcher()
-    private val testScope = TestScope(dispatcher)
-
-    private val randomIndex: Int = Random.Default.nextInt()
-
-    private lateinit var testPath: Path
-
-    @BeforeTest
-    fun setUp() {
-        testPath = Path("$SystemTemporaryDirectory/test_download_$randomIndex")
-        SystemFileSystem.createDirectories(path = testPath)
-        println(testPath)
+    @Test
+    fun readUtf8StringTest() {
+        val textSource = Buffer().apply { writeString("Aéあ缝") }
+        val str = readStringFromSource(textSource, "UTF-8")
+        assertEquals("Aéあ缝", str)
     }
 
     @Test
-    fun readStringTest() {
-        val str =
-            Path("src/commonTest/resources/test3.html").readString("Shift_JIS")
-        println(str)
+    fun readShiftJISStringTest() {
+        val shiftJisBytes =
+            byteArrayOf(
+                0x82.toByte(),
+                0xB1.toByte(),
+                0x82.toByte(),
+                0xF1.toByte(),
+                0x82.toByte(),
+                0xC9.toByte(),
+                0x82.toByte(),
+                0xBF.toByte(),
+                0x82.toByte(),
+                0xCD.toByte(),
+            )
+        val textSource = Buffer().apply { write(shiftJisBytes) }
+        val str = readStringFromSource(textSource, "Shift_JIS")
+        assertEquals("こんにちは", str)
     }
 
     @Test
     fun unzipFileTest() {
+        val testPath = Path(SystemTemporaryDirectory, "test.zip")
         Path("src/commonTest/resources/test.zip").unzipTo(testPath)
+        assertEquals(
+            1,
+            SystemFileSystem.list(testPath).count { it.toString().endsWith("kiso_dochuki.txt") },
+        )
     }
 
     @Test
     fun writeSourceToPathTest() {
-        val source =
-            Path("src/commonTest/resources/test.zip").let {
-                SystemFileSystem.source(it).buffered()
-            }
+        val source = Buffer().apply { writeString("Test") }
+        source.writeToPath(Path(SystemTemporaryDirectory, "target.zip"))
+        val string =
+            SystemFileSystem
+                .source(Path(SystemTemporaryDirectory, "target.zip"))
+                .buffered()
+                .readString()
 
-        source.writeToPath(Path(testPath, "target.zip"))
+        assertTrue(SystemFileSystem.exists(Path(SystemTemporaryDirectory, "target.zip")))
+        assertEquals(string, "Test")
     }
 }

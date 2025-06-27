@@ -354,7 +354,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-common",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Common",
         "spdxLicenses": [
             {
@@ -370,7 +370,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-common-iossimulatorarm64",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Common",
         "spdxLicenses": [
             {
@@ -386,7 +386,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-paging",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room Paging",
         "spdxLicenses": [
             {
@@ -402,7 +402,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-paging-iossimulatorarm64",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room Paging",
         "spdxLicenses": [
             {
@@ -418,7 +418,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-runtime",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Runtime",
         "spdxLicenses": [
             {
@@ -434,7 +434,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-runtime-iossimulatorarm64",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Runtime",
         "spdxLicenses": [
             {
@@ -450,7 +450,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite",
         "spdxLicenses": [
             {
@@ -466,7 +466,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-bundled",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Bundled Integration",
         "spdxLicenses": [
             {
@@ -482,7 +482,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-bundled-iossimulatorarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Bundled Integration",
         "spdxLicenses": [
             {
@@ -498,7 +498,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-framework",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Framework Integration",
         "spdxLicenses": [
             {
@@ -514,7 +514,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-framework-iossimulatorarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Framework Integration",
         "spdxLicenses": [
             {
@@ -530,7 +530,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-iossimulatorarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite",
         "spdxLicenses": [
             {
@@ -992,7 +992,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio",
-        "version": "3.12.0",
+        "version": "3.13.0",
         "name": "okio",
         "spdxLicenses": [
             {
@@ -1008,7 +1008,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio-iossimulatorarm64",
-        "version": "3.12.0",
+        "version": "3.13.0",
         "name": "okio",
         "spdxLicenses": [
             {
@@ -2480,7 +2480,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib",
-        "version": "2.1.21",
+        "version": "2.2.0",
         "name": "Kotlin Stdlib",
         "spdxLicenses": [
             {
