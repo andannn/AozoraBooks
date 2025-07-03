@@ -7,11 +7,14 @@ package me.andannn.aozora.ui.feature.home.searchresult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
@@ -53,6 +56,10 @@ class SearchResultPresenter(
 ) : Presenter<SearchResultState> {
     @Composable
     override fun present(): SearchResultState {
+        val searchCategories =
+            remember {
+                mutableStateListOf(SearchCategory.BOOK, SearchCategory.AUTHOR)
+            }
         val loadState by produceRetainedState<LoadState>(
             initialValue = LoadState.Loading,
         ) {
@@ -78,6 +85,7 @@ class SearchResultPresenter(
         }
 
         return SearchResultState(
+            searchCategory = searchCategories.toImmutableList(),
             query = query,
             loadState = loadState,
         ) { event ->
@@ -97,14 +105,28 @@ class SearchResultPresenter(
                         SearchInputScreen(initialParam = query),
                     )
                 }
+
+                is SearchResultUiEvent.OnSearchCategoryChange -> {
+                    if (event.searchCategory !in searchCategories) {
+                        searchCategories.add(event.searchCategory)
+                    } else {
+                        searchCategories.remove(event.searchCategory)
+                    }
+                }
             }
         }
     }
 }
 
+enum class SearchCategory {
+    BOOK,
+    AUTHOR,
+}
+
 @Stable
 data class SearchResultState(
     val query: String,
+    val searchCategory: ImmutableList<SearchCategory>,
     val loadState: LoadState,
     val evenSink: (SearchResultUiEvent) -> Unit = {},
 ) : CircuitUiState
@@ -124,6 +146,10 @@ sealed interface SearchResultUiEvent {
     data object Back : SearchResultUiEvent
 
     data object OnTitleClick : SearchResultUiEvent
+
+    data class OnSearchCategoryChange(
+        val searchCategory: SearchCategory,
+    ) : SearchResultUiEvent
 
     data class OnAuthorClick(
         val author: AuthorData,
