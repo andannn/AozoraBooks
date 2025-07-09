@@ -4,20 +4,20 @@ import FirebaseCore
 import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-    MobileAds.shared.start(completionHandler: nil)
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        MobileAds.shared.start(completionHandler: nil)
 
-    #if DEBUG
-      print("Running in Debug mode")
-      MainViewControllerKt.enableDebugLog()
-    #else
-      print("Running in Release mode")
-    #endif
+        #if DEBUG
+        print("Running in Debug mode")
+        MainViewControllerKt.enableDebugLog()
+        #else
+        print("Running in Release mode")
+        #endif
 
-    return true
-  }
+        return true
+    }
 }
 
 @main
