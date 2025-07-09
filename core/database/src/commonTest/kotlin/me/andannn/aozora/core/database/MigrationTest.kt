@@ -5,43 +5,42 @@
 package me.andannn.aozora.core.database
 
 import androidx.room.testing.MigrationTestHelper
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import java.io.File
+import okio.SYSTEM
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+expect fun migrationTestHelper(fileName: String): MigrationTestHelper
+
 class MigrationTest {
     private val tempFile =
         FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve("test-${Random.nextInt()}.db")
 
-    private fun getMigrationTestHelper(fileName: String) =
-        MigrationTestHelper(
-            schemaDirectoryPath = File("schemas").toPath(),
-            driver = BundledSQLiteDriver(),
-            databaseClass = AozoraDataBase::class,
-            databasePath = File(fileName).toPath(),
-        )
-
     @BeforeTest
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun before() {
         FileSystem.SYSTEM.delete(tempFile)
         FileSystem.SYSTEM.delete("$tempFile.lck".toPath())
     }
 
     @AfterTest
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun after() {
         FileSystem.SYSTEM.delete(tempFile)
         FileSystem.SYSTEM.delete("$tempFile.lck".toPath())
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate1To2() {
         val migrationTestHelper =
-            getMigrationTestHelper(
+            migrationTestHelper(
                 tempFile.toString(),
             )
         val newConnection = migrationTestHelper.createDatabase(1)
@@ -53,9 +52,11 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate2To3() {
         val migrationTestHelper =
-            getMigrationTestHelper(
+            migrationTestHelper(
                 tempFile.toString(),
             )
         val newConnection = migrationTestHelper.createDatabase(2)
@@ -67,9 +68,11 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate3To4() {
         val migrationTestHelper =
-            getMigrationTestHelper(
+            migrationTestHelper(
                 tempFile.toString(),
             )
         val newConnection = migrationTestHelper.createDatabase(3)
@@ -81,9 +84,11 @@ class MigrationTest {
     }
 
     @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
     fun migrate4To5() {
         val migrationTestHelper =
-            getMigrationTestHelper(
+            migrationTestHelper(
                 tempFile.toString(),
             )
         val newConnection = migrationTestHelper.createDatabase(4)

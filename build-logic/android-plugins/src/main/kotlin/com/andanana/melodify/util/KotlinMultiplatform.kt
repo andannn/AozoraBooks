@@ -13,7 +13,8 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
             androidTarget {
                 compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
 
-                @OptIn(ExperimentalKotlinGradlePluginApi::class) // this is experimental API and will likely change in the future into more robust DSL
+                // this is experimental API and will likely change in the future into more robust DSL
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 instrumentedTestVariant {
                     // !!! this makes instrumented tests depends on commonTest source set.
                     sourceSetTree.set(KotlinSourceSetTree.test)
@@ -45,6 +46,12 @@ fun Project.configureKotlinMultiplatform(extension: KotlinMultiplatformExtension
             commonTest.dependencies {
                 implementation(libs.findLibrary("kotlin.test").get())
                 implementation(libs.findLibrary("kotlinx.coroutines.test").get())
+            }
+
+            androidInstrumentedTest.dependencies {
+                implementation(libs.findLibrary("androidx.test.runner").get())
+                implementation(libs.findLibrary("androidx.test.core.ktx").get())
+                implementation(libs.findLibrary("androidx.test.monitor").get())
             }
         }
     }

@@ -33,6 +33,7 @@ androidxRoom = "2.7.2"
 sqliteBundled = "2.5.2"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
+testMonitor = "1.7.2"
 licensee = "1.13.0"
 workRuntimeKtx = "2.10.2"
 
@@ -89,6 +90,7 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "testCoreKtx" }
+androidx-test-monitor = { group = "androidx.test", name = "monitor", version.ref = "testMonitor" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 # dependecy in build-logic
