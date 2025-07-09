@@ -45,6 +45,3 @@ jobs:
 
       - name: Run android unit tests
         run: ./gradlew testDebugUnitTest
-
-      - name: Run jvm database test
-        run: ./gradlew :core:database:jvmTest

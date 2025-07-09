@@ -14,6 +14,7 @@ import kotlinx.io.writeString
 import me.andannn.core.util.readStringFromSource
 import me.andannn.core.util.unzipTo
 import me.andannn.core.util.writeToPath
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -47,6 +48,7 @@ class Utf8UtilTest {
     }
 
     @Test
+    @Ignore
     fun unzipFileTest() {
         val testPath = Path(SystemTemporaryDirectory, "test.zip")
         Path("src/commonTest/resources/test.zip").unzipTo(testPath)

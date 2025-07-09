@@ -11,6 +11,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.okio)
             implementation(libs.ksoup)
+            implementation(libs.kotlin.test)
         }
     }
 }
