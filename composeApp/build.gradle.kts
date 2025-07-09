@@ -17,8 +17,6 @@ android {
         applicationId = "me.andannn.aozora"
         versionCode = (project.findProperty("VERSION_CODE") as? String?)?.toIntOrNull() ?: error("No version code found")
         versionName = project.findProperty("VERSION_NAME") as String? ?: error("No version name found")
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {

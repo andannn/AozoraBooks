@@ -16,16 +16,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -39,6 +39,7 @@ import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
 import me.andannn.aozora.ui.common.widgets.ItemRow
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
@@ -84,7 +85,9 @@ private fun BookCardContent(
         topBar = {
             TopAppBar(
                 title = {
-                    Text("図書カード：No.${bookCardInfo.id}")
+                    Text(
+                        "図書カード：No.${bookCardInfo.id}",
+                    )
                 },
                 navigationIcon = {
                     IconButton(
@@ -92,48 +95,20 @@ private fun BookCardContent(
                             onEvent(BookCardUiEvent.Back)
                         },
                     ) {
-                        Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
             )
         },
-        floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-            ) {
-                SmallFloatingActionButton(
-                    content = {
-                        Text("読む")
-                    },
-                    onClick = {
-                        onEvent.invoke(BookCardUiEvent.OnClickRead)
-                    },
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                ExtendedFloatingActionButton(
-                    content = {
-                        if (isAddedToShelf) {
-                            Text("本棚から削除")
-                        } else {
-                            Text("本棚に追加")
-                        }
-                    },
-                    onClick = {
-                        onEvent.invoke(BookCardUiEvent.OnAddToShelf)
-                    },
-                )
-            }
-        },
     ) {
         LazyColumn(
-            Modifier.padding(it),
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
         ) {
             item {
-                Box(modifier = Modifier.fillMaxWidth()) {
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp)) {
                     Column(
                         modifier = Modifier.align(Alignment.Center).width(IntrinsicSize.Max),
                     ) {
-                        Spacer(Modifier.height(24.dp))
                         Text(
                             modifier = Modifier.align(Alignment.CenterHorizontally),
                             text = bookCardInfo.titleKana,
@@ -158,6 +133,34 @@ private fun BookCardContent(
             }
 
             item {
+                Row {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            onEvent.invoke(BookCardUiEvent.OnAddToShelf)
+                        },
+                    ) {
+                        if (isAddedToShelf) {
+                            Text("本棚から削除")
+                        } else {
+                            Text("本棚に追加")
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    FilledIconButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            onEvent.invoke(BookCardUiEvent.OnClickRead)
+                        },
+                    ) {
+                        Text("読む")
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
+            }
+
+            item {
                 Heading(text = "作品データ")
             }
 
@@ -170,6 +173,13 @@ private fun BookCardContent(
                 }
                 bookCardInfo.characterType?.let {
                     ItemRow(title = "文字遣い種別：", value = it)
+                }
+                bookCardInfo.takeIf { it.haveCopyRight }?.let {
+                    Text(
+                        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp),
+                        text = "＊著作権存続＊",
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
             }
 
@@ -266,6 +276,10 @@ private fun BookCardContent(
                         ItemRow(title = "校正：", value = it)
                     }
                 }
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

@@ -78,3 +78,8 @@ running `./gradlew spotlessApply` to add copyright.
 ### Update License list in app
 
 running `./gradlew :composeApp:licensee` to update license file.
+
+### Run Tests before contributing
+
+1. Run `./gradlew connectedDebugAndroidTest` to execute android instrument tests.
+2. Run `./gradlew iosSimulatorArm64Test` to execute iOS tests.

@@ -17,6 +17,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.Dp
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.retained.rememberRetained
@@ -29,6 +31,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.FontSizeLevel
@@ -46,6 +49,7 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
+import me.andannn.aozora.ui.feature.common.dialog.OnAccept
 import me.andannn.aozora.ui.feature.common.dialog.showAlertDialog
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
@@ -57,9 +61,10 @@ fun rememberBookViewerPresenter(
     screenHeightDp: Dp,
     bookSource: BookPageSource = LocalBookPageSource.current,
     popupController: PopupController = LocalPopupController.current,
+    uriHandler: UriHandler = LocalUriHandler.current,
     navigator: Navigator = RootNavigator.current,
     settingRepository: UserDataRepository = getKoin().get(),
-) = remember(card, bookSource, screenWidthDp, screenHeightDp, settingRepository) {
+) = remember(card, bookSource, screenWidthDp, screenHeightDp, uriHandler, settingRepository) {
     BookViewerPresenter(
         card = card,
         bookSource = bookSource,
@@ -67,6 +72,7 @@ fun rememberBookViewerPresenter(
         navigator = navigator,
         screenWidthDp = screenWidthDp,
         screenHeightDp = screenHeightDp,
+        uriHandler = uriHandler,
         userDataRepository = settingRepository,
     )
 }
@@ -81,6 +87,7 @@ class BookViewerPresenter(
     private val userDataRepository: UserDataRepository,
     private val popupController: PopupController,
     private val navigator: Navigator,
+    private val uriHandler: UriHandler,
 ) : Presenter<BookViewerState> {
     @Composable
     override fun present(): BookViewerState {
@@ -199,7 +206,11 @@ class BookViewerPresenter(
                                     .recordException(it.exception)
                             }
 
-                            popupController.showAlertDialog(it.exception)
+                            val result = popupController.showAlertDialog(it.exception)
+                            if (result == OnAccept && it.exception is CopyRightRetainedException) {
+                                uriHandler.openUri((it.exception as CopyRightRetainedException).bookCard.cardUrl)
+                            }
+
                             // dialog closed.
                             navigator.pop()
                         }

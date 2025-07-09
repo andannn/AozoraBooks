@@ -54,28 +54,25 @@ private fun ReaderCompletedDialog(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // TODO: Only support android now.
-        if (platform == Platform.ANDROID) {
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                TextButton(
-                    onClick = {
-                        onAction(Dismissed)
-                    },
-                ) {
-                    Text("後で")
-                }
-
-                TextButton(
-                    onClick = {
-                        onAction(OnGoToAppStore)
-                    },
-                ) {
-                    Text("アプリを評価する")
-                }
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
+            TextButton(
+                onClick = {
+                    onAction(Dismissed)
+                },
+            ) {
+                Text("後で")
             }
-            Spacer(modifier = Modifier.width(8.dp))
+
+            TextButton(
+                onClick = {
+                    onAction(OnGoToAppStore)
+                },
+            ) {
+                Text("アプリを評価する")
+            }
         }
+        Spacer(modifier = Modifier.width(8.dp))
     }
 }
 

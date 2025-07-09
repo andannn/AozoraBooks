@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.LocalPolice
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,7 +65,7 @@ private fun AboutContent(
                             onEvent.invoke(AboutUiEvent.OnBack)
                         },
                     ) {
-                        Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
             )

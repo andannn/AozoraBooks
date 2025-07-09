@@ -9,8 +9,10 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
@@ -45,7 +47,14 @@ class SearchInputPresenter(
 ) : Presenter<SearchInputState> {
     @Composable
     override fun present(): SearchInputState {
-        var inputText by rememberSaveable { mutableStateOf(initialParam) }
+        var inputText by rememberRetained {
+            mutableStateOf(
+                TextFieldValue(
+                    text = initialParam ?: "",
+                    selection = TextRange(initialParam?.length ?: 0),
+                ),
+            )
+        }
         return SearchInputState(
             inputText = inputText,
         ) { event ->
@@ -56,7 +65,7 @@ class SearchInputPresenter(
                 }
 
                 SearchInputUiEvent.OnConfirmSearch -> {
-                    val query = inputText ?: return@SearchInputState
+                    val query = inputText.text
                     localNavigator.pop()
                     localNavigator.goTo(SearchResultScreen(query = query))
                 }
@@ -67,7 +76,7 @@ class SearchInputPresenter(
 
 @Stable
 data class SearchInputState(
-    val inputText: String?,
+    val inputText: TextFieldValue,
     val evenSink: (SearchInputUiEvent) -> Unit = {},
 ) : CircuitUiState
 
@@ -77,6 +86,6 @@ sealed interface SearchInputUiEvent {
     data object OnConfirmSearch : SearchInputUiEvent
 
     data class OnValueChange(
-        val value: String,
+        val value: TextFieldValue,
     ) : SearchInputUiEvent
 }

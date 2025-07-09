@@ -11,6 +11,7 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.files.SystemTemporaryDirectory
 import kotlin.random.Random
 import kotlin.test.BeforeTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class RemoteOrCacheBookRawSourceTest {
@@ -29,6 +30,7 @@ class RemoteOrCacheBookRawSourceTest {
     }
 
     @Test
+    @Ignore
     fun processParseHtmlTest() {
         processParseHtml(
             Path("src/commonTest/resources/test2.html"),

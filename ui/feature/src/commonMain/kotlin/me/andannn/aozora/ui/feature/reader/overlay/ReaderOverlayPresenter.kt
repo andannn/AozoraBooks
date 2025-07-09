@@ -36,6 +36,8 @@ import me.andannn.aozora.ui.feature.common.dialog.ReaderCompleteDialogId
 import me.andannn.aozora.ui.feature.common.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.feature.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
+import me.andannn.platform.Platform
+import me.andannn.platform.platform
 import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "ReaderOverlayPresenter"
@@ -91,7 +93,13 @@ class ReaderOverlayPresenter(
             userDataRepository.markBookAsCompleted(cardId, authorId)
             val result = popupController.showDialog(ReaderCompleteDialogId)
             if (result is OnGoToAppStore) {
-                uriHandler.openUri("https://play.google.com/store/apps/details?id=me.andannn.aozora")
+                val url =
+                    if (platform == Platform.ANDROID) {
+                        "https://play.google.com/store/apps/details?id=me.andannn.aozora"
+                    } else {
+                        "https://apps.apple.com/app/id6746423917"
+                    }
+                uriHandler.openUri(url)
                 navigator.pop()
             } else {
                 navigator.pop()

@@ -10,7 +10,6 @@ android {
 }
 
 kotlin {
-    jvm()
     sourceSets {
         commonMain.dependencies {
             implementation(libs.room.runtime)
@@ -18,16 +17,13 @@ kotlin {
             implementation(libs.okio)
         }
 
-        iosMain.dependencies {
-            implementation(libs.androidx.sqlite.bundled)
+        commonTest.dependencies {
+            implementation(libs.androidx.room.testing)
+            implementation(libs.okio)
         }
 
-        jvmTest.dependencies {
-            implementation(project(":core:database"))
-            implementation(libs.androidx.room.testing)
+        iosMain.dependencies {
             implementation(libs.androidx.sqlite.bundled)
-            implementation(libs.room.runtime)
-            implementation(libs.okio)
         }
     }
 }
@@ -40,5 +36,4 @@ dependencies {
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
-    add("kspJvm", libs.room.compiler)
 }

@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +27,7 @@ import me.andannn.aozora.ui.common.widgets.BookColumnItemView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
 import me.andannn.aozora.ui.common.widgets.ItemRow
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.core.util.removePrefixRecursive
 
 @Composable
@@ -65,7 +66,7 @@ private fun AuthorContent(
                             onEvent(AuthorUiEvent.OnBack)
                         },
                     ) {
-                        Icon(Icons.Filled.ArrowBackIosNew, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
             )
@@ -76,7 +77,7 @@ private fun AuthorContent(
         }
 
         LazyColumn(
-            Modifier.padding(it),
+            modifier = Modifier.padding(top = it.calculateTopPadding()),
         ) {
             item {
                 Row(
@@ -130,6 +131,10 @@ private fun AuthorContent(
                         )
                     },
                 )
+            }
+
+            item {
+                NavigationBarAnchor()
             }
         }
     }

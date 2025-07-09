@@ -1,40 +1,41 @@
 [versions]
 agp = "8.10.1"
 circuit = "0.27.1"
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-kotlinxIoCore = "0.7.0"
+kotlinxIoCore = "0.8.0"
 ktor = "3.1.3"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 napierVersion = "2.7.1"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutines = "1.10.2"
-kotlinxSerializationJson = "1.8.1"
-ksp = "2.1.21-2.0.1"
+kotlinxSerializationJson = "1.9.0"
+ksp = "2.2.0-2.0.2"
 androidGradlePlugin = "8.10.1"
 compose-plugin = "1.7.3"
 koin-bom = "4.0.4"
-kotlinxDatetime = "0.6.2"
+kotlinxDatetime = "0.7.0-0.6.x-compat"
 ksoup = "0.2.4"
-okio = "3.12.0"
+okio = "3.14.0"
 ktlint = "12.2.0"
-googleService = "4.4.2"
+googleService = "4.4.3"
 firebaseCrashlytics = "3.0.4"
-firebaseBom = "33.15.0"
+firebaseBom = "33.16.0"
 androidxDatastore = "1.1.7"
 pagingCommonVersion = "3.3.6"
-playServicesAds = "24.3.0"
-spotless = "7.0.4"
-androidxRoom = "2.7.1"
-sqliteBundled = "2.5.1"
+playServicesAds = "24.4.0"
+spotless = "7.1.0"
+androidxRoom = "2.7.2"
+sqliteBundled = "2.5.2"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
+testMonitor = "1.7.2"
 licensee = "1.13.0"
-workRuntimeKtx = "2.10.1"
+workRuntimeKtx = "2.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -89,6 +90,7 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqliteBundled" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "testCoreKtx" }
+androidx-test-monitor = { group = "androidx.test", name = "monitor", version.ref = "testMonitor" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
 
 # dependecy in build-logic

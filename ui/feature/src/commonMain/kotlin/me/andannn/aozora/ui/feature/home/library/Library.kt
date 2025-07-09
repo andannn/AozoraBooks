@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.BookWithProgress
+import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
@@ -114,6 +115,7 @@ fun LibraryContent(
                         ) {
                             Text("本を検索する")
                         }
+                        NavigationBarAnchor()
                     }
                 } else {
                     BookList(
@@ -168,6 +170,7 @@ private fun BookList(
             PreviewBookCard(
                 modifier = Modifier.animateItem(),
                 title = card.title,
+                subTitle = card.subTitle,
                 author = card.author.toString(),
                 progress = progress,
                 userMarkRead = bookWithProgress.isUserMarkCompleted,
@@ -178,6 +181,10 @@ private fun BookList(
                     onEvent.invoke(LibraryUiEvent.OnCardOptionClick(card))
                 },
             )
+        }
+
+        item {
+            NavigationBarAnchor()
         }
     }
 }

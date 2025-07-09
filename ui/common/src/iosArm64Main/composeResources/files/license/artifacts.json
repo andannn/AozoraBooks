@@ -354,7 +354,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-common",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Common",
         "spdxLicenses": [
             {
@@ -370,7 +370,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-common-iosarm64",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Common",
         "spdxLicenses": [
             {
@@ -385,8 +385,40 @@
     },
     {
         "groupId": "androidx.room",
+        "artifactId": "room-paging",
+        "version": "2.7.2",
+        "name": "Room Paging",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://cs.android.com/androidx/platform/frameworks/support"
+        }
+    },
+    {
+        "groupId": "androidx.room",
+        "artifactId": "room-paging-iosarm64",
+        "version": "2.7.2",
+        "name": "Room Paging",
+        "spdxLicenses": [
+            {
+                "identifier": "Apache-2.0",
+                "name": "Apache License 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            }
+        ],
+        "scm": {
+            "url": "https://cs.android.com/androidx/platform/frameworks/support"
+        }
+    },
+    {
+        "groupId": "androidx.room",
         "artifactId": "room-runtime",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Runtime",
         "spdxLicenses": [
             {
@@ -402,7 +434,7 @@
     {
         "groupId": "androidx.room",
         "artifactId": "room-runtime-iosarm64",
-        "version": "2.7.1",
+        "version": "2.7.2",
         "name": "Room-Runtime",
         "spdxLicenses": [
             {
@@ -418,7 +450,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite",
         "spdxLicenses": [
             {
@@ -434,7 +466,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-bundled",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Bundled Integration",
         "spdxLicenses": [
             {
@@ -450,7 +482,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-bundled-iosarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Bundled Integration",
         "spdxLicenses": [
             {
@@ -466,7 +498,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-framework",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Framework Integration",
         "spdxLicenses": [
             {
@@ -482,7 +514,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-framework-iosarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite Framework Integration",
         "spdxLicenses": [
             {
@@ -498,7 +530,7 @@
     {
         "groupId": "androidx.sqlite",
         "artifactId": "sqlite-iosarm64",
-        "version": "2.5.1",
+        "version": "2.5.2",
         "name": "SQLite",
         "spdxLicenses": [
             {
@@ -674,7 +706,7 @@
     {
         "groupId": "com.fleeksoft.ksoup",
         "artifactId": "ksoup",
-        "version": "0.2.3",
+        "version": "0.2.4",
         "name": "ksoup",
         "unknownLicenses": [
             {
@@ -689,7 +721,7 @@
     {
         "groupId": "com.fleeksoft.ksoup",
         "artifactId": "ksoup-iosarm64",
-        "version": "0.2.3",
+        "version": "0.2.4",
         "name": "ksoup",
         "unknownLicenses": [
             {
@@ -960,7 +992,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio",
-        "version": "3.11.0",
+        "version": "3.13.0",
         "name": "okio",
         "spdxLicenses": [
             {
@@ -976,7 +1008,7 @@
     {
         "groupId": "com.squareup.okio",
         "artifactId": "okio-iosarm64",
-        "version": "3.11.0",
+        "version": "3.13.0",
         "name": "okio",
         "spdxLicenses": [
             {
@@ -2448,7 +2480,7 @@
     {
         "groupId": "org.jetbrains.kotlin",
         "artifactId": "kotlin-stdlib",
-        "version": "2.1.21",
+        "version": "2.2.0",
         "name": "Kotlin Stdlib",
         "spdxLicenses": [
             {

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -49,7 +50,7 @@ fun SearchInput(
 @Composable
 private fun SearchInputContent(
     modifier: Modifier = Modifier,
-    inputText: String?,
+    inputText: TextFieldValue,
     onEvent: (SearchInputUiEvent) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -78,7 +79,7 @@ private fun SearchInputContent(
 
                 TextField(
                     modifier = Modifier.weight(1f).focusRequester(focusRequester),
-                    value = inputText ?: "",
+                    value = inputText,
                     onValueChange = {
                         onEvent.invoke(SearchInputUiEvent.OnValueChange(it))
                     },
