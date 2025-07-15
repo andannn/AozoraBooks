@@ -2,13 +2,14 @@ package me.andannn.aozora.core.data.ndc
 
 import aosora.core.data.generated.resources.Res
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.io.Buffer
+import kotlinx.io.readString
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.core.domain.model.NDCType
 import me.andannn.aozora.core.domain.model.NdcData
 import me.andannn.aozora.core.domain.model.isChildOf
-import okio.Buffer
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 @OptIn(ExperimentalResourceApi::class)
@@ -25,8 +26,12 @@ private fun getNdcDataSequence(rawJson: ByteArray): Sequence<NdcData> =
     sequence {
         val string =
             Buffer()
-                .write(rawJson)
-                .readUtf8()
+                .apply {
+                    write(rawJson)
+                }.use {
+                    it.readString()
+                }
+
         val ndcNodes = Json.decodeFromString<List<NdcNode>>(string)
         for (node in ndcNodes) {
             val ndcClassification = NDCClassification(node.notation)

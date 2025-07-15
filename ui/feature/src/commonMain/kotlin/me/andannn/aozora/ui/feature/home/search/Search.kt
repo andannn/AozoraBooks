@@ -32,7 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.domain.model.KanaLineItem
+import me.andannn.aozora.core.domain.model.NdcData
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
@@ -45,6 +47,7 @@ fun Search(
 ) {
     SearchContent(
         modifier = modifier,
+        ndcRootCategoryList = state.ndcRootCategoryList,
         onEvent = state.evenSink,
     )
 }
@@ -52,6 +55,7 @@ fun Search(
 @Composable
 fun SearchContent(
     modifier: Modifier = Modifier,
+    ndcRootCategoryList: ImmutableList<NdcData>,
     onEvent: (SearchUiEvent) -> Unit,
 ) {
     Column(modifier.systemBarsPadding()) {
@@ -117,6 +121,23 @@ fun SearchContent(
                 }
             }
 
+            item {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(12.dp),
+                        text = "分類別",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    NdcCategoryArea(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        ndcRootCategoryList = ndcRootCategoryList,
+                        onNdcItemClick = { ndcData ->
+                            onEvent.invoke(SearchUiEvent.OnClickNdcItem(ndcData))
+                        },
+                    )
+                }
+            }
+
             if (showPlatformAd) {
                 item {
                     BannerAdView(
@@ -129,6 +150,25 @@ fun SearchContent(
             item {
                 NavigationBarAnchor()
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun NdcCategoryArea(
+    modifier: Modifier = Modifier,
+    ndcRootCategoryList: ImmutableList<NdcData>,
+    onNdcItemClick: (NdcData) -> Unit,
+) {
+    FlowRow(modifier) {
+        ndcRootCategoryList.forEach {
+            NdcSearchItem(
+                ndcData = it,
+                onClick = {
+                    onNdcItemClick(it)
+                },
+            )
         }
     }
 }
@@ -194,6 +234,27 @@ private fun SearchKanaItem(
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = kana,
+            )
+        }
+    }
+}
+
+@Composable
+private fun NdcSearchItem(
+    modifier: Modifier = Modifier,
+    ndcData: NdcData,
+    onClick: () -> Unit,
+) {
+    Surface(
+        modifier = modifier.padding(2.dp),
+        onClick = onClick,
+        shape = CircleShape,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Box(Modifier.padding(horizontal = 6.dp, vertical = 3.dp)) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = ndcData.label,
             )
         }
     }
