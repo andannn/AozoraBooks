@@ -1,5 +1,6 @@
 plugins {
     id("melodify.kmp.library")
+    id("melodify.compose.multiplatform.library")
 }
 
 kotlin {

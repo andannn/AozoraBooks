@@ -10,6 +10,8 @@ import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.AuthorWithBooks
 import me.andannn.aozora.core.domain.model.KanaLineItem
+import me.andannn.aozora.core.domain.model.NDCClassification
+import me.andannn.aozora.core.domain.model.NdcData
 
 interface AozoraContentsRepository {
     fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>>
@@ -26,4 +28,20 @@ interface AozoraContentsRepository {
     suspend fun searchBooks(query: String): List<AozoraBookCard>
 
     suspend fun searchAuthors(query: String): List<AuthorData>
+
+    /**
+     * Returns children of NDC classifications.
+     *
+     * @param ndcClassification The NDC classification to get children for.
+     * @return A list of [NdcData] representing the children of the given NDC classification.
+     */
+    suspend fun getChildrenOfNDC(ndcClassification: NDCClassification): List<NdcData>
+
+    /**
+     * Retrieves the details of a specific NDC classification.
+     *
+     * @param ndc The NDC classification to get details for.
+     * @return An [NdcData] object containing the details of the specified NDC classification.
+     */
+    suspend fun getNDCDetails(ndc: NDCClassification): NdcData?
 }
