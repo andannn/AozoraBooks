@@ -66,3 +66,9 @@ expect class SearchResultScreen : Screen {
 
     val query: String
 }
+
+expect class NdcContentScreen : Screen {
+    constructor(ndc: String)
+
+    val ndc: String
+}

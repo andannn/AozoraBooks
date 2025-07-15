@@ -24,6 +24,7 @@ import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorPagesScreen
 import me.andannn.aozora.ui.feature.common.screens.IndexPageScreen
+import me.andannn.aozora.ui.feature.common.screens.NdcContentScreen
 import me.andannn.aozora.ui.feature.common.screens.SearchInputResult
 import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
 import org.koin.mp.KoinPlatform.getKoin
@@ -92,7 +93,7 @@ class SearchPresenter(
                 }
 
                 is SearchUiEvent.OnClickNdcItem -> {
-                    // TODO
+                    localNavigator.goTo(NdcContentScreen(event.ndcData.ndcClassification.value))
                 }
             }
         }
