@@ -11,6 +11,7 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import me.andannn.aozora.app.AozoraBooksApp
+import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.syncer.AozoraDBSyncer
 import me.andannn.aozora.syncer.SyncResult
 import me.andannn.aozora.ui.common.theme.AozoraTheme
@@ -20,8 +21,9 @@ import org.koin.mp.KoinPlatform.getKoin
 fun MainViewController() =
     ComposeUIViewController {
         LaunchedEffect(Dispatchers.Default) {
+            val ndcTableMigrated = getKoin().get<UserDataRepository>().isNdcTableMigrated()
             val syncer = getKoin().get<AozoraDBSyncer>()
-            val result = syncer.sync()
+            val result = syncer.sync(force = !ndcTableMigrated)
             delay(2000)
             when (result) {
                 SyncResult.Retry -> {

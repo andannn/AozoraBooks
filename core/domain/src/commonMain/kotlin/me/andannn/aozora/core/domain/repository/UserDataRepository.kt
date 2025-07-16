@@ -143,4 +143,6 @@ interface UserDataRepository {
         bookId: String,
         authorId: String,
     ): Flow<AozoraBookCard?>
+
+    suspend fun isNdcTableMigrated(): Boolean
 }

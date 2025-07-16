@@ -5,6 +5,7 @@
 package me.andannn.aozora.core.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import me.andannn.aozora.core.data.mapper.toModel
@@ -192,6 +193,8 @@ internal class UserDataRepositoryImpl(
     ) = dao.getBookByBookIdAndAuthorId(bookId, authorId).map {
         it?.toModel()
     }
+
+    override suspend fun isNdcTableMigrated(): Boolean = preferences.userData.first().ndcTableMigrated
 }
 
 private fun BookEntityWithProgress.toModel() =

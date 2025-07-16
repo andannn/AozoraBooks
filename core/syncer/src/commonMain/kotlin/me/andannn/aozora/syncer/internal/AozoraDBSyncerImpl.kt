@@ -44,14 +44,14 @@ internal class AozoraDBSyncerImpl(
 ) : AozoraDBSyncer {
     override suspend fun sync(force: Boolean): SyncResult {
         try {
-            Napier.d(tag = TAG) { "sync started." }
+            Napier.d(tag = TAG) { "sync started. $force" }
             val lastSuccessfulSyncTime =
                 userSettingPreferences.userData.first().lastSuccessfulSyncTime
 
             if (lastSuccessfulSyncTime == null) {
                 Napier.d(tag = TAG) { "Sync with bundled data E" }
                 syncWithAppBundledData()
-                saveLastSuccessfulSyncTime(BUNDLED_CSV_FILE_LAST_MODIFIED_TIME)
+                saveSuccessfulSyncFlag(BUNDLED_CSV_FILE_LAST_MODIFIED_TIME)
                 // Retry to sync with remote data source.
                 Napier.d(tag = TAG) { "Sync with bundled data X" }
 
@@ -63,7 +63,7 @@ internal class AozoraDBSyncerImpl(
             if (force || lastSuccessfulSyncTime != serverLastModifiedTime) {
                 Napier.d(tag = TAG) { "Sync with server data E" }
                 syncWithAozoraServerData()
-                saveLastSuccessfulSyncTime(serverLastModifiedTime)
+                saveSuccessfulSyncFlag(serverLastModifiedTime)
                 analytics.logSyncEvent(SyncEvent.SuccessServer)
                 Napier.d(tag = TAG) { "Sync with server data X" }
             } else {
@@ -140,8 +140,9 @@ internal class AozoraDBSyncerImpl(
         }
     }
 
-    private suspend fun saveLastSuccessfulSyncTime(time: String) {
+    private suspend fun saveSuccessfulSyncFlag(time: String) {
         userSettingPreferences.setLastSuccessfulSyncTime(time)
+        userSettingPreferences.setNdcTableMigrated(true)
     }
 }
 

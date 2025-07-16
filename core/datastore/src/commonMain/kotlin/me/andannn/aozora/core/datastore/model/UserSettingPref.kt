@@ -17,6 +17,7 @@ data class UserSettingPref(
     val readerTheme: ReaderTheme,
     val fontType: FontType,
     val lastSuccessfulSyncTime: String?,
+    val ndcTableMigrated: Boolean,
 )
 
 fun TopMargin.toTopMarginValue() =

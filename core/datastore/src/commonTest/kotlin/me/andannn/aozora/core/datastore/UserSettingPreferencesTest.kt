@@ -134,4 +134,16 @@ class UserSettingPreferencesTest {
             preferences.setLastSuccessfulSyncTime(time)
             assertEquals(time, preferences.userData.first().lastSuccessfulSyncTime)
         }
+
+    @Test
+    fun ndcTableMigrated() =
+        testScope.runTest {
+            assertEquals(false, preferences.userData.first().ndcTableMigrated)
+
+            preferences.setNdcTableMigrated(true)
+            assertEquals(true, preferences.userData.first().ndcTableMigrated)
+
+            preferences.setNdcTableMigrated(false)
+            assertEquals(false, preferences.userData.first().ndcTableMigrated)
+        }
 }
