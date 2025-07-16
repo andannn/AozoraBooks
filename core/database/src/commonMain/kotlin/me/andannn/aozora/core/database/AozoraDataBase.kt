@@ -279,5 +279,7 @@ internal val MIGRATION_5_6 =
                 )
                 """.trimIndent(),
             )
+
+            // TODO: Inert data to book_id_with_book_category_table
         }
     }

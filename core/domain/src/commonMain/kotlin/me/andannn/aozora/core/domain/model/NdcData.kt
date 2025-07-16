@@ -28,8 +28,8 @@ value class NDCClassification(
 ) {
     init {
         require(value.isNotEmpty()) { "NDC classification cannot be empty" }
-        require(value.all { it.isDigit() }) { "NDC classification must contain only digits" }
-        require(value.length <= 3) { "NDC classification must be at most 10 characters long" }
+        require(value.all { it.isDigit() }) { "NDC classification must contain only digits. $value" }
+        require(value.length <= 3) { "NDC classification must be at most 3 characters long $value" }
     }
 
     val mainClassNum: Int

@@ -6,6 +6,7 @@ package me.andannn.aozora.core.database
 
 import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
+import me.andannn.aozora.core.database.entity.BookIdWithBookCategory
 
 val bookEntities =
     listOf(
@@ -19,7 +20,7 @@ val bookEntities =
             subtitleKana = null,
             originalTitle = null,
             firstAppearance = null,
-            categoryNo = null,
+            categoryNo = "NDC 933",
             orthography = null,
             workCopyrightFlag = null,
             publishDate = null,
@@ -76,7 +77,7 @@ val bookEntities =
             subtitleKana = null,
             originalTitle = null,
             firstAppearance = null,
-            categoryNo = null,
+            categoryNo = "NDC 933",
             orthography = null,
             workCopyrightFlag = null,
             publishDate = null,
@@ -133,7 +134,7 @@ val bookEntities =
             subtitleKana = null,
             originalTitle = null,
             firstAppearance = null,
-            categoryNo = null,
+            categoryNo = "NDC 133",
             orthography = null,
             workCopyrightFlag = null,
             publishDate = null,
@@ -190,7 +191,7 @@ val bookEntities =
             subtitleKana = null,
             originalTitle = null,
             firstAppearance = null,
-            categoryNo = null,
+            categoryNo = "NDC 133",
             orthography = null,
             workCopyrightFlag = null,
             publishDate = null,
@@ -268,5 +269,27 @@ val authorList =
             birth = null,
             death = null,
             copyrightFlag = null,
+        ),
+    )
+
+val bookIdWithBookCategoryList =
+    listOf(
+        BookIdWithBookCategory(
+            bookId = "12353",
+            ndcMainClassNum = 9,
+            ndcDivisionNum = 3,
+            ndcSectionNum = 3,
+        ),
+        BookIdWithBookCategory(
+            bookId = "212353",
+            ndcMainClassNum = 1,
+            ndcDivisionNum = 3,
+            ndcSectionNum = 3,
+        ),
+        BookIdWithBookCategory(
+            bookId = "056078",
+            ndcMainClassNum = 1,
+            ndcDivisionNum = 3,
+            ndcSectionNum = 3,
         ),
     )

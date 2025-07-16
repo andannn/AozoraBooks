@@ -18,6 +18,8 @@ interface AozoraContentsRepository {
 
     fun getAuthorsPagingFlow(kanaLineItem: KanaLineItem): Flow<PagingData<AuthorData>>
 
+    fun getBookEntitiesOfNdcClassificationFlow(ndcClassification: NDCClassification): Flow<PagingData<AozoraBookCard>>
+
     fun getBookCard(
         cardId: String,
         authorId: String,

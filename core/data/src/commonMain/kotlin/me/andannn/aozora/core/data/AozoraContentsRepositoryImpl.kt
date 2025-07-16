@@ -50,6 +50,20 @@ internal class AozoraContentsRepositoryImpl(
             pagingData.map { it.toModel() }
         }
 
+    override fun getBookEntitiesOfNdcClassificationFlow(ndcClassification: NDCClassification) =
+        Pager(
+            config = PagingConfig(pageSize = LOAD_SIZE),
+            pagingSourceFactory = {
+                dao.booksOfClassificationPaging(
+                    ndcMainClassNum = ndcClassification.mainClassNum,
+                    ndcDivisionNum = ndcClassification.divisionNum!!,
+                    ndcSectionNum = ndcClassification.sectionNum!!,
+                )
+            },
+        ).flow.map { pagingData ->
+            pagingData.map { it.toModel() }
+        }
+
     override fun getBookCard(
         cardId: String,
         authorId: String,
