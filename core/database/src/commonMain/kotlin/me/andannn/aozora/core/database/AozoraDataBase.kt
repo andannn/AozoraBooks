@@ -16,6 +16,7 @@ import kotlinx.coroutines.IO
 import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
+import me.andannn.aozora.core.database.entity.BookIdWithBookCategory
 import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookEntity
@@ -29,6 +30,7 @@ object Tables {
     const val AUTHOR_FTS_TABLE = "author_fts_table"
     const val SAVED_BOOK_TABLE = "saved_book_table"
     const val BOOK_PROGRESS_TABLE = "book_progress_table"
+    const val BOOK_ID_WITH_BOOK_CATEGORY_TABLE = "book_id_with_book_category_table"
 }
 
 @Database(
@@ -39,8 +41,9 @@ object Tables {
         AuthorEntity::class,
         AuthorFtsEntity::class,
         BookFtsEntity::class,
+        BookIdWithBookCategory::class,
     ],
-    version = 5,
+    version = 6,
 )
 @ConstructedBy(MelodifyDataBaseConstructor::class)
 abstract class AozoraDataBase : RoomDatabase() {
@@ -61,6 +64,7 @@ internal fun <T : RoomDatabase> RoomDatabase.Builder<T>.setUpDatabase() =
             MIGRATION_2_3,
             MIGRATION_3_4,
             MIGRATION_4_5,
+            MIGRATION_5_6,
         )
     }
 
@@ -255,6 +259,23 @@ internal val MIGRATION_4_5 =
                   subtitle,
                   subtitle_kana,
                   content=`book_table`
+                )
+                """.trimIndent(),
+            )
+        }
+    }
+
+internal val MIGRATION_5_6 =
+    object : Migration(5, 6) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS book_id_with_book_category_table (
+                    book_id TEXT NOT NULL,
+                    ndc_main_class_num INTEGER NOT NULL,
+                    ndc_division_num INTEGER NOT NULL,
+                    ndc_section_num INTEGER NOT NULL,
+                    PRIMARY KEY(book_id, ndc_main_class_num, ndc_division_num, ndc_section_num)
                 )
                 """.trimIndent(),
             )
