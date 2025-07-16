@@ -13,5 +13,5 @@ sealed interface SyncResult {
 }
 
 interface AozoraDBSyncer {
-    suspend fun sync(): SyncResult
+    suspend fun sync(force: Boolean = false): SyncResult
 }

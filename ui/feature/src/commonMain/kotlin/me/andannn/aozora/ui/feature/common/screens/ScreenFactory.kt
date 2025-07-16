@@ -44,6 +44,9 @@ import me.andannn.aozora.ui.feature.indexpages.rememberIndexPagesPresenter
 import me.andannn.aozora.ui.feature.license.License
 import me.andannn.aozora.ui.feature.license.LicenseState
 import me.andannn.aozora.ui.feature.license.rememberLicensePresenter
+import me.andannn.aozora.ui.feature.ndc.NdcContent
+import me.andannn.aozora.ui.feature.ndc.NdcContentState
+import me.andannn.aozora.ui.feature.ndc.rememberNdcContentPresenter
 import me.andannn.aozora.ui.feature.reader.Reader
 import me.andannn.aozora.ui.feature.reader.ReaderState
 import me.andannn.aozora.ui.feature.reader.rememberReaderPresenter
@@ -119,6 +122,12 @@ object RouteUiFactory : Ui.Factory {
             is SearchResultScreen -> {
                 ui<SearchResultState> { state, modifier ->
                     SearchResult(state, modifier)
+                }
+            }
+
+            is NdcContentScreen -> {
+                ui<NdcContentState> { state, modifier ->
+                    NdcContent(state, modifier)
                 }
             }
 
@@ -203,6 +212,11 @@ object RoutePresenterFactory : Presenter.Factory {
                     rememberSearchResultPresenter(screen.query).present()
                 }
 
+            is NdcContentScreen -> {
+                presenterOf {
+                    rememberNdcContentPresenter(screen.ndc).present()
+                }
+            }
             else -> null
         }
 }

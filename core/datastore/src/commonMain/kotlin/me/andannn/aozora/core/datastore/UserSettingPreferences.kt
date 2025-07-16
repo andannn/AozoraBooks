@@ -6,6 +6,7 @@ package me.andannn.aozora.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -58,6 +59,9 @@ class UserSettingPreferences(
                         } ?: FontType.DEFAULT,
                     lastSuccessfulSyncTime =
                         preferences[stringPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)],
+                    ndcTableMigrated =
+                        preferences[booleanPreferencesKey(PreferencesKeyName.NDC_TABLE_MIGRATED_KEY_NAME)]
+                            ?: false,
                 )
             }
 
@@ -100,6 +104,13 @@ class UserSettingPreferences(
         preferences.edit { preferences ->
             preferences[stringPreferencesKey(PreferencesKeyName.LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME)] =
                 time
+        }
+    }
+
+    suspend fun setNdcTableMigrated(migrated: Boolean) {
+        preferences.edit { preferences ->
+            preferences[booleanPreferencesKey(PreferencesKeyName.NDC_TABLE_MIGRATED_KEY_NAME)] =
+                migrated
         }
     }
 }

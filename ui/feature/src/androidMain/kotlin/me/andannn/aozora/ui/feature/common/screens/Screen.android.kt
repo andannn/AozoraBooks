@@ -64,3 +64,8 @@ actual data class SearchInputResult actual constructor(
 actual data class SearchResultScreen actual constructor(
     actual val query: String,
 ) : Screen
+
+@Parcelize
+actual data class NdcContentScreen actual constructor(
+    actual val ndc: String,
+) : Screen

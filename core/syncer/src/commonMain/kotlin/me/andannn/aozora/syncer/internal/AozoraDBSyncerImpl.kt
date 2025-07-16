@@ -15,6 +15,7 @@ import kotlinx.io.files.SystemFileSystem
 import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookEntity
+import me.andannn.aozora.core.database.entity.BookIdWithBookCategory
 import me.andannn.aozora.core.datastore.UserSettingPreferences
 import me.andannn.aozora.syncer.AozoraDBSyncer
 import me.andannn.aozora.syncer.SyncResult
@@ -22,6 +23,7 @@ import me.andannn.aozora.syncer.internal.util.CSV_ZIP_URL
 import me.andannn.aozora.syncer.internal.util.SyncEvent
 import me.andannn.aozora.syncer.internal.util.getCsvZipLastModifiedTime
 import me.andannn.aozora.syncer.internal.util.logSyncEvent
+import me.andannn.aozora.syncer.internal.util.parseAsBookIdWithBookCategory
 import me.andannn.aozora.syncer.internal.util.parseAsBookModel
 import me.andannn.aozora.syncer.internal.util.toEntity
 import me.andannn.core.util.downloadTo
@@ -40,15 +42,16 @@ internal class AozoraDBSyncerImpl(
     private val userSettingPreferences: UserSettingPreferences,
     private val analytics: PlatformAnalytics,
 ) : AozoraDBSyncer {
-    override suspend fun sync(): SyncResult {
+    override suspend fun sync(force: Boolean): SyncResult {
         try {
-            Napier.d(tag = TAG) { "sync started." }
+            Napier.d(tag = TAG) { "sync started. $force" }
             val lastSuccessfulSyncTime =
                 userSettingPreferences.userData.first().lastSuccessfulSyncTime
+
             if (lastSuccessfulSyncTime == null) {
                 Napier.d(tag = TAG) { "Sync with bundled data E" }
                 syncWithAppBundledData()
-                saveLastSuccessfulSyncTime(BUNDLED_CSV_FILE_LAST_MODIFIED_TIME)
+                saveSuccessfulSyncFlag(BUNDLED_CSV_FILE_LAST_MODIFIED_TIME)
                 // Retry to sync with remote data source.
                 Napier.d(tag = TAG) { "Sync with bundled data X" }
 
@@ -57,17 +60,17 @@ internal class AozoraDBSyncerImpl(
             }
 
             val serverLastModifiedTime = getCsvZipLastModifiedTime()
-            if (lastSuccessfulSyncTime == serverLastModifiedTime) {
+            if (force || lastSuccessfulSyncTime != serverLastModifiedTime) {
+                Napier.d(tag = TAG) { "Sync with server data E" }
+                syncWithAozoraServerData()
+                saveSuccessfulSyncFlag(serverLastModifiedTime)
+                analytics.logSyncEvent(SyncEvent.SuccessServer)
+                Napier.d(tag = TAG) { "Sync with server data X" }
+            } else {
                 Napier.d(tag = TAG) { "sync time is same as server time. No need to sync." }
                 analytics.logSyncEvent(SyncEvent.Skip)
                 return SyncResult.Success
             }
-
-            Napier.d(tag = TAG) { "Sync with server data E" }
-            syncWithAozoraServerData()
-            saveLastSuccessfulSyncTime(serverLastModifiedTime)
-            analytics.logSyncEvent(SyncEvent.SuccessServer)
-            Napier.d(tag = TAG) { "Sync with server data X" }
 
             Napier.d(tag = TAG) { "sync end." }
             return SyncResult.Success
@@ -116,20 +119,30 @@ internal class AozoraDBSyncerImpl(
 
         this.chunked(2000).forEach { bookList ->
             val authorListToUpsert = mutableListOf<AuthorEntity>()
+            val bookIdWithBookCategoryToUpsert = mutableListOf<BookIdWithBookCategory>()
             for (book in bookList) {
                 val authorId = book.authorId
                 if (insertedAuthorIds.add(authorId)) {
                     val author = book.toAuthorEntity()
                     authorListToUpsert.add(author)
                 }
+
+                bookIdWithBookCategoryToUpsert.addAll(
+                    book.parseAsBookIdWithBookCategory(),
+                )
             }
 
-            dao.upsertBookAndAuthorList(bookList, authorListToUpsert)
+            dao.upsertBookAndAuthorList(
+                bookList,
+                authorListToUpsert,
+                bookIdWithBookCategoryToUpsert,
+            )
         }
     }
 
-    private suspend fun saveLastSuccessfulSyncTime(time: String) {
+    private suspend fun saveSuccessfulSyncFlag(time: String) {
         userSettingPreferences.setLastSuccessfulSyncTime(time)
+        userSettingPreferences.setNdcTableMigrated(true)
     }
 }
 

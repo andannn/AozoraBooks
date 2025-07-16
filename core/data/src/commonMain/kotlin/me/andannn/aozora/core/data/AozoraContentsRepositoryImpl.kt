@@ -12,14 +12,19 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import me.andannn.aozora.core.data.mapper.toModel
+import me.andannn.aozora.core.data.ndc.NdcDataHodler
 import me.andannn.aozora.core.database.dao.BookLibraryDao
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.AuthorWithBooks
 import me.andannn.aozora.core.domain.model.KanaLineItem
+import me.andannn.aozora.core.domain.model.NDCClassification
+import me.andannn.aozora.core.domain.model.NdcData
+import me.andannn.aozora.core.domain.model.NdcDataWithBookCount
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.service.AozoraService
 
@@ -29,6 +34,8 @@ internal class AozoraContentsRepositoryImpl(
     private val aozoraService: AozoraService,
     private val dao: BookLibraryDao,
 ) : AozoraContentsRepository {
+    private val ndcDataHodler = NdcDataHodler()
+
     override fun getBookListPagingFlow(kana: String): Flow<PagingData<AozoraBookCard>> =
         Pager(
             config = PagingConfig(pageSize = LOAD_SIZE),
@@ -44,6 +51,27 @@ internal class AozoraContentsRepositoryImpl(
         ).flow.map { pagingData ->
             pagingData.map { it.toModel() }
         }
+
+    override fun getBookEntitiesOfNdcClassificationFlow(ndcClassification: NDCClassification) =
+        Pager(
+            config = PagingConfig(pageSize = LOAD_SIZE),
+            pagingSourceFactory = {
+                dao.booksOfClassificationPaging(
+                    ndcMainClassNum = ndcClassification.mainClassNum,
+                    ndcDivisionNum = ndcClassification.divisionNum!!,
+                    ndcSectionNum = ndcClassification.sectionNum!!,
+                )
+            },
+        ).flow.map { pagingData ->
+            pagingData.map { it.toModel() }
+        }
+
+    override fun bookCountOfNdcClassificationFlow(ndcClassification: NDCClassification): Flow<Int> =
+        dao.bookCountOfNdcCategoryFlow(
+            ndcMainClassNum = ndcClassification.mainClassNum,
+            ndcDivisionNum = ndcClassification.divisionNum,
+            ndcSectionNum = ndcClassification.sectionNum,
+        )
 
     override fun getBookCard(
         cardId: String,
@@ -79,6 +107,22 @@ internal class AozoraContentsRepositoryImpl(
         dao.searchAuthor(query).map {
             it.toModel()
         }
+
+    override suspend fun getChildrenOfNDC(ndcClassification: NDCClassification): List<NdcDataWithBookCount> {
+        val children = ndcDataHodler.getChildrenOfNDC(ndcClassification)
+        return children.map {
+            val bookCount =
+                dao
+                    .bookCountOfNdcCategoryFlow(
+                        ndcMainClassNum = it.ndcClassification.mainClassNum,
+                        ndcDivisionNum = it.ndcClassification.divisionNum,
+                        ndcSectionNum = it.ndcClassification.sectionNum,
+                    ).first()
+            NdcDataWithBookCount(it, bookCount)
+        }
+    }
+
+    override suspend fun getNDCDetails(ndc: NDCClassification): NdcData? = ndcDataHodler.getNdcDataByClassification(ndc)
 
     private fun getBookCardAuthorDataListOrNullFlow(
         cardId: String,

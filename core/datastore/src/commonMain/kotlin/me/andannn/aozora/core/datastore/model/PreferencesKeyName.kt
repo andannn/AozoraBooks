@@ -12,4 +12,5 @@ object PreferencesKeyName {
     const val READER_THEME_KEY_NAME = "reader_theme"
     const val FONT_TYPE_KEY_NAME = "font_type"
     const val LAST_SUCCESSFUL_SYNC_TIME_KEY_NAME = "last_successful_sync_time"
+    const val NDC_TABLE_MIGRATED_KEY_NAME = "ndc_table_migrated"
 }

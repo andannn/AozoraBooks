@@ -20,6 +20,7 @@ import me.andannn.aozora.core.database.entity.AuthorColumns
 import me.andannn.aozora.core.database.entity.AuthorEntity
 import me.andannn.aozora.core.database.entity.BookColumns
 import me.andannn.aozora.core.database.entity.BookEntity
+import me.andannn.aozora.core.database.entity.BookIdWithBookCategory
 import me.andannn.aozora.core.database.entity.BookProgressColumns
 import me.andannn.aozora.core.database.entity.BookProgressEntity
 import me.andannn.aozora.core.database.entity.SavedBookColumn
@@ -43,9 +44,11 @@ interface BookLibraryDao {
     suspend fun upsertBookAndAuthorList(
         bookEntities: List<BookEntity>,
         authorEntities: List<AuthorEntity>,
+        bookIdWithBookCategories: List<BookIdWithBookCategory>,
     ) {
         upsertBookList(bookEntities)
         upsertAuthorList(authorEntities)
+        upsertBookIdWithBookCategoryList(bookIdWithBookCategories)
     }
 
     /**
@@ -179,6 +182,111 @@ interface BookLibraryDao {
         """,
     )
     suspend fun searchAuthor(query: String): List<AuthorEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertBookIdWithBookCategoryList(categoryList: List<BookIdWithBookCategory>)
+
+    // only for test
+    @Query(
+        """
+            SELECT b.*
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} a
+            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id AND b.author_id = a.author_id
+            WHERE a.ndc_main_class_num = :ndcMainClassNum 
+                AND a.ndc_division_num = :ndcDivisionNum 
+                AND a.ndc_section_num = :ndcSectionNum
+        """,
+    )
+    suspend fun getBooksWithClassification(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+        ndcSectionNum: Int,
+    ): List<BookEntity>
+
+    @Query(
+        """
+            SELECT b.*
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} a
+            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id AND b.author_id = a.author_id
+            WHERE a.ndc_main_class_num = :ndcMainClassNum 
+                AND a.ndc_division_num = :ndcDivisionNum 
+                AND a.ndc_section_num = :ndcSectionNum
+        """,
+    )
+    fun booksOfClassificationPaging(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+        ndcSectionNum: Int,
+    ): PagingSource<Int, BookEntity>
+
+    fun bookCountOfNdcCategoryFlow(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int?,
+        ndcSectionNum: Int?,
+    ): Flow<Int> =
+        when {
+            ndcDivisionNum == null && ndcSectionNum == null ->
+                getNdcMainClassBookCount(
+                    ndcMainClassNum,
+                )
+
+            ndcSectionNum == null && ndcDivisionNum != null ->
+                getNdcDivisionBookCount(
+                    ndcMainClassNum,
+                    ndcDivisionNum,
+                )
+
+            ndcSectionNum != null && ndcDivisionNum != null ->
+                getNdcSectionBookCount(
+                    ndcMainClassNum,
+                    ndcDivisionNum,
+                    ndcSectionNum,
+                )
+
+            else -> throw IllegalArgumentException(
+                "Invalid NDC classification parameters provided: " +
+                    "mainClassNum=$ndcMainClassNum, " +
+                    "divisionNum=$ndcDivisionNum, " +
+                    "sectionNum=$ndcSectionNum",
+            )
+        }
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum
+        """,
+    )
+    fun getNdcMainClassBookCount(ndcMainClassNum: Int): Flow<Int>
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum 
+                AND ndc_division_num = :ndcDivisionNum
+        """,
+    )
+    fun getNdcDivisionBookCount(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+    ): Flow<Int>
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum 
+                AND ndc_division_num = :ndcDivisionNum 
+                AND ndc_section_num = :ndcSectionNum
+        """,
+    )
+    fun getNdcSectionBookCount(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+        ndcSectionNum: Int,
+    ): Flow<Int>
 }
 
 private fun buildKanaLineStartQuery(kanaList: List<String>): RoomRawQuery {

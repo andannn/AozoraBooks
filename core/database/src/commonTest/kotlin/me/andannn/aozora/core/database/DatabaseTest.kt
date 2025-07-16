@@ -257,4 +257,16 @@ class DatabaseTest {
             val result = savedBookDao.searchAuthor("南部*")
             println(result)
         }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    fun getBooksOfNDCClassificationTest() =
+        testScope.runTest {
+            savedBookDao.upsertBookList(bookEntities)
+            savedBookDao.upsertBookIdWithBookCategoryList(bookIdWithBookCategoryList)
+            val result1 = savedBookDao.getBooksWithClassification(1, 3, 3)
+            assertEquals(2, result1.size)
+            assertEquals("212353", result1[0].bookId)
+            assertEquals("056078", result1[1].bookId)
+        }
 }

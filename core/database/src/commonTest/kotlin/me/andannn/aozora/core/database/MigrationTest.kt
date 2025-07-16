@@ -98,4 +98,20 @@ class MigrationTest {
             migrationTestHelper.runMigrationsAndValidate(5, listOf(MIGRATION_4_5))
         migratedConnection.close()
     }
+
+    @Test
+    @IgnoreAndroidUnitTest
+    @IgnoreNativeTest
+    fun migrate5To6() {
+        val migrationTestHelper =
+            migrationTestHelper(
+                tempFile.toString(),
+            )
+        val newConnection = migrationTestHelper.createDatabase(5)
+        newConnection.close()
+
+        val migratedConnection =
+            migrationTestHelper.runMigrationsAndValidate(6, listOf(MIGRATION_5_6))
+        migratedConnection.close()
+    }
 }

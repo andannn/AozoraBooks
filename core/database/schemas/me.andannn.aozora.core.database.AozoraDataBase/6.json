@@ -1,0 +1,609 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 6,
+    "identityHash": "4e83a9868cad369b9eebfeba1c7f7ec3",
+    "entities": [
+      {
+        "tableName": "book_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `title_sort_kana` TEXT, `subtitle` TEXT, `subtitle_kana` TEXT, `original_title` TEXT, `first_appearance` TEXT, `category_no` TEXT, `orthography` TEXT, `work_copyright_flag` TEXT, `publish_date` TEXT, `last_update_date` TEXT, `card_url` TEXT NOT NULL, `author_id` TEXT NOT NULL, `author_last_name` TEXT NOT NULL, `author_first_name` TEXT NOT NULL, `author_last_name_kana` TEXT, `author_first_name_kana` TEXT, `author_last_name_sort_kana` TEXT, `author_first_name_sort_kana` TEXT, `author_last_name_romaji` TEXT, `author_first_name_romaji` TEXT, `author_role_flag` TEXT, `author_birth` TEXT, `author_death` TEXT, `author_copyright_flag` TEXT, `source_book1` TEXT, `source_publisher1` TEXT, `source_pub_year1` TEXT, `input_edition1` TEXT, `proof_edition1` TEXT, `parent_source_book1` TEXT, `parent_source_publisher1` TEXT, `parent_source_pub_year1` TEXT, `source_book2` TEXT, `source_publisher2` TEXT, `source_pub_year2` TEXT, `input_edition2` TEXT, `proof_edition2` TEXT, `parent_source_book2` TEXT, `parent_source_publisher2` TEXT, `parent_source_pub_year2` TEXT, `input_by` TEXT, `proof_by` TEXT, `text_file_url` TEXT, `text_file_last_update` TEXT, `text_file_encoding` TEXT, `text_file_charset` TEXT, `text_file_revision` TEXT, `html_file_url` TEXT, `html_file_last_update` TEXT, `html_file_encoding` TEXT, `html_file_charset` TEXT, `html_file_revision` TEXT, PRIMARY KEY(`book_id`, `author_id`))",
+        "fields": [
+          {
+            "fieldPath": "bookId",
+            "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleKana",
+            "columnName": "title_kana",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleSortKana",
+            "columnName": "title_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subtitle",
+            "columnName": "subtitle",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subtitleKana",
+            "columnName": "subtitle_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "originalTitle",
+            "columnName": "original_title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstAppearance",
+            "columnName": "first_appearance",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "categoryNo",
+            "columnName": "category_no",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "orthography",
+            "columnName": "orthography",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "workCopyrightFlag",
+            "columnName": "work_copyright_flag",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "publishDate",
+            "columnName": "publish_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastUpdateDate",
+            "columnName": "last_update_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cardUrl",
+            "columnName": "card_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorLastName",
+            "columnName": "author_last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorFirstName",
+            "columnName": "author_first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorLastNameKana",
+            "columnName": "author_last_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorFirstNameKana",
+            "columnName": "author_first_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorLastNameSortKana",
+            "columnName": "author_last_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorFirstNameSortKana",
+            "columnName": "author_first_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorLastNameRomaji",
+            "columnName": "author_last_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorFirstNameRomaji",
+            "columnName": "author_first_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorRoleFlag",
+            "columnName": "author_role_flag",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorBirth",
+            "columnName": "author_birth",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorDeath",
+            "columnName": "author_death",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "authorCopyrightFlag",
+            "columnName": "author_copyright_flag",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourceBook1",
+            "columnName": "source_book1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourcePublisher1",
+            "columnName": "source_publisher1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourcePubYear1",
+            "columnName": "source_pub_year1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "inputEdition1",
+            "columnName": "input_edition1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "proofEdition1",
+            "columnName": "proof_edition1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourceBook1",
+            "columnName": "parent_source_book1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourcePublisher1",
+            "columnName": "parent_source_publisher1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourcePubYear1",
+            "columnName": "parent_source_pub_year1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourceBook2",
+            "columnName": "source_book2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourcePublisher2",
+            "columnName": "source_publisher2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "sourcePubYear2",
+            "columnName": "source_pub_year2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "inputEdition2",
+            "columnName": "input_edition2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "proofEdition2",
+            "columnName": "proof_edition2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourceBook2",
+            "columnName": "parent_source_book2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourcePublisher2",
+            "columnName": "parent_source_publisher2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "parentSourcePubYear2",
+            "columnName": "parent_source_pub_year2",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "inputBy",
+            "columnName": "input_by",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "proofBy",
+            "columnName": "proof_by",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textFileUrl",
+            "columnName": "text_file_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textFileLastUpdate",
+            "columnName": "text_file_last_update",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textFileEncoding",
+            "columnName": "text_file_encoding",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textFileCharset",
+            "columnName": "text_file_charset",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textFileRevision",
+            "columnName": "text_file_revision",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "htmlFileUrl",
+            "columnName": "html_file_url",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "htmlFileLastUpdate",
+            "columnName": "html_file_last_update",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "htmlFileEncoding",
+            "columnName": "html_file_encoding",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "htmlFileCharset",
+            "columnName": "html_file_charset",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "htmlFileRevision",
+            "columnName": "html_file_revision",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "book_id",
+            "author_id"
+          ]
+        }
+      },
+      {
+        "tableName": "saved_book_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `author_id` TEXT NOT NULL, `created_date` INTEGER NOT NULL, PRIMARY KEY(`book_id`, `author_id`))",
+        "fields": [
+          {
+            "fieldPath": "bookId",
+            "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdDate",
+            "columnName": "created_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "book_id",
+            "author_id"
+          ]
+        }
+      },
+      {
+        "tableName": "book_progress_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`saved_book_id` TEXT NOT NULL, `saved_author_id` TEXT NOT NULL, `progress_block_index` INTEGER NOT NULL, `update_epoch_millisecond` INTEGER NOT NULL, `total_block_count` INTEGER, `mark_completed` INTEGER, PRIMARY KEY(`saved_book_id`, `saved_author_id`))",
+        "fields": [
+          {
+            "fieldPath": "bookId",
+            "columnName": "saved_book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "saved_author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progressBlockIndex",
+            "columnName": "progress_block_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updateEpochMillisecond",
+            "columnName": "update_epoch_millisecond",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalBlockCount",
+            "columnName": "total_block_count",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "markCompleted",
+            "columnName": "mark_completed",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "saved_book_id",
+            "saved_author_id"
+          ]
+        }
+      },
+      {
+        "tableName": "author_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`author_id` TEXT NOT NULL, `last_name` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name_kana` TEXT, `first_name_kana` TEXT, `last_name_sort_kana` TEXT, `first_name_sort_kana` TEXT, `last_name_romaji` TEXT, `first_name_romaji` TEXT, `birth` TEXT, `death` TEXT, `copyright_flag` TEXT, PRIMARY KEY(`author_id`))",
+        "fields": [
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNameKana",
+            "columnName": "last_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameKana",
+            "columnName": "first_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastNameSortKana",
+            "columnName": "last_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameSortKana",
+            "columnName": "first_name_sort_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastNameRomaji",
+            "columnName": "last_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameRomaji",
+            "columnName": "first_name_romaji",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "birth",
+            "columnName": "birth",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "death",
+            "columnName": "death",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "copyrightFlag",
+            "columnName": "copyright_flag",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "author_id"
+          ]
+        }
+      },
+      {
+        "tableName": "author_fts_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`last_name` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name_kana` TEXT, `first_name_kana` TEXT, content=`author_table`)",
+        "fields": [
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastNameKana",
+            "columnName": "last_name_kana",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstNameKana",
+            "columnName": "first_name_kana",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "author_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_BEFORE_UPDATE BEFORE UPDATE ON `author_table` BEGIN DELETE FROM `author_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_BEFORE_DELETE BEFORE DELETE ON `author_table` BEGIN DELETE FROM `author_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_AFTER_UPDATE AFTER UPDATE ON `author_table` BEGIN INSERT INTO `author_fts_table`(`docid`, `last_name`, `first_name`, `last_name_kana`, `first_name_kana`) VALUES (NEW.`rowid`, NEW.`last_name`, NEW.`first_name`, NEW.`last_name_kana`, NEW.`first_name_kana`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_author_fts_table_AFTER_INSERT AFTER INSERT ON `author_table` BEGIN INSERT INTO `author_fts_table`(`docid`, `last_name`, `first_name`, `last_name_kana`, `first_name_kana`) VALUES (NEW.`rowid`, NEW.`last_name`, NEW.`first_name`, NEW.`last_name_kana`, NEW.`first_name_kana`); END"
+        ]
+      },
+      {
+        "tableName": "book_fts_table",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`title` TEXT NOT NULL, `title_kana` TEXT NOT NULL, `subtitle` TEXT, `subtitle_kana` TEXT, content=`book_table`)",
+        "fields": [
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleKana",
+            "columnName": "title_kana",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subtitle",
+            "columnName": "subtitle",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subtitleKana",
+            "columnName": "subtitle_kana",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "rowid"
+          ]
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "book_table",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_BEFORE_UPDATE BEFORE UPDATE ON `book_table` BEGIN DELETE FROM `book_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_BEFORE_DELETE BEFORE DELETE ON `book_table` BEGIN DELETE FROM `book_fts_table` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_AFTER_UPDATE AFTER UPDATE ON `book_table` BEGIN INSERT INTO `book_fts_table`(`docid`, `title`, `title_kana`, `subtitle`, `subtitle_kana`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`title_kana`, NEW.`subtitle`, NEW.`subtitle_kana`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_book_fts_table_AFTER_INSERT AFTER INSERT ON `book_table` BEGIN INSERT INTO `book_fts_table`(`docid`, `title`, `title_kana`, `subtitle`, `subtitle_kana`) VALUES (NEW.`rowid`, NEW.`title`, NEW.`title_kana`, NEW.`subtitle`, NEW.`subtitle_kana`); END"
+        ]
+      },
+      {
+        "tableName": "book_id_with_book_category_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `author_id` TEXT NOT NULL, `ndc_main_class_num` INTEGER NOT NULL, `ndc_division_num` INTEGER NOT NULL, `ndc_section_num` INTEGER NOT NULL, PRIMARY KEY(`book_id`, `author_id`, `ndc_main_class_num`, `ndc_division_num`, `ndc_section_num`))",
+        "fields": [
+          {
+            "fieldPath": "bookId",
+            "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ndcMainClassNum",
+            "columnName": "ndc_main_class_num",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ndcDivisionNum",
+            "columnName": "ndc_division_num",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ndcSectionNum",
+            "columnName": "ndc_section_num",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "book_id",
+            "author_id",
+            "ndc_main_class_num",
+            "ndc_division_num",
+            "ndc_section_num"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e83a9868cad369b9eebfeba1c7f7ec3')"
+    ]
+  }
+}
