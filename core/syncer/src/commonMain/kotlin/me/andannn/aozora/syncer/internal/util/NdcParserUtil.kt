@@ -14,6 +14,7 @@ internal fun BookEntity.parseAsBookIdWithBookCategory(): List<BookIdWithBookCate
     return parsed.map {
         BookIdWithBookCategory(
             bookId = bookId,
+            authorId = authorId,
             ndcMainClassNum = it.mainClassNum,
             ndcDivisionNum = it.divisionNum ?: error("NDC division number is required"),
             ndcSectionNum = it.sectionNum ?: error("NDC division number is required"),

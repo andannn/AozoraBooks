@@ -10,6 +10,7 @@ import me.andannn.aozora.core.database.Tables
 
 internal object BookIdWithBookCategoryColumns {
     const val BOOK_ID = "book_id"
+    const val AUTHOR_ID = "author_id"
     const val NDC_MAIN_CLASS_NUM = "ndc_main_class_num"
     const val NDC_DIVISION_NUM = "ndc_division_num"
     const val NDC_SECTION_NUM = "ndc_section_num"
@@ -19,6 +20,7 @@ internal object BookIdWithBookCategoryColumns {
     tableName = Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE,
     primaryKeys = [
         BookIdWithBookCategoryColumns.BOOK_ID,
+        BookIdWithBookCategoryColumns.AUTHOR_ID,
         BookIdWithBookCategoryColumns.NDC_MAIN_CLASS_NUM,
         BookIdWithBookCategoryColumns.NDC_DIVISION_NUM,
         BookIdWithBookCategoryColumns.NDC_SECTION_NUM,
@@ -27,6 +29,8 @@ internal object BookIdWithBookCategoryColumns {
 data class BookIdWithBookCategory(
     @ColumnInfo(name = BookIdWithBookCategoryColumns.BOOK_ID)
     val bookId: String,
+    @ColumnInfo(name = BookIdWithBookCategoryColumns.AUTHOR_ID)
+    val authorId: String,
     @ColumnInfo(name = BookIdWithBookCategoryColumns.NDC_MAIN_CLASS_NUM)
     val ndcMainClassNum: Int,
     @ColumnInfo(name = BookIdWithBookCategoryColumns.NDC_DIVISION_NUM)

@@ -18,7 +18,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.core.domain.model.NDCType
-import me.andannn.aozora.core.domain.model.NdcData
+import me.andannn.aozora.core.domain.model.NdcDataWithBookCount
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
@@ -98,7 +98,8 @@ class NdcContentPresenter(
                     value =
                         aozoraContentsRepository
                             .getChildrenOfNDC(ndcClassification)
-                            .sortedBy { it.ndcClassification.value }
+                            .filter { it.bookCount != 0 }
+                            .sortedBy { it.ndcData.ndcClassification.value }
                 }
             return NdcContentState.NdcChildren(
                 title = title.value,
@@ -116,7 +117,7 @@ sealed class NdcContentState(
 ) : CircuitUiState {
     data class NdcChildren(
         override val title: String,
-        val children: List<NdcData>,
+        val children: List<NdcDataWithBookCount>,
         override val evenSink: (NdcContentUiEvent) -> Unit,
     ) : NdcContentState(title, evenSink)
 

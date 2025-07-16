@@ -191,7 +191,7 @@ interface BookLibraryDao {
         """
             SELECT b.*
             FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} a
-            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id
+            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id AND b.author_id = a.author_id
             WHERE a.ndc_main_class_num = :ndcMainClassNum 
                 AND a.ndc_division_num = :ndcDivisionNum 
                 AND a.ndc_section_num = :ndcSectionNum
@@ -207,7 +207,7 @@ interface BookLibraryDao {
         """
             SELECT b.*
             FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} a
-            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id
+            INNER JOIN ${Tables.BOOK_TABLE} b ON b.book_id = a.book_id AND b.author_id = a.author_id
             WHERE a.ndc_main_class_num = :ndcMainClassNum 
                 AND a.ndc_division_num = :ndcDivisionNum 
                 AND a.ndc_section_num = :ndcSectionNum
@@ -218,6 +218,75 @@ interface BookLibraryDao {
         ndcDivisionNum: Int,
         ndcSectionNum: Int,
     ): PagingSource<Int, BookEntity>
+
+    fun bookCountOfNdcCategoryFlow(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int?,
+        ndcSectionNum: Int?,
+    ): Flow<Int> =
+        when {
+            ndcDivisionNum == null && ndcSectionNum == null ->
+                getNdcMainClassBookCount(
+                    ndcMainClassNum,
+                )
+
+            ndcSectionNum == null && ndcDivisionNum != null ->
+                getNdcDivisionBookCount(
+                    ndcMainClassNum,
+                    ndcDivisionNum,
+                )
+
+            ndcSectionNum != null && ndcDivisionNum != null ->
+                getNdcSectionBookCount(
+                    ndcMainClassNum,
+                    ndcDivisionNum,
+                    ndcSectionNum,
+                )
+
+            else -> throw IllegalArgumentException(
+                "Invalid NDC classification parameters provided: " +
+                    "mainClassNum=$ndcMainClassNum, " +
+                    "divisionNum=$ndcDivisionNum, " +
+                    "sectionNum=$ndcSectionNum",
+            )
+        }
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum
+        """,
+    )
+    fun getNdcMainClassBookCount(ndcMainClassNum: Int): Flow<Int>
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum 
+                AND ndc_division_num = :ndcDivisionNum
+        """,
+    )
+    fun getNdcDivisionBookCount(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+    ): Flow<Int>
+
+    @Query(
+        """
+            SELECT COUNT(*) 
+            FROM ${Tables.BOOK_ID_WITH_BOOK_CATEGORY_TABLE} 
+            WHERE ndc_main_class_num = :ndcMainClassNum 
+                AND ndc_division_num = :ndcDivisionNum 
+                AND ndc_section_num = :ndcSectionNum
+        """,
+    )
+    fun getNdcSectionBookCount(
+        ndcMainClassNum: Int,
+        ndcDivisionNum: Int,
+        ndcSectionNum: Int,
+    ): Flow<Int>
 }
 
 private fun buildKanaLineStartQuery(kanaList: List<String>): RoomRawQuery {

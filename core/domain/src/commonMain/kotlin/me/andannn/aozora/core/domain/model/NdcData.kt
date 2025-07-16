@@ -11,6 +11,11 @@ data class NdcData(
     val label: String,
 )
 
+data class NdcDataWithBookCount(
+    val ndcData: NdcData,
+    val bookCount: Int,
+)
+
 enum class NDCType {
     MAIN_CLASS,
     DIVISION,

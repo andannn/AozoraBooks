@@ -270,12 +270,13 @@ internal val MIGRATION_5_6 =
         override fun migrate(connection: SQLiteConnection) {
             connection.execSQL(
                 """
-                CREATE TABLE IF NOT EXISTS book_id_with_book_category_table (
-                    book_id TEXT NOT NULL,
-                    ndc_main_class_num INTEGER NOT NULL,
-                    ndc_division_num INTEGER NOT NULL,
-                    ndc_section_num INTEGER NOT NULL,
-                    PRIMARY KEY(book_id, ndc_main_class_num, ndc_division_num, ndc_section_num)
+                CREATE TABLE IF NOT EXISTS `book_id_with_book_category_table` (
+                    `book_id` TEXT NOT NULL, 
+                    `author_id` TEXT NOT NULL, 
+                    `ndc_main_class_num` INTEGER NOT NULL, 
+                    `ndc_division_num` INTEGER NOT NULL, 
+                    `ndc_section_num` INTEGER NOT NULL, 
+                    PRIMARY KEY(`book_id`, `author_id`, `ndc_main_class_num`, `ndc_division_num`, `ndc_section_num`)
                 )
                 """.trimIndent(),
             )

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "7f8ed9957b1d6d58abb09204c69390f9",
+    "identityHash": "4e83a9868cad369b9eebfeba1c7f7ec3",
     "entities": [
       {
         "tableName": "book_table",
@@ -556,11 +556,17 @@
       },
       {
         "tableName": "book_id_with_book_category_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `ndc_main_class_num` INTEGER NOT NULL, `ndc_division_num` INTEGER NOT NULL, `ndc_section_num` INTEGER NOT NULL, PRIMARY KEY(`book_id`, `ndc_main_class_num`, `ndc_division_num`, `ndc_section_num`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`book_id` TEXT NOT NULL, `author_id` TEXT NOT NULL, `ndc_main_class_num` INTEGER NOT NULL, `ndc_division_num` INTEGER NOT NULL, `ndc_section_num` INTEGER NOT NULL, PRIMARY KEY(`book_id`, `author_id`, `ndc_main_class_num`, `ndc_division_num`, `ndc_section_num`))",
         "fields": [
           {
             "fieldPath": "bookId",
             "columnName": "book_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorId",
+            "columnName": "author_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -587,6 +593,7 @@
           "autoGenerate": false,
           "columnNames": [
             "book_id",
+            "author_id",
             "ndc_main_class_num",
             "ndc_division_num",
             "ndc_section_num"
@@ -596,7 +603,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7f8ed9957b1d6d58abb09204c69390f9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e83a9868cad369b9eebfeba1c7f7ec3')"
     ]
   }
 }

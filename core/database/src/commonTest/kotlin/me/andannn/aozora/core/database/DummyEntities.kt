@@ -276,18 +276,28 @@ val bookIdWithBookCategoryList =
     listOf(
         BookIdWithBookCategory(
             bookId = "12353",
+            authorId = "2",
+            ndcMainClassNum = 9,
+            ndcDivisionNum = 3,
+            ndcSectionNum = 3,
+        ),
+        BookIdWithBookCategory(
+            bookId = "12353",
+            authorId = "1",
             ndcMainClassNum = 9,
             ndcDivisionNum = 3,
             ndcSectionNum = 3,
         ),
         BookIdWithBookCategory(
             bookId = "212353",
+            authorId = "2",
             ndcMainClassNum = 1,
             ndcDivisionNum = 3,
             ndcSectionNum = 3,
         ),
         BookIdWithBookCategory(
             bookId = "056078",
+            authorId = "001257",
             ndcMainClassNum = 1,
             ndcDivisionNum = 3,
             ndcSectionNum = 3,

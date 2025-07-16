@@ -6,10 +6,15 @@ package me.andannn.aozora.ui.feature.ndc
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.NdcData
+import me.andannn.aozora.core.domain.model.NdcDataWithBookCount
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.BookColumnItemView
 import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
@@ -83,20 +88,23 @@ fun NdcContent(
 @Composable
 private fun NdcChildren(
     modifier: Modifier = Modifier,
-    ndcChildren: List<NdcData>,
+    ndcChildren: List<NdcDataWithBookCount>,
     eventSink: (NdcContentUiEvent) -> Unit,
 ) {
     LazyColumn(modifier) {
         items(
             items = ndcChildren,
-            key = { it.ndcClassification.value },
+            key = { it.ndcData.ndcClassification.value },
         ) { item ->
-            NdcCategoryItem(
-                ndcData = item,
-                onClick = {
-                    eventSink(NdcContentUiEvent.OnNdcItemClick(item.ndcClassification))
-                },
-            )
+            Column {
+                NdcCategoryItem(
+                    model = item,
+                    onClick = {
+                        eventSink(NdcContentUiEvent.OnNdcItemClick(item.ndcData.ndcClassification))
+                    },
+                )
+                HorizontalDivider()
+            }
         }
 
         item {
@@ -144,7 +152,7 @@ private fun NdcDetail(
 
 @Composable
 private fun NdcCategoryItem(
-    ndcData: NdcData,
+    model: NdcDataWithBookCount,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -153,14 +161,35 @@ private fun NdcCategoryItem(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         ) {
             Text(
-                ndcData.ndcClassification.toString(),
-                style = MaterialTheme.typography.labelLarge,
-            )
-            Text(
-                ndcData.label,
+                model.ndcData.label,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
             )
+
+            Spacer(Modifier.height(8.dp))
+            Row {
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = CircleShape,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        text = model.bookCount.toString() + " 作品",
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    shape = CircleShape,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                        text = model.ndcData.ndcClassification.toString(),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
         }
     }
 }
