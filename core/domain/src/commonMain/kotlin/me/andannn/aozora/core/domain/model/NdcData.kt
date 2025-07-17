@@ -4,6 +4,7 @@
  */
 package me.andannn.aozora.core.domain.model
 
+import io.github.aakira.napier.Napier
 import kotlin.jvm.JvmInline
 
 data class NdcData(
@@ -69,4 +70,32 @@ fun NDCClassification.isChildOf(other: NDCClassification): Boolean =
             other.ndcType == NDCType.DIVISION &&
                 this.mainClassNum == other.mainClassNum &&
                 this.divisionNum == other.divisionNum
+    }
+
+/**
+ * Parses the NDC classification from a string.
+ *
+ * Patterns:
+ * - "NDC 931" -> [NDCClassification("931")]
+ * - "NDC 931 123" -> [NDCClassification("931"), NDCClassification("123")]
+ */
+fun String.asNDCClassification(): List<NDCClassification> =
+    split(" ")
+        .let { splitList ->
+            if (splitList.size >= 2) {
+                splitList
+                    .subList(1, splitList.size)
+                    .filter { it.isNotBlank() && it.isNotEmpty() }
+                    .map {
+                        NDCClassification(it.parseDigits())
+                    }
+            } else {
+                Napier.e { "Invalid NDC classification format: $this" }
+                emptyList()
+            }
+        }
+
+private fun String.parseDigits() =
+    this.filter {
+        it.isDigit()
     }

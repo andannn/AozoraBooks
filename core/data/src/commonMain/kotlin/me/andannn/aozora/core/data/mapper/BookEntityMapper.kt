@@ -8,6 +8,7 @@ import me.andannn.aozora.core.database.entity.BookEntity
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.StaffData
+import me.andannn.aozora.core.domain.model.asNDCClassification
 
 internal fun BookEntity.toModel() =
     AozoraBookCard(
@@ -19,7 +20,7 @@ internal fun BookEntity.toModel() =
         zipUrl = textFileUrl,
         htmlUrl = htmlFileUrl,
         authorUrl = null,
-        category = categoryNo,
+        categories = categoryNo?.asNDCClassification() ?: emptyList(),
         source = firstAppearance,
         characterType = orthography,
         haveCopyRight = this.workCopyrightFlag == "あり",

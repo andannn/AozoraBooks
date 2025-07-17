@@ -19,10 +19,10 @@ data class AozoraBookCard constructor(
     val zipUrl: String?,
     val subTitle: String? = null,
     val htmlUrl: String? = null,
-    val category: String? = null,
     val source: String? = null,
     val characterType: String? = null,
     val staffData: StaffData? = null,
+    val categories: List<NDCClassification> = emptyList(),
     val authorDataList: List<AuthorData>,
 )
 

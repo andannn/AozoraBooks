@@ -17,11 +17,13 @@ import com.slack.circuit.runtime.presenter.Presenter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
+import me.andannn.aozora.ui.feature.common.screens.NdcContentScreen
 import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -79,8 +81,19 @@ class BookCardPresenter(
             .getSavedBookById(bookId, authorId = groupId)
             .collectAsRetainedState(null)
 
+        val ndcClassificationToDescription by produceRetainedState(emptyMap(), bookCardInfo) {
+            val categories = bookCardInfo?.categories ?: emptyList()
+            value =
+                categories
+                    .distinct()
+                    .associateWith { ndcClassification ->
+                        aozoraContentsRepository.getNDCDetails(ndcClassification)?.label ?: ""
+                    }
+        }
+
         return BookCardState(
             bookCardInfo = bookCardInfo,
+            ndcClassificationToDescription = ndcClassificationToDescription,
             isAddedToShelf = savedBookCard != null,
         ) { event ->
             when (event) {
@@ -112,6 +125,14 @@ class BookCardPresenter(
                         AuthorScreen(authorId = event.authorId),
                     )
                 }
+
+                is BookCardUiEvent.OnNdcClick -> {
+                    localNavigator.goTo(
+                        NdcContentScreen(
+                            ndc = event.ndcClassification.value,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -120,6 +141,7 @@ class BookCardPresenter(
 @Stable
 data class BookCardState(
     val bookCardInfo: AozoraBookCard?,
+    val ndcClassificationToDescription: Map<NDCClassification, String>,
     val isAddedToShelf: Boolean,
     val evenSink: (BookCardUiEvent) -> Unit = {},
 ) : CircuitUiState
@@ -130,6 +152,10 @@ sealed interface BookCardUiEvent {
     data object OnAddToShelf : BookCardUiEvent
 
     data object OnClickRead : BookCardUiEvent
+
+    data class OnNdcClick(
+        val ndcClassification: NDCClassification,
+    ) : BookCardUiEvent
 
     data class OnClickAuthor(
         val authorId: String,

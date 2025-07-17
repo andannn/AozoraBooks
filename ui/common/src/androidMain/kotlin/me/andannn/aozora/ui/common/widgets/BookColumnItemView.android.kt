@@ -25,7 +25,6 @@ private fun BookColumnItemViewPreview() {
                     zipUrl = null,
                     subTitle = "subTitle",
                     htmlUrl = null,
-                    category = null,
                     source = null,
                     characterType = null,
                     staffData = null,
