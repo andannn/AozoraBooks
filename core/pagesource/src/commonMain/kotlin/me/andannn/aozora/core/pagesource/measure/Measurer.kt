@@ -19,13 +19,13 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
 
-data class ElementMeasureResult(
+internal data class ElementMeasureResult(
     val widthDp: Dp,
     val heightDp: Dp,
     val fontStyle: FontStyle? = null,
 )
 
-data class BlockMeasureResult(
+internal data class BlockMeasureResult(
     val lineCount: Int,
     val lineHeightDpPerLine: Dp,
     val availableTextCountPerLine: Int,
@@ -39,7 +39,7 @@ internal fun interface BlockMeasurer {
     fun measure(block: AozoraBlock): BlockMeasureResult
 }
 
-fun interface ElementMeasurer {
+internal fun interface ElementMeasurer {
     fun measure(
         element: AozoraElement,
         style: AozoraTextStyle?,

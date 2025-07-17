@@ -197,7 +197,7 @@ class BookViewerPresenter(
                 .collect {
                     when (it) {
                         is PagerSnapShot.Error -> {
-                            Napier.e(tag = TAG) { "error: ${it.exception}" }
+                            Napier.e(tag = TAG) { "msg: ${it.exception.message} cause: ${it.exception.cause}" }
 
                             // report error to analytics.
                             launch {

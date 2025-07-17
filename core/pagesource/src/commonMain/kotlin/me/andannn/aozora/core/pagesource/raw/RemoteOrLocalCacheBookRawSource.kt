@@ -31,6 +31,7 @@ import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.pagesource.SourceNotFoundException
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
@@ -61,9 +62,12 @@ internal class RemoteOrLocalCacheBookRawSource(
             try {
                 bookModelStateFlow.value =
                     SourceState.Success(createBookRawSource(card, cacheDictionary))
+            } catch (e: CopyRightRetainedException) {
+                Napier.e { "CopyRightRetainedException thrown when create book raw source. $e" }
+                bookModelStateFlow.value = SourceState.Error(e)
             } catch (e: Exception) {
                 Napier.e { "Exception thrown when create book raw source. $e" }
-                bookModelStateFlow.value = SourceState.Error(e)
+                bookModelStateFlow.value = SourceState.Error(SourceNotFoundException(cause = e))
             }
         }
     }
