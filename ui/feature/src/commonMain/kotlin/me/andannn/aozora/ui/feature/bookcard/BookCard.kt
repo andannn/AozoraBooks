@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.AozoraBookCard
+import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
@@ -53,6 +54,7 @@ fun BookCard(
     BookCardContent(
         modifier = modifier,
         bookCardInfo = state.bookCardInfo,
+        ndcClassificationToDescription = state.ndcClassificationToDescription,
         isAddedToShelf = state.isAddedToShelf,
         onEvent = state.evenSink,
     )
@@ -63,6 +65,7 @@ fun BookCard(
 private fun BookCardContent(
     modifier: Modifier = Modifier,
     bookCardInfo: AozoraBookCard?,
+    ndcClassificationToDescription: Map<NDCClassification, String>,
     isAddedToShelf: Boolean,
     onEvent: (BookCardUiEvent) -> Unit = {},
 ) {
@@ -165,9 +168,13 @@ private fun BookCardContent(
             }
 
             item {
-                bookCardInfo.category?.let {
-                    ItemRow(title = "分類：", value = it)
-                }
+                NdcCategoryRow(
+                    title = "分類：",
+                    ndcClassificationToDescription = ndcClassificationToDescription,
+                    onNdcClick = { ndcClassification ->
+                        onEvent.invoke(BookCardUiEvent.OnNdcClick(ndcClassification))
+                    },
+                )
                 bookCardInfo.source?.let {
                     ItemRow(title = "初出：", value = it)
                 }
@@ -176,7 +183,10 @@ private fun BookCardContent(
                 }
                 bookCardInfo.takeIf { it.haveCopyRight }?.let {
                     Text(
-                        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp),
+                        modifier =
+                            modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp, horizontal = 12.dp),
                         text = "＊著作権存続＊",
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -280,6 +290,37 @@ private fun BookCardContent(
 
             item {
                 NavigationBarAnchor()
+            }
+        }
+    }
+}
+
+@Composable
+private fun NdcCategoryRow(
+    modifier: Modifier = Modifier,
+    title: String,
+    ndcClassificationToDescription: Map<NDCClassification, String>,
+    onNdcClick: (NDCClassification) -> Unit = {},
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 12.dp),
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = title,
+            color = MaterialTheme.colorScheme.inverseSurface,
+        )
+
+        Column(
+            modifier = Modifier.weight(2f),
+        ) {
+            ndcClassificationToDescription.forEach { (ndcClassification, description) ->
+                ClickableOrText(
+                    value = description,
+                    onClick = {
+                        onNdcClick.invoke(ndcClassification)
+                    },
+                )
             }
         }
     }

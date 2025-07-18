@@ -10,7 +10,7 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
 import me.andannn.aozora.core.pagesource.parser.html.parseAsAozoraElements
 
-object SpecialParagraphMatcher : ElementMatcher {
+internal object SpecialParagraphMatcher : ElementMatcher {
     override fun match(node: Node): AozoraElement? {
         if (node !is Element) return null
         if (node.tagName() != "div") return null

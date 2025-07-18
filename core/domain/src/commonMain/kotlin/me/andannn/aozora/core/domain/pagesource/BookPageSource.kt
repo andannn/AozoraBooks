@@ -18,6 +18,10 @@ import me.andannn.aozora.core.domain.model.TableOfContentsModel
 val LocalBookPageSource: ProvidableCompositionLocal<BookPageSource> =
     compositionLocalOf { error("no book source") }
 
+class SourceNotFoundException(
+    override val cause: Throwable?,
+) : Exception("Book source not found", cause)
+
 /**
  * Book page source.
  */
@@ -27,7 +31,8 @@ interface BookPageSource {
      *
      * @param pageMetaData page meta data.
      * @param readingProgress initial start progress of book page source. every 64 bytes is One Unit of progress.
-     * @throws Exception when error occurred.
+     * @throws SourceNotFoundException when error occurred.
+     * @throws CopyRightRetainedException when try to download source with copyright.
      */
     fun getPagerSnapShotFlow(
         pageMetaData: PageMetaData,
@@ -36,11 +41,15 @@ interface BookPageSource {
 
     /**
      * get book meta. return empty list when error occurred.
+     * @throws SourceNotFoundException when error occurred.
+     * @throws CopyRightRetainedException when try to download source with copyright.
      */
     suspend fun getTableOfContents(): List<TableOfContentsModel>
 
     /**
      * get total block count. return null when error occurred.
+     * @throws SourceNotFoundException when error occurred.
+     * @throws CopyRightRetainedException when try to download source with copyright.
      */
     suspend fun getTotalBlockCount(): Int?
 
