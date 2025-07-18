@@ -30,11 +30,12 @@ import kotlinx.serialization.json.Json
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.exceptions.DownloadBookFailedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraElement.BaseText
 import me.andannn.aozora.core.domain.pagesource.SourceNotFoundException
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.parser.DefaultAozoraBlockParser
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.parseAsHtmlNodes
 import me.andannn.aozora.core.pagesource.parser.lineSequence
@@ -283,14 +284,20 @@ internal fun processParseHtml(
                 lineCount++
 
                 if (line.startsWith("<div") && line.contains("<h")) {
-                    val headingElement =
-                        HeadingMatcher.match(
-                            line.parseAsHtmlNodes().first(),
-                        ) as? AozoraElement.Heading ?: error("heading not found")
+                    val matched =
+                        HeadingMatcher
+                            .match(
+                                line.parseAsHtmlNodes().first(),
+                            ).takeIf { it is MatchResult.BlockMatched && it.headingLevel != 0 }
+                            ?: error("heading not found")
+                    check(matched is MatchResult.BlockMatched)
                     tableOfContentList.add(
                         TableOfContent(
-                            headingLevel = headingElement.headingLevel,
-                            title = headingElement.text,
+                            headingLevel = matched.headingLevel,
+                            title =
+                                matched.elements.fold("") { acc, element ->
+                                    acc + ((element as? BaseText)?.text ?: "")
+                                },
                             lineNumber = lineCount,
                         ),
                     )

@@ -10,14 +10,16 @@ import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.core.domain.model.Line
-import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
 import me.andannn.aozora.core.pagesource.util.divide
 import kotlin.math.min
 
+/**
+ * Build a vertical line from [AozoraElement]s.
+ *
+ * @param maxDp The maximum height of the line.
+ */
 internal class LineBuilder(
     private val maxDp: Dp,
-    initialIndent: Int = 0,
-    private val measure: (AozoraElement) -> ElementMeasureResult,
     private val maxCharacterPerLine: Int? = null,
 ) {
     private var currentHeight: Dp = 0.dp
@@ -31,13 +33,7 @@ internal class LineBuilder(
     private val elementList = mutableListOf<AozoraElement>()
     private var currentFontStyle: FontStyle? = null
 
-    init {
-        if (initialIndent > 0) {
-            tryAdd(AozoraElement.Indent(initialIndent))
-        }
-    }
-
-    fun tryAdd(element: AozoraElement): FillResult {
+    fun ElementMeasureScope.tryAdd(element: AozoraElement): FillResult {
         when (element) {
             is AozoraElement.Ruby,
             is AozoraElement.Text,
@@ -95,12 +91,6 @@ internal class LineBuilder(
 
             AozoraElement.PageBreak -> {
                 error("Can not handle page break in line")
-            }
-
-            is AozoraElement.Heading,
-            is AozoraElement.SpecialParagraph,
-            -> {
-                error("Never")
             }
         }
     }

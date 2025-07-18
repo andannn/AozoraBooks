@@ -47,44 +47,6 @@ sealed interface AozoraElement {
     ) : BaseText()
 
     /**
-     * Heading element.
-     *
-     * @property style The style of the heading.
-     * @property indent The indent of the heading.
-     * @property elements The elements of the heading.
-     */
-    data class Heading(
-        override val style: AozoraTextStyle,
-        val headingLevel: Int,
-        val indent: Int,
-        val elements: List<AozoraElement> = emptyList(),
-    ) : BaseText() {
-        override val text: String
-            get() =
-                elements.fold("") { acc, element ->
-                    acc + ((element as? BaseText)?.text ?: "")
-                }
-    }
-
-    /**
-     * Special paragraph element.
-     *
-     * @property style The style of the special paragraph.
-     */
-    data class SpecialParagraph(
-        val indent: Int,
-        val maxLength: Int?,
-        val elements: List<AozoraElement> = emptyList(),
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
-    ) : BaseText() {
-        override val text: String
-            get() =
-                elements.fold("") { acc, element ->
-                    acc + ((element as? BaseText)?.text ?: "")
-                }
-    }
-
-    /**
      * Illustration element.
      *
      * @property filename The filename of the illustration.
@@ -101,7 +63,6 @@ sealed interface AozoraElement {
      * Indent element.
      *
      * @property count The count of the indent.
-     * @property style The style of the indent.
      */
     data class Indent(
         /**

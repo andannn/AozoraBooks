@@ -9,15 +9,16 @@ import com.fleeksoft.ksoup.nodes.Node
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.EmphasisStyle
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 
 internal object EmphasisMatcher : ElementMatcher {
-    override fun match(node: Node): AozoraElement? {
-        if (node !is Element) return null
+    override fun match(node: Node): MatchResult {
+        if (node !is Element) return MatchResult.NotMatched
 
         val className = node.attr("class")
 
         if (className.lowercase() != "sesame_dot") {
-            return null
+            return MatchResult.NotMatched
         }
 
         val style =
@@ -27,6 +28,8 @@ internal object EmphasisMatcher : ElementMatcher {
                 else -> error("unknown emphasis style: ${node.tagName()}")
             }
         val sesameDot = node.text()
-        return AozoraElement.Emphasis(sesameDot, style)
+        return MatchResult.ElementMatched(
+            AozoraElement.Emphasis(sesameDot, style),
+        )
     }
 }

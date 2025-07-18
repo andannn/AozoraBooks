@@ -6,21 +6,23 @@ package me.andannn.aozora.core.pagesource.parser.html.matchers
 
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
-import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.AozoraElement.Heading
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.pagesource.parser.elements
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
-import me.andannn.aozora.core.pagesource.parser.html.parseAsAozoraElements
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
+import me.andannn.aozora.core.pagesource.parser.html.matchAsMatchResults
 
 internal object HeadingMatcher : ElementMatcher {
-    override fun match(node: Node): AozoraElement? {
-        if (node !is Element) return null
-        if (node.tagName() != "div") return null
+    override fun match(node: Node): MatchResult {
+        if (node !is Element) return MatchResult.NotMatched
+        if (node.tagName() != "div") return MatchResult.NotMatched
 
         val className = node.attr("class")
-        val indent = className.split("_").getOrNull(1)?.toIntOrNull() ?: return null
-        val child = node.children().getOrNull(0) ?: return null
-        val headingLevel = child.tagName().removePrefix("h").toIntOrNull() ?: return null
+        val indent =
+            className.split("_").getOrNull(1)?.toIntOrNull() ?: return MatchResult.NotMatched
+        val child = node.children().getOrNull(0) ?: return MatchResult.NotMatched
+        val headingLevel =
+            child.tagName().removePrefix("h").toIntOrNull() ?: return MatchResult.NotMatched
         val styleName = child.attr("class")
         val style =
             when {
@@ -28,14 +30,15 @@ internal object HeadingMatcher : ElementMatcher {
                 styleName.contains("o-midashi") -> AozoraTextStyle.HEADING_LARGE
                 else -> AozoraTextStyle.PARAGRAPH
             }
-        val contentNodes = child.selectFirst(".midashi_anchor")?.childNodes() ?: return null
-        val elements = contentNodes.parseAsAozoraElements()
+        val contentNodes =
+            child.selectFirst(".midashi_anchor")?.childNodes() ?: return MatchResult.NotMatched
+        val result = contentNodes.matchAsMatchResults()
 
-        return Heading(
+        return MatchResult.BlockMatched(
+            elements = result.elements(),
             indent = indent,
             style = style,
             headingLevel = headingLevel,
-            elements = elements,
         )
     }
 }
