@@ -7,6 +7,7 @@ package me.andannn.aozora.core.pagesource.parser
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 
 internal interface AozoraBlockParser {
     /**
@@ -21,30 +22,21 @@ internal class DefaultAozoraBlockParser(
     var blockIndex: Int = 0
 
     override fun parseLineAsBlock(line: RawLine): AozoraBlock {
-        val elements = parser.parseLine(line)
-
-        if (elements.size == 2 && elements[0] is AozoraElement.Heading) {
-            val heading = (elements[0] as AozoraElement.Heading)
-            val indent = heading.indent
-            return AozoraBlock.TextBlock(
-                blockIndex = blockIndex++,
-                elements = heading.elements + elements[1],
-                indent = indent,
-                textStyle = heading.style,
-            )
-        } else if (elements.size == 2 && elements[0] is AozoraElement.SpecialParagraph) {
-            val paragraph = elements[0] as AozoraElement.SpecialParagraph
-            return AozoraBlock.TextBlock(
-                blockIndex = blockIndex++,
-                elements = paragraph.elements + elements[1],
-                indent = paragraph.indent,
-                textStyle = AozoraTextStyle.PARAGRAPH,
-                maxCharacterPerLine = paragraph.maxLength,
-            )
-        } else if (elements.size == 1 && elements[0] is AozoraElement.Illustration) {
+        val matchResultMatched = parser.parseLine(line)
+        val elements = matchResultMatched.elements()
+        if (matchResultMatched.size == 1 && elements.count { it is AozoraElement.Illustration } == 1) {
             return AozoraBlock.Image(
                 blockIndex = blockIndex++,
                 elements = elements,
+            )
+        } else if (matchResultMatched.size == 2 && matchResultMatched[0] is MatchResult.BlockMatched) {
+            val block = matchResultMatched[0] as MatchResult.BlockMatched
+            return AozoraBlock.TextBlock(
+                blockIndex = blockIndex++,
+                elements = elements,
+                indent = block.indent,
+                textStyle = block.style,
+                maxCharacterPerLine = block.maxLength,
             )
         } else {
             return AozoraBlock.TextBlock(

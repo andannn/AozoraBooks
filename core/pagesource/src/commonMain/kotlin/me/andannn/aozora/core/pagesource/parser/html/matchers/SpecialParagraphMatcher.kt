@@ -6,23 +6,24 @@ package me.andannn.aozora.core.pagesource.parser.html.matchers
 
 import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
-import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.pagesource.parser.elements
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
-import me.andannn.aozora.core.pagesource.parser.html.parseAsAozoraElements
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
+import me.andannn.aozora.core.pagesource.parser.html.matchAsMatchResults
 
 internal object SpecialParagraphMatcher : ElementMatcher {
-    override fun match(node: Node): AozoraElement? {
-        if (node !is Element) return null
-        if (node.tagName() != "div") return null
+    override fun match(node: Node): MatchResult {
+        if (node !is Element) return MatchResult.NotMatched
+        if (node.tagName() != "div") return MatchResult.NotMatched
         val (divResult, contentNodes) = parseDivElementRecursive(node)
-        if (divResult.isEmpty()) return null
-        if (contentNodes.isEmpty()) return null
-        val elements = contentNodes.parseAsAozoraElements()
+        if (divResult.isEmpty()) return MatchResult.NotMatched
+        if (contentNodes.isEmpty()) return MatchResult.NotMatched
+        val elements = contentNodes.matchAsMatchResults()
 
-        return AozoraElement.SpecialParagraph(
+        return MatchResult.BlockMatched(
             indent = (divResult.firstOrNull { it is Div.Indent } as? Div.Indent?)?.indent ?: 0,
             maxLength = (divResult.firstOrNull { it is Div.Max } as? Div.Max?)?.value,
-            elements = elements,
+            elements = elements.elements(),
         )
     }
 

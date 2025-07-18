@@ -12,7 +12,7 @@ import me.andannn.aozora.core.domain.model.AozoraPage.AozoraRoughPage
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.LayoutPage
 import me.andannn.aozora.core.domain.model.PageMetaData
-import me.andannn.aozora.core.pagesource.measure.DefaultMeasurer
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
 
@@ -23,7 +23,7 @@ class AozoraPageLayoutHelperImpl : AozoraPageLayoutHelper {
                 val builder =
                     LayoutPageBuilder(
                         pageMetaData,
-                        DefaultMeasurer(pageMetaData),
+                        TextStyleCalculator(pageMetaData),
                         forceAddBlock = true,
                     )
                 this.blocks.filterIsInstance<AozoraBlock>().forEach {

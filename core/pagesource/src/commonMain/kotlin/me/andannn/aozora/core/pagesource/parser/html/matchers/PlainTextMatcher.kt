@@ -8,12 +8,15 @@ import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 
 internal object PlainTextMatcher : ElementMatcher {
-    override fun match(node: Node): AozoraElement? {
-        if (node !is TextNode) return null
-        if (node.text().isBlank()) return null
+    override fun match(node: Node): MatchResult {
+        if (node !is TextNode) return MatchResult.NotMatched
+        if (node.text().isBlank()) return MatchResult.NotMatched
 
-        return AozoraElement.Text(node.text())
+        return MatchResult.ElementMatched(
+            AozoraElement.Text(node.text()),
+        )
     }
 }
