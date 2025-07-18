@@ -5,10 +5,12 @@
 package me.andannn.aozora.core.pagesource.parser
 
 import me.andannn.aozora.core.domain.model.AozoraElement
+import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.EmphasisStyle
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 
 @Suppress("ktlint:standard:max-line-length")
 class AozoraSourceParserTest {
@@ -29,8 +31,8 @@ class AozoraSourceParserTest {
     fun testParseStringWithLinkBreak() {
         val sampleString = sample1
         val result = parser.parseLine(sampleString.asRawLine())
-        assertEquals(AozoraElement.Text("小山の妻君は"), result[0])
-        assertEquals(AozoraElement.LineBreak, result[1])
+        assertEquals(MatchResult.ElementMatched(AozoraElement.Text("小山の妻君は")), result[0])
+        assertEquals(MatchResult.ElementMatched(AozoraElement.LineBreak), result[1])
     }
 
     @Test
@@ -38,20 +40,56 @@ class AozoraSourceParserTest {
         val sampleString = sample2
         val result = parser.parseLine(sampleString.asRawLine())
         assertEquals(
-            AozoraElement.Text("ふと気が付いて見ると書生はいない。たくさんおった兄弟が一"),
+            MatchResult.ElementMatched(
+                AozoraElement.Text("ふと気が付いて見ると書生はいない。たくさんおった兄弟が一"),
+            ),
             result[0],
         )
-        assertEquals(AozoraElement.Ruby("疋", ruby = "ぴき"), result[1])
-        assertEquals(AozoraElement.Text("も見えぬ。"), result[2])
-        assertEquals(AozoraElement.Ruby("肝心", ruby = "かんじん"), result[3])
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Ruby("疋", ruby = "ぴき"),
+            ),
+            result[1],
+        )
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Text("も見えぬ。"),
+            ),
+            result[2],
+        )
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Ruby("肝心", ruby = "かんじん"),
+            ),
+            result[3],
+        )
     }
 
     @Test
     fun testParseBouten2() {
         val sampleString = sample3
         val result = parser.parseLine(sampleString.asRawLine())
-        assertEquals(AozoraElement.Text("藤吉は"), result[0])
-        assertIs<AozoraElement.Emphasis>(result[1])
-        assertEquals(AozoraElement.Text("起き上った。"), result[2])
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Text("藤吉は"),
+            ),
+            result[0],
+        )
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Emphasis(
+                    text = "むっくり",
+                    emphasisStyle = EmphasisStyle.Strong,
+                    style = AozoraTextStyle.PARAGRAPH,
+                ),
+            ),
+            result[1],
+        )
+        assertEquals(
+            MatchResult.ElementMatched(
+                AozoraElement.Text("起き上った。"),
+            ),
+            result[2],
+        )
     }
 }

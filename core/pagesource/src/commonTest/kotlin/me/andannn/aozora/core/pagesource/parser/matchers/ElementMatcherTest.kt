@@ -5,9 +5,9 @@
 package me.andannn.aozora.core.pagesource.parser.matchers
 
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.AozoraElement.SpecialParagraph
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.EmphasisStyle
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 import me.andannn.aozora.core.pagesource.parser.html.matchers.EmphasisMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.ImageMatcher
@@ -24,7 +24,9 @@ class ElementMatcherTest {
     @Test
     fun testTextNodeMatcher() {
         assertEquals(
-            AozoraElement.Text("AAA"),
+            MatchResult.ElementMatched(
+                AozoraElement.Text("AAA"),
+            ),
             PlainTextMatcher.match("AAA".parseAsHtmlNodes().first()),
         )
     }
@@ -32,7 +34,9 @@ class ElementMatcherTest {
     @Test
     fun testRubyNodeMatcher() {
         assertEquals(
-            AozoraElement.Ruby("饒", "ゆたけ"),
+            MatchResult.ElementMatched(
+                AozoraElement.Ruby("饒", "ゆたけ"),
+            ),
             RubyMatcher.match(
                 "<ruby><rb>饒</rb><rp>（</rp><rt>ゆたけ</rt><rp>）</rp></ruby>"
                     .parseAsHtmlNodes()
@@ -44,7 +48,9 @@ class ElementMatcherTest {
     @Test
     fun testImageNodeMatcher() {
         assertEquals(
-            AozoraElement.Illustration(filename = "fig49947_04.png", width = 311, height = 235),
+            MatchResult.ElementMatched(
+                AozoraElement.Illustration(filename = "fig49947_04.png", width = 311, height = 235),
+            ),
             ImageMatcher.match(
                 "<img class=\"illustration\" width=\"311\" height=\"235\" src=\"fig49947_04.png\" alt=\"「シチュウ鍋の図」のキャプション付きの図\" /><br />\n>"
                     .parseAsHtmlNodes()
@@ -56,7 +62,9 @@ class ElementMatcherTest {
     @Test
     fun testLineBreak() {
         assertEquals(
-            AozoraElement.LineBreak,
+            MatchResult.ElementMatched(
+                AozoraElement.LineBreak,
+            ),
             LineBreakMatcher.match("<br />".parseAsHtmlNodes().first()),
         )
     }
@@ -64,7 +72,9 @@ class ElementMatcherTest {
     @Test
     fun testEmphasisMatcher() {
         assertEquals(
-            AozoraElement.Emphasis("せびられ", emphasisStyle = EmphasisStyle.Bouten),
+            MatchResult.ElementMatched(
+                AozoraElement.Emphasis("せびられ", emphasisStyle = EmphasisStyle.Bouten),
+            ),
             EmphasisMatcher.match(
                 "<em class=\"sesame_dot\">せびられ</em>".parseAsHtmlNodes().first(),
             ),
@@ -74,7 +84,7 @@ class ElementMatcherTest {
     @Test
     fun testHeaderMatcher() {
         assertEquals(
-            AozoraElement.Heading(
+            MatchResult.BlockMatched(
                 indent = 4,
                 style = AozoraTextStyle.HEADING_MEDIUM,
                 headingLevel = 4,
@@ -98,7 +108,7 @@ class ElementMatcherTest {
     @Test
     fun testHeaderMatcher2() {
         assertEquals(
-            AozoraElement.Heading(
+            MatchResult.BlockMatched(
                 indent = 6,
                 style = AozoraTextStyle.HEADING_MEDIUM,
                 headingLevel = 4,
@@ -131,7 +141,7 @@ class ElementMatcherTest {
                     """.trimIndent()
                 ).parseAsHtmlNodes().first(),
             )
-        assertIs<SpecialParagraph>(result)
+        assertIs<MatchResult.BlockMatched>(result)
         assertEquals(4, result.indent)
         assertEquals(27, result.maxLength)
     }
@@ -149,7 +159,7 @@ class ElementMatcherTest {
                     """.trimIndent()
                 ).parseAsHtmlNodes().first(),
             )
-        assertIs<SpecialParagraph>(result)
+        assertIs<MatchResult.BlockMatched>(result)
         assertEquals(2, result.indent)
         assertEquals(null, result.maxLength)
     }

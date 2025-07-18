@@ -8,16 +8,19 @@ import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.parser.html.ElementMatcher
+import me.andannn.aozora.core.pagesource.parser.html.MatchResult
 
 internal object ImageMatcher : ElementMatcher {
-    override fun match(node: Node): AozoraElement? {
-        if (node !is Element) return null
+    override fun match(node: Node): MatchResult {
+        if (node !is Element) return MatchResult.NotMatched
         if (node.tagName() != "img") {
-            return null
+            return MatchResult.NotMatched
         }
-        val width = node.attr("width").toIntOrNull() ?: return null
-        val height = node.attr("height").toIntOrNull() ?: return null
-        val src = node.attr("src") ?: return null
-        return AozoraElement.Illustration(src, width, height)
+        val width = node.attr("width").toIntOrNull() ?: return MatchResult.NotMatched
+        val height = node.attr("height").toIntOrNull() ?: return MatchResult.NotMatched
+        val src = node.attr("src") ?: return MatchResult.NotMatched
+        return MatchResult.ElementMatched(
+            AozoraElement.Illustration(src, width, height),
+        )
     }
 }

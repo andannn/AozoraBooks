@@ -12,14 +12,13 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.LayoutPage
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.core.domain.model.PageMetaData
-import me.andannn.aozora.core.pagesource.measure.ElementMeasureResult
-import me.andannn.aozora.core.pagesource.measure.ElementMeasurer
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
 
 private const val TAG = "ReaderPageBuilder"
 
 internal class LayoutPageBuilder(
     private val meta: PageMetaData,
-    private val measurer: ElementMeasurer,
+    private val textStyleCalculator: TextStyleCalculator,
     private val forceAddBlock: Boolean = false,
 ) {
     private val fullWidth: Dp = meta.renderWidth
@@ -32,49 +31,43 @@ internal class LayoutPageBuilder(
 
     private var isPageBreakAdded = false
 
-    fun tryAddBlock(block: AozoraBlock): FillResult {
-        Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
-        val remainingElements = block.elements.toMutableList()
+    fun tryAddBlock(block: AozoraBlock): FillResult =
+        with(ElementMeasureScope(block, textStyleCalculator)) {
+            Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
+            val remainingElements = block.elements.toMutableList()
 
-        while (remainingElements.isNotEmpty()) {
-            val element = remainingElements.first()
-            val result =
-                tryAddElement(
-                    element,
-                    lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
-                    maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
-                    sizeOf = { element ->
-                        measurer.measure(
-                            element,
-                            (block as? AozoraBlock.TextBlock)?.textStyle,
-                        )
-                    },
-                )
+            while (remainingElements.isNotEmpty()) {
+                val element = remainingElements.first()
+                val result =
+                    tryAddElement(
+                        element,
+                        lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
+                        maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
+                    )
 
-            when (result) {
-                is FillResult.FillContinue -> {
-                    remainingElements.removeAt(0) // 成功消费，移除
+                when (result) {
+                    is FillResult.FillContinue -> {
+                        remainingElements.removeAt(0) // 成功消费，移除
+                    }
+
+                    is FillResult.Filled -> {
+                        remainingElements.removeAt(0) // 继续消费本 element
+                        result.remainElement?.let { remainingElements.add(0, it) } // 还原未消费部分
+                        break
+                    }
                 }
+            }
 
-                is FillResult.Filled -> {
-                    remainingElements.removeAt(0) // 继续消费本 element
-                    result.remainElement?.let { remainingElements.add(0, it) } // 还原未消费部分
-                    break
-                }
+            return if (remainingElements.isEmpty()) {
+                FillResult.FillContinue
+            } else {
+                FillResult.Filled(remainBlock = block.copyWith(remainingElements))
             }
         }
 
-        return if (remainingElements.isEmpty()) {
-            FillResult.FillContinue
-        } else {
-            FillResult.Filled(remainBlock = block.copyWith(remainingElements))
-        }
-    }
-
-    fun tryAddElement(
+    private fun ElementMeasureScope.tryAddElement(
         element: AozoraElement,
         lineIndent: Int,
-        sizeOf: (AozoraElement) -> ElementMeasureResult,
         maxCharacterPerLine: Int? = null,
     ): FillResult {
         Napier.v(tag = TAG) { "tryAddElement E. element $element" }
@@ -88,7 +81,7 @@ internal class LayoutPageBuilder(
         }
 
         if (!forceAddBlock && lineBuilder == null) {
-            val measureResult = sizeOf(element)
+            val measureResult = measure(element)
             if (currentWidth + measureResult.widthDp > fullWidth) {
                 return FillResult.Filled(element)
             }
@@ -97,10 +90,12 @@ internal class LayoutPageBuilder(
         val lineBuilder =
             lineBuilder ?: LineBuilder(
                 maxDp = fullHeight,
-                initialIndent = lineIndent,
                 maxCharacterPerLine = maxCharacterPerLine,
-                measure = sizeOf,
-            ).also {
+            ).apply {
+                if (lineIndent > 0) {
+                    tryAdd(AozoraElement.Indent(lineIndent))
+                }
+            }.also {
                 lineBuilder = it
             }
 
@@ -112,24 +107,24 @@ internal class LayoutPageBuilder(
             is AozoraElement.Illustration,
             is AozoraElement.Emphasis,
             -> {
-                when (val result = lineBuilder.tryAdd(element)) {
-                    FillResult.FillContinue -> return result
-                    is FillResult.Filled -> {
-                        buildNewLine()
-                        val remainElement = result.remainElement
-                        return if (remainElement == null) {
-                            // The element is consumed by new line. return continue
-                            FillResult.FillContinue
-                        } else {
-                            tryAddElement(remainElement, lineIndent, sizeOf, maxCharacterPerLine)
+                with(lineBuilder) {
+                    when (val result = tryAdd(element)) {
+                        FillResult.FillContinue -> return result
+                        is FillResult.Filled -> {
+                            buildNewLine()
+                            val remainElement = result.remainElement
+                            return if (remainElement == null) {
+                                // The element is consumed by new line. return continue
+                                FillResult.FillContinue
+                            } else {
+                                tryAddElement(remainElement, lineIndent, maxCharacterPerLine)
+                            }
                         }
                     }
                 }
             }
 
             AozoraElement.PageBreak,
-            is AozoraElement.Heading,
-            is AozoraElement.SpecialParagraph,
             -> {
                 error("Never")
             }
