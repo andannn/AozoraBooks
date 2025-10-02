@@ -40,7 +40,7 @@ import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
 import me.andannn.aozora.core.pagesource.parser.html.parseAsHtmlNodes
 import me.andannn.aozora.core.pagesource.parser.lineSequence
 import me.andannn.aozora.core.pagesource.util.validBlock
-import me.andannn.core.util.downloadTo
+import me.andannn.core.util.downloadFileTo
 import me.andannn.core.util.readString
 import me.andannn.core.util.unzipTo
 import org.koin.mp.KoinPlatform.getKoin
@@ -222,7 +222,7 @@ private suspend fun downloadAndUnZip(
         zipUrl?.let {
             async {
                 val tempZipFilePath = Path("$savePath/temp.zip")
-                client.downloadTo(zipUrl, tempZipFilePath)
+                client.downloadFileTo(zipUrl, tempZipFilePath)
                 tempZipFilePath.unzipTo(savePath)
                 SystemFileSystem.delete(tempZipFilePath)
             }
@@ -232,7 +232,7 @@ private suspend fun downloadAndUnZip(
         htmlUrl?.let {
             async {
                 val tempHtmlFile = Path("$savePath/$TEMP_HTML")
-                client.downloadTo(htmlUrl, tempHtmlFile)
+                client.downloadFileTo(htmlUrl, tempHtmlFile)
             }
         }
 

@@ -5,8 +5,10 @@
 package me.andannn.aozora.core.util
 
 import me.andannn.core.util.parseBookSourceAsAnnotatedString
+import kotlin.test.Test
 
 class HtmlUtilTest {
+    @Test
     fun parseHtmlAsAnnotatedStringTest() {
         val string =
             parseBookSourceAsAnnotatedString(

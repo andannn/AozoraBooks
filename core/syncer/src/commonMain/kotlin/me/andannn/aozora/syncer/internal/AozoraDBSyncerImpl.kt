@@ -26,7 +26,7 @@ import me.andannn.aozora.syncer.internal.util.logSyncEvent
 import me.andannn.aozora.syncer.internal.util.parseAsBookIdWithBookCategory
 import me.andannn.aozora.syncer.internal.util.parseAsBookModel
 import me.andannn.aozora.syncer.internal.util.toEntity
-import me.andannn.core.util.downloadTo
+import me.andannn.core.util.downloadFileTo
 import me.andannn.core.util.unzipTo
 import me.andannn.core.util.writeToPath
 import me.andannn.platform.PlatformAnalytics
@@ -91,7 +91,7 @@ internal class AozoraDBSyncerImpl(
 
     private suspend fun syncWithAozoraServerData() {
         val csvZipPath = Path(getCachedCsvPath(), CSV_TEMP_ZIP_FILE_NAME)
-        getKoin().get<HttpClient>().downloadTo(CSV_ZIP_URL, csvZipPath)
+        getKoin().get<HttpClient>().downloadFileTo(CSV_ZIP_URL, csvZipPath)
 
         unzipCsvAndInsertToDB()
     }
