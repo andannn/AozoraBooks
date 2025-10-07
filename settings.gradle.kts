@@ -10,6 +10,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven("https://central.sonatype.com/repository/maven-snapshots/")
     }
 }
 dependencyResolutionManagement {

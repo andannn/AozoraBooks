@@ -13,9 +13,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
-import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.retained.collectAsRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
@@ -72,6 +73,7 @@ class ReaderOverlayPresenter(
     private val popupController: PopupController,
     private val uriHandler: UriHandler,
 ) : Presenter<ReaderOverlayState> {
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     override fun present(): ReaderOverlayState {
         var showOverlay by rememberSaveable {

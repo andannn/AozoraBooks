@@ -1,7 +1,7 @@
 [versions]
 agp = "8.10.1"
-circuit = "0.27.1"
-kotlin = "2.1.21"
+circuit = "0.30.0"
+kotlin = "2.2.20"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -14,9 +14,9 @@ napierVersion = "2.7.1"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutines = "1.10.2"
 kotlinxSerializationJson = "1.8.1"
-ksp = "2.1.21-2.0.2"
+ksp = "2.2.20-2.0.2"
 androidGradlePlugin = "8.11.1"
-compose-plugin = "1.7.3"
+compose-plugin = "1.9.0"
 koin-bom = "4.0.4"
 kotlinxDatetime = "0.7.0-0.6.x-compat"
 ksoup = "0.2.4"
@@ -29,7 +29,7 @@ androidxDatastore = "1.1.7"
 pagingCommonVersion = "3.3.6"
 playServicesAds = "24.6.0"
 spotless = "7.1.0"
-androidxRoom = "2.7.2"
+androidxRoom = "2.8.1"
 sqliteBundled = "2.5.2"
 androidxTestRunner = "1.6.2"
 testCoreKtx = "1.6.1"
@@ -91,6 +91,8 @@ androidx-test-runner = { group = "androidx.test", name = "runner", version.ref =
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "testCoreKtx" }
 androidx-test-monitor = { group = "androidx.test", name = "monitor", version.ref = "testMonitor" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+ui-backhandler = { group = "org.jetbrains.compose.ui", name = "ui-backhandler", version.ref = "compose-plugin" }
+
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

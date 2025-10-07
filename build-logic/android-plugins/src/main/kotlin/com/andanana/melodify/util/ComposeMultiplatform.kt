@@ -28,6 +28,7 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
                 implementation(libs.findLibrary("circuit.foundation").get())
+                implementation(libs.findLibrary("ui.backhandler").get())
             }
 
             commonTest.dependencies {

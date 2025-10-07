@@ -12,7 +12,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -20,7 +22,6 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.animation.AnimatedNavEvent
 import com.slack.circuit.foundation.animation.AnimatedNavState
 import com.slack.circuit.foundation.animation.AnimatedScreenTransform
-import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.ExperimentalCircuitApi
 import com.slack.circuit.runtime.presenter.Presenter
@@ -41,6 +42,7 @@ import org.koin.mp.KoinPlatform.getKoin
 
 private const val TAG = "AozoraBooksApp"
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AozoraBooksApp(
     modifier: Modifier = Modifier,
@@ -102,10 +104,11 @@ internal fun buildCircuit(
         .addAnimatedScreenTransforms(
             transforms =
                 mapOf(
-                    SearchNestedScreen::class to CustomScreenAnimatedTransform,
-                    LibraryNestedScreen::class to CustomScreenAnimatedTransform,
+                    SearchNestedScreen::class to FadeInOutAnimatedTransform,
+                    LibraryNestedScreen::class to FadeInOutAnimatedTransform,
                 ),
-        ).build()
+        )
+        .build()
 
 private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
     logEvent(
@@ -118,14 +121,12 @@ private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
 }
 
 @OptIn(ExperimentalCircuitApi::class)
-object CustomScreenAnimatedTransform : AnimatedScreenTransform {
+object FadeInOutAnimatedTransform : AnimatedScreenTransform {
     override fun AnimatedContentTransitionScope<AnimatedNavState>.enterTransition(animatedNavEvent: AnimatedNavEvent): EnterTransition? {
-        // Coming from `HomeScreen` we override the transition to slide in horizontally.
-        return if (initialState.screen is SearchNestedScreen || initialState.screen is LibraryNestedScreen) fadeIn() else null
+        return fadeIn()
     }
 
     override fun AnimatedContentTransitionScope<AnimatedNavState>.exitTransition(animatedNavEvent: AnimatedNavEvent): ExitTransition? {
-        // Going to `HomeScreen` we override the transition fade out.
-        return if (initialState.screen is SearchNestedScreen || initialState.screen is LibraryNestedScreen) fadeOut() else null
+        return fadeOut()
     }
 }

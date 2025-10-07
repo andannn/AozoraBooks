@@ -25,10 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.internal.BackHandler
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.popUntil
 import com.slack.circuit.runtime.screen.Screen
@@ -48,6 +49,7 @@ fun Home(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
