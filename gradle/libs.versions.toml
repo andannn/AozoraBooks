@@ -1,6 +1,6 @@
 [versions]
 agp = "8.10.1"
-circuit = "0.30.0"
+circuit = "0.31.0"
 kotlin = "2.2.21"
 coreKtx = "1.16.0"
 junit = "4.13.2"
