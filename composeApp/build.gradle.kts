@@ -62,6 +62,7 @@ kotlin {
             implementation(project(":ui:feature"))
             implementation(libs.napier)
             implementation(libs.circuit.foundation)
+            implementation(libs.nav3.ui)
         }
 
         androidMain.dependencies {

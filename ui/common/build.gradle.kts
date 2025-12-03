@@ -7,6 +7,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:domain"))
+            api(libs.retainedmodel)
+            api(libs.nav3.runtime)
             api(project(":core:platform"))
         }
 

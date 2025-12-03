@@ -13,6 +13,7 @@ kotlin {
             implementation(project(":core:util"))
             implementation(libs.androidx.paging.common)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.nav3.runtime)
         }
     }
 }
