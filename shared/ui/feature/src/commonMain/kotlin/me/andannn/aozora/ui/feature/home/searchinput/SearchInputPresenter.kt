@@ -12,28 +12,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.SearchResultScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberSearchInputPresenter(
+fun retainSearchInputPresenter(
     initialParam: String?,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     localNavigator: Navigator = LocalNavigator.current,
-) = remember(
+) = retainRetainedModel(
     initialParam,
     aozoraContentsRepository,
     localNavigator,
 ) {
     SearchInputPresenter(
         initialParam = initialParam,
-        aozoraContentsRepository = aozoraContentsRepository,
         localNavigator = localNavigator,
     )
 }
@@ -42,12 +42,12 @@ private const val TAG = "SearchInputPresenter"
 
 class SearchInputPresenter(
     private val initialParam: String?,
-    private val aozoraContentsRepository: AozoraContentsRepository,
     private val localNavigator: Navigator,
-) : Presenter<SearchInputState> {
+) : RetainedModel(),
+    Presenter<SearchInputState> {
     @Composable
     override fun present(): SearchInputState {
-        var inputText by rememberRetained {
+        var inputText by remember {
             mutableStateOf(
                 TextFieldValue(
                     text = initialParam ?: "",
@@ -59,7 +59,10 @@ class SearchInputPresenter(
             inputText = inputText,
         ) { event ->
             when (event) {
-                SearchInputUiEvent.Back -> localNavigator.pop()
+                SearchInputUiEvent.Back -> {
+                    localNavigator.pop()
+                }
+
                 is SearchInputUiEvent.OnValueChange -> {
                     inputText = event.value
                 }

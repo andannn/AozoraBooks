@@ -8,8 +8,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -17,11 +15,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
-import com.slack.circuit.retained.collectAsRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
@@ -44,7 +45,7 @@ import org.koin.mp.KoinPlatform.getKoin
 private const val TAG = "ReaderOverlayPresenter"
 
 @Composable
-fun rememberReaderOverlayPresenter(
+fun retainReaderOverlayPresenter(
     cardId: String,
     authorId: String,
     bookPageState: BookPageState,
@@ -52,7 +53,7 @@ fun rememberReaderOverlayPresenter(
     navigator: Navigator = RootNavigator.current,
     popupController: PopupController = LocalPopupController.current,
     uriHandler: UriHandler = LocalUriHandler.current,
-) = remember(cardId, authorId, settingRepository, bookPageState, popupController, navigator, uriHandler) {
+) = retainRetainedModel(cardId, authorId, settingRepository, bookPageState, popupController, navigator, uriHandler) {
     ReaderOverlayPresenter(
         cardId,
         authorId,
@@ -72,23 +73,40 @@ class ReaderOverlayPresenter(
     private val bookPageState: BookPageState,
     private val popupController: PopupController,
     private val uriHandler: UriHandler,
-) : Presenter<ReaderOverlayState> {
+) : RetainedModel(),
+    Presenter<ReaderOverlayState> {
+    val userMarkCompletedFlow =
+        userDataRepository
+            .isUserMarkCompletedFlow(cardId)
+            .stateIn(
+                retainedScope,
+                started =
+                    kotlinx.coroutines.flow.SharingStarted
+                        .WhileSubscribed(1000),
+                false,
+            )
+    val savedBookCardFlow =
+        userDataRepository
+            .getSavedBookById(bookId = cardId, authorId = authorId)
+            .stateIn(
+                retainedScope,
+                started =
+                    kotlinx.coroutines.flow.SharingStarted
+                        .WhileSubscribed(1000),
+                null,
+            )
+
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     override fun present(): ReaderOverlayState {
         var showOverlay by rememberSaveable {
             mutableStateOf(false)
         }
-        val scope = rememberCoroutineScope()
-        val userMarkCompleted by userDataRepository
-            .isUserMarkCompletedFlow(cardId)
-            .collectAsRetainedState(false)
+        val userMarkCompleted by userMarkCompletedFlow.collectAsStateWithLifecycle()
         val isLastPage by rememberUpdatedState(
             bookPageState.pagerState.currentPage == bookPageState.pagerState.pageCount - 1,
         )
-        val savedBookCard by userDataRepository
-            .getSavedBookById(bookId = cardId, authorId = authorId)
-            .collectAsRetainedState(null)
+        val savedBookCard by savedBookCardFlow.collectAsStateWithLifecycle()
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         suspend fun markCompletedAndShowAlertDialog() {
@@ -110,7 +128,7 @@ class ReaderOverlayPresenter(
 
         BackHandler(enabled = isAddedToShelf && isLastPage && !userMarkCompleted) {
             Napier.d(tag = TAG) { "back pressed when book completed" }
-            scope.launch {
+            retainedScope.launch {
                 markCompletedAndShowAlertDialog()
             }
         }
@@ -125,14 +143,14 @@ class ReaderOverlayPresenter(
             when (event) {
                 ReaderOverlayEvent.OnOpenFontSetting -> {
                     showOverlay = false
-                    scope.launch {
+                    retainedScope.launch {
                         popupController.showDialog(ReaderSettingDialogId)
                     }
                 }
 
                 ReaderOverlayEvent.OnOpenTableOfContents -> {
                     showOverlay = false
-                    scope.launch {
+                    retainedScope.launch {
                         val result = popupController.showDialog(TableOfContentsDialogId)
                         Napier.d(tag = TAG) { "on jump to result $result" }
                         if (result is OnJumpTo) {
@@ -146,7 +164,7 @@ class ReaderOverlayPresenter(
                 }
 
                 ReaderOverlayEvent.OnBack -> {
-                    scope.launch {
+                    retainedScope.launch {
                         if (isAddedToShelf && isLastPage && !userMarkCompleted) {
                             markCompletedAndShowAlertDialog()
                         } else {

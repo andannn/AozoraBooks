@@ -6,23 +6,26 @@ package me.andannn.aozora.ui.feature.license
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
-import com.slack.circuit.retained.produceRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.LibraryInfo
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 
 @Composable
-fun rememberLicensePresenter(
+fun retainLicensePresenter(
     navigator: Navigator = RootNavigator.current,
     uriHandler: UriHandler = LocalUriHandler.current,
-) = remember(
+) = retainRetainedModel(
     navigator,
     uriHandler,
 ) {
@@ -35,13 +38,19 @@ fun rememberLicensePresenter(
 class LicensePresenter(
     private val navigator: Navigator,
     private val uriHandler: UriHandler,
-) : Presenter<LicenseState> {
+) : RetainedModel(),
+    Presenter<LicenseState> {
+    val licenseListFLow = MutableStateFlow(emptyList<LibraryInfo>())
+
+    init {
+        retainedScope.launch {
+            licenseListFLow.value = getLicenseInfo()
+        }
+    }
+
     @Composable
     override fun present(): LicenseState {
-        val licenseList =
-            produceRetainedState(emptyList<LibraryInfo>()) {
-                value = getLicenseInfo()
-            }
+        val licenseList = licenseListFLow.collectAsStateWithLifecycle()
 
         return LicenseState(
             licenseList = licenseList.value.toImmutableList(),

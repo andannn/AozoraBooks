@@ -29,6 +29,18 @@ import me.andannn.platform.showPlatformAd
 
 @Composable
 fun IndexPages(
+    kana: String,
+    presenter: IndexPagesPresenter = retainIndexPagesPresenter(kana),
+    modifier: Modifier = Modifier,
+) {
+    IndexPages(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun IndexPages(
     state: IndexPagesState,
     modifier: Modifier = Modifier,
 ) {

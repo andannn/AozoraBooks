@@ -29,15 +29,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.slack.circuit.retained.collectAsRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
@@ -67,37 +70,53 @@ object ReaderSettingDialogId : DialogId {
 }
 
 @Composable
-fun rememberReaderSettingDialogPresenter(settingRepository: UserDataRepository = getKoin().get()) =
-    remember(settingRepository) {
+fun retainReaderSettingDialogPresenter(settingRepository: UserDataRepository = getKoin().get()) =
+    retainRetainedModel(settingRepository) {
         ReaderSettingDialogPresenter(settingRepository)
     }
 
 class ReaderSettingDialogPresenter(
     private val settingRepository: UserDataRepository,
-) : Presenter<ReaderSettingState> {
+) : RetainedModel(),
+    Presenter<ReaderSettingState> {
+    val fontSizeFlow =
+        settingRepository.getFontSizeLevel().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            FontSizeLevel.DEFAULT,
+        )
+    val fontTypeFlow =
+        settingRepository.getFontFontType().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            FontType.DEFAULT,
+        )
+    val topMarginFlow =
+        settingRepository.getTopMargin().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            TopMargin.DEFAULT,
+        )
+    val lineSpacingFlow =
+        settingRepository.getLineSpacing().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            LineSpacing.DEFAULT,
+        )
+    val themeFlow =
+        settingRepository.getReaderTheme().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            ReaderTheme.DEFAULT,
+        )
+
     @Composable
     override fun present(): ReaderSettingState {
-        val scope = rememberCoroutineScope()
-        val fontSize =
-            settingRepository.getFontSizeLevel().collectAsRetainedState(
-                FontSizeLevel.DEFAULT,
-            )
-        val fontType =
-            settingRepository.getFontFontType().collectAsRetainedState(
-                FontType.DEFAULT,
-            )
-        val topMargin =
-            settingRepository.getTopMargin().collectAsRetainedState(
-                TopMargin.DEFAULT,
-            )
-        val lineSpacing =
-            settingRepository.getLineSpacing().collectAsRetainedState(
-                LineSpacing.DEFAULT,
-            )
-        val theme =
-            settingRepository.getReaderTheme().collectAsRetainedState(
-                ReaderTheme.DEFAULT,
-            )
+        val fontSize = fontSizeFlow.collectAsStateWithLifecycle()
+        val fontType = fontTypeFlow.collectAsStateWithLifecycle()
+        val topMargin = topMarginFlow.collectAsStateWithLifecycle()
+        val lineSpacing = lineSpacingFlow.collectAsStateWithLifecycle()
+        val theme = themeFlow.collectAsStateWithLifecycle()
 
         return ReaderSettingState(
             fontSizeLevel = fontSize.value,
@@ -108,31 +127,34 @@ class ReaderSettingDialogPresenter(
             eventSink = {
                 when (it) {
                     is ReaderSettingUiEvent.OnChangeFontSize -> {
-                        scope.launch {
+                        retainedScope.launch {
                             settingRepository.setFontSizeLevel(it.fontSizeLevel)
                         }
                     }
 
                     is ReaderSettingUiEvent.OnChangeFontType -> {
-                        scope.launch {
+                        retainedScope.launch {
                             settingRepository.setFontType(it.fontType)
                         }
                     }
 
-                    is ReaderSettingUiEvent.OnChangeLineSpacing ->
-                        scope.launch {
+                    is ReaderSettingUiEvent.OnChangeLineSpacing -> {
+                        retainedScope.launch {
                             settingRepository.setLineSpacing(it.lineSpacing)
                         }
+                    }
 
-                    is ReaderSettingUiEvent.OnChangeReaderTheme ->
-                        scope.launch {
+                    is ReaderSettingUiEvent.OnChangeReaderTheme -> {
+                        retainedScope.launch {
                             settingRepository.setReaderTheme(it.readerTheme)
                         }
+                    }
 
-                    is ReaderSettingUiEvent.OnChangeTopMargin ->
-                        scope.launch {
+                    is ReaderSettingUiEvent.OnChangeTopMargin -> {
+                        retainedScope.launch {
                             settingRepository.setTopMargin(it.topMargin)
                         }
+                    }
                 }
             },
         )
@@ -173,7 +195,7 @@ sealed interface ReaderSettingUiEvent {
 
 @Composable
 internal fun ReaderSettingDialog() {
-    val state = rememberReaderSettingDialogPresenter().present()
+    val state = retainReaderSettingDialogPresenter().present()
     val currentSelectIndex =
         remember {
             mutableStateOf(0)
@@ -215,7 +237,7 @@ fun ReaderSettingDialogContent(
             }
         }
         when (TabRowItem.entries[currentSelectIndex]) {
-            TabRowItem.FONT ->
+            TabRowItem.FONT -> {
                 FontSetting(
                     fontSizeLevel = state.fontSizeLevel,
                     fontType = state.fontType,
@@ -226,6 +248,7 @@ fun ReaderSettingDialogContent(
                         state.eventSink.invoke(ReaderSettingUiEvent.OnChangeFontType(it))
                     },
                 )
+            }
 
             TabRowItem.LAYOUT -> {
                 LayoutSetting(

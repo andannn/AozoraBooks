@@ -6,22 +6,25 @@ package me.andannn.aozora.ui.feature.home.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.foundation.rememberAnsweringNavigator
-import com.slack.circuit.retained.produceRetainedState
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.core.domain.model.NdcData
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
-import me.andannn.aozora.ui.common.navigator.RootNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorPagesScreen
 import me.andannn.aozora.ui.feature.common.screens.IndexPageScreen
 import me.andannn.aozora.ui.feature.common.screens.NdcContentScreen
@@ -30,18 +33,15 @@ import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberSearchPresenter(
-    rootNavigator: Navigator = RootNavigator.current,
+fun retainSearchPresenter(
     localNavigator: Navigator = LocalNavigator.current,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
 ): SearchPresenter =
-    remember(
-        rootNavigator,
+    retainRetainedModel(
         localNavigator,
         aozoraContentsRepository,
     ) {
         SearchPresenter(
-            rootNavigator = rootNavigator,
             localNavigator = localNavigator,
             aozoraContentsRepository = aozoraContentsRepository,
         )
@@ -50,10 +50,27 @@ fun rememberSearchPresenter(
 private const val TAG = "SearchPresenter"
 
 class SearchPresenter(
-    private val rootNavigator: Navigator,
     private val localNavigator: Navigator,
     private val aozoraContentsRepository: AozoraContentsRepository,
-) : Presenter<SearchState> {
+) : RetainedModel(),
+    Presenter<SearchState> {
+    val ndcRootCategoryListFlow = MutableStateFlow<ImmutableList<NdcData>>(persistentListOf())
+
+    init {
+        retainedScope.launch {
+            val ndcClassificationList =
+                List(10) { index ->
+                    NDCClassification(index.toString())
+                }
+
+            ndcRootCategoryListFlow.value =
+                ndcClassificationList
+                    .mapNotNull {
+                        aozoraContentsRepository.getNDCDetails(it)
+                    }.toImmutableList()
+        }
+    }
+
     @Composable
     override fun present(): SearchState {
         val searchInputNavigator =
@@ -62,22 +79,10 @@ class SearchPresenter(
                 // Navigate to search result Page.
             }
 
-        val ndcRootCategoryList =
-            produceRetainedState(persistentListOf()) {
-                val ndcClassificationList =
-                    List(10) { index ->
-                        NDCClassification(index.toString())
-                    }
-
-                value =
-                    ndcClassificationList
-                        .mapNotNull {
-                            aozoraContentsRepository.getNDCDetails(it)
-                        }.toImmutableList()
-            }
+        val ndcRootCategoryList by ndcRootCategoryListFlow.collectAsStateWithLifecycle()
 
         return SearchState(
-            ndcRootCategoryList = ndcRootCategoryList.value,
+            ndcRootCategoryList = ndcRootCategoryList,
         ) { event ->
             when (event) {
                 is SearchUiEvent.OnClickKanaItem -> {

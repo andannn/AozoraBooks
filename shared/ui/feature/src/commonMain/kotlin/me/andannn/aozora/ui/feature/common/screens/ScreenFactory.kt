@@ -13,43 +13,43 @@ import com.slack.circuit.runtime.ui.Ui
 import com.slack.circuit.runtime.ui.ui
 import me.andannn.aozora.ui.feature.about.About
 import me.andannn.aozora.ui.feature.about.AboutState
-import me.andannn.aozora.ui.feature.about.rememberAboutPresenter
+import me.andannn.aozora.ui.feature.about.retainAboutPresenter
 import me.andannn.aozora.ui.feature.author.Author
 import me.andannn.aozora.ui.feature.author.AuthorState
-import me.andannn.aozora.ui.feature.author.rememberAuthorPresenter
+import me.andannn.aozora.ui.feature.author.retainAuthorPresenter
 import me.andannn.aozora.ui.feature.authorpages.AuthorPages
 import me.andannn.aozora.ui.feature.authorpages.AuthorPagesState
-import me.andannn.aozora.ui.feature.authorpages.rememberAuthorPagesPresenter
+import me.andannn.aozora.ui.feature.authorpages.retainAuthorPagesPresenter
 import me.andannn.aozora.ui.feature.bookcard.BookCard
 import me.andannn.aozora.ui.feature.bookcard.BookCardState
-import me.andannn.aozora.ui.feature.bookcard.rememberBookCardPresenter
+import me.andannn.aozora.ui.feature.bookcard.retainBookCardPresenter
 import me.andannn.aozora.ui.feature.home.Home
 import me.andannn.aozora.ui.feature.home.HomeState
 import me.andannn.aozora.ui.feature.home.library.Library
 import me.andannn.aozora.ui.feature.home.library.LibraryState
-import me.andannn.aozora.ui.feature.home.library.rememberLibraryPresenter
-import me.andannn.aozora.ui.feature.home.rememberHomePresenter
+import me.andannn.aozora.ui.feature.home.library.retainLibraryPresenter
+import me.andannn.aozora.ui.feature.home.retainHomePresenter
 import me.andannn.aozora.ui.feature.home.search.Search
 import me.andannn.aozora.ui.feature.home.search.SearchState
-import me.andannn.aozora.ui.feature.home.search.rememberSearchPresenter
+import me.andannn.aozora.ui.feature.home.search.retainSearchPresenter
 import me.andannn.aozora.ui.feature.home.searchinput.SearchInput
 import me.andannn.aozora.ui.feature.home.searchinput.SearchInputState
-import me.andannn.aozora.ui.feature.home.searchinput.rememberSearchInputPresenter
+import me.andannn.aozora.ui.feature.home.searchinput.retainSearchInputPresenter
 import me.andannn.aozora.ui.feature.home.searchresult.SearchResult
 import me.andannn.aozora.ui.feature.home.searchresult.SearchResultState
-import me.andannn.aozora.ui.feature.home.searchresult.rememberSearchResultPresenter
+import me.andannn.aozora.ui.feature.home.searchresult.retainSearchResultPresenter
 import me.andannn.aozora.ui.feature.indexpages.IndexPages
 import me.andannn.aozora.ui.feature.indexpages.IndexPagesState
-import me.andannn.aozora.ui.feature.indexpages.rememberIndexPagesPresenter
+import me.andannn.aozora.ui.feature.indexpages.retainIndexPagesPresenter
 import me.andannn.aozora.ui.feature.license.License
 import me.andannn.aozora.ui.feature.license.LicenseState
-import me.andannn.aozora.ui.feature.license.rememberLicensePresenter
+import me.andannn.aozora.ui.feature.license.retainLicensePresenter
 import me.andannn.aozora.ui.feature.ndc.NdcContent
 import me.andannn.aozora.ui.feature.ndc.NdcContentState
-import me.andannn.aozora.ui.feature.ndc.rememberNdcContentPresenter
+import me.andannn.aozora.ui.feature.ndc.retainNdcContentPresenter
 import me.andannn.aozora.ui.feature.reader.Reader
 import me.andannn.aozora.ui.feature.reader.ReaderState
-import me.andannn.aozora.ui.feature.reader.rememberReaderPresenter
+import me.andannn.aozora.ui.feature.reader.retainReaderPresenter
 
 object RouteUiFactory : Ui.Factory {
     override fun create(
@@ -57,15 +57,17 @@ object RouteUiFactory : Ui.Factory {
         context: CircuitContext,
     ): Ui<*>? =
         when (screen) {
-            is HomeScreen ->
+            is HomeScreen -> {
                 ui<HomeState> { state, modifier ->
                     Home(state, modifier)
                 }
+            }
 
-            is ReaderScreen ->
+            is ReaderScreen -> {
                 ui<ReaderState> { state, modifier ->
                     Reader(state, modifier)
                 }
+            }
 
             is IndexPageScreen -> {
                 ui<IndexPagesState> { state, modifier ->
@@ -91,15 +93,17 @@ object RouteUiFactory : Ui.Factory {
                 }
             }
 
-            is LicenseScreen ->
+            is LicenseScreen -> {
                 ui<LicenseState> { state, modifier ->
                     License(state, modifier)
                 }
+            }
 
-            is AboutScreen ->
+            is AboutScreen -> {
                 ui<AboutState> { state, modifier ->
                     About(state, modifier)
                 }
+            }
 
             is AuthorPagesScreen -> {
                 ui<AuthorPagesState> { state, modifier ->
@@ -131,7 +135,9 @@ object RouteUiFactory : Ui.Factory {
                 }
             }
 
-            else -> null
+            else -> {
+                null
+            }
         }
 }
 
@@ -142,25 +148,27 @@ object RoutePresenterFactory : Presenter.Factory {
         context: CircuitContext,
     ): Presenter<*>? =
         when (screen) {
-            is HomeScreen ->
+            is HomeScreen -> {
                 presenterOf {
-                    rememberHomePresenter().present()
+                    retainHomePresenter().present()
                 }
+            }
 
-            is ReaderScreen ->
+            is ReaderScreen -> {
                 presenterOf {
-                    rememberReaderPresenter(screen.cardId, screen.authorId).present()
+                    retainReaderPresenter(screen.cardId, screen.authorId).present()
                 }
+            }
 
             is IndexPageScreen -> {
                 presenterOf {
-                    rememberIndexPagesPresenter(screen.kana).present()
+                    retainIndexPagesPresenter(screen.kana).present()
                 }
             }
 
             is BookCardScreen -> {
                 presenterOf {
-                    rememberBookCardPresenter(
+                    retainBookCardPresenter(
                         groupId = screen.groupId,
                         bookId = screen.bookCardId,
                     ).present()
@@ -169,54 +177,60 @@ object RoutePresenterFactory : Presenter.Factory {
 
             is LibraryNestedScreen -> {
                 presenterOf {
-                    rememberLibraryPresenter().present()
+                    retainLibraryPresenter().present()
                 }
             }
 
             is SearchNestedScreen -> {
                 presenterOf {
-                    rememberSearchPresenter().present()
+                    retainSearchPresenter().present()
                 }
             }
 
-            is LicenseScreen ->
+            is LicenseScreen -> {
                 presenterOf {
-                    rememberLicensePresenter().present()
+                    retainLicensePresenter().present()
                 }
+            }
 
-            is AboutScreen ->
+            is AboutScreen -> {
                 presenterOf {
-                    rememberAboutPresenter().present()
+                    retainAboutPresenter().present()
                 }
+            }
 
             is AuthorPagesScreen -> {
                 presenterOf {
-                    rememberAuthorPagesPresenter(screen.code).present()
+                    retainAuthorPagesPresenter(screen.code).present()
                 }
             }
 
             is AuthorScreen -> {
                 presenterOf {
-                    rememberAuthorPresenter(screen.authorId).present()
+                    retainAuthorPresenter(screen.authorId).present()
                 }
             }
 
             is SearchInputScreen -> {
                 presenterOf {
-                    rememberSearchInputPresenter(screen.initialParam).present()
+                    retainSearchInputPresenter(screen.initialParam).present()
                 }
             }
 
-            is SearchResultScreen ->
+            is SearchResultScreen -> {
                 presenterOf {
-                    rememberSearchResultPresenter(screen.query).present()
+                    retainSearchResultPresenter(screen.query).present()
                 }
+            }
 
             is NdcContentScreen -> {
                 presenterOf {
-                    rememberNdcContentPresenter(screen.ndc).present()
+                    retainNdcContentPresenter(screen.ndc).present()
                 }
             }
-            else -> null
+
+            else -> {
+                null
+            }
         }
 }

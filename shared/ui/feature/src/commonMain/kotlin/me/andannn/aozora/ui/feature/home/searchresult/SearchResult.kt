@@ -42,6 +42,18 @@ import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 
 @Composable
 fun SearchResult(
+    query: String,
+    presenter: SearchResultPresenter = retainSearchResultPresenter(query),
+    modifier: Modifier = Modifier,
+) {
+    SearchResult(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun SearchResult(
     state: SearchResultState,
     modifier: Modifier = Modifier,
 ) {

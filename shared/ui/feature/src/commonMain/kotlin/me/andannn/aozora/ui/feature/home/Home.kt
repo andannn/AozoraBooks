@@ -40,6 +40,17 @@ import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 
 @Composable
 fun Home(
+    modifier: Modifier = Modifier,
+    presenter: HomePresenter = retainHomePresenter(),
+) {
+    Home(
+        modifier = modifier,
+        state = presenter.present(),
+    )
+}
+
+@Composable
+fun Home(
     state: HomeState,
     modifier: Modifier = Modifier,
 ) {

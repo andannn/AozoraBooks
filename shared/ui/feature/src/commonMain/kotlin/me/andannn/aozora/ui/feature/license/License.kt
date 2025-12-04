@@ -29,6 +29,17 @@ import me.andannn.aozora.core.domain.model.LibraryInfo
 
 @Composable
 fun License(
+    presenter: LicensePresenter = retainLicensePresenter(),
+    modifier: Modifier = Modifier,
+) {
+    License(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun License(
     state: LicenseState,
     modifier: Modifier = Modifier,
 ) {

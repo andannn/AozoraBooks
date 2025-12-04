@@ -35,6 +35,17 @@ import me.andannn.aozora.ui.common.widgets.PreviewBookCard
 
 @Composable
 fun Library(
+    presenter: LibraryPresenter = retainLibraryPresenter(),
+    modifier: Modifier = Modifier,
+) {
+    Library(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun Library(
     state: LibraryState,
     modifier: Modifier = Modifier,
 ) {

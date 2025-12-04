@@ -37,6 +37,18 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SearchInput(
+    initialParam: String?,
+    presenter: SearchInputPresenter = retainSearchInputPresenter(initialParam),
+    modifier: Modifier = Modifier,
+) {
+    SearchInput(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun SearchInput(
     state: SearchInputState,
     modifier: Modifier = Modifier,
 ) {

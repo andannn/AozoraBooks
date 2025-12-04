@@ -23,10 +23,27 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.internal.DefaultDialogController
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlay
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlayEvent
-import me.andannn.aozora.ui.feature.reader.overlay.rememberReaderOverlayPresenter
+import me.andannn.aozora.ui.feature.reader.overlay.retainReaderOverlayPresenter
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
-import me.andannn.aozora.ui.feature.reader.viewer.rememberBookViewerPresenter
+import me.andannn.aozora.ui.feature.reader.viewer.retainBookViewerPresenter
 import org.koin.mp.KoinPlatform.getKoin
+
+@Composable
+fun Reader(
+    cardId: String,
+    authorId: String,
+    presenter: ReaderPresenter =
+        retainReaderPresenter(
+            cardId = cardId,
+            authorId = authorId,
+        ),
+    modifier: Modifier = Modifier,
+) {
+    Reader(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun Reader(
@@ -71,13 +88,13 @@ private fun ReaderContent(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val viewerState =
-            rememberBookViewerPresenter(
+            retainBookViewerPresenter(
                 card = bookCard,
                 screenWidthDp = maxWidth,
                 screenHeightDp = maxHeight,
             ).present()
         val overlayState =
-            rememberReaderOverlayPresenter(
+            retainReaderOverlayPresenter(
                 bookCard.id,
                 bookCard.authorId,
                 viewerState.bookPageState,

@@ -7,14 +7,18 @@ package me.andannn.aozora.ui.feature.bookcard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.produceRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.NDCClassification
@@ -28,14 +32,14 @@ import me.andannn.aozora.ui.feature.common.screens.ReaderScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberBookCardPresenter(
+fun retainBookCardPresenter(
     groupId: String,
     bookId: String,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     userDataRepository: UserDataRepository = getKoin().get(),
     rootNavigator: Navigator = RootNavigator.current,
     localNavigator: Navigator = LocalNavigator.current,
-) = remember(
+) = retainRetainedModel(
     groupId,
     bookId,
     aozoraContentsRepository,
@@ -62,34 +66,52 @@ class BookCardPresenter(
     private val rootNavigator: Navigator,
     private val localNavigator: Navigator,
     private val userDataRepository: UserDataRepository,
-) : Presenter<BookCardState> {
-    @Composable
-    override fun present(): BookCardState {
-        val scope = rememberCoroutineScope()
-        val bookCardInfo by
-            produceRetainedState<AozoraBookCard?>(null) {
-                aozoraContentsRepository
-                    .getBookCard(
-                        cardId = bookId,
-                        authorId = groupId,
-                    ).filterNotNull()
-                    .collect {
-                        value = it
-                    }
-            }
-        val savedBookCard by userDataRepository
+) : RetainedModel(),
+    Presenter<BookCardState> {
+    val bookCardInfoFlow = MutableStateFlow<AozoraBookCard?>(null)
+    val savedBookCardFlow =
+        userDataRepository
             .getSavedBookById(bookId, authorId = groupId)
-            .collectAsRetainedState(null)
+            .stateIn(
+                retainedScope,
+                initialValue = null,
+                started = SharingStarted.WhileSubscribed(5000),
+            )
 
-        val ndcClassificationToDescription by produceRetainedState(emptyMap(), bookCardInfo) {
-            val categories = bookCardInfo?.categories ?: emptyList()
-            value =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val ndcClassificationToDescriptionFlow =
+        bookCardInfoFlow
+            .mapLatest { bookCardInfoOrNull ->
+                val categories = bookCardInfoOrNull?.categories ?: emptyList()
                 categories
                     .distinct()
                     .associateWith { ndcClassification ->
                         aozoraContentsRepository.getNDCDetails(ndcClassification)?.label ?: ""
                     }
+            }.stateIn(
+                retainedScope,
+                initialValue = emptyMap(),
+                started = SharingStarted.WhileSubscribed(5000),
+            )
+
+    init {
+        retainedScope.launch {
+            aozoraContentsRepository
+                .getBookCard(
+                    cardId = bookId,
+                    authorId = groupId,
+                ).filterNotNull()
+                .collect {
+                    bookCardInfoFlow.value = it
+                }
         }
+    }
+
+    @Composable
+    override fun present(): BookCardState {
+        val bookCardInfo by bookCardInfoFlow.collectAsStateWithLifecycle()
+        val savedBookCard by savedBookCardFlow.collectAsStateWithLifecycle()
+        val ndcClassificationToDescription by ndcClassificationToDescriptionFlow.collectAsStateWithLifecycle()
 
         return BookCardState(
             bookCardInfo = bookCardInfo,
@@ -97,9 +119,12 @@ class BookCardPresenter(
             isAddedToShelf = savedBookCard != null,
         ) { event ->
             when (event) {
-                BookCardUiEvent.Back -> localNavigator.pop()
+                BookCardUiEvent.Back -> {
+                    localNavigator.pop()
+                }
+
                 BookCardUiEvent.OnAddToShelf -> {
-                    scope.launch {
+                    retainedScope.launch {
                         if (savedBookCard != null) {
                             userDataRepository.deleteSavedBook(
                                 savedBookCard!!.id,

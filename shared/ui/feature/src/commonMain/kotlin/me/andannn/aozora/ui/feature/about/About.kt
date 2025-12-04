@@ -32,6 +32,17 @@ import me.andannn.platform.Platform
 
 @Composable
 fun About(
+    presenter: AboutPresenter = retainAboutPresenter(),
+    modifier: Modifier = Modifier,
+) {
+    About(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun About(
     state: AboutState,
     modifier: Modifier = Modifier,
 ) {

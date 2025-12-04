@@ -32,6 +32,18 @@ import me.andannn.core.util.removePrefixRecursive
 
 @Composable
 fun Author(
+    authorId: String,
+    presenter: AuthorPresenter = retainAuthorPresenter(authorId),
+    modifier: Modifier = Modifier,
+) {
+    Author(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun Author(
     state: AuthorState,
     modifier: Modifier = Modifier,
 ) {

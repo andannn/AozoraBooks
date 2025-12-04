@@ -7,12 +7,15 @@ package me.andannn.aozora.ui.feature.author
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import com.slack.circuit.retained.collectAsRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorWithBooks
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
@@ -21,11 +24,11 @@ import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberAuthorPresenter(
+fun retainAuthorPresenter(
     authorId: String,
     aozoraRepository: AozoraContentsRepository = getKoin().get(),
     navigator: Navigator = LocalNavigator.current,
-) = remember(
+) = retainRetainedModel(
     authorId,
     aozoraRepository,
     navigator,
@@ -39,12 +42,21 @@ class AuthorPresenter(
     private val authorId: String,
     private val aozoraRepository: AozoraContentsRepository,
     private val navigator: Navigator,
-) : Presenter<AuthorState> {
+) : RetainedModel(),
+    Presenter<AuthorState> {
+    val authorDataFlow =
+        aozoraRepository
+            .getAuthorDataWithBooks(authorId)
+            .stateIn(
+                retainedScope,
+                initialValue = null,
+                started = WhileSubscribed(5000),
+            )
+
     @Composable
     override fun present(): AuthorState {
         Napier.d(tag = TAG) { "present $authorId" }
-        val authorData by
-            aozoraRepository.getAuthorDataWithBooks(authorId).collectAsRetainedState(null)
+        val authorData by authorDataFlow.collectAsStateWithLifecycle()
         return AuthorState(
             authorId = authorId,
             authorData = authorData,

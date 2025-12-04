@@ -42,6 +42,17 @@ import me.andannn.platform.showPlatformAd
 
 @Composable
 fun Search(
+    presenter: SearchPresenter = retainSearchPresenter(),
+    modifier: Modifier = Modifier,
+) {
+    Search(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun Search(
     state: SearchState,
     modifier: Modifier = Modifier,
 ) {

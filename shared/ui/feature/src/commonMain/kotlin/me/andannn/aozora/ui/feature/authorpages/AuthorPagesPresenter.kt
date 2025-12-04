@@ -6,29 +6,28 @@ package me.andannn.aozora.ui.feature.authorpages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.model.KanaLineItem
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.AuthorScreen
-import me.andannn.core.util.rememberRetainedCoroutineScope
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberAuthorPagesPresenter(
+fun retainAuthorPagesPresenter(
     code: String,
     aozoraRepository: AozoraContentsRepository = getKoin().get(),
     navigator: Navigator = LocalNavigator.current,
-) = remember(
+) = retainRetainedModel(
     code,
     aozoraRepository,
     navigator,
@@ -42,15 +41,14 @@ class AuthorPagesPresenter(
     private val kanaLineItem: KanaLineItem,
     private val aozoraRepository: AozoraContentsRepository,
     private val navigator: Navigator,
-) : Presenter<AuthorPagesState> {
+) : RetainedModel(),
+    Presenter<AuthorPagesState> {
+    val pagingDataFlow =
+        aozoraRepository.getAuthorsPagingFlow(kanaLineItem).cachedIn(retainedScope)
+
     @Composable
     override fun present(): AuthorPagesState {
         Napier.d(tag = TAG) { "present $kanaLineItem" }
-        val scope = rememberRetainedCoroutineScope()
-        val pagingDataFlow =
-            rememberRetained {
-                aozoraRepository.getAuthorsPagingFlow(kanaLineItem).cachedIn(scope)
-            }
         val pagingData = pagingDataFlow.collectAsLazyPagingItems()
         return AuthorPagesState(
             kanaLineItem,

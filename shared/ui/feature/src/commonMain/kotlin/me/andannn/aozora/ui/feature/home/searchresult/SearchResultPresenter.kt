@@ -9,13 +9,17 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import com.slack.circuit.retained.produceRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
@@ -27,12 +31,12 @@ import me.andannn.aozora.ui.feature.common.screens.SearchInputScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberSearchResultPresenter(
+fun retainSearchResultPresenter(
     query: String,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
     localNavigator: Navigator = LocalNavigator.current,
     rootNavigator: Navigator = RootNavigator.current,
-) = remember(
+) = retainRetainedModel(
     query,
     aozoraContentsRepository,
     localNavigator,
@@ -42,7 +46,6 @@ fun rememberSearchResultPresenter(
         query = query,
         aozoraContentsRepository = aozoraContentsRepository,
         localNavigator = localNavigator,
-        rootNavigator = rootNavigator,
     )
 }
 
@@ -52,17 +55,12 @@ class SearchResultPresenter(
     private val query: String,
     private val aozoraContentsRepository: AozoraContentsRepository,
     private val localNavigator: Navigator,
-    private val rootNavigator: Navigator,
-) : Presenter<SearchResultState> {
-    @Composable
-    override fun present(): SearchResultState {
-        val searchCategories =
-            remember {
-                mutableStateListOf(SearchCategory.BOOK, SearchCategory.AUTHOR)
-            }
-        val loadState by produceRetainedState<LoadState>(
-            initialValue = LoadState.Loading,
-        ) {
+) : RetainedModel(),
+    Presenter<SearchResultState> {
+    val loadStateFlow = MutableStateFlow<LoadState>(LoadState.Loading)
+
+    init {
+        retainedScope.launch {
             val bookResultDeferred =
                 async {
                     aozoraContentsRepository.searchBooks("$query*")
@@ -73,7 +71,7 @@ class SearchResultPresenter(
                 }
             val bookResult = bookResultDeferred.await()
             val authorResult = authorResultDeferred.await()
-            value =
+            loadStateFlow.value =
                 if (bookResult.isEmpty() && authorResult.isEmpty()) {
                     LoadState.NoResult
                 } else {
@@ -83,6 +81,15 @@ class SearchResultPresenter(
                     )
                 }
         }
+    }
+
+    @Composable
+    override fun present(): SearchResultState {
+        val searchCategories =
+            remember {
+                mutableStateListOf(SearchCategory.BOOK, SearchCategory.AUTHOR)
+            }
+        val loadState by loadStateFlow.collectAsStateWithLifecycle()
 
         return SearchResultState(
             searchCategory = searchCategories.toImmutableList(),
@@ -90,15 +97,22 @@ class SearchResultPresenter(
             loadState = loadState,
         ) { event ->
             when (event) {
-                SearchResultUiEvent.Back -> localNavigator.pop()
-                is SearchResultUiEvent.OnAuthorClick -> localNavigator.goTo(AuthorScreen(event.author.authorId))
-                is SearchResultUiEvent.OnBookClick ->
+                SearchResultUiEvent.Back -> {
+                    localNavigator.pop()
+                }
+
+                is SearchResultUiEvent.OnAuthorClick -> {
+                    localNavigator.goTo(AuthorScreen(event.author.authorId))
+                }
+
+                is SearchResultUiEvent.OnBookClick -> {
                     localNavigator.goTo(
                         BookCardScreen(
                             event.book.id,
                             event.book.authorId,
                         ),
                     )
+                }
 
                 SearchResultUiEvent.OnTitleClick -> {
                     localNavigator.goTo(

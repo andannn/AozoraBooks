@@ -6,15 +6,16 @@ package me.andannn.aozora.ui.feature.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.ui.common.navigator.RootNavigator
 
 @Composable
-fun rememberHomePresenter(navigator: Navigator = RootNavigator.current) =
-    remember(
+fun retainHomePresenter(navigator: Navigator = RootNavigator.current) =
+    retainRetainedModel(
         navigator,
     ) {
         HomePresenter(
@@ -24,7 +25,8 @@ fun rememberHomePresenter(navigator: Navigator = RootNavigator.current) =
 
 class HomePresenter(
     private val navigator: Navigator,
-) : Presenter<HomeState> {
+) : RetainedModel(),
+    Presenter<HomeState> {
     @Composable
     override fun present(): HomeState =
         HomeState { event ->

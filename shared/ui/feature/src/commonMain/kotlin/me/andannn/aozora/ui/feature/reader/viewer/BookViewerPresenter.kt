@@ -20,16 +20,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.Dp
-import com.slack.circuit.retained.collectAsRetainedState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
@@ -55,7 +59,7 @@ import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberBookViewerPresenter(
+fun retainBookViewerPresenter(
     card: AozoraBookCard,
     screenWidthDp: Dp,
     screenHeightDp: Dp,
@@ -64,7 +68,14 @@ fun rememberBookViewerPresenter(
     uriHandler: UriHandler = LocalUriHandler.current,
     navigator: Navigator = RootNavigator.current,
     settingRepository: UserDataRepository = getKoin().get(),
-) = remember(card, bookSource, screenWidthDp, screenHeightDp, uriHandler, settingRepository) {
+) = retainRetainedModel(
+    card,
+    bookSource,
+    screenWidthDp,
+    screenHeightDp,
+    uriHandler,
+    settingRepository,
+) {
     BookViewerPresenter(
         card = card,
         bookSource = bookSource,
@@ -88,23 +99,56 @@ class BookViewerPresenter(
     private val popupController: PopupController,
     private val navigator: Navigator,
     private val uriHandler: UriHandler,
-) : Presenter<BookViewerState> {
+) : RetainedModel(),
+    Presenter<BookViewerState> {
+    val fontSizeFlow =
+        userDataRepository.getFontSizeLevel().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            FontSizeLevel.DEFAULT,
+        )
+    val fontTypeFlow =
+        userDataRepository.getFontFontType().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            FontType.DEFAULT,
+        )
+    val topMarginFlow =
+        userDataRepository.getTopMargin().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            TopMargin.DEFAULT,
+        )
+    val lineSpacingFlow =
+        userDataRepository.getLineSpacing().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            LineSpacing.DEFAULT,
+        )
+    val themeFlow =
+        userDataRepository.getReaderTheme().stateIn(
+            retainedScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            ReaderTheme.DEFAULT,
+        )
+
+    val savedBookCardFlow =
+        userDataRepository
+            .getSavedBookById(bookId = card.id, authorId = card.authorId)
+            .stateIn(
+                retainedScope,
+                started = SharingStarted.WhileSubscribed(1000),
+                null,
+            )
+
     @Composable
     override fun present(): BookViewerState {
-        val fontSize by userDataRepository
-            .getFontSizeLevel()
-            .collectAsRetainedState(FontSizeLevel.DEFAULT)
-        val fontType by userDataRepository
-            .getFontFontType()
-            .collectAsRetainedState(FontType.DEFAULT)
-        val theme by userDataRepository.getReaderTheme().collectAsRetainedState(ReaderTheme.DEFAULT)
-        val topMargin by userDataRepository.getTopMargin().collectAsRetainedState(TopMargin.DEFAULT)
-        val lineSpacing by userDataRepository
-            .getLineSpacing()
-            .collectAsRetainedState(LineSpacing.DEFAULT)
-        val savedBookCard by userDataRepository
-            .getSavedBookById(bookId = card.id, authorId = card.authorId)
-            .collectAsRetainedState(null)
+        val fontSize by fontSizeFlow.collectAsStateWithLifecycle()
+        val fontType by fontTypeFlow.collectAsStateWithLifecycle()
+        val topMargin by topMarginFlow.collectAsStateWithLifecycle()
+        val lineSpacing by lineSpacingFlow.collectAsStateWithLifecycle()
+        val theme by themeFlow.collectAsStateWithLifecycle()
+        val savedBookCard by savedBookCardFlow.collectAsStateWithLifecycle(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
 
         var snapshotState by remember {
@@ -215,7 +259,9 @@ class BookViewerPresenter(
                             navigator.pop()
                         }
 
-                        is PagerSnapShot.Ready -> snapshotState = it
+                        is PagerSnapShot.Ready -> {
+                            snapshotState = it
+                        }
                     }
                 }
         }

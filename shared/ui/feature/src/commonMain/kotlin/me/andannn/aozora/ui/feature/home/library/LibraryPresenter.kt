@@ -9,17 +9,18 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
-import com.slack.circuit.retained.collectAsRetainedState
-import com.slack.circuit.retained.rememberRetained
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.BookWithProgress
@@ -38,13 +39,13 @@ import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberLibraryPresenter(
+fun retainLibraryPresenter(
     localNavigator: Navigator = LocalNavigator.current,
     userDataRepository: UserDataRepository = getKoin().get(),
     rootNavigator: Navigator = RootNavigator.current,
     uriHandler: UriHandler = LocalUriHandler.current,
     popupController: PopupController = LocalPopupController.current,
-) = remember(
+) = retainRetainedModel(
     localNavigator,
     userDataRepository,
     rootNavigator,
@@ -60,19 +61,36 @@ class LibraryPresenter(
     private val rootNavigator: Navigator,
     private val uriHandler: UriHandler,
     private val popupController: PopupController,
-) : Presenter<LibraryState> {
+) : RetainedModel(),
+    Presenter<LibraryState> {
+    val notCompletedBooksFlow =
+        userDataRepository
+            .getAllNotCompletedBooks()
+            .stateIn(
+                retainedScope,
+                initialValue = emptyList(),
+                started =
+                    kotlinx.coroutines.flow.SharingStarted
+                        .WhileSubscribed(5000),
+            )
+    val completedBooksFlow =
+        userDataRepository
+            .getAllCompletedBooks()
+            .stateIn(
+                retainedScope,
+                initialValue = emptyList(),
+                started =
+                    kotlinx.coroutines.flow.SharingStarted
+                        .WhileSubscribed(5000),
+            )
+
     @Composable
     override fun present(): LibraryState {
-        val notCompletedBooks by userDataRepository
-            .getAllNotCompletedBooks()
-            .collectAsRetainedState(initial = emptyList())
-        val completedBooks by userDataRepository
-            .getAllCompletedBooks()
-            .collectAsRetainedState(initial = emptyList())
-        var currentTab by rememberRetained {
+        val notCompletedBooks by notCompletedBooksFlow.collectAsStateWithLifecycle()
+        val completedBooks by completedBooksFlow.collectAsStateWithLifecycle()
+        var currentTab by remember {
             mutableStateOf(TabItem.READING)
         }
-        val scope = rememberCoroutineScope()
         return LibraryState(
             currentTab = currentTab,
             notCompletedBooks = notCompletedBooks.toImmutableList(),
@@ -92,7 +110,7 @@ class LibraryPresenter(
                 }
 
                 is LibraryUiEvent.OnCardOptionClick -> {
-                    scope.launch {
+                    retainedScope.launch {
                         val result =
                             popupController.showBookOptionDialog(
                                 fromReadingTab = currentTab == TabItem.READING,

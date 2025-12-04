@@ -29,6 +29,18 @@ import me.andannn.platform.showPlatformAd
 
 @Composable
 fun AuthorPages(
+    code: String,
+    presenter: AuthorPagesPresenter = retainAuthorPagesPresenter(code),
+    modifier: Modifier = Modifier,
+) {
+    AuthorPages(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun AuthorPages(
     state: AuthorPagesState,
     modifier: Modifier = Modifier,
 ) {

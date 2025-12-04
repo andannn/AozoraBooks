@@ -48,6 +48,23 @@ private const val TAG = "BookCard"
 
 @Composable
 fun BookCard(
+    groupId: String,
+    bookId: String,
+    presenter: BookCardPresenter =
+        retainBookCardPresenter(
+            groupId = groupId,
+            bookId = bookId,
+        ),
+    modifier: Modifier = Modifier,
+) {
+    BookCard(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun BookCard(
     state: BookCardState,
     modifier: Modifier = Modifier,
 ) {

@@ -6,7 +6,8 @@ package me.andannn.aozora.ui.feature.ndc
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -15,6 +16,10 @@ import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.NDCClassification
 import me.andannn.aozora.core.domain.model.NDCType
@@ -23,15 +28,14 @@ import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
 import me.andannn.aozora.ui.feature.common.screens.NdcContentScreen
-import me.andannn.core.util.rememberRetainedCoroutineScope
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberNdcContentPresenter(
+fun retainNdcContentPresenter(
     ndcString: String,
     navigator: Navigator = LocalNavigator.current,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
-) = remember(
+) = retainRetainedModel(
     ndcString,
     navigator,
     aozoraContentsRepository,
@@ -47,13 +51,19 @@ class NdcContentPresenter(
     private val ndcClassification: NDCClassification,
     private val navigator: Navigator,
     private val aozoraContentsRepository: AozoraContentsRepository,
-) : Presenter<NdcContentState> {
+) : RetainedModel(),
+    Presenter<NdcContentState> {
+    val titleFlow = MutableStateFlow<String>("")
+
+    init {
+        retainedScope.launch {
+            titleFlow.value = aozoraContentsRepository.getNDCDetails(ndcClassification)?.label ?: ""
+        }
+    }
+
     @Composable
     override fun present(): NdcContentState {
-        val title =
-            produceRetainedState("") {
-                value = aozoraContentsRepository.getNDCDetails(ndcClassification)?.label ?: ""
-            }
+        val title by titleFlow.collectAsStateWithLifecycle()
         val isDetail = ndcClassification.ndcType == NDCType.SECTION
 
         val eventSink: (NdcContentUiEvent) -> Unit = { event ->
@@ -78,17 +88,16 @@ class NdcContentPresenter(
         }
 
         if (isDetail) {
-            val scope = rememberRetainedCoroutineScope()
             val pagingDataFlow =
                 rememberRetained {
                     aozoraContentsRepository
                         .getBookEntitiesOfNdcClassificationFlow(
                             ndcClassification,
-                        ).cachedIn(scope)
+                        ).cachedIn(retainedScope)
                 }
             val pagingData = pagingDataFlow.collectAsLazyPagingItems()
             return NdcContentState.NdcDetails(
-                title = title.value,
+                title = title,
                 pagingData = pagingData,
                 evenSink = eventSink,
             )
@@ -102,7 +111,7 @@ class NdcContentPresenter(
                             .sortedBy { it.ndcData.ndcClassification.value }
                 }
             return NdcContentState.NdcChildren(
-                title = title.value,
+                title = title,
                 children = children.value,
                 evenSink = eventSink,
             )

@@ -38,6 +38,18 @@ import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.platform.AdType
 import me.andannn.platform.showPlatformAd
 
+@Composable
+fun NdcContent(
+    ndcString: String,
+    presenter: NdcContentPresenter = retainNdcContentPresenter(ndcString),
+    modifier: Modifier = Modifier,
+) {
+    NdcContent(
+        state = presenter.present(),
+        modifier = modifier,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NdcContent(

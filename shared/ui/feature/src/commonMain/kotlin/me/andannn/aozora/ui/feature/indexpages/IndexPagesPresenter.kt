@@ -6,28 +6,27 @@ package me.andannn.aozora.ui.feature.indexpages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.slack.circuit.retained.rememberRetained
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import io.github.aakira.napier.Napier
+import io.github.andannn.RetainedModel
+import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.navigator.LocalNavigator
 import me.andannn.aozora.ui.feature.common.screens.BookCardScreen
-import me.andannn.core.util.rememberRetainedCoroutineScope
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun rememberIndexPagesPresenter(
+fun retainIndexPagesPresenter(
     kana: String,
     aozoraRepository: AozoraContentsRepository = getKoin().get(),
     navigator: Navigator = LocalNavigator.current,
-) = remember(
+) = retainRetainedModel(
     kana,
     aozoraRepository,
     navigator,
@@ -41,15 +40,14 @@ class IndexPagesPresenter(
     private val kana: String,
     private val aozoraRepository: AozoraContentsRepository,
     private val navigator: Navigator,
-) : Presenter<IndexPagesState> {
+) : RetainedModel(),
+    Presenter<IndexPagesState> {
+    val pagingDataFlow =
+        aozoraRepository.getBookListPagingFlow(kana).cachedIn(retainedScope)
+
     @Composable
     override fun present(): IndexPagesState {
         Napier.d(tag = TAG) { "present $kana" }
-        val scope = rememberRetainedCoroutineScope()
-        val pagingDataFlow =
-            rememberRetained {
-                aozoraRepository.getBookListPagingFlow(kana).cachedIn(scope)
-            }
         val pagingData = pagingDataFlow.collectAsLazyPagingItems()
         return IndexPagesState(
             kana,
