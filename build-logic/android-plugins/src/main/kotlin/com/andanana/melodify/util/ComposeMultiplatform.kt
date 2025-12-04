@@ -27,14 +27,11 @@ fun Project.configureComposeMultiplatform(extension: KotlinMultiplatformExtensio
                 implementation(compose.components.resources)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.components.uiToolingPreview)
-                implementation(libs.findLibrary("circuit.foundation").get())
-                implementation(libs.findLibrary("ui.backhandler").get())
             }
 
             commonTest.dependencies {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.uiTest)
-                implementation(libs.findLibrary("circuit.test").get())
             }
 
             androidMain.dependencies {

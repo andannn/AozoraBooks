@@ -13,7 +13,7 @@ val LocalPopupController: ProvidableCompositionLocal<PopupController> =
     compositionLocalOf { error("no popup controller") }
 
 @Suppress("ktlint:standard:function-naming")
-fun PopupController() = DefaultDialogController()
+fun PopupController(): PopupController = DefaultDialogController()
 
 interface DialogData {
     val dialogId: DialogId

@@ -71,6 +71,7 @@ kotlin {
 dependencies {
     implementation(project(":shared:app"))
     implementation(project(":shared:syncer"))
+    implementation(project(":shared:platform"))
     implementation(libs.napier)
 
     implementation(platform(libs.koin.bom))
