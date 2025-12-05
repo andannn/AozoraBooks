@@ -4,41 +4,30 @@
  */
 package me.andannn.aozora.app
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.backhandler.BackHandler
-import com.slack.circuit.backstack.rememberSaveableBackStack
-import com.slack.circuit.foundation.Circuit
-import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.animation.AnimatedNavEvent
-import com.slack.circuit.foundation.animation.AnimatedNavState
-import com.slack.circuit.foundation.animation.AnimatedScreenTransform
-import com.slack.circuit.foundation.rememberCircuitNavigator
-import com.slack.circuit.runtime.ExperimentalCircuitApi
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuit.runtime.ui.Ui
+import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
+import androidx.navigation3.ui.NavDisplay
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.syncer.AozoraDBSyncer
-import me.andannn.aozora.ui.common.dialog.ActionDialog
-import me.andannn.aozora.ui.common.dialog.LocalPopupController
-import me.andannn.aozora.ui.common.dialog.PopupController
-import me.andannn.aozora.ui.common.navigator.RootNavigator
+import me.andannn.aozora.ui.common.HomeScreen
+import me.andannn.aozora.ui.common.NavigatorImpl
+import me.andannn.aozora.ui.common.RootNavigator
+import me.andannn.aozora.ui.common.Screen
+import me.andannn.aozora.ui.common.buildSavedStateConfiguration
+import me.andannn.aozora.ui.common.rememberPopupControllerNavEntryDecorator
+import me.andannn.aozora.ui.common.rememberRetainedValueStoreNavEntryDecorator
 import me.andannn.aozora.ui.common.theme.AozoraTheme
-import me.andannn.aozora.ui.feature.common.screens.HomeScreen
-import me.andannn.aozora.ui.feature.common.screens.LibraryNestedScreen
-import me.andannn.aozora.ui.feature.common.screens.RoutePresenterFactory
-import me.andannn.aozora.ui.feature.common.screens.RouteUiFactory
-import me.andannn.aozora.ui.feature.common.screens.SearchNestedScreen
 import me.andannn.platform.PlatformAnalytics
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -46,16 +35,26 @@ private const val TAG = "AozoraBooksApp"
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AozoraBooksApp(circuit: Circuit = buildCircuitMobile()) {
-    val backStack = rememberSaveableBackStack(HomeScreen)
-    val navigator =
-        rememberCircuitNavigator(backStack) {
+fun AozoraBooksApp() {
+    val backStack =
+        rememberNavBackStack(
+            buildSavedStateConfiguration(),
+            HomeScreen,
+        )
+    val navigator = retain { NavigatorImpl() }
+
+    DisposableEffect(backStack) {
+        navigator.backStack = backStack
+
+        onDispose {
+            navigator.backStack = null
         }
+    }
 
     // Log screen transition event.
-    val currentScreen = backStack.topRecord?.screen
+    val currentScreen = backStack.lastOrNull()
     LaunchedEffect(currentScreen) {
-        if (currentScreen != null) {
+        if (currentScreen != null && currentScreen is Screen) {
             Napier.d(tag = TAG) { "log screen Event $currentScreen" }
             // Log screen transition.
             getKoin()
@@ -68,17 +67,19 @@ fun AozoraBooksApp(circuit: Circuit = buildCircuitMobile()) {
     ) {
         CompositionLocalProvider(
             RootNavigator provides navigator,
-            LocalPopupController provides PopupController(),
         ) {
-            CircuitCompositionLocals(circuit = circuit) {
-                BackHandler(enabled = backStack.size > 1) {
-                    navigator.pop()
-                }
-
-                NavigableCircuitContent(navigator, backStack)
-
-                ActionDialog()
-            }
+            NavDisplay(
+                modifier = Modifier,
+                backStack = backStack,
+                sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+                entryDecorators =
+                    listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberRetainedValueStoreNavEntryDecorator(),
+                        rememberPopupControllerNavEntryDecorator(),
+                    ),
+                entryProvider = aosoraScreenEntryProvider(),
+            )
         }
     }
 
@@ -86,35 +87,6 @@ fun AozoraBooksApp(circuit: Circuit = buildCircuitMobile()) {
         forceSyncAozoraDbIfNeeded()
     }
 }
-
-private fun buildCircuitMobile() =
-    buildCircuit(
-        presenterFactory =
-            listOf(
-                RoutePresenterFactory,
-            ),
-        uiFactory =
-            listOf(
-                RouteUiFactory,
-            ),
-    )
-
-@OptIn(ExperimentalCircuitApi::class)
-internal fun buildCircuit(
-    presenterFactory: List<Presenter.Factory> = emptyList(),
-    uiFactory: List<Ui.Factory> = emptyList(),
-): Circuit =
-    Circuit
-        .Builder()
-        .addPresenterFactories(presenterFactory)
-        .addUiFactories(uiFactory)
-        .addAnimatedScreenTransforms(
-            transforms =
-                mapOf(
-                    SearchNestedScreen::class to FadeInOutAnimatedTransform,
-                    LibraryNestedScreen::class to FadeInOutAnimatedTransform,
-                ),
-        ).build()
 
 private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
     logEvent(
@@ -124,15 +96,6 @@ private fun PlatformAnalytics.logScreenEvent(screen: Screen) {
                 "screen" to screen.toString(),
             ),
     )
-}
-
-@OptIn(ExperimentalCircuitApi::class)
-object FadeInOutAnimatedTransform : AnimatedScreenTransform {
-    override fun AnimatedContentTransitionScope<AnimatedNavState>.enterTransition(animatedNavEvent: AnimatedNavEvent): EnterTransition? =
-        fadeIn()
-
-    override fun AnimatedContentTransitionScope<AnimatedNavState>.exitTransition(animatedNavEvent: AnimatedNavEvent): ExitTransition? =
-        fadeOut()
 }
 
 private suspend fun forceSyncAozoraDbIfNeeded() {
