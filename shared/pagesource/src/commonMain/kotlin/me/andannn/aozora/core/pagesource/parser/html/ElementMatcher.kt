@@ -55,7 +55,8 @@ private val PARSERS =
     listOf(
         PlainTextMatcher,
         RubyMatcher,
-        ImageMatcher,
+// TODO: support image later
+//        ImageMatcher,
         EmphasisMatcher,
         LineBreakMatcher,
         HeadingMatcher,

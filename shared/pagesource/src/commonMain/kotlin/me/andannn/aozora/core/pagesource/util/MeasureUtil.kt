@@ -14,6 +14,7 @@ import me.andannn.aozora.core.pagesource.page.AozoraBlock
  * Return pair: [0, startIndex) -> [startIndex, length)
  */
 internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText, AozoraElement.BaseText>? {
+    if (startIndex <= 0) error("startIndex must be greater than 0. startIndex $startIndex")
     if (startIndex > length) {
         return null
     }
@@ -21,7 +22,7 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.
         is AozoraElement.Emphasis -> {
             val left =
                 copy(
-                    text = text.substring(0, startIndex),
+                    text = text.take(startIndex),
                     style = style,
                 )
             val right =
@@ -34,7 +35,7 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.
 
         is AozoraElement.Text -> {
             copy(
-                text = text.substring(0, startIndex),
+                text = text.take(startIndex),
             ) to
                 copy(
                     text = text.substring(startIndex),
@@ -43,6 +44,55 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.
 
         else -> {
             null
+        }
+    }
+}
+
+internal data class DividedText(
+    val left: AozoraElement.BaseText,
+    val right: AozoraElement.BaseText,
+)
+
+/**
+ * Divide the element from [startIndex].
+ * throw error if [startIndex] is out of range.
+ *
+ * When [startIndex] <= 0 or >= length,  Return error
+ * When [startIndex] in [1, length), Return pair: [0, startIndex) to [startIndex, length)
+ */
+internal fun AozoraElement.BaseText.divide2(startIndex: Int): DividedText {
+    if (startIndex !in 1..<length) error("startIndex must be in [1, $length) $startIndex")
+    return when (this) {
+        is AozoraElement.Emphasis -> {
+            val left =
+                copy(
+                    text = text.take(startIndex),
+                    style = style,
+                )
+            val right =
+                copy(
+                    text = text.substring(startIndex),
+                    style = style,
+                )
+            DividedText(left, right)
+        }
+
+        is AozoraElement.Text -> {
+            val left =
+                copy(
+                    text = text.take(startIndex),
+                    style = style,
+                )
+            val right =
+                copy(
+                    text = text.substring(startIndex),
+                    style = style,
+                )
+            DividedText(left, right)
+        }
+
+        is AozoraElement.Ruby -> {
+            DividedText(AozoraElement.NoDividedLeftText, this)
         }
     }
 }
@@ -138,4 +188,70 @@ internal fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, A
             }
         }
     }
+}
+
+internal data class DividedBlock(
+    val left: AozoraBlock,
+    val right: AozoraBlock,
+)
+
+/**
+ * Divide the block from [startIndex].
+ * Throw error if [startIndex] is out of range.
+ *
+ * Valid range: [1, textCount)
+ * - When [startIndex] <= 0 or >= textCount → error
+ * - When [startIndex] ∈ [1, textCount) →
+ *   return pair: [0, startIndex) and [startIndex, textCount)
+ */
+internal fun AozoraBlock.TextBlock.divideByTextIndex2(startIndex: Int): DividedBlock {
+    require(startIndex in 1 until textCount) {
+        "startIndex must be in [1, $textCount), actual: $startIndex"
+    }
+
+    var currentElementStartIndex = 0
+
+    elements.forEachIndexed { index, element ->
+        val elementEndIndex = currentElementStartIndex + element.length
+
+        when {
+            startIndex == elementEndIndex -> {
+                val splitIndex = index + 1
+                return DividedBlock(
+                    left =
+                        copyWith(
+                            elements = elements.subList(0, splitIndex),
+                        ),
+                    right =
+                        copyWith(
+                            elements = elements.subList(splitIndex, elements.size),
+                        ),
+                )
+            }
+
+            startIndex < elementEndIndex -> {
+                val relativeIndex = startIndex - currentElementStartIndex
+                val baseText = element as AozoraElement.BaseText
+
+                val divided: DividedText = baseText.divide2(relativeIndex)
+
+                val (leftText, rightText) = divided
+                val left =
+                    copyWith(
+                        elements = elements.subList(0, index) + listOf(leftText),
+                    )
+                val right =
+                    copyWith(
+                        elements =
+                            listOf(rightText) +
+                                elements.subList(index + 1, elements.size),
+                    )
+                return DividedBlock(left, right)
+            }
+        }
+
+        currentElementStartIndex = elementEndIndex
+    }
+
+    error("No element found for startIndex=$startIndex in [1, $textCount)")
 }
