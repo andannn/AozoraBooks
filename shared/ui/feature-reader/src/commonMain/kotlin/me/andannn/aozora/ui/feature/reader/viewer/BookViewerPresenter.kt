@@ -4,9 +4,6 @@
  */
 package me.andannn.aozora.ui.feature.reader.viewer
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.UriHandler
@@ -178,13 +174,6 @@ private class BookViewerPresenter(
         )
 
         val containerDpSize = LocalWindowInfo.current.containerDpSize
-        val density = LocalDensity.current
-        val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
-        val navigationBarHeight =
-            with(density) { navigationBarHeightPx.toDp() }
-        val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
-        val statusBarHeight =
-            with(density) { statusBarHeightPx.toDp() }
         // update progress when page changed.
         LaunchedEffect(
             snapshotState?.snapshotVersion,
@@ -236,8 +225,6 @@ private class BookViewerPresenter(
         ) {
             val pageMetadata =
                 PageContext(
-                    navigationBarHeight = navigationBarHeight,
-                    statusBarHeight = statusBarHeight,
                     originalHeight = containerDpSize.height,
                     originalWidth = containerDpSize.width,
                     additionalTopMargin = topMargin,
