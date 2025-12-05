@@ -42,8 +42,8 @@ private class ReaderPresenter(
 
     init {
         retainedScope.launch {
-            val bookCache = userDataRepository.getBookCache(cardId, authorId).first()
-            if (bookCache == null) return@launch
+            val bookCache =
+                userDataRepository.getBookCache(cardId, authorId).first() ?: return@launch
 
             savedBookFlow.value = bookCache
 
