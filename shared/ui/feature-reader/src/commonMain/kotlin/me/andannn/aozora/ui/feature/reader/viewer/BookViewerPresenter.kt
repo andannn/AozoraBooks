@@ -52,6 +52,7 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.OnAccept
 import me.andannn.aozora.ui.common.dialog.OnJumpTo
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.common.dialog.showAlertDialog
 import me.andannn.aozora.ui.common.retainPresenter
@@ -271,7 +272,7 @@ private class BookViewerPresenter(
                 ),
         ) { eventSink ->
             when (eventSink) {
-                BookViewerUiEvent.OnShowSettingDialog -> {
+                BookViewerUiEvent.OnShowTableOfContentDialog -> {
                     retainedScope.launch {
                         val result = popupController.showDialog(TableOfContentsDialogId)
                         Napier.d(tag = TAG) { "on jump to result $result" }
@@ -282,6 +283,12 @@ private class BookViewerPresenter(
                                 blockIndex = result.blockIndex,
                             )
                         }
+                    }
+                }
+
+                BookViewerUiEvent.OnShowSettingDialog -> {
+                    retainedScope.launch {
+                        popupController.showDialog(ReaderSettingDialogId)
                     }
                 }
             }
@@ -328,5 +335,7 @@ internal data class BookViewerState(
 )
 
 internal sealed interface BookViewerUiEvent {
+    data object OnShowTableOfContentDialog : BookViewerUiEvent
+
     data object OnShowSettingDialog : BookViewerUiEvent
 }

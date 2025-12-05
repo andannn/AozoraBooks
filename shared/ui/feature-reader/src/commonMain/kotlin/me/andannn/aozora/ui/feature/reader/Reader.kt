@@ -126,6 +126,9 @@ private fun ReaderContent(
                 onRequestShowSettingDialog = {
                     viewerState.evenSink.invoke(BookViewerUiEvent.OnShowSettingDialog)
                 },
+                onRequestShowTableOfContentDialog = {
+                    viewerState.evenSink.invoke(BookViewerUiEvent.OnShowTableOfContentDialog)
+                },
             )
         }
     }

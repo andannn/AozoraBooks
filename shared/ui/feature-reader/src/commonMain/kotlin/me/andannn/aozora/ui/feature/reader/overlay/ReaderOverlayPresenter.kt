@@ -138,14 +138,7 @@ private class ReaderOverlayPresenter(
         ) { event ->
             Napier.d(tag = TAG) { "on event $event" }
             when (event) {
-                ReaderOverlayEvent.OnOpenFontSetting -> {
-                    showOverlay = false
-                    retainedScope.launch {
-                        popupController.showDialog(ReaderSettingDialogId)
-                    }
-                }
-
-                ReaderOverlayEvent.OnOpenTableOfContents -> {
+                ReaderOverlayEvent.OnCloseOverlay -> {
                     showOverlay = false
                 }
 
@@ -174,9 +167,7 @@ data class ReaderOverlayState(
 )
 
 sealed interface ReaderOverlayEvent {
-    data object OnOpenFontSetting : ReaderOverlayEvent
-
-    data object OnOpenTableOfContents : ReaderOverlayEvent
+    data object OnCloseOverlay : ReaderOverlayEvent
 
     data object OnToggleOverlay : ReaderOverlayEvent
 

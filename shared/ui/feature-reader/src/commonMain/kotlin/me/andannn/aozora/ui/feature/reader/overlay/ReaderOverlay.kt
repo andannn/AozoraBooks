@@ -45,6 +45,7 @@ private const val TAG = "ReaderOverlay"
 internal fun ReaderOverlay(
     state: ReaderOverlayState,
     modifier: Modifier = Modifier,
+    onRequestShowTableOfContentDialog: () -> Unit = {},
     onRequestShowSettingDialog: () -> Unit = {},
 ) {
     ReaderOverlayContent(
@@ -52,6 +53,7 @@ internal fun ReaderOverlay(
         pagerState = state.pagerState,
         showOverlay = state.showOverlay,
         onEvent = state.eventSink,
+        onRequestShowTableOfContentDialog = onRequestShowTableOfContentDialog,
         onRequestShowSettingDialog = onRequestShowSettingDialog,
     )
 }
@@ -62,6 +64,7 @@ private fun ReaderOverlayContent(
     pagerState: PagerState,
     showOverlay: Boolean,
     onEvent: (ReaderOverlayEvent) -> Unit = {},
+    onRequestShowTableOfContentDialog: () -> Unit = {},
     onRequestShowSettingDialog: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -92,11 +95,12 @@ private fun ReaderOverlayContent(
                 onEvent.invoke(ReaderOverlayEvent.OnBack)
             },
             onClickTableOfContents = {
-                onEvent.invoke(ReaderOverlayEvent.OnOpenTableOfContents)
-                onRequestShowSettingDialog()
+                onEvent.invoke(ReaderOverlayEvent.OnCloseOverlay)
+                onRequestShowTableOfContentDialog()
             },
             onClickSetting = {
-                onEvent.invoke(ReaderOverlayEvent.OnOpenFontSetting)
+                onEvent.invoke(ReaderOverlayEvent.OnCloseOverlay)
+                onRequestShowSettingDialog()
             },
         )
 
