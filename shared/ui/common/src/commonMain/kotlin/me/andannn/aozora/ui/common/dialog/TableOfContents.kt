@@ -54,7 +54,7 @@ class TableOfContentsPresenter(
 ) : Presenter<TableOfContentsState> {
     @Composable
     override fun present(): TableOfContentsState {
-        val tableOfContents by produceState<List<TableOfContentsModel>>(emptyList()) {
+        val tableOfContents by produceState(emptyList()) {
             value = bookSource.getTableOfContents()
         }
         return TableOfContentsState(

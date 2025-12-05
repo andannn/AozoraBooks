@@ -22,20 +22,15 @@ import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.andannn.aozora.core.domain.model.AozoraPage
-import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
-import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
 import me.andannn.aozora.core.domain.repository.UserDataRepository
 import me.andannn.aozora.ui.common.Navigator
 import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.RootNavigator
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.OnGoToAppStore
-import me.andannn.aozora.ui.common.dialog.OnJumpTo
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.dialog.ReaderCompleteDialogId
 import me.andannn.aozora.ui.common.dialog.ReaderSettingDialogId
-import me.andannn.aozora.ui.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.common.retainPresenter
 import me.andannn.aozora.ui.common.util.SystemUiVisibilityEffect
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState
@@ -152,13 +147,6 @@ private class ReaderOverlayPresenter(
 
                 ReaderOverlayEvent.OnOpenTableOfContents -> {
                     showOverlay = false
-                    retainedScope.launch {
-                        val result = popupController.showDialog(TableOfContentsDialogId)
-                        Napier.d(tag = TAG) { "on jump to result $result" }
-                        if (result is OnJumpTo) {
-                            onJumpTo(result.blockIndex)
-                        }
-                    }
                 }
 
                 ReaderOverlayEvent.OnToggleOverlay -> {
@@ -175,28 +163,6 @@ private class ReaderOverlayPresenter(
                     }
                 }
             }
-        }
-    }
-
-    private suspend fun onJumpTo(blockIndex: Int) {
-        val pageIndex =
-            bookPageState.pages.indexOfFirst { page ->
-                when (page) {
-                    is AozoraPage.AozoraBibliographicalPage -> {
-                        blockIndex == READ_PROGRESS_DONE
-                    }
-
-                    is AozoraPage.AozoraCoverPage -> {
-                        blockIndex == READ_PROGRESS_NONE
-                    }
-
-                    is AozoraPage.AozoraRoughPage -> {
-                        blockIndex in page.pageProgress
-                    }
-                }
-            }
-        if (pageIndex != -1) {
-            bookPageState.pagerState.animateScrollToPage(pageIndex)
         }
     }
 }

@@ -19,13 +19,11 @@ import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.Presenter
-import me.andannn.aozora.ui.common.dialog.ActionDialog
-import me.andannn.aozora.ui.common.dialog.LocalPopupController
-import me.andannn.aozora.ui.common.dialog.internal.DefaultDialogController
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlay
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlayEvent
 import me.andannn.aozora.ui.feature.reader.overlay.retainReaderOverlayPresenter
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
+import me.andannn.aozora.ui.feature.reader.viewer.BookViewerUiEvent
 import me.andannn.aozora.ui.feature.reader.viewer.retainBookViewerPresenter
 import org.koin.mp.KoinPlatform.getKoin
 
@@ -125,6 +123,9 @@ private fun ReaderContent(
 
             ReaderOverlay(
                 state = overlayState,
+                onRequestShowSettingDialog = {
+                    viewerState.evenSink.invoke(BookViewerUiEvent.OnShowSettingDialog)
+                },
             )
         }
     }

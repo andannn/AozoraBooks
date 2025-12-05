@@ -22,8 +22,6 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.aakira.napier.Napier
-import io.github.andannn.RetainedModel
-import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,6 +36,8 @@ import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
 import me.andannn.aozora.core.domain.model.PageContext
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
+import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
 import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.core.domain.model.ReaderTheme
 import me.andannn.aozora.core.domain.model.TopMargin
@@ -50,7 +50,9 @@ import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.RootNavigator
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.OnAccept
+import me.andannn.aozora.ui.common.dialog.OnJumpTo
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.common.dialog.showAlertDialog
 import me.andannn.aozora.ui.common.retainPresenter
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
@@ -269,8 +271,46 @@ private class BookViewerPresenter(
                 ),
         ) { eventSink ->
             when (eventSink) {
-                else -> {}
+                BookViewerUiEvent.OnShowSettingDialog -> {
+                    retainedScope.launch {
+                        val result = popupController.showDialog(TableOfContentsDialogId)
+                        Napier.d(tag = TAG) { "on jump to result $result" }
+                        if (result is OnJumpTo) {
+                            onJumpTo(
+                                pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
+                                pagerState = pagerState,
+                                blockIndex = result.blockIndex,
+                            )
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    private suspend fun onJumpTo(
+        pagerState: PagerState,
+        blockIndex: Int,
+        pages: ImmutableList<AozoraPage>,
+    ) {
+        val pageIndex =
+            pages.indexOfFirst { page ->
+                when (page) {
+                    is AozoraPage.AozoraBibliographicalPage -> {
+                        blockIndex == READ_PROGRESS_DONE
+                    }
+
+                    is AozoraPage.AozoraCoverPage -> {
+                        blockIndex == READ_PROGRESS_NONE
+                    }
+
+                    is AozoraPage.AozoraRoughPage -> {
+                        blockIndex in page.pageProgress
+                    }
+                }
+            }
+        if (pageIndex != -1) {
+            pagerState.animateScrollToPage(pageIndex)
         }
     }
 }
@@ -287,4 +327,6 @@ internal data class BookViewerState(
     val evenSink: (BookViewerUiEvent) -> Unit = {},
 )
 
-internal sealed interface BookViewerUiEvent
+internal sealed interface BookViewerUiEvent {
+    data object OnShowSettingDialog : BookViewerUiEvent
+}

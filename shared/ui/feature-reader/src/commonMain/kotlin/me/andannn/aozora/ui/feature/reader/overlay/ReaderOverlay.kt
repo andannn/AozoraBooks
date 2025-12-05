@@ -45,12 +45,14 @@ private const val TAG = "ReaderOverlay"
 internal fun ReaderOverlay(
     state: ReaderOverlayState,
     modifier: Modifier = Modifier,
+    onRequestShowSettingDialog: () -> Unit = {},
 ) {
     ReaderOverlayContent(
         modifier = modifier,
         pagerState = state.pagerState,
         showOverlay = state.showOverlay,
         onEvent = state.eventSink,
+        onRequestShowSettingDialog = onRequestShowSettingDialog,
     )
 }
 
@@ -60,6 +62,7 @@ private fun ReaderOverlayContent(
     pagerState: PagerState,
     showOverlay: Boolean,
     onEvent: (ReaderOverlayEvent) -> Unit = {},
+    onRequestShowSettingDialog: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val pageSize = pagerState.pageCount
@@ -90,6 +93,7 @@ private fun ReaderOverlayContent(
             },
             onClickTableOfContents = {
                 onEvent.invoke(ReaderOverlayEvent.OnOpenTableOfContents)
+                onRequestShowSettingDialog()
             },
             onClickSetting = {
                 onEvent.invoke(ReaderOverlayEvent.OnOpenFontSetting)
