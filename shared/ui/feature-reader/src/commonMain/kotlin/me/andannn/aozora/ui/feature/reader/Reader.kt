@@ -71,14 +71,11 @@ private fun Reader(
 
     CompositionLocalProvider(
         LocalBookPageSource provides pageSource,
-        LocalPopupController provides DefaultDialogController(),
     ) {
         ReaderContent(
             bookCard = bookCard,
             modifier = modifier,
         )
-
-        ActionDialog()
     }
 }
 

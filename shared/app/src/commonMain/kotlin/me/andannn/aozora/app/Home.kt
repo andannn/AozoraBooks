@@ -47,6 +47,7 @@ import me.andannn.aozora.ui.common.Screen
 import me.andannn.aozora.ui.common.SearchInputScreen
 import me.andannn.aozora.ui.common.SearchNestedScreen
 import me.andannn.aozora.ui.common.buildSavedStateConfiguration
+import me.andannn.aozora.ui.common.popUntil
 import me.andannn.aozora.ui.common.rememberRetainedValueStoreNavEntryDecorator
 
 @Composable
@@ -97,7 +98,7 @@ fun HomeContent(
         remember(current) {
             val backStackList = backStack.filterIsInstance<Screen>()
             val lastBaseRecord =
-                backStackList.firstOrNull { screen ->
+                backStackList.lastOrNull { screen ->
                     screen.isNestBase
                 }
             lastBaseRecord?.toNavigationItem()!!
@@ -147,10 +148,9 @@ fun HomeContent(
                                     record == nestRootScreen
                                 } != null
                             if (alreadyInStack) {
-// TODO:
-//                                navigator.popUntil { screen ->
-//                                    screen == nestRootScreen
-//                                }
+                                navigator.popUntil { screen ->
+                                    screen == nestRootScreen
+                                }
                             } else {
                                 navigator.goTo(nestRootScreen)
                             }

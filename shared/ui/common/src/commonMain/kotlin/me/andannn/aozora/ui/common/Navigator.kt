@@ -29,6 +29,14 @@ interface Navigator {
     fun pop()
 }
 
+fun Navigator.popUntil(predicate: (Screen) -> Boolean) {
+    (this as? NavigatorImpl) ?: error("navigator is not NavigatorImpl")
+    val backStack = backStack ?: return
+    while (backStack.lastOrNull() != null && !predicate(backStack.last() as Screen)) {
+        pop()
+    }
+}
+
 class NavigatorImpl :
     RetainObserver,
     Navigator {

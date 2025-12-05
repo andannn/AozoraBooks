@@ -28,6 +28,7 @@ import me.andannn.aozora.ui.common.buildSavedStateConfiguration
 import me.andannn.aozora.ui.common.dialog.ActionDialog
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.rememberPopupControllerNavEntryDecorator
 import me.andannn.aozora.ui.common.rememberRetainedValueStoreNavEntryDecorator
 import me.andannn.aozora.ui.common.theme.AozoraTheme
 import me.andannn.platform.PlatformAnalytics
@@ -69,7 +70,6 @@ fun AozoraBooksApp() {
     ) {
         CompositionLocalProvider(
             RootNavigator provides navigator,
-            LocalPopupController provides PopupController(),
         ) {
             NavDisplay(
                 modifier = Modifier,
@@ -79,11 +79,10 @@ fun AozoraBooksApp() {
                     listOf(
                         rememberSaveableStateHolderNavEntryDecorator(),
                         rememberRetainedValueStoreNavEntryDecorator(),
+                        rememberPopupControllerNavEntryDecorator(),
                     ),
                 entryProvider = aosoraScreenEntryProvider(),
             )
-
-            ActionDialog()
         }
     }
 
