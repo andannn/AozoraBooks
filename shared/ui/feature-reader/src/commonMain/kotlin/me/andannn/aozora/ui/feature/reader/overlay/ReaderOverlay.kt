@@ -44,17 +44,20 @@ private const val TAG = "ReaderOverlay"
 @Composable
 internal fun ReaderOverlay(
     state: ReaderOverlayState,
+    bookPageState: PagerState,
     modifier: Modifier = Modifier,
     onRequestShowTableOfContentDialog: () -> Unit = {},
     onRequestShowSettingDialog: () -> Unit = {},
+    onNavigateUp: () -> Unit = {},
 ) {
     ReaderOverlayContent(
         modifier = modifier,
-        pagerState = state.pagerState,
+        pagerState = bookPageState,
         showOverlay = state.showOverlay,
         onEvent = state.eventSink,
         onRequestShowTableOfContentDialog = onRequestShowTableOfContentDialog,
         onRequestShowSettingDialog = onRequestShowSettingDialog,
+        onNavigateUp = onNavigateUp,
     )
 }
 
@@ -66,6 +69,7 @@ private fun ReaderOverlayContent(
     onEvent: (ReaderOverlayEvent) -> Unit = {},
     onRequestShowTableOfContentDialog: () -> Unit = {},
     onRequestShowSettingDialog: () -> Unit = {},
+    onNavigateUp: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val pageSize = pagerState.pageCount
@@ -92,7 +96,7 @@ private fun ReaderOverlayContent(
                     .padding(top = statusBarHeight),
             enable = animatedAlpha.value != 0f,
             onBack = {
-                onEvent.invoke(ReaderOverlayEvent.OnBack)
+                onNavigateUp()
             },
             onClickTableOfContents = {
                 onEvent.invoke(ReaderOverlayEvent.OnCloseOverlay)

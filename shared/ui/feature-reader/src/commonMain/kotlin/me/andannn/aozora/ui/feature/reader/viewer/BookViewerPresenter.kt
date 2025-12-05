@@ -22,6 +22,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -52,14 +55,18 @@ import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.RootNavigator
 import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.OnAccept
+import me.andannn.aozora.ui.common.dialog.OnGoToAppStore
 import me.andannn.aozora.ui.common.dialog.OnJumpTo
 import me.andannn.aozora.ui.common.dialog.PopupController
+import me.andannn.aozora.ui.common.dialog.ReaderCompleteDialogId
 import me.andannn.aozora.ui.common.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.common.dialog.TableOfContentsDialogId
 import me.andannn.aozora.ui.common.dialog.showAlertDialog
 import me.andannn.aozora.ui.common.retainPresenter
 import me.andannn.aozora.ui.common.widgets.rememberRefreshablePagerState
+import me.andannn.platform.Platform
 import me.andannn.platform.PlatformAnalytics
+import me.andannn.platform.platform
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -143,6 +150,14 @@ private class BookViewerPresenter(
                 started = SharingStarted.WhileSubscribed(1000),
                 null,
             )
+    val userMarkCompletedFlow =
+        userDataRepository
+            .isUserMarkCompletedFlow(card.id)
+            .stateIn(
+                retainedScope,
+                started = SharingStarted.WhileSubscribed(1000),
+                false,
+            )
 
     @Composable
     override fun present(): BookViewerState {
@@ -153,6 +168,7 @@ private class BookViewerPresenter(
         val theme by themeFlow.collectAsStateWithLifecycle()
         val savedBookCard by savedBookCardFlow.collectAsStateWithLifecycle(null)
         val isAddedToShelf by rememberUpdatedState(savedBookCard != null)
+        val userMarkCompleted by userMarkCompletedFlow.collectAsStateWithLifecycle()
 
         var snapshotState by remember {
             mutableStateOf<PagerSnapShot.Ready?>(null)
@@ -165,6 +181,9 @@ private class BookViewerPresenter(
             ) {
                 snapshotState?.pageList?.size ?: 0
             }
+        val isLastPage by rememberUpdatedState(
+            pagerState.currentPage == pagerState.pageCount - 1,
+        )
 
         val density = LocalDensity.current
         val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
@@ -264,6 +283,16 @@ private class BookViewerPresenter(
                     }
                 }
         }
+
+        NavigationBackHandler(
+            state = rememberNavigationEventState(NavigationEventInfo.None),
+            isBackEnabled = isAddedToShelf && isLastPage && !userMarkCompleted,
+        ) {
+            retainedScope.launch {
+                markCompletedAndShowAlertDialog()
+            }
+        }
+
         val uiScope = rememberCoroutineScope()
         return BookViewerState(
             fontType = fontType,
@@ -298,7 +327,34 @@ private class BookViewerPresenter(
                         popupController.showDialog(ReaderSettingDialogId)
                     }
                 }
+
+                BookViewerUiEvent.OnBack -> {
+                    retainedScope.launch {
+                        if (isAddedToShelf && isLastPage && !userMarkCompleted) {
+                            markCompletedAndShowAlertDialog()
+                        } else {
+                            navigator.pop()
+                        }
+                    }
+                }
             }
+        }
+    }
+
+    suspend fun markCompletedAndShowAlertDialog() {
+        userDataRepository.markBookAsCompleted(card.id, card.authorId)
+        val result = popupController.showDialog(ReaderCompleteDialogId)
+        if (result is OnGoToAppStore) {
+            val url =
+                if (platform == Platform.ANDROID) {
+                    "https://play.google.com/store/apps/details?id=me.andannn.aozora"
+                } else {
+                    "https://apps.apple.com/app/id6746423917"
+                }
+            uriHandler.openUri(url)
+            navigator.pop()
+        } else {
+            navigator.pop()
         }
     }
 }
@@ -347,4 +403,6 @@ internal sealed interface BookViewerUiEvent {
     data object OnShowTableOfContentDialog : BookViewerUiEvent
 
     data object OnShowSettingDialog : BookViewerUiEvent
+
+    data object OnBack : BookViewerUiEvent
 }

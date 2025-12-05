@@ -74,11 +74,7 @@ private fun ReaderContent(
                 screenHeightDp = maxHeight,
             ).present()
         val overlayState =
-            retainReaderOverlayPresenter(
-                bookCard.id,
-                bookCard.authorId,
-                viewerState.bookPageState,
-            ).present()
+            retainReaderOverlayPresenter().present()
 
         Box {
             BookViewer(
@@ -107,11 +103,15 @@ private fun ReaderContent(
 
             ReaderOverlay(
                 state = overlayState,
+                bookPageState = viewerState.bookPageState.pagerState,
                 onRequestShowSettingDialog = {
                     viewerState.evenSink.invoke(BookViewerUiEvent.OnShowSettingDialog)
                 },
                 onRequestShowTableOfContentDialog = {
                     viewerState.evenSink.invoke(BookViewerUiEvent.OnShowTableOfContentDialog)
+                },
+                onNavigateUp = {
+                    viewerState.evenSink.invoke(BookViewerUiEvent.OnBack)
                 },
             )
         }

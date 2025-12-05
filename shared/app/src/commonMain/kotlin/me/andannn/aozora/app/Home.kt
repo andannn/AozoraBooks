@@ -192,7 +192,7 @@ private enum class NavigationItem {
     SEARCH,
 }
 
-private val baseNavigationMap =
+private val baseNavigationMap: Map<NavigationItem, Screen> =
     mapOf(
         NavigationItem.LIBRARY to LibraryNestedScreen,
         NavigationItem.SEARCH to SearchNestedScreen,
