@@ -23,7 +23,7 @@ jobs:
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore.jks'
-          fileDir: './composeApp/keystore/'
+          fileDir: './android-app/keystore/'
           encodedString: ${{ secrets.KEYSTORE }}
 
       # Set Current Date As Env Variable
