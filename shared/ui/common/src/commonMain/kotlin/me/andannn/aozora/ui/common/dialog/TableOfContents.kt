@@ -18,47 +18,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
-import me.andannn.aozora.core.domain.pagesource.BookPageSource
-import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
-import me.andannn.aozora.ui.common.Presenter
 
-object TableOfContentsDialogId : DialogId {
+data class TableOfContentsDialogId(
+    val tableOfContentList: List<TableOfContentsModel>,
+) : DialogId {
     override val dialogType: DialogType = DialogType.ModalBottomSheet
 
     @Composable
     override fun Content(onAction: (DialogAction) -> Unit) {
-        TableOfContentsDialog(onAction)
-    }
-}
-
-data class OnJumpTo(
-    val blockIndex: Int,
-) : DialogAction
-
-@Composable
-fun rememberTableOfContentsDialogPresenter(bookSource: BookPageSource = LocalBookPageSource.current) =
-    remember(bookSource) {
-        TableOfContentsPresenter(bookSource)
-    }
-
-class TableOfContentsPresenter(
-    private val bookSource: BookPageSource,
-) : Presenter<TableOfContentsState> {
-    @Composable
-    override fun present(): TableOfContentsState {
-        val tableOfContents by produceState(emptyList()) {
-            value = bookSource.getTableOfContents()
-        }
-        return TableOfContentsState(
-            tableOfContentsList = tableOfContents,
+        TableOfContentsDialog(
+            tableOfContentList,
+            onAction,
         )
     }
 }
@@ -67,17 +42,19 @@ data class TableOfContentsState(
     val tableOfContentsList: List<TableOfContentsModel> = emptyList(),
 )
 
+data class OnJumpTo(
+    val blockIndex: Int,
+) : DialogAction
+
 @Composable
 fun TableOfContentsDialog(
+    tableOfContentList: List<TableOfContentsModel>,
     onAction: (DialogAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val presenter = rememberTableOfContentsDialogPresenter()
-    val state = presenter.present()
-
     TableOfContentsDialogContent(
         modifier = modifier,
-        state = state,
+        state = TableOfContentsState(tableOfContentList),
         onClickTableOfContent = {
             onAction(OnJumpTo(it.blockIndex))
         },
@@ -136,7 +113,12 @@ fun TableOfContentItem(
                 Spacer(modifier = Modifier.width(24.dp))
             }
         }
-        Text(tableOfContent.title, style = getHeadingLevel(tableOfContent.headingLevel), maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            tableOfContent.title,
+            style = getHeadingLevel(tableOfContent.headingLevel),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

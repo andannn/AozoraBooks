@@ -274,11 +274,15 @@ private class BookViewerPresenter(
             when (eventSink) {
                 BookViewerUiEvent.OnShowTableOfContentDialog -> {
                     retainedScope.launch {
-                        val result = popupController.showDialog(TableOfContentsDialogId)
+                        val tableOfContents = bookSource.getTableOfContents()
+                        val result =
+                            popupController.showDialog(TableOfContentsDialogId(tableOfContents))
                         Napier.d(tag = TAG) { "on jump to result $result" }
                         if (result is OnJumpTo) {
                             onJumpTo(
-                                pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
+                                pages =
+                                    snapshotState?.pageList
+                                        ?: emptyList<AozoraPage>().toImmutableList(),
                                 pagerState = pagerState,
                                 blockIndex = result.blockIndex,
                             )

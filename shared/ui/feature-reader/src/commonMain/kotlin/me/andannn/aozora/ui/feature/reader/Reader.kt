@@ -10,13 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.LocalBookPageSource
 import me.andannn.aozora.ui.common.Presenter
 import me.andannn.aozora.ui.feature.reader.overlay.ReaderOverlay
