@@ -17,7 +17,6 @@ ksp = "2.2.21-2.0.4"
 androidGradlePlugin = "8.13.1"
 compose-plugin = "1.10.0-rc01"
 koin-bom = "4.0.4"
-kotlinxDatetime = "0.7.0-0.6.x-compat"
 ksoup = "0.2.5"
 okio = "3.16.4"
 ktlint = "12.2.0"
@@ -76,7 +75,6 @@ koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
-kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
