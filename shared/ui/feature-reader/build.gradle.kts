@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:ui:common"))
+            implementation(libs.navigationevent.compose)
         }
     }
 }

@@ -15,6 +15,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -122,13 +125,15 @@ private class ReaderOverlayPresenter(
                 navigator.pop()
             }
         }
-// TODO: back event handle
-//        BackHandler(enabled = isAddedToShelf && isLastPage && !userMarkCompleted) {
-//            Napier.d(tag = TAG) { "back pressed when book completed" }
-//            retainedScope.launch {
-//                markCompletedAndShowAlertDialog()
-//            }
-//        }
+
+        NavigationBackHandler(
+            state = rememberNavigationEventState(NavigationEventInfo.None),
+            isBackEnabled = isAddedToShelf && isLastPage && !userMarkCompleted,
+        ) {
+            retainedScope.launch {
+                markCompletedAndShowAlertDialog()
+            }
+        }
 
         SystemUiVisibilityEffect(visible = showOverlay)
 

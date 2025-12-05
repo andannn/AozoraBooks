@@ -2,7 +2,7 @@
  * Copyright 2025, the AozoraBooks project contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-package me.andannn.aozora.ui.feature.home
+package me.andannn.aozora.app
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInVertically
@@ -35,11 +35,6 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import me.andannn.aozora.app.HomePresenter
-import me.andannn.aozora.app.HomeState
-import me.andannn.aozora.app.HomeUiEvent
-import me.andannn.aozora.app.aosoraScreenEntryProvider
-import me.andannn.aozora.app.retainHomePresenter
 import me.andannn.aozora.ui.common.LibraryNestedScreen
 import me.andannn.aozora.ui.common.LocalNavigator
 import me.andannn.aozora.ui.common.NavigatorImpl

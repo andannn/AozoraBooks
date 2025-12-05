@@ -19,7 +19,6 @@ import me.andannn.aozora.ui.feature.about.About
 import me.andannn.aozora.ui.feature.author.Author
 import me.andannn.aozora.ui.feature.author.pages.AuthorPages
 import me.andannn.aozora.ui.feature.bookcard.BookCard
-import me.andannn.aozora.ui.feature.home.Home
 import me.andannn.aozora.ui.feature.index.pages.IndexPages
 import me.andannn.aozora.ui.feature.library.Library
 import me.andannn.aozora.ui.feature.license.License
