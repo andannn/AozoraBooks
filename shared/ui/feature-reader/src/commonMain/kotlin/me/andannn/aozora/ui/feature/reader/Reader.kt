@@ -25,7 +25,6 @@ import me.andannn.aozora.ui.feature.reader.overlay.retainReaderOverlayPresenter
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewer
 import me.andannn.aozora.ui.feature.reader.viewer.BookViewerUiEvent
 import me.andannn.aozora.ui.feature.reader.viewer.retainBookViewerPresenter
-import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
 fun Reader(
@@ -49,26 +48,15 @@ private fun Reader(
     state: ReaderState,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
     val bookCard = state.bookCard
-    if (bookCard == null) {
+    val bookPageSource = state.bookPageSource
+    if (bookCard == null || bookPageSource == null) {
         Scaffold(modifier.fillMaxSize()) {}
         return
     }
 
-    val pageSource =
-        remember(bookCard, scope) {
-            getKoin().get<BookPageSource.Factory>().createBookPageSource(bookCard, scope)
-        }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            pageSource.close()
-        }
-    }
-
     CompositionLocalProvider(
-        LocalBookPageSource provides pageSource,
+        LocalBookPageSource provides state.bookPageSource,
     ) {
         ReaderContent(
             bookCard = bookCard,
