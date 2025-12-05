@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.github.andannn.RetainedModel
-import io.github.andannn.retainRetainedModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -24,7 +22,6 @@ import me.andannn.aozora.ui.common.IndexPageScreen
 import me.andannn.aozora.ui.common.LocalNavigator
 import me.andannn.aozora.ui.common.Navigator
 import me.andannn.aozora.ui.common.NdcContentScreen
-import me.andannn.aozora.ui.common.Presenter
 import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.SearchInputScreen
 import me.andannn.aozora.ui.common.retainPresenter
@@ -34,16 +31,15 @@ import org.koin.mp.KoinPlatform.getKoin
 internal fun retainSearchPresenter(
     localNavigator: Navigator = LocalNavigator.current,
     aozoraContentsRepository: AozoraContentsRepository = getKoin().get(),
-) =
-    retainPresenter(
-        localNavigator,
-        aozoraContentsRepository,
-    ) {
-        SearchPresenter(
-            localNavigator = localNavigator,
-            aozoraContentsRepository = aozoraContentsRepository,
-        )
-    }
+) = retainPresenter(
+    localNavigator,
+    aozoraContentsRepository,
+) {
+    SearchPresenter(
+        localNavigator = localNavigator,
+        aozoraContentsRepository = aozoraContentsRepository,
+    )
+}
 
 private const val TAG = "SearchPresenter"
 

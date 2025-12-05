@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.github.andannn.RetainedModel
-import io.github.andannn.retainRetainedModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +23,6 @@ import me.andannn.aozora.ui.common.AuthorScreen
 import me.andannn.aozora.ui.common.LocalNavigator
 import me.andannn.aozora.ui.common.Navigator
 import me.andannn.aozora.ui.common.NdcContentScreen
-import me.andannn.aozora.ui.common.Presenter
 import me.andannn.aozora.ui.common.ReaderScreen
 import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.RootNavigator

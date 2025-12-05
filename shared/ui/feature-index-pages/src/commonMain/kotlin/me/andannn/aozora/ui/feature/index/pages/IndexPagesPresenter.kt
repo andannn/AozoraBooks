@@ -10,14 +10,11 @@ import androidx.paging.cachedIn
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.github.aakira.napier.Napier
-import io.github.andannn.RetainedModel
-import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.BookCardScreen
 import me.andannn.aozora.ui.common.LocalNavigator
 import me.andannn.aozora.ui.common.Navigator
-import me.andannn.aozora.ui.common.Presenter
 import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.retainPresenter
 import org.koin.mp.KoinPlatform.getKoin

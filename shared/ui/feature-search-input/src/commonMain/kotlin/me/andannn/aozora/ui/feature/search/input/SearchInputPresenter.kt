@@ -12,12 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import io.github.andannn.RetainedModel
-import io.github.andannn.retainRetainedModel
 import me.andannn.aozora.core.domain.repository.AozoraContentsRepository
 import me.andannn.aozora.ui.common.LocalNavigator
 import me.andannn.aozora.ui.common.Navigator
-import me.andannn.aozora.ui.common.Presenter
 import me.andannn.aozora.ui.common.RetainedPresenter
 import me.andannn.aozora.ui.common.SearchResultScreen
 import me.andannn.aozora.ui.common.retainPresenter
