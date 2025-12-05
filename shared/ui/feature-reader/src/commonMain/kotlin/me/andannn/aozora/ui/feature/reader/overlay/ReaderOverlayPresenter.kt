@@ -30,7 +30,6 @@ import me.andannn.aozora.ui.common.dialog.LocalPopupController
 import me.andannn.aozora.ui.common.dialog.OnGoToAppStore
 import me.andannn.aozora.ui.common.dialog.PopupController
 import me.andannn.aozora.ui.common.dialog.ReaderCompleteDialogId
-import me.andannn.aozora.ui.common.dialog.ReaderSettingDialogId
 import me.andannn.aozora.ui.common.retainPresenter
 import me.andannn.aozora.ui.common.util.SystemUiVisibilityEffect
 import me.andannn.aozora.ui.feature.reader.viewer.BookPageState

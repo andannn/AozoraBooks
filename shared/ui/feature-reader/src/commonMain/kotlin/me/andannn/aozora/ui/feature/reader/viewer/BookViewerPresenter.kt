@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -24,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -262,6 +264,7 @@ private class BookViewerPresenter(
                     }
                 }
         }
+        val uiScope = rememberCoroutineScope()
         return BookViewerState(
             fontType = fontType,
             theme = theme,
@@ -279,7 +282,7 @@ private class BookViewerPresenter(
                             popupController.showDialog(TableOfContentsDialogId(tableOfContents))
                         Napier.d(tag = TAG) { "on jump to result $result" }
                         if (result is OnJumpTo) {
-                            onJumpTo(
+                            uiScope.onJumpTo(
                                 pages =
                                     snapshotState?.pageList
                                         ?: emptyList<AozoraPage>().toImmutableList(),
@@ -298,29 +301,31 @@ private class BookViewerPresenter(
             }
         }
     }
+}
 
-    private suspend fun onJumpTo(
-        pagerState: PagerState,
-        blockIndex: Int,
-        pages: ImmutableList<AozoraPage>,
-    ) {
-        val pageIndex =
-            pages.indexOfFirst { page ->
-                when (page) {
-                    is AozoraPage.AozoraBibliographicalPage -> {
-                        blockIndex == READ_PROGRESS_DONE
-                    }
+private fun CoroutineScope.onJumpTo(
+    pagerState: PagerState,
+    blockIndex: Int,
+    pages: ImmutableList<AozoraPage>,
+) {
+    val pageIndex =
+        pages.indexOfFirst { page ->
+            when (page) {
+                is AozoraPage.AozoraBibliographicalPage -> {
+                    blockIndex == READ_PROGRESS_DONE
+                }
 
-                    is AozoraPage.AozoraCoverPage -> {
-                        blockIndex == READ_PROGRESS_NONE
-                    }
+                is AozoraPage.AozoraCoverPage -> {
+                    blockIndex == READ_PROGRESS_NONE
+                }
 
-                    is AozoraPage.AozoraRoughPage -> {
-                        blockIndex in page.pageProgress
-                    }
+                is AozoraPage.AozoraRoughPage -> {
+                    blockIndex in page.pageProgress
                 }
             }
-        if (pageIndex != -1) {
+        }
+    if (pageIndex != -1) {
+        launch {
             pagerState.animateScrollToPage(pageIndex)
         }
     }
