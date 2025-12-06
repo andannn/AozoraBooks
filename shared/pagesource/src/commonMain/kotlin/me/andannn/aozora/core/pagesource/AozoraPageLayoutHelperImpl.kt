@@ -7,8 +7,8 @@ package me.andannn.aozora.core.pagesource
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.layouthelper.AozoraPageLayoutHelper
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder

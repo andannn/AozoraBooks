@@ -90,7 +90,7 @@ sealed interface AozoraElement {
     companion object {
         // When try to divide a element(Such as ruby) which can not divide.
         // Divided left element is assigned to [NoDividedLeftText]
-        val NoDividedLeftText = Text("")
+        val NoDividedLeftText = Text("not divided")
     }
 }
 
@@ -100,10 +100,21 @@ fun AozoraElement.debugText() =
             text
         }
 
-        is AozoraElement.Illustration -> "[Image $filename]"
-        is AozoraElement.Indent -> "[Indent $count]"
-        AozoraElement.LineBreak -> "\n"
-        AozoraElement.PageBreak -> ""
+        is AozoraElement.Illustration -> {
+            "[Image $filename]"
+        }
+
+        is AozoraElement.Indent -> {
+            "[Indent $count]"
+        }
+
+        AozoraElement.LineBreak -> {
+            "\n"
+        }
+
+        AozoraElement.PageBreak -> {
+            ""
+        }
     }
 
 enum class AozoraTextStyle {

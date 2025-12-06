@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.Line
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2

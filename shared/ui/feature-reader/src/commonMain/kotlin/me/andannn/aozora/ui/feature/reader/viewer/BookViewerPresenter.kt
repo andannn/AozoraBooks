@@ -32,10 +32,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageContext
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
