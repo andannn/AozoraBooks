@@ -12,6 +12,6 @@ import androidx.compose.ui.keepScreenOn
 @Composable
 actual fun KeepScreenOnEffect() {
     Spacer(
-        modifier = Modifier.keepScreenOn()
+        modifier = Modifier.keepScreenOn(),
     )
 }

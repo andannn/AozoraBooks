@@ -21,9 +21,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.transformWhile
-import me.andannn.aozora.core.domain.model.AozoraPage
-import me.andannn.aozora.core.domain.model.AozoraPage.AozoraCoverPage
-import me.andannn.aozora.core.domain.model.AozoraPage.AozoraRoughPage
+import me.andannn.aozora.core.domain.model.Page
+import me.andannn.aozora.core.domain.model.Page.CoverPage
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
@@ -31,10 +30,8 @@ import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
-import me.andannn.aozora.core.pagesource.measure.BlockMeasureScopeImpl
-import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
-import me.andannn.aozora.core.pagesource.page.RoughPageBuilder
+import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookInfo
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
@@ -78,7 +75,7 @@ internal class CachedLinerPageSource(
             val version = version++
 
             val bookInfoData = rawSource.getBookInfo()
-            val loadedPages = mutableListOf<AozoraPage>()
+            val loadedPages = mutableListOf<Page>()
             var initialPageIndex: Int? = null
             val startMilliseconds = Clock.System.now().toEpochMilliseconds()
             Napier.d(tag = TAG) { "start load page. " }
@@ -92,16 +89,16 @@ internal class CachedLinerPageSource(
                 if (initialPageIndex == null) {
                     val hit =
                         when (page) {
-                            is AozoraCoverPage -> {
+                            is CoverPage -> {
                                 readingProgress is ReadProgress.None
                             }
 
-                            is AozoraRoughPage -> {
-                                readingProgress is ReadProgress.Reading && readingProgress.blockIndex in page.pageProgress
+                            is Page.BibliographicalPage -> {
+                                readingProgress is ReadProgress.Done
                             }
 
-                            is AozoraPage.AozoraBibliographicalPage -> {
-                                readingProgress is ReadProgress.Done
+                            is Page.LayoutPage -> {
+                                readingProgress is ReadProgress.Reading && readingProgress.blockIndex in page.pageProgress
                             }
                         }
                     if (hit) {
@@ -135,7 +132,7 @@ internal class CachedLinerPageSource(
     private fun createPageFlow(
         bookInfoData: BookInfo,
         pageMetaData: PageMetaData,
-    ): Flow<AozoraPage> {
+    ): Flow<Page> {
         val coldFlow =
             shardBlockHotFlow.transformWhile { state ->
                 when (state) {
@@ -148,17 +145,12 @@ internal class CachedLinerPageSource(
                     is ParseEvent.Error -> throw state.t
                 }
             }
-        val pageFlow: Flow<AozoraPage> =
+        val pageFlow: Flow<Page> =
             createPageFlowFromSequence(
                 blockSequenceFlow = coldFlow,
                 builderFactory = {
-                    RoughPageBuilder(
+                    LayoutPageBuilder(
                         meta = pageMetaData,
-                        measurer =
-                            BlockMeasureScopeImpl(
-                                renderHeight = pageMetaData.renderHeight,
-                                textStyleCalculator = TextStyleCalculatorImpl(renderSetting = pageMetaData),
-                            ),
                     )
                 },
             )
@@ -166,7 +158,7 @@ internal class CachedLinerPageSource(
         return pageFlow
             .onStart {
                 emit(
-                    AozoraCoverPage(
+                    CoverPage(
                         pageMetaData = pageMetaData,
                         title = bookInfoData.title,
                         author = bookInfoData.author,
@@ -175,7 +167,7 @@ internal class CachedLinerPageSource(
                 )
             }.onCompletion {
                 emit(
-                    AozoraPage.AozoraBibliographicalPage(
+                    Page.BibliographicalPage(
                         pageMetaData = pageMetaData,
                         html = rawSource.getBookInfo().bibliographicalInformation,
                     ),

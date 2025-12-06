@@ -22,8 +22,7 @@ sealed interface AozoraElement {
     data class Text(
         override val text: String,
         override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
-    ) : BaseText() {
-    }
+    ) : BaseText()
 
     /**
      * Ruby element.

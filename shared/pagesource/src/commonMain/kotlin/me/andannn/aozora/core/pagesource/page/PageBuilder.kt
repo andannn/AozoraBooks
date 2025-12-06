@@ -5,7 +5,7 @@
 package me.andannn.aozora.core.pagesource.page
 
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.Page
 
 internal sealed interface FillResult {
     data class Filled(
@@ -16,7 +16,7 @@ internal sealed interface FillResult {
     data object FillContinue : FillResult
 }
 
-internal interface PageBuilder<out T : AozoraPage> {
+internal interface PageBuilder<out T : Page> {
     fun tryAddBlock(block: AozoraBlock): FillResult
 
     fun build(): T

@@ -17,13 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import me.andannn.aozora.core.domain.model.AozoraPage.AozoraBibliographicalPage
+import me.andannn.aozora.core.domain.model.Page.BibliographicalPage
 import me.andannn.core.util.parseBookSourceAsAnnotatedString
 
 @Composable
 fun AozoraBibliographicalPage(
     modifier: Modifier = Modifier,
-    page: AozoraBibliographicalPage,
+    page: BibliographicalPage,
     textColor: Color,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(horizontal = 48.dp)) {

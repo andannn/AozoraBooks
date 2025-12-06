@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
@@ -194,15 +194,15 @@ private class BookViewerPresenter(
                     if (page != null) {
                         val currentProgress =
                             when (page) {
-                                is AozoraPage.AozoraCoverPage -> {
+                                is Page.CoverPage -> {
                                     ReadProgress.None
                                 }
 
-                                is AozoraPage.AozoraBibliographicalPage -> {
+                                is Page.BibliographicalPage -> {
                                     ReadProgress.Done
                                 }
 
-                                is AozoraPage.AozoraRoughPage -> {
+                                is Page.LayoutPage -> {
                                     ReadProgress.Reading(
                                         blockIndex = page.pageProgress.first,
                                         totalBlockCount = totalCount,
@@ -279,7 +279,7 @@ private class BookViewerPresenter(
             theme = theme,
             bookPageState =
                 BookPageState(
-                    pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
+                    pages = snapshotState?.pageList ?: emptyList<Page>().toImmutableList(),
                     pagerState = pagerState,
                 ),
         ) { eventSink ->
@@ -294,7 +294,7 @@ private class BookViewerPresenter(
                             uiScope.onJumpTo(
                                 pages =
                                     snapshotState?.pageList
-                                        ?: emptyList<AozoraPage>().toImmutableList(),
+                                        ?: emptyList<Page>().toImmutableList(),
                                 pagerState = pagerState,
                                 blockIndex = result.blockIndex,
                             )
@@ -342,21 +342,19 @@ private class BookViewerPresenter(
 private fun CoroutineScope.onJumpTo(
     pagerState: PagerState,
     blockIndex: Int,
-    pages: ImmutableList<AozoraPage>,
+    pages: ImmutableList<Page>,
 ) {
     val pageIndex =
         pages.indexOfFirst { page ->
             when (page) {
-                is AozoraPage.AozoraBibliographicalPage -> {
+                is Page.BibliographicalPage -> {
                     blockIndex == READ_PROGRESS_DONE
                 }
 
-                is AozoraPage.AozoraCoverPage -> {
+                is Page.CoverPage,
+                is Page.LayoutPage,
+                -> {
                     blockIndex == READ_PROGRESS_NONE
-                }
-
-                is AozoraPage.AozoraRoughPage -> {
-                    blockIndex in page.pageProgress
                 }
             }
         }
@@ -368,7 +366,7 @@ private fun CoroutineScope.onJumpTo(
 }
 
 internal data class BookPageState(
-    val pages: ImmutableList<AozoraPage>,
+    val pages: ImmutableList<Page>,
     val pagerState: PagerState,
 )
 

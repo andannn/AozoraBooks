@@ -11,7 +11,6 @@ import me.andannn.aozora.core.pagesource.textBlockOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertIs
 
 class DivideBaseTextTest {
     @Test

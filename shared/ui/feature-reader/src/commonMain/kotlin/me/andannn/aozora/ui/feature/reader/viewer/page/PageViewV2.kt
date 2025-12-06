@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
 import io.github.aakira.napier.Napier
-import me.andannn.aozora.core.domain.model.LayoutPage
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
@@ -31,7 +31,7 @@ private const val TAG = "PageView"
 
 @Composable
 fun PageViewV2(
-    page: LayoutPage,
+    page: Page.LayoutPage,
     textColor: Color,
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
@@ -78,9 +78,9 @@ fun PageViewV2(
                         ) {
                             var currentX = renderWidth
                             for (line in page.lines) {
-                                val lineHeightPx = with(density) { line.lineHeight.toPx() }
+                                val lineHeightPx = with(density) { line.line.lineHeight.toPx() }
                                 currentX -= lineHeightPx / 2
-                                drawAozoraLineV2(currentX, line, adapters, density)
+                                drawAozoraLineV2(currentX, line.line, adapters, density)
                                 currentX -= lineHeightPx / 2
                             }
                         }

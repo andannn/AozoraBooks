@@ -9,31 +9,33 @@ import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.LayoutPage
-import me.andannn.aozora.core.domain.model.Line
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 private const val TAG = "ReaderPageBuilder"
 
-internal class LayoutPageBuilder(
+internal class LayoutPageBuilder constructor(
     private val meta: PageMetaData,
-    private val textStyleCalculator: TextStyleCalculatorImpl,
+    private val textStyleCalculator: TextStyleCalculatorImpl =
+        TextStyleCalculatorImpl(meta),
     private val forceAddBlock: Boolean = false,
-) {
+) : PageBuilder<Page.LayoutPage> {
     private val fullWidth: Dp = meta.renderWidth
     private val fullHeight: Dp = meta.renderHeight
 
-    private val lines = mutableListOf<Line>()
+    private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
     private var lineBuilder: LineBuilder? = null
 
     private var isPageBreakAdded = false
+    private var currentBlockIndex = 0
 
-    fun tryAddBlock(block: AozoraBlock): FillResult =
+    override fun tryAddBlock(block: AozoraBlock): FillResult =
         with(ElementMeasureScope(block, textStyleCalculator)) {
             Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
+            currentBlockIndex = block.blockIndex
             val remainingElements = block.elements.toMutableList()
 
             while (remainingElements.isNotEmpty()) {
@@ -109,7 +111,10 @@ internal class LayoutPageBuilder(
             -> {
                 with(lineBuilder) {
                     when (val result = tryAdd(element)) {
-                        FillResult.FillContinue -> return result
+                        FillResult.FillContinue -> {
+                            return result
+                        }
+
                         is FillResult.Filled -> {
                             buildNewLine()
                             val remainElement = result.remainElement
@@ -131,12 +136,12 @@ internal class LayoutPageBuilder(
         }
     }
 
-    fun build(): LayoutPage {
+    override fun build(): Page.LayoutPage {
         if (lineBuilder != null) {
             buildNewLine()
         }
 
-        return LayoutPage(
+        return Page.LayoutPage(
             pageMetaData = meta,
             lines = lines.toImmutableList(),
         )
@@ -144,7 +149,7 @@ internal class LayoutPageBuilder(
 
     private fun buildNewLine() {
         val line = lineBuilder!!.build()
-        lines += line
+        lines += Page.LayoutPage.LineWithBlockIndex(line, currentBlockIndex)
         currentWidth += line.lineHeight
         lineBuilder = null
         Napier.v(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }
