@@ -36,12 +36,14 @@ internal class BlockMeasureScopeImpl(
 ) : BlockMeasureScope {
     override fun measure(block: AozoraBlock): BlockMeasureResult {
         when (block) {
-            is AozoraBlock.Image -> return BlockMeasureResult(
-                lineCount = 1,
+            is AozoraBlock.Image -> {
+                return BlockMeasureResult(
+                    lineCount = 1,
 // TODO
-                lineHeightDpPerLine = 10.dp,
-                availableTextCountPerLine = 0,
-            )
+                    lineHeightDpPerLine = 10.dp,
+                    availableTextCountPerLine = 0,
+                )
+            }
 
             is AozoraBlock.TextBlock -> {
                 val style = textStyleCalculator.resolve(block.textStyle)
@@ -82,12 +84,16 @@ internal class BlockMeasureScopeImpl(
     }
 }
 
-internal class TextStyleCalculator(
+interface TextStyleCalculator {
+    fun resolve(aozoraStyle: AozoraTextStyle): FontStyle
+}
+
+internal class TextStyleCalculatorImpl(
     private val renderSetting: RenderSetting,
-) {
+): TextStyleCalculator {
     private val fontStyleCache = mutableMapOf<AozoraTextStyle, FontStyle>()
 
-    fun resolve(aozoraStyle: AozoraTextStyle): FontStyle {
+    override fun resolve(aozoraStyle: AozoraTextStyle): FontStyle {
         return fontStyleCache[aozoraStyle]
             ?: aozoraStyle
                 .resolveFontStyle(

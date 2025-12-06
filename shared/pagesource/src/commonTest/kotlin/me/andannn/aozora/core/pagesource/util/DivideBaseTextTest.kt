@@ -7,6 +7,7 @@ package me.andannn.aozora.core.pagesource.util
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
+import me.andannn.aozora.core.pagesource.textBlockOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -129,13 +130,3 @@ private fun AozoraBlock.assertText(vararg textElements: String) {
         assertEquals(expects[index], text)
     }
 }
-
-private fun textBlockOf(vararg textElements: String): AozoraBlock.TextBlock =
-    AozoraBlock.TextBlock(
-        blockIndex = 0,
-        textStyle = AozoraTextStyle.PARAGRAPH,
-        elements =
-            textElements.map { text ->
-                AozoraElement.Text(text)
-            },
-    )

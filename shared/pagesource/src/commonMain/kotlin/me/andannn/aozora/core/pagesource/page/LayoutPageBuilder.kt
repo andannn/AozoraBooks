@@ -12,13 +12,13 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.LayoutPage
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.core.domain.model.PageMetaData
-import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 private const val TAG = "ReaderPageBuilder"
 
 internal class LayoutPageBuilder(
     private val meta: PageMetaData,
-    private val textStyleCalculator: TextStyleCalculator,
+    private val textStyleCalculator: TextStyleCalculatorImpl,
     private val forceAddBlock: Boolean = false,
 ) {
     private val fullWidth: Dp = meta.renderWidth

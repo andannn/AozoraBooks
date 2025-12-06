@@ -32,7 +32,7 @@ import me.andannn.aozora.core.domain.model.TableOfContentsModel
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.measure.BlockMeasureScopeImpl
-import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.page.RoughPageBuilder
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
@@ -157,7 +157,7 @@ internal class CachedLinerPageSource(
                         measurer =
                             BlockMeasureScopeImpl(
                                 renderHeight = pageMetaData.renderHeight,
-                                textStyleCalculator = TextStyleCalculator(renderSetting = pageMetaData),
+                                textStyleCalculator = TextStyleCalculatorImpl(renderSetting = pageMetaData),
                             ),
                     )
                 },

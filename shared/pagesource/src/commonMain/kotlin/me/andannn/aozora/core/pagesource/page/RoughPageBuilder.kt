@@ -13,7 +13,7 @@ import me.andannn.aozora.core.pagesource.measure.BlockMeasureScope
 import me.andannn.aozora.core.pagesource.util.divideByTextIndex
 import kotlin.math.floor
 
-internal class RoughPageBuilder(
+internal class RoughPageBuilder constructor(
     private val meta: PageMetaData,
     private val measurer: BlockMeasureScope,
 ) : PageBuilder<AozoraRoughPage> {
