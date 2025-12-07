@@ -63,8 +63,6 @@ interface PageMetaData :
  * Meta data for a render page.
  */
 data class PageContext(
-    private val navigationBarHeight: Dp,
-    private val statusBarHeight: Dp,
     override val additionalTopMargin: TopMargin = TopMargin.MEDIUM,
     override val fontType: FontType = FontType.DEFAULT,
     override val lineSpacing: LineSpacing = LineSpacing.MEDIUM,
@@ -77,12 +75,12 @@ data class PageContext(
             // x =
             originalWidth * DEFAULT_HORIZONTAL_MARGIN_PERCENT / 2,
             // y =
-            originalHeight * DEFAULT_VERTICAL_MARGIN_PERCENT / 2 + statusBarHeight + additionalTopMargin.value,
+            originalHeight * DEFAULT_TOP_MARGIN_PERCENT + additionalTopMargin.value,
         )
     }
 
     override val renderHeight: Dp by lazy {
-        originalHeight * (1 - DEFAULT_VERTICAL_MARGIN_PERCENT) - additionalTopMargin.value - navigationBarHeight - statusBarHeight
+        originalHeight * (1 - DEFAULT_TOP_MARGIN_PERCENT - DEFAULT_BOTTOM_MARGIN_PERCENT) - additionalTopMargin.value
     }
 
     override val renderWidth: Dp by lazy {
@@ -91,4 +89,5 @@ data class PageContext(
 }
 
 private const val DEFAULT_HORIZONTAL_MARGIN_PERCENT = 0.15f
-private const val DEFAULT_VERTICAL_MARGIN_PERCENT = 0.02f
+private const val DEFAULT_TOP_MARGIN_PERCENT = 0.05f
+private const val DEFAULT_BOTTOM_MARGIN_PERCENT = 0.02f

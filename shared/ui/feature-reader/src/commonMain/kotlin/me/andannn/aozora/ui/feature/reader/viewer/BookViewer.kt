@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.domain.layouthelper.AozoraPageLayoutHelper
-import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.FontType
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.ReaderTheme
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
@@ -49,7 +49,7 @@ internal fun BookViewer(
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
-    pages: ImmutableList<AozoraPage>,
+    pages: ImmutableList<Page>,
     theme: ReaderTheme,
     pagerState: PagerState,
     fontType: FontType,
@@ -82,7 +82,7 @@ private fun ReaderContent(
             val pageState = rememberUpdatedState(pages.getOrNull(pageIndex))
 
             val page = pageState.value
-            if (page is AozoraPage.AozoraBibliographicalPage) {
+            if (page is Page.BibliographicalPage) {
                 AozoraBibliographicalPage(page = page, textColor = textColor)
             } else {
                 val layoutHelper =

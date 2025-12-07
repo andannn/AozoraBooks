@@ -13,7 +13,7 @@ internal sealed class AozoraBlock(
     override val blockIndex: Int,
     open val elements: List<AozoraElement>,
 ) : Block {
-    data class TextBlock(
+    data class TextBlock constructor(
         override val blockIndex: Int,
         override val elements: List<AozoraElement>,
         val textStyle: AozoraTextStyle,

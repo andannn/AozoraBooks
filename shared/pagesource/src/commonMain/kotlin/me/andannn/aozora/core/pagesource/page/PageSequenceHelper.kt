@@ -6,12 +6,12 @@ package me.andannn.aozora.core.pagesource.page
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.Page
 
 /**
  * create page flow from [blockSequenceFlow].
  */
-internal fun <T : AozoraPage> createPageFlowFromSequence(
+internal fun <T : Page> createPageFlowFromSequence(
     blockSequenceFlow: Flow<AozoraBlock>,
     builderFactory: () -> PageBuilder<T>,
 ) = flow<T> {

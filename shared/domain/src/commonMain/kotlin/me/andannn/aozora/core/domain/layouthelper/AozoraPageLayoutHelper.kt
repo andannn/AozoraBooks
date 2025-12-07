@@ -4,9 +4,8 @@
  */
 package me.andannn.aozora.core.domain.layouthelper
 
-import me.andannn.aozora.core.domain.model.AozoraPage
-import me.andannn.aozora.core.domain.model.LayoutPage
+import me.andannn.aozora.core.domain.model.Page
 
 interface AozoraPageLayoutHelper {
-    fun AozoraPage.layout(): LayoutPage
+    fun Page.layout(): Page.LayoutPage
 }

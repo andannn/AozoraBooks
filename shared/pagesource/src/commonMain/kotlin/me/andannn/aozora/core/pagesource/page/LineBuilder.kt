@@ -32,8 +32,13 @@ internal class LineBuilder(
     private var maxWidth: Dp = 0.dp
     private val elementList = mutableListOf<AozoraElement>()
     private var currentFontStyle: FontStyle? = null
+    private var isBreakLineAdded: Boolean = false
 
     fun ElementMeasureScope.tryAdd(element: AozoraElement): FillResult {
+        if (isBreakLineAdded) {
+            return FillResult.Filled(element)
+        }
+
         when (element) {
             is AozoraElement.Ruby,
             is AozoraElement.Text,
@@ -56,15 +61,21 @@ internal class LineBuilder(
                         }
                     if (remainSlot == 0) {
                         return FillResult.Filled(element)
-                    } else {
-                        element.divide(remainSlot)?.let {
-                            val (left, right) = it
-                            val leftResult = measure(left)
-
-                            updateState(left, leftResult)
-                            return FillResult.Filled(right)
-                        } ?: return FillResult.Filled(element)
                     }
+
+                    val startIndex = remainSlot
+                    if (startIndex !in 1..<element.length) {
+                        return FillResult.Filled(element)
+                    }
+
+                    val (left, right) = element.divide(startIndex)
+                    if (left == AozoraElement.NoDividedLeftText) {
+                        return FillResult.Filled(element)
+                    }
+                    val leftResult = measure(left)
+
+                    updateState(left, leftResult)
+                    return FillResult.Filled(right)
                 }
 
                 updateState(element, measureResult)
@@ -74,6 +85,7 @@ internal class LineBuilder(
             AozoraElement.LineBreak -> {
                 val measureResult = measure(element)
                 updateState(element, measureResult)
+                isBreakLineAdded = true
                 return FillResult.Filled()
             }
 

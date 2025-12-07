@@ -13,22 +13,22 @@ class NDCClassificationTest {
     @Test
     fun testNDCClassification() {
         val ndc1 = NDCClassification("1")
-        assertTrue(ndc1.mainClassNum == 1)
-        assertTrue(ndc1.divisionNum == null)
-        assertTrue(ndc1.sectionNum == null)
-        assertTrue(ndc1.ndcType == NDCType.MAIN_CLASS)
+        assertEquals(ndc1.mainClassNum, 1)
+        assertEquals(ndc1.divisionNum, null)
+        assertEquals(ndc1.sectionNum, null)
+        assertEquals(ndc1.ndcType, NDCType.MAIN_CLASS)
 
         val ndc2 = NDCClassification("12")
-        assertTrue(ndc2.mainClassNum == 1)
-        assertTrue(ndc2.divisionNum == 2)
-        assertTrue(ndc2.sectionNum == null)
-        assertTrue(ndc2.ndcType == NDCType.DIVISION)
+        assertEquals(ndc2.mainClassNum, 1)
+        assertEquals(ndc2.divisionNum, 2)
+        assertEquals(ndc2.sectionNum, null)
+        assertEquals(ndc2.ndcType, NDCType.DIVISION)
 
         val ndc3 = NDCClassification("123")
-        assertTrue(ndc3.mainClassNum == 1)
-        assertTrue(ndc3.divisionNum == 2)
-        assertTrue(ndc3.sectionNum == 3)
-        assertTrue(ndc3.ndcType == NDCType.SECTION)
+        assertEquals(ndc3.mainClassNum, 1)
+        assertEquals(ndc3.divisionNum, 2)
+        assertEquals(ndc3.sectionNum, 3)
+        assertEquals(ndc3.ndcType, NDCType.SECTION)
 
         assertFails {
             NDCClassification("")

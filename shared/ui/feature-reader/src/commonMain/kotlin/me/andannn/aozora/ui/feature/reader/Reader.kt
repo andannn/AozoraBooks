@@ -70,8 +70,6 @@ private fun ReaderContent(
         val viewerState =
             retainBookViewerPresenter(
                 card = bookCard,
-                screenWidthDp = maxWidth,
-                screenHeightDp = maxHeight,
             ).present()
         val overlayState =
             retainReaderOverlayPresenter().present()

@@ -10,7 +10,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.AozoraPage
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.domain.model.ReadProgress
 import me.andannn.aozora.core.domain.model.TableOfContentsModel
@@ -74,7 +74,7 @@ sealed interface PagerSnapShot {
      */
     data class Ready(
         val initialIndex: Int?,
-        val pageList: ImmutableList<AozoraPage>,
+        val pageList: ImmutableList<Page>,
         val snapshotVersion: Int,
     ) : PagerSnapShot
 

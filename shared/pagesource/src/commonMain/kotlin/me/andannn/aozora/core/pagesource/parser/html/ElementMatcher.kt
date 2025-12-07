@@ -10,7 +10,6 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.pagesource.parser.html.matchers.EmphasisMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.HeadingMatcher
-import me.andannn.aozora.core.pagesource.parser.html.matchers.ImageMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.LineBreakMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.PlainTextMatcher
 import me.andannn.aozora.core.pagesource.parser.html.matchers.RubyMatcher
@@ -55,7 +54,8 @@ private val PARSERS =
     listOf(
         PlainTextMatcher,
         RubyMatcher,
-        ImageMatcher,
+// TODO: support image later
+//        ImageMatcher,
         EmphasisMatcher,
         LineBreakMatcher,
         HeadingMatcher,

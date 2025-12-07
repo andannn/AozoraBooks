@@ -7,21 +7,25 @@ package me.andannn.aozora.core.pagesource.util
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 
+internal data class DividedText(
+    val left: AozoraElement.BaseText,
+    val right: AozoraElement.BaseText,
+)
+
 /**
  * Divide the element from [startIndex].
- * return null if this element can not be divided or [startIndex] is out of range.
+ * throw error if [startIndex] is out of range.
  *
- * Return pair: [0, startIndex) -> [startIndex, length)
+ * When [startIndex] <= 0 or >= length,  Return error
+ * When [startIndex] in [1, length), Return pair: [0, startIndex) to [startIndex, length)
  */
-internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.BaseText, AozoraElement.BaseText>? {
-    if (startIndex > length) {
-        return null
-    }
+internal fun AozoraElement.BaseText.divide(startIndex: Int): DividedText {
+    if (startIndex !in 1..<length) error("startIndex must be in [1, $length) $startIndex")
     return when (this) {
         is AozoraElement.Emphasis -> {
             val left =
                 copy(
-                    text = text.substring(0, startIndex),
+                    text = text.take(startIndex),
                     style = style,
                 )
             val right =
@@ -29,20 +33,25 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): Pair<AozoraElement.
                     text = text.substring(startIndex),
                     style = style,
                 )
-            left to right
+            DividedText(left, right)
         }
 
         is AozoraElement.Text -> {
-            copy(
-                text = text.substring(0, startIndex),
-            ) to
+            val left =
+                copy(
+                    text = text.take(startIndex),
+                    style = style,
+                )
+            val right =
                 copy(
                     text = text.substring(startIndex),
+                    style = style,
                 )
+            DividedText(left, right)
         }
 
-        else -> {
-            null
+        is AozoraElement.Ruby -> {
+            DividedText(AozoraElement.NoDividedLeftText, this)
         }
     }
 }
@@ -75,67 +84,3 @@ private fun AozoraBlock.divideByLineBreak() =
             }
         }
     }
-
-/**
- * Divide the element by [startIndex] (not include).
- */
-internal fun AozoraBlock.divideByTextIndex(startIndex: Int): Pair<AozoraBlock, AozoraBlock> {
-    if (startIndex <= 0) {
-        error("index must be greater than 0. startIndex $startIndex")
-    }
-
-    when (this) {
-        is AozoraBlock.Image -> {
-            error("Image can not be divided")
-        }
-
-        is AozoraBlock.TextBlock -> {
-            var currentElementStartIndex = 0
-            var hitElement: IndexedValue<AozoraElement>? = null
-            for ((index, element) in elements.withIndex()) {
-                if (currentElementStartIndex + element.length >= startIndex) {
-                    hitElement = IndexedValue(index, element)
-                    break
-                }
-
-                currentElementStartIndex += element.length
-            }
-
-            if (hitElement == null) {
-                error("no element found")
-            }
-
-            var hitPair: Pair<AozoraElement.BaseText, AozoraElement.BaseText>? = null
-            (hitElement.value as? AozoraElement.BaseText)
-                ?.divide(startIndex - currentElementStartIndex)
-                ?.let {
-                    hitPair = it
-                }
-            if (hitPair != null) {
-                return this.copyWith(
-                    elements = elements.subList(0, hitElement.index) + listOf(hitPair.first),
-                ) to
-                    this.copyWith(
-                        elements =
-                            listOf(hitPair.second) +
-                                elements.subList(
-                                    hitElement.index + 1,
-                                    elements.size,
-                                ),
-                    )
-            } else {
-                val nextIndex = hitElement.index + 1
-                return this.copyWith(
-                    elements = elements.subList(0, nextIndex),
-                ) to
-                    this.copyWith(
-                        elements =
-                            elements.subList(
-                                nextIndex,
-                                elements.size,
-                            ),
-                    )
-            }
-        }
-    }
-}

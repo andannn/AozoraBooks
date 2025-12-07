@@ -4,9 +4,6 @@
  */
 package me.andannn.aozora.ui.feature.reader.viewer
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,10 +14,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.UriHandler
-import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
@@ -36,10 +32,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.andannn.aozora.core.domain.exceptions.CopyRightRetainedException
 import me.andannn.aozora.core.domain.model.AozoraBookCard
-import me.andannn.aozora.core.domain.model.AozoraPage
 import me.andannn.aozora.core.domain.model.FontSizeLevel
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
+import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageContext
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
@@ -72,8 +68,6 @@ import org.koin.mp.KoinPlatform.getKoin
 @Composable
 internal fun retainBookViewerPresenter(
     card: AozoraBookCard,
-    screenWidthDp: Dp,
-    screenHeightDp: Dp,
     bookSource: BookPageSource = LocalBookPageSource.current,
     popupController: PopupController = LocalPopupController.current,
     uriHandler: UriHandler = LocalUriHandler.current,
@@ -82,8 +76,6 @@ internal fun retainBookViewerPresenter(
 ) = retainPresenter(
     card,
     bookSource,
-    screenWidthDp,
-    screenHeightDp,
     uriHandler,
     settingRepository,
 ) {
@@ -92,8 +84,6 @@ internal fun retainBookViewerPresenter(
         bookSource = bookSource,
         popupController = popupController,
         navigator = navigator,
-        screenWidthDp = screenWidthDp,
-        screenHeightDp = screenHeightDp,
         uriHandler = uriHandler,
         userDataRepository = settingRepository,
     )
@@ -104,8 +94,6 @@ private const val TAG = "ReaderPresenter"
 private class BookViewerPresenter(
     private val card: AozoraBookCard,
     private val bookSource: BookPageSource,
-    private val screenWidthDp: Dp,
-    private val screenHeightDp: Dp,
     private val userDataRepository: UserDataRepository,
     private val popupController: PopupController,
     private val navigator: Navigator,
@@ -185,13 +173,7 @@ private class BookViewerPresenter(
             pagerState.currentPage == pagerState.pageCount - 1,
         )
 
-        val density = LocalDensity.current
-        val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
-        val navigationBarHeight =
-            with(density) { navigationBarHeightPx.toDp() }
-        val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
-        val statusBarHeight =
-            with(density) { statusBarHeightPx.toDp() }
+        val containerDpSize = LocalWindowInfo.current.containerDpSize
         // update progress when page changed.
         LaunchedEffect(
             snapshotState?.snapshotVersion,
@@ -212,15 +194,15 @@ private class BookViewerPresenter(
                     if (page != null) {
                         val currentProgress =
                             when (page) {
-                                is AozoraPage.AozoraCoverPage -> {
+                                is Page.CoverPage -> {
                                     ReadProgress.None
                                 }
 
-                                is AozoraPage.AozoraBibliographicalPage -> {
+                                is Page.BibliographicalPage -> {
                                     ReadProgress.Done
                                 }
 
-                                is AozoraPage.AozoraRoughPage -> {
+                                is Page.LayoutPage -> {
                                     ReadProgress.Reading(
                                         blockIndex = page.pageProgress.first,
                                         totalBlockCount = totalCount,
@@ -243,10 +225,8 @@ private class BookViewerPresenter(
         ) {
             val pageMetadata =
                 PageContext(
-                    navigationBarHeight = navigationBarHeight,
-                    statusBarHeight = statusBarHeight,
-                    originalHeight = screenHeightDp,
-                    originalWidth = screenWidthDp,
+                    originalHeight = containerDpSize.height,
+                    originalWidth = containerDpSize.width,
                     additionalTopMargin = topMargin,
                     fontSizeLevel = fontSize,
                     fontType = fontType,
@@ -299,7 +279,7 @@ private class BookViewerPresenter(
             theme = theme,
             bookPageState =
                 BookPageState(
-                    pages = snapshotState?.pageList ?: emptyList<AozoraPage>().toImmutableList(),
+                    pages = snapshotState?.pageList ?: emptyList<Page>().toImmutableList(),
                     pagerState = pagerState,
                 ),
         ) { eventSink ->
@@ -314,7 +294,7 @@ private class BookViewerPresenter(
                             uiScope.onJumpTo(
                                 pages =
                                     snapshotState?.pageList
-                                        ?: emptyList<AozoraPage>().toImmutableList(),
+                                        ?: emptyList<Page>().toImmutableList(),
                                 pagerState = pagerState,
                                 blockIndex = result.blockIndex,
                             )
@@ -362,21 +342,19 @@ private class BookViewerPresenter(
 private fun CoroutineScope.onJumpTo(
     pagerState: PagerState,
     blockIndex: Int,
-    pages: ImmutableList<AozoraPage>,
+    pages: ImmutableList<Page>,
 ) {
     val pageIndex =
         pages.indexOfFirst { page ->
             when (page) {
-                is AozoraPage.AozoraBibliographicalPage -> {
+                is Page.BibliographicalPage -> {
                     blockIndex == READ_PROGRESS_DONE
                 }
 
-                is AozoraPage.AozoraCoverPage -> {
+                is Page.CoverPage,
+                is Page.LayoutPage,
+                -> {
                     blockIndex == READ_PROGRESS_NONE
-                }
-
-                is AozoraPage.AozoraRoughPage -> {
-                    blockIndex in page.pageProgress
                 }
             }
         }
@@ -388,7 +366,7 @@ private fun CoroutineScope.onJumpTo(
 }
 
 internal data class BookPageState(
-    val pages: ImmutableList<AozoraPage>,
+    val pages: ImmutableList<Page>,
     val pagerState: PagerState,
 )
 
