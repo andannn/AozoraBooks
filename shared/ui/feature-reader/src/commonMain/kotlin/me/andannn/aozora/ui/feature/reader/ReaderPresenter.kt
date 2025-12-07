@@ -50,7 +50,7 @@ private class ReaderPresenter(
             pageSourceFlow.value =
                 getKoin()
                     .get<BookPageSource.Factory>()
-                    .createBookPageSource(bookCache, retainedScope)
+                    .createDummySource()
         }
     }
 

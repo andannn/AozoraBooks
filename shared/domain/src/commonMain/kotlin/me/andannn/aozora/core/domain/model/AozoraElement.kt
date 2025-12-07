@@ -9,11 +9,9 @@ sealed interface AozoraElement {
      * Text element.
      *
      * @property text The text content of the element.
-     * @property style The style of the text.
      */
     sealed class BaseText : AozoraElement {
         abstract val text: String
-        abstract val style: AozoraTextStyle
     }
 
     /**
@@ -21,7 +19,6 @@ sealed interface AozoraElement {
      */
     data class Text(
         override val text: String,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
@@ -32,7 +29,6 @@ sealed interface AozoraElement {
     data class Ruby(
         override val text: String,
         val ruby: String,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
@@ -43,7 +39,6 @@ sealed interface AozoraElement {
     data class Emphasis(
         override val text: String,
         val emphasisStyle: EmphasisStyle,
-        override val style: AozoraTextStyle = AozoraTextStyle.PARAGRAPH,
     ) : BaseText()
 
     /**
