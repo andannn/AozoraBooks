@@ -59,6 +59,7 @@ fun buildDummyBookPageSource(): BookPageSource =
                         writeString(dummyHtml)
                     }.lineSequence()
                     .map { DefaultAozoraBlockParser(HtmlLineParser).parseLineAsBlock(it) }
+                    .flatten()
                     .validBlock()
                     .asFlow()
 
