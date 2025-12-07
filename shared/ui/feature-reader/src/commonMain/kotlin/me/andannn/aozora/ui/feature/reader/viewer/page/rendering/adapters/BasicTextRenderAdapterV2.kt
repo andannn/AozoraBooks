@@ -17,7 +17,6 @@ import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
-import kotlin.text.forEach
 
 abstract class BasicTextRenderAdapterV2(
     private val measureHelper: MeasureHelper,
@@ -70,17 +69,30 @@ abstract class BasicTextRenderAdapterV2(
         var currentY = y
         var maxWidth = 0f
 
-        text.forEach { char ->
+        text.consume { type, string ->
             val charSize =
-                drawKanji(
-                    char = char,
-                    x = x,
-                    currentY = currentY,
-                    fontStyle = fontStyle,
-                    isNotation = isNotation,
-                )
+                when (type) {
+                    ConsumeType.Japanese -> {
+                        drawKanji(
+                            char = string,
+                            x = x,
+                            currentY = currentY,
+                            fontStyle = fontStyle,
+                            isNotation = isNotation,
+                        )
+                    }
 
-            currentY += charSize.width
+                    ConsumeType.AlphaNumeric -> {
+                        drawAlphaNumeric(
+                            string = string,
+                            x = x,
+                            currentY = currentY,
+                            fontStyle = fontStyle,
+                        )
+                    }
+                }
+
+            currentY += charSize.height
             maxWidth = maxOf(maxWidth, charSize.width.toFloat())
         }
 
@@ -89,8 +101,8 @@ abstract class BasicTextRenderAdapterV2(
         return Size(width, height)
     }
 
-    private fun DrawScope.drawKanji(
-        char: Char,
+    private fun DrawScope.drawAlphaNumeric(
+        string: String,
         x: Float,
         currentY: Float,
         fontStyle: FontStyle,
@@ -98,7 +110,37 @@ abstract class BasicTextRenderAdapterV2(
     ): IntSize {
         val result =
             measureHelper.measure(
-                text = char.toString(),
+                text = string,
+                fontStyle = fontStyle,
+                isNotation = isNotation,
+            )
+        val size = result.size
+        rotate(
+            degrees = 90f,
+            pivot = Offset(x, currentY),
+        ) {
+            drawText(
+                textLayoutResult = result,
+                topLeft =
+                    Offset(
+                        x = x,
+                        y = currentY - size.height.div(2f),
+                    ),
+            )
+        }
+        return IntSize(size.height, size.width)
+    }
+
+    private fun DrawScope.drawKanji(
+        char: String,
+        x: Float,
+        currentY: Float,
+        fontStyle: FontStyle,
+        isNotation: Boolean = false,
+    ): IntSize {
+        val result =
+            measureHelper.measure(
+                text = char,
                 fontStyle = fontStyle,
                 isNotation = isNotation,
             )
@@ -124,9 +166,43 @@ abstract class BasicTextRenderAdapterV2(
                     ),
             )
         }
-        return result.size
+        return IntSize(charSize.height, charSize.width)
     }
 }
+
+private enum class ConsumeType {
+    Japanese,
+    AlphaNumeric,
+}
+
+private inline fun String.consume(consumer: (consumeType: ConsumeType, value: String) -> Unit) {
+    if (isEmpty()) return
+
+    var i = 0
+    val length = this.length
+
+    while (i < length) {
+        val c = this[i]
+
+        when {
+            c.isAsciiAlphaNumeric() -> {
+                val start = i
+                i++
+                while (i < length && this[i].isAsciiAlphaNumeric()) {
+                    i++
+                }
+                consumer(ConsumeType.AlphaNumeric, substring(start, i))
+            }
+
+            else -> {
+                consumer(ConsumeType.Japanese, c.toString())
+                i++
+            }
+        }
+    }
+}
+
+private fun Char.isAsciiAlphaNumeric(): Boolean = (this in 'A'..'Z') || (this in 'a'..'z') || (this in '0'..'9')
 
 private sealed interface TransForm {
     data class Rotate(
@@ -163,13 +239,13 @@ private val TransformMap =
 private fun isUtf8AlphaBet(char: Char): Boolean = char in 'A'..'Z' || char in 'a'..'z'
 
 private fun DrawScope.withCharTransforms(
-    char: Char,
+    char: String,
     oneCharSize: Int,
     onGetPivot: () -> Offset,
     block: DrawScope.() -> Unit,
 ) {
     val transforms = mutableListOf<TransForm>()
-    TransformMap[char]?.let {
+    TransformMap[char.first()]?.let {
         transforms.addAll(it)
     }
     if (transforms.isEmpty()) {
