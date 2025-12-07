@@ -10,7 +10,6 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
-import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 internal data class ElementMeasureResult(
     val widthDp: Dp,
