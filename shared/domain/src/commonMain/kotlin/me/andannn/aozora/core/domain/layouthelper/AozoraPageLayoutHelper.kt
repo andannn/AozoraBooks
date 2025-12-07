@@ -5,7 +5,12 @@
 package me.andannn.aozora.core.domain.layouthelper
 
 import me.andannn.aozora.core.domain.model.Page
+import me.andannn.aozora.core.domain.model.PageMetaData
 
 interface AozoraPageLayoutHelper {
     fun Page.layout(): Page.LayoutPage
+
+    interface Factory {
+        fun create(pageMetaData: PageMetaData): AozoraPageLayoutHelper
+    }
 }

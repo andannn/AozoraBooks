@@ -11,19 +11,24 @@ import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
 import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 private const val TAG = "ReaderPageBuilder"
 
-internal class LayoutPageBuilder constructor(
-    private val meta: PageMetaData,
-    private val textStyleCalculator: TextStyleCalculatorImpl =
+internal fun LayoutPageBuilder(meta: PageMetaData) =
+    LayoutPageBuilder(
+        meta.renderWidth,
+        meta.renderHeight,
         TextStyleCalculatorImpl(meta),
+    )
+
+internal class LayoutPageBuilder(
+    private val fullWidth: Dp,
+    private val fullHeight: Dp,
+    private val textStyleCalculator: TextStyleCalculator,
     private val forceAddBlock: Boolean = false,
 ) : PageBuilder<Page.LayoutPage> {
-    private val fullWidth: Dp = meta.renderWidth
-    private val fullHeight: Dp = meta.renderHeight
-
     private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
@@ -142,7 +147,6 @@ internal class LayoutPageBuilder constructor(
         }
 
         return Page.LayoutPage(
-            pageMetaData = meta,
             lines = lines.toImmutableList(),
         )
     }

@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.FontStyle
+import me.andannn.aozora.core.pagesource.measure.TextStyleCalculator
 import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 internal data class ElementMeasureResult(
@@ -23,12 +24,12 @@ internal interface ElementMeasureScope {
 
 internal fun ElementMeasureScope(
     block: AozoraBlock,
-    textStyleCalculator: TextStyleCalculatorImpl,
+    textStyleCalculator: TextStyleCalculator,
 ): ElementMeasureScope = ElementMeasureScopeImpl(block, textStyleCalculator)
 
 private class ElementMeasureScopeImpl(
     val block: AozoraBlock,
-    val textStyleCalculator: TextStyleCalculatorImpl,
+    val textStyleCalculator: TextStyleCalculator,
 ) : ElementMeasureScope {
     override fun measure(element: AozoraElement): ElementMeasureResult =
         when (val block = block) {
@@ -84,7 +85,9 @@ private class ElementMeasureScopeImpl(
                 )
             }
 
-            AozoraElement.PageBreak -> error("error")
+            AozoraElement.PageBreak -> {
+                error("error")
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
  */
 package me.andannn.aozora.core.domain.model
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 
 interface PaperLayout {
@@ -55,6 +56,7 @@ interface RenderSetting {
     val additionalTopMargin: TopMargin
 }
 
+@Stable
 interface PageMetaData :
     PaperLayout,
     RenderSetting

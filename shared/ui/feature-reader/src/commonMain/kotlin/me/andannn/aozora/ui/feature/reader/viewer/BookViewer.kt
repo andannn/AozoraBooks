@@ -22,6 +22,7 @@ import kotlinx.collections.immutable.ImmutableList
 import me.andannn.aozora.core.domain.layouthelper.AozoraPageLayoutHelper
 import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.Page
+import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.domain.model.ReaderTheme
 import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
@@ -42,6 +43,7 @@ internal fun BookViewer(
             theme = state.theme,
             pagerState = state.bookPageState.pagerState,
             fontType = state.fontType,
+            metadata = state.bookPageState.pageMetaData,
         )
     }
 }
@@ -49,12 +51,13 @@ internal fun BookViewer(
 @Composable
 private fun ReaderContent(
     modifier: Modifier = Modifier,
+    metadata: PageMetaData?,
     pages: ImmutableList<Page>,
     theme: ReaderTheme,
     pagerState: PagerState,
     fontType: FontType,
 ) {
-    if (pages.isEmpty()) {
+    if (pages.isEmpty() || metadata == null) {
         Scaffold(
             modifier = modifier.fillMaxSize(),
         ) {
@@ -86,8 +89,8 @@ private fun ReaderContent(
                 AozoraBibliographicalPage(page = page, textColor = textColor)
             } else {
                 val layoutHelper =
-                    remember {
-                        getKoin().get<AozoraPageLayoutHelper>()
+                    remember(metadata) {
+                        getKoin().get<AozoraPageLayoutHelper.Factory>().create(metadata)
                     }
                 val layoutPage =
                     remember(page) {
@@ -101,6 +104,7 @@ private fun ReaderContent(
                         modifier = Modifier.fillMaxSize(),
                         page = layoutPage,
                         textColor = textColor,
+                        pageMetaData = metadata,
                         fontFamily = fontFamily,
                     )
                 }

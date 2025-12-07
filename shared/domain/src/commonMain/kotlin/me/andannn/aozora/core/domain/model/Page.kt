@@ -10,20 +10,16 @@ import kotlinx.collections.immutable.ImmutableList
 /**
  * Page of reader.
  */
-sealed class Page(
-    open val pageMetaData: PageMetaData,
-) {
+sealed interface Page {
     data class CoverPage(
-        override val pageMetaData: PageMetaData,
         val title: String,
         val author: String,
         val subtitle: String?,
-    ) : Page(pageMetaData)
+    ) : Page
 
     data class LayoutPage(
-        override val pageMetaData: PageMetaData,
         val lines: ImmutableList<LineWithBlockIndex>,
-    ) : Page(pageMetaData) {
+    ) : Page {
         data class LineWithBlockIndex(
             val line: Line,
             val blockIndex: Int,
@@ -41,7 +37,6 @@ sealed class Page(
     }
 
     data class BibliographicalPage(
-        override val pageMetaData: PageMetaData,
         val html: String,
-    ) : Page(pageMetaData)
+    ) : Page
 }
