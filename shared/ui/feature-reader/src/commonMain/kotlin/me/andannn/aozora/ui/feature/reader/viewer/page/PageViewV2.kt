@@ -97,19 +97,19 @@ fun DrawScope.drawAozoraLineV2(
     adapters: List<ElementRenderAdapterV2>,
     density: Density,
 ) {
-    val fontStyle = line.fontStyle
     var currentY = 0f
-    line.elements.forEach { element ->
+    line.elements.forEach { item ->
+        val fontStyle = item.fontStyle
         var drawSize: Size? = null
         for (adapter in adapters) {
-            val size = with(adapter) { draw(x, currentY, element, fontStyle) }
+            val size = with(adapter) { draw(x, currentY, item.element, fontStyle) }
             if (size != null) {
                 drawSize = size
                 break
             }
         }
         if (drawSize == null) {
-            error("No adapter can draw element $element")
+            error("No adapter can draw element $item")
         }
 
         if (DEBUG_RENDER) {

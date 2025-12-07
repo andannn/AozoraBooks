@@ -79,6 +79,7 @@ private class ElementMeasureScopeImpl(
             is AozoraElement.Indent -> {
                 val style = textStyleCalculator.resolve(AozoraTextStyle.PARAGRAPH)
                 return ElementMeasureResult(
+                    fontStyle = style,
                     widthDp = style.lineHeightDp,
                     heightDp = style.baseSizeDp * element.count,
                 )

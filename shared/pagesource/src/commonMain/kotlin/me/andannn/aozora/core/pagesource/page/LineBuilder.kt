@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.toImmutableList
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.FontStyle
+import me.andannn.aozora.core.domain.model.ElementDetail
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.core.pagesource.util.divide
 import kotlin.math.min
@@ -30,8 +30,7 @@ internal class LineBuilder(
     // Excluding indent.
     private var currentCharacterCount: Int = 0
     private var maxWidth: Dp = 0.dp
-    private val elementList = mutableListOf<AozoraElement>()
-    private var currentFontStyle: FontStyle? = null
+    private val elementList = mutableListOf<ElementDetail>()
     private var isBreakLineAdded: Boolean = false
 
     fun ElementMeasureScope.tryAdd(element: AozoraElement): FillResult {
@@ -111,19 +110,15 @@ internal class LineBuilder(
         Line(
             lineHeight = maxWidth,
             elements = elementList.toImmutableList(),
-            fontStyle = currentFontStyle,
         )
 
     private fun updateState(
         element: AozoraElement,
         measureResult: ElementMeasureResult,
     ) {
-        elementList += element
+        elementList += ElementDetail(element, measureResult.fontStyle)
         currentHeight += measureResult.heightDp
         currentCharacterCount += (element as? AozoraElement.BaseText)?.length ?: 0
         maxWidth = maxOf(maxWidth, measureResult.widthDp)
-        if (measureResult.fontStyle != null) {
-            currentFontStyle = measureResult.fontStyle
-        }
     }
 }
