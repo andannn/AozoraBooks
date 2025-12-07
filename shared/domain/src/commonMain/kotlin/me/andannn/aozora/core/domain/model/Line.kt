@@ -18,18 +18,12 @@ data class Line(
      */
     val lineHeight: Dp,
     /**
-     * font style.
-     */
-    val fontStyle: FontStyle?,
-    /**
      * elements in line.
      */
-    val elements: ImmutableList<AozoraElement>,
-) {
-    val fullText: String
-        by lazy {
-            elements.fold("") { acc, element ->
-                acc + element.debugText()
-            }
-        }
-}
+    val elements: ImmutableList<ElementDetail>,
+)
+
+data class ElementDetail(
+    val element: AozoraElement,
+    val fontStyle: FontStyle? = null,
+)

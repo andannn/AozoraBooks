@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Density
-import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
@@ -27,8 +26,6 @@ import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.createAdapters
-
-private const val TAG = "PageView"
 
 @Composable
 fun PageViewV2(
@@ -38,7 +35,6 @@ fun PageViewV2(
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
 ) {
-    Napier.d(tag = TAG) { "PageView E. page $page" }
     val measurer =
         rememberTextMeasurer(
             cacheSize = 0,
@@ -52,7 +48,7 @@ fun PageViewV2(
         modifier =
             modifier
                 .fillMaxSize()
-                .drawWithContent {
+                .drawWithCache {
                     val contentWidthDp = page.contentWidth
                     val renderWidthDp = pageMetaData.renderWidth
                     val renderHeightDp = pageMetaData.renderHeight
@@ -64,26 +60,28 @@ fun PageViewV2(
                     val offsetX = with(density) { offsetXDp.toPx() }
                     val offsetY = with(density) { offsetYDp.toPx() }
 
-                    if (DEBUG_RENDER) {
-                        drawRect(
-                            topLeft = Offset(offsetX, offsetY),
-                            size = Size(renderWidth, renderHeight),
-                            color = RandomColor,
-                        )
-                    }
-                    translate(
-                        left = (contentWidth - renderWidth).div(2),
-                    ) {
+                    onDrawBehind {
+                        if (DEBUG_RENDER) {
+                            drawRect(
+                                topLeft = Offset(offsetX, offsetY),
+                                size = Size(renderWidth, renderHeight),
+                                color = RandomColor,
+                            )
+                        }
                         translate(
-                            offsetX,
-                            offsetY,
+                            left = (contentWidth - renderWidth).div(2),
                         ) {
-                            var currentX = renderWidth
-                            for (line in page.lines) {
-                                val lineHeightPx = with(density) { line.line.lineHeight.toPx() }
-                                currentX -= lineHeightPx / 2
-                                drawAozoraLineV2(currentX, line.line, adapters, density)
-                                currentX -= lineHeightPx / 2
+                            translate(
+                                offsetX,
+                                offsetY,
+                            ) {
+                                var currentX = renderWidth
+                                for (line in page.lines) {
+                                    val lineHeightPx = with(density) { line.line.lineHeight.toPx() }
+                                    currentX -= lineHeightPx / 2
+                                    drawAozoraLineV2(currentX, line.line, adapters, density)
+                                    currentX -= lineHeightPx / 2
+                                }
                             }
                         }
                     }
@@ -97,19 +95,19 @@ fun DrawScope.drawAozoraLineV2(
     adapters: List<ElementRenderAdapterV2>,
     density: Density,
 ) {
-    val fontStyle = line.fontStyle
     var currentY = 0f
-    line.elements.forEach { element ->
+    line.elements.forEach { item ->
+        val fontStyle = item.fontStyle
         var drawSize: Size? = null
         for (adapter in adapters) {
-            val size = with(adapter) { draw(x, currentY, element, fontStyle) }
+            val size = with(adapter) { draw(x, currentY, item.element, fontStyle) }
             if (size != null) {
                 drawSize = size
                 break
             }
         }
         if (drawSize == null) {
-            error("No adapter can draw element $element")
+            error("No adapter can draw element $item")
         }
 
         if (DEBUG_RENDER) {

@@ -10,13 +10,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.IntSize
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
-import kotlin.text.forEach
 
 abstract class BasicTextRenderAdapterV2(
     private val measureHelper: MeasureHelper,
@@ -67,51 +67,142 @@ abstract class BasicTextRenderAdapterV2(
         isNotation: Boolean = false,
     ): Size {
         var currentY = y
-        val oneCharSize =
-            measureHelper
-                .measure(
-                    text = "あ",
-                    fontStyle = fontStyle,
-                    isNotation = isNotation,
-                ).size
-        val offsetX = (oneCharSize.width) / 2
-        val textSize = oneCharSize.width
-        text.forEach { char ->
-            val result =
-                measureHelper.measure(
-                    text = char.toString(),
-                    fontStyle = fontStyle,
-                    isNotation = isNotation,
-                )
-            val offsetY = (result.size.height - result.size.width) / 2
-            withCharTransforms(
-                char,
-                oneCharSize.width,
-                onGetPivot = {
-                    Offset(
-                        x = x,
-                        y = currentY + (oneCharSize.width) / 2,
-                    )
-                },
-            ) {
-                drawText(
-                    textLayoutResult = result,
-                    topLeft =
-                        Offset(
-                            x = x - offsetX,
-                            y = currentY - offsetY,
-                        ),
-                )
-            }
+        var maxWidth = 0f
 
-            currentY += result.size.width
+        text.consume { type, string ->
+            val charSize =
+                when (type) {
+                    ConsumeType.Japanese -> {
+                        drawKanji(
+                            char = string,
+                            x = x,
+                            currentY = currentY,
+                            fontStyle = fontStyle,
+                            isNotation = isNotation,
+                        )
+                    }
+
+                    ConsumeType.AlphaNumeric -> {
+                        drawAlphaNumeric(
+                            string = string,
+                            x = x,
+                            currentY = currentY,
+                            fontStyle = fontStyle,
+                        )
+                    }
+                }
+
+            currentY += charSize.height
+            maxWidth = maxOf(maxWidth, charSize.width.toFloat())
         }
 
-        val width = textSize.toFloat()
-        val height = (text.length * width).toFloat()
+        val width = maxWidth
+        val height = currentY - y
         return Size(width, height)
     }
+
+    private fun DrawScope.drawAlphaNumeric(
+        string: String,
+        x: Float,
+        currentY: Float,
+        fontStyle: FontStyle,
+        isNotation: Boolean = false,
+    ): IntSize {
+        val result =
+            measureHelper.measure(
+                text = string,
+                fontStyle = fontStyle,
+                isNotation = isNotation,
+            )
+        val size = result.size
+        rotate(
+            degrees = 90f,
+            pivot = Offset(x, currentY),
+        ) {
+            drawText(
+                textLayoutResult = result,
+                topLeft =
+                    Offset(
+                        x = x,
+                        y = currentY - size.height.div(2f),
+                    ),
+            )
+        }
+        return IntSize(size.height, size.width)
+    }
+
+    private fun DrawScope.drawKanji(
+        char: String,
+        x: Float,
+        currentY: Float,
+        fontStyle: FontStyle,
+        isNotation: Boolean = false,
+    ): IntSize {
+        val result =
+            measureHelper.measure(
+                text = char,
+                fontStyle = fontStyle,
+                isNotation = isNotation,
+            )
+        val charSize = result.size
+        val offsetY = (charSize.height - charSize.width) / 2
+        val offsetX = (charSize.width) / 2
+        withCharTransforms(
+            char,
+            charSize.width,
+            onGetPivot = {
+                Offset(
+                    x = x,
+                    y = currentY + (charSize.width) / 2,
+                )
+            },
+        ) {
+            drawText(
+                textLayoutResult = result,
+                topLeft =
+                    Offset(
+                        x = x - offsetX,
+                        y = currentY - offsetY,
+                    ),
+            )
+        }
+        return IntSize(charSize.height, charSize.width)
+    }
 }
+
+private enum class ConsumeType {
+    Japanese,
+    AlphaNumeric,
+}
+
+private inline fun String.consume(consumer: (consumeType: ConsumeType, value: String) -> Unit) {
+    if (isEmpty()) return
+
+    var i = 0
+    val length = this.length
+
+    while (i < length) {
+        val c = this[i]
+
+        when {
+            c.isAsciiAlphaNumeric() -> {
+                val start = i
+                i++
+                while (i < length && this[i].isAsciiAlphaNumeric()) {
+                    i++
+                }
+                consumer(ConsumeType.AlphaNumeric, substring(start, i))
+            }
+
+            else -> {
+                consumer(ConsumeType.Japanese, c.toString())
+                i++
+            }
+        }
+    }
+}
+
+private fun Char.isAsciiAlphaNumeric(): Boolean = (this in 'A'..'Z') || (this in 'a'..'z') || (this in '0'..'9')
 
 private sealed interface TransForm {
     data class Rotate(
@@ -145,14 +236,19 @@ private val TransformMap =
         '』' to listOf(TransForm.Rotate(90f)),
     )
 
+private fun isUtf8AlphaBet(char: Char): Boolean = char in 'A'..'Z' || char in 'a'..'z'
+
 private fun DrawScope.withCharTransforms(
-    char: Char,
+    char: String,
     oneCharSize: Int,
     onGetPivot: () -> Offset,
     block: DrawScope.() -> Unit,
 ) {
-    val transforms = TransformMap[char]
-    if (transforms.isNullOrEmpty()) {
+    val transforms = mutableListOf<TransForm>()
+    TransformMap[char.first()]?.let {
+        transforms.addAll(it)
+    }
+    if (transforms.isEmpty()) {
         block()
     } else {
         applyTransformsRecursively(transforms, 0, oneCharSize, onGetPivot, block)
