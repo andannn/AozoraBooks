@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.IntSize
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.common.theme.RandomColor
@@ -67,49 +68,63 @@ abstract class BasicTextRenderAdapterV2(
         isNotation: Boolean = false,
     ): Size {
         var currentY = y
-        val oneCharSize =
-            measureHelper
-                .measure(
-                    text = "あ",
-                    fontStyle = fontStyle,
-                    isNotation = isNotation,
-                ).size
-        val offsetX = (oneCharSize.width) / 2
-        val textSize = oneCharSize.width
-        text.forEach { char ->
-            val result =
-                measureHelper.measure(
-                    text = char.toString(),
-                    fontStyle = fontStyle,
-                    isNotation = isNotation,
-                )
-            val offsetY = (result.size.height - result.size.width) / 2
-            withCharTransforms(
-                char,
-                oneCharSize.width,
-                onGetPivot = {
-                    Offset(
-                        x = x,
-                        y = currentY + (oneCharSize.width) / 2,
-                    )
-                },
-            ) {
-                drawText(
-                    textLayoutResult = result,
-                    topLeft =
-                        Offset(
-                            x = x - offsetX,
-                            y = currentY - offsetY,
-                        ),
-                )
-            }
+        var maxWidth = 0f
 
-            currentY += result.size.width
+        text.forEach { char ->
+            val charSize =
+                drawKanji(
+                    char = char,
+                    x = x,
+                    currentY = currentY,
+                    fontStyle = fontStyle,
+                    isNotation = isNotation,
+                )
+
+            currentY += charSize.width
+            maxWidth = maxOf(maxWidth, charSize.width.toFloat())
         }
 
-        val width = textSize.toFloat()
-        val height = (text.length * width).toFloat()
+        val width = maxWidth
+        val height = currentY - y
         return Size(width, height)
+    }
+
+    private fun DrawScope.drawKanji(
+        char: Char,
+        x: Float,
+        currentY: Float,
+        fontStyle: FontStyle,
+        isNotation: Boolean = false,
+    ): IntSize {
+        val result =
+            measureHelper.measure(
+                text = char.toString(),
+                fontStyle = fontStyle,
+                isNotation = isNotation,
+            )
+        val charSize = result.size
+        val offsetY = (charSize.height - charSize.width) / 2
+        val offsetX = (charSize.width) / 2
+        withCharTransforms(
+            char,
+            charSize.width,
+            onGetPivot = {
+                Offset(
+                    x = x,
+                    y = currentY + (charSize.width) / 2,
+                )
+            },
+        ) {
+            drawText(
+                textLayoutResult = result,
+                topLeft =
+                    Offset(
+                        x = x - offsetX,
+                        y = currentY - offsetY,
+                    ),
+            )
+        }
+        return result.size
     }
 }
 
@@ -145,14 +160,19 @@ private val TransformMap =
         '』' to listOf(TransForm.Rotate(90f)),
     )
 
+private fun isUtf8AlphaBet(char: Char): Boolean = char in 'A'..'Z' || char in 'a'..'z'
+
 private fun DrawScope.withCharTransforms(
     char: Char,
     oneCharSize: Int,
     onGetPivot: () -> Offset,
     block: DrawScope.() -> Unit,
 ) {
-    val transforms = TransformMap[char]
-    if (transforms.isNullOrEmpty()) {
+    val transforms = mutableListOf<TransForm>()
+    TransformMap[char]?.let {
+        transforms.addAll(it)
+    }
+    if (transforms.isEmpty()) {
         block()
     } else {
         applyTransformsRecursively(transforms, 0, oneCharSize, onGetPivot, block)

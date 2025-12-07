@@ -73,6 +73,10 @@ private fun ReaderContent(
     val backgroundColor = theme.getBackgroundColor(MaterialTheme.colorScheme)
     val textColor = theme.getTextColor(MaterialTheme.colorScheme)
     val fontFamily = getFontFamilyByType(fontType)
+    val layoutHelper =
+        remember(metadata) {
+            getKoin().get<AozoraPageLayoutHelper.Factory>().create(metadata)
+        }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -88,17 +92,12 @@ private fun ReaderContent(
             if (page is Page.BibliographicalPage) {
                 AozoraBibliographicalPage(page = page, textColor = textColor)
             } else {
-                val layoutHelper =
-                    remember(metadata) {
-                        getKoin().get<AozoraPageLayoutHelper.Factory>().create(metadata)
-                    }
                 val layoutPage =
                     remember(page) {
                         with(layoutHelper) {
                             page?.layout()
                         }
                     }
-
                 if (layoutPage != null) {
                     PageViewV2(
                         modifier = Modifier.fillMaxSize(),
