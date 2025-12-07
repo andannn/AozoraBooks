@@ -13,12 +13,17 @@ import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
 import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
 
-class AozoraPageLayoutHelperImpl : AozoraPageLayoutHelper {
+class AozoraPageLayoutHelperFactory : AozoraPageLayoutHelper.Factory {
+    override fun create(pageMetaData: PageMetaData): AozoraPageLayoutHelper = AozoraPageLayoutHelperImpl(pageMetaData)
+}
+
+private class AozoraPageLayoutHelperImpl(
+    val pageMetaData: PageMetaData,
+) : AozoraPageLayoutHelper {
     override fun Page.layout(): Page.LayoutPage =
         when (this) {
             is Page.CoverPage -> {
                 createCoverPage(
-                    pageMetaData,
                     title = title,
                     author = author,
                     subtitle = subtitle,
@@ -35,7 +40,6 @@ class AozoraPageLayoutHelperImpl : AozoraPageLayoutHelper {
         }
 
     private fun createCoverPage(
-        pageMetaData: PageMetaData,
         title: String,
         subtitle: String?,
         author: String,

@@ -7,6 +7,7 @@ package me.andannn.aozora.ui.feature.reader.viewer
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import me.andannn.aozora.core.domain.model.FontType
 import me.andannn.aozora.core.domain.model.LineSpacing
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageContext
+import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_DONE
 import me.andannn.aozora.core.domain.model.READ_PROGRESS_NONE
 import me.andannn.aozora.core.domain.model.ReadProgress
@@ -159,15 +161,15 @@ private class BookViewerPresenter(
         val userMarkCompleted by userMarkCompletedFlow.collectAsStateWithLifecycle()
 
         var snapshotState by remember {
-            mutableStateOf<PagerSnapShot.Ready?>(null)
+            mutableStateOf<MetadataWithPage?>(null)
         }
 
         val pagerState =
             rememberRefreshablePagerState(
-                initialPage = snapshotState?.initialIndex ?: 0,
-                version = snapshotState?.snapshotVersion,
+                initialPage = snapshotState?.page?.initialIndex ?: 0,
+                version = snapshotState?.page?.snapshotVersion,
             ) {
-                snapshotState?.pageList?.size ?: 0
+                snapshotState?.page?.pageList?.size ?: 0
             }
         val isLastPage by rememberUpdatedState(
             pagerState.currentPage == pagerState.pageCount - 1,
@@ -176,7 +178,7 @@ private class BookViewerPresenter(
         val containerDpSize = LocalWindowInfo.current.containerDpSize
         // update progress when page changed.
         LaunchedEffect(
-            snapshotState?.snapshotVersion,
+            snapshotState?.page?.snapshotVersion,
             isAddedToShelf,
         ) {
             if (!isAddedToShelf) {
@@ -190,7 +192,7 @@ private class BookViewerPresenter(
                 .drop(1)
                 .collect { newIndex ->
                     Napier.d(tag = TAG) { "new settled page collected $newIndex" }
-                    val page = snapshotState?.pageList?.get(newIndex)
+                    val page = snapshotState?.page?.pageList?.get(newIndex)
                     if (page != null) {
                         val currentProgress =
                             when (page) {
@@ -258,7 +260,11 @@ private class BookViewerPresenter(
                         }
 
                         is PagerSnapShot.Ready -> {
-                            snapshotState = it
+                            snapshotState =
+                                MetadataWithPage(
+                                    metaData = pageMetadata,
+                                    page = it,
+                                )
                         }
                     }
                 }
@@ -279,8 +285,9 @@ private class BookViewerPresenter(
             theme = theme,
             bookPageState =
                 BookPageState(
-                    pages = snapshotState?.pageList ?: emptyList<Page>().toImmutableList(),
+                    pages = snapshotState?.page?.pageList ?: emptyList<Page>().toImmutableList(),
                     pagerState = pagerState,
+                    pageMetaData = snapshotState?.metaData,
                 ),
         ) { eventSink ->
             when (eventSink) {
@@ -293,7 +300,7 @@ private class BookViewerPresenter(
                         if (result is OnJumpTo) {
                             uiScope.onJumpTo(
                                 pages =
-                                    snapshotState?.pageList
+                                    snapshotState?.page?.pageList
                                         ?: emptyList<Page>().toImmutableList(),
                                 pagerState = pagerState,
                                 blockIndex = result.blockIndex,
@@ -365,11 +372,20 @@ private fun CoroutineScope.onJumpTo(
     }
 }
 
+@Stable
+data class MetadataWithPage(
+    val metaData: PageMetaData,
+    val page: PagerSnapShot.Ready,
+)
+
+@Stable
 internal data class BookPageState(
+    val pageMetaData: PageMetaData?,
     val pages: ImmutableList<Page>,
     val pagerState: PagerState,
 )
 
+@Stable
 internal data class BookViewerState(
     val fontType: FontType,
     val bookPageState: BookPageState,

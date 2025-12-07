@@ -15,15 +15,22 @@ import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 
 private const val TAG = "ReaderPageBuilder"
 
-internal class LayoutPageBuilder constructor(
-    private val meta: PageMetaData,
-    private val textStyleCalculator: TextStyleCalculatorImpl =
-        TextStyleCalculatorImpl(meta),
-    private val forceAddBlock: Boolean = false,
-) : PageBuilder<Page.LayoutPage> {
-    private val fullWidth: Dp = meta.renderWidth
-    private val fullHeight: Dp = meta.renderHeight
+@Suppress("ktlint:standard:function-naming")
+internal fun LayoutPageBuilder(meta: PageMetaData) =
+    LayoutPageBuilder(
+        meta.renderWidth,
+        meta.renderHeight,
+        scopeBuilder = {
+            ElementMeasureScope(it, TextStyleCalculatorImpl(meta))
+        },
+    )
 
+internal class LayoutPageBuilder(
+    private val fullWidth: Dp,
+    private val fullHeight: Dp,
+    private val forceAddBlock: Boolean = false,
+    private val scopeBuilder: (block: AozoraBlock) -> ElementMeasureScope,
+) : PageBuilder<Page.LayoutPage> {
     private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
@@ -33,7 +40,7 @@ internal class LayoutPageBuilder constructor(
     private var currentBlockIndex = 0
 
     override fun tryAddBlock(block: AozoraBlock): FillResult =
-        with(ElementMeasureScope(block, textStyleCalculator)) {
+        with(scopeBuilder(block)) {
             Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
             currentBlockIndex = block.blockIndex
             val remainingElements = block.elements.toMutableList()
@@ -49,12 +56,12 @@ internal class LayoutPageBuilder constructor(
 
                 when (result) {
                     is FillResult.FillContinue -> {
-                        remainingElements.removeAt(0) // 成功消费，移除
+                        remainingElements.removeAt(0)
                     }
 
                     is FillResult.Filled -> {
-                        remainingElements.removeAt(0) // 继续消费本 element
-                        result.remainElement?.let { remainingElements.add(0, it) } // 还原未消费部分
+                        remainingElements.removeAt(0)
+                        result.remainElement?.let { remainingElements.add(0, it) }
                         break
                     }
                 }
@@ -142,7 +149,6 @@ internal class LayoutPageBuilder constructor(
         }
 
         return Page.LayoutPage(
-            pageMetaData = meta,
             lines = lines.toImmutableList(),
         )
     }

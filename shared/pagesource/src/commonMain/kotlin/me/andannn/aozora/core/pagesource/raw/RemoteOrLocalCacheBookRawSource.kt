@@ -88,6 +88,7 @@ internal class RemoteOrLocalCacheBookRawSource(
                     .buffered()
                     .lineSequence()
                     .map { parser.parseLineAsBlock(it) }
+                    .flatten()
                     .validBlock()
                     .asFlow()
                     .onCompletion {

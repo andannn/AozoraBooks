@@ -23,30 +23,14 @@ internal fun AozoraElement.BaseText.divide(startIndex: Int): DividedText {
     if (startIndex !in 1..<length) error("startIndex must be in [1, $length) $startIndex")
     return when (this) {
         is AozoraElement.Emphasis -> {
-            val left =
-                copy(
-                    text = text.take(startIndex),
-                    style = style,
-                )
-            val right =
-                copy(
-                    text = text.substring(startIndex),
-                    style = style,
-                )
+            val left = copy(text = text.take(startIndex))
+            val right = copy(text = text.substring(startIndex))
             DividedText(left, right)
         }
 
         is AozoraElement.Text -> {
-            val left =
-                copy(
-                    text = text.take(startIndex),
-                    style = style,
-                )
-            val right =
-                copy(
-                    text = text.substring(startIndex),
-                    style = style,
-                )
+            val left = copy(text = text.take(startIndex))
+            val right = copy(text = text.substring(startIndex))
             DividedText(left, right)
         }
 

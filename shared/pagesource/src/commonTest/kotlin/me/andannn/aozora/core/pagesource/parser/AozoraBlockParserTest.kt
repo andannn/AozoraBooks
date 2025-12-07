@@ -35,7 +35,7 @@ class AozoraBlockParserTest {
 
     @Test
     fun testParseAozoraBlock() {
-        val result = parser.parseLineAsBlock(sampleString1.asRawLine())
+        val result = parser.parseLineAsBlock(sampleString1.asRawLine()).first()
         assertEquals(
             AozoraBlock.TextBlock(
                 indent = 4,
@@ -46,7 +46,6 @@ class AozoraBlockParserTest {
                         AozoraElement.Text(text = "第一　"),
                         AozoraElement.Ruby(text = "腹中", ruby = "ふくちゅう"),
                         AozoraElement.Text(text = "の新年"),
-                        AozoraElement.LineBreak,
                     ),
             ),
             result,
@@ -55,7 +54,7 @@ class AozoraBlockParserTest {
 
     @Test
     fun testParseAozoraBlock2() {
-        val result = parser.parseLineAsBlock(sampleString2.asRawLine())
+        val result = parser.parseLineAsBlock(sampleString2.asRawLine()).first()
         assertIs<AozoraBlock.TextBlock>(result)
         assertEquals(4, result.indent)
         assertEquals(27, result.maxCharacterPerLine)

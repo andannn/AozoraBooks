@@ -141,8 +141,13 @@ internal class CachedLinerPageSource(
                         true
                     }
 
-                    ParseEvent.Completed -> false
-                    is ParseEvent.Error -> throw state.t
+                    ParseEvent.Completed -> {
+                        false
+                    }
+
+                    is ParseEvent.Error -> {
+                        throw state.t
+                    }
                 }
             }
         val pageFlow: Flow<Page> =
@@ -159,7 +164,6 @@ internal class CachedLinerPageSource(
             .onStart {
                 emit(
                     CoverPage(
-                        pageMetaData = pageMetaData,
                         title = bookInfoData.title,
                         author = bookInfoData.author,
                         subtitle = bookInfoData.subtitle,
@@ -168,7 +172,6 @@ internal class CachedLinerPageSource(
             }.onCompletion {
                 emit(
                     Page.BibliographicalPage(
-                        pageMetaData = pageMetaData,
                         html = rawSource.getBookInfo().bibliographicalInformation,
                     ),
                 )

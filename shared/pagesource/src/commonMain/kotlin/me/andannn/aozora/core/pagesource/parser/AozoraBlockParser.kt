@@ -13,7 +13,7 @@ internal interface AozoraBlockParser {
     /**
      * parse line to block
      */
-    fun parseLineAsBlock(line: RawLine): AozoraBlock
+    fun parseLineAsBlock(line: RawLine): List<AozoraBlock>
 }
 
 internal class DefaultAozoraBlockParser(
@@ -21,29 +21,42 @@ internal class DefaultAozoraBlockParser(
 ) : AozoraBlockParser {
     var blockIndex: Int = 0
 
-    override fun parseLineAsBlock(line: RawLine): AozoraBlock {
+    override fun parseLineAsBlock(line: RawLine): List<AozoraBlock> {
         val matchResultMatched = parser.parseLine(line)
-        val elements = matchResultMatched.elements()
-        if (matchResultMatched.size == 1 && elements.count { it is AozoraElement.Illustration } == 1) {
-            return AozoraBlock.Image(
-                blockIndex = blockIndex++,
-                elements = elements,
-            )
-        } else if (matchResultMatched.size == 2 && matchResultMatched[0] is MatchResult.BlockMatched) {
-            val block = matchResultMatched[0] as MatchResult.BlockMatched
-            return AozoraBlock.TextBlock(
-                blockIndex = blockIndex++,
-                elements = elements,
-                indent = block.indent,
-                textStyle = block.style,
-                maxCharacterPerLine = block.maxLength,
-            )
-        } else {
-            return AozoraBlock.TextBlock(
-                blockIndex = blockIndex++,
-                textStyle = AozoraTextStyle.PARAGRAPH,
-                elements = elements,
-            )
-        }
+        return matchResultMatched
+            .map { matched ->
+                when (matched) {
+                    is MatchResult.BlockMatched -> {
+                        AozoraBlock.TextBlock(
+                            blockIndex = blockIndex,
+                            elements = matched.elements,
+                            indent = matched.indent,
+                            textStyle = matched.style,
+                            maxCharacterPerLine = matched.maxLength,
+                        )
+                    }
+
+                    is MatchResult.ElementMatched -> {
+                        when (matched.element) {
+                            is AozoraElement.Illustration -> {
+                                AozoraBlock.Image(
+                                    blockIndex = blockIndex,
+                                    elements = listOf(matched.element),
+                                )
+                            }
+
+                            else -> {
+                                AozoraBlock.TextBlock(
+                                    blockIndex = blockIndex,
+                                    textStyle = AozoraTextStyle.PARAGRAPH,
+                                    elements = listOf(matched.element),
+                                )
+                            }
+                        }
+                    }
+                }
+            }.also {
+                blockIndex++
+            }
     }
 }

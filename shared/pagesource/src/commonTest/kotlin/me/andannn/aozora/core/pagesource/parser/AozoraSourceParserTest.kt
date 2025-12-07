@@ -5,7 +5,6 @@
 package me.andannn.aozora.core.pagesource.parser
 
 import me.andannn.aozora.core.domain.model.AozoraElement
-import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.EmphasisStyle
 import me.andannn.aozora.core.pagesource.parser.html.HtmlLineParser
 import me.andannn.aozora.core.pagesource.parser.html.MatchResult
@@ -80,7 +79,6 @@ class AozoraSourceParserTest {
                 AozoraElement.Emphasis(
                     text = "むっくり",
                     emphasisStyle = EmphasisStyle.Strong,
-                    style = AozoraTextStyle.PARAGRAPH,
                 ),
             ),
             result[1],

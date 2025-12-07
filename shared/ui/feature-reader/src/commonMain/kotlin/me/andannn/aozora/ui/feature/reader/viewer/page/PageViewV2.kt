@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Density
 import io.github.aakira.napier.Napier
 import me.andannn.aozora.core.domain.model.Line
 import me.andannn.aozora.core.domain.model.Page
+import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
@@ -31,6 +32,7 @@ private const val TAG = "PageView"
 
 @Composable
 fun PageViewV2(
+    pageMetaData: PageMetaData,
     page: Page.LayoutPage,
     textColor: Color,
     fontFamily: FontFamily,
@@ -52,10 +54,10 @@ fun PageViewV2(
                 .fillMaxSize()
                 .drawWithContent {
                     val contentWidthDp = page.contentWidth
-                    val renderWidthDp = page.pageMetaData.renderWidth
-                    val renderHeightDp = page.pageMetaData.renderHeight
-                    val offsetXDp = page.pageMetaData.offset.first
-                    val offsetYDp = page.pageMetaData.offset.second
+                    val renderWidthDp = pageMetaData.renderWidth
+                    val renderHeightDp = pageMetaData.renderHeight
+                    val offsetXDp = pageMetaData.offset.first
+                    val offsetYDp = pageMetaData.offset.second
                     val contentWidth = with(density) { contentWidthDp.toPx() }
                     val renderWidth = with(density) { renderWidthDp.toPx() }
                     val renderHeight = with(density) { renderHeightDp.toPx() }
