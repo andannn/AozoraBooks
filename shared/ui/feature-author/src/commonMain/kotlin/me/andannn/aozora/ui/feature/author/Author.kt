@@ -24,12 +24,15 @@ import androidx.compose.ui.unit.dp
 import me.andannn.aozora.core.domain.model.AozoraBookCard
 import me.andannn.aozora.core.domain.model.AuthorData
 import me.andannn.aozora.ui.common.Presenter
+import me.andannn.aozora.ui.common.widgets.BannerAdView
 import me.andannn.aozora.ui.common.widgets.BookColumnItemView
 import me.andannn.aozora.ui.common.widgets.ClickableOrText
 import me.andannn.aozora.ui.common.widgets.Heading
 import me.andannn.aozora.ui.common.widgets.ItemRow
 import me.andannn.aozora.ui.common.widgets.NavigationBarAnchor
 import me.andannn.core.util.removePrefixRecursive
+import me.andannn.platform.AdType
+import me.andannn.platform.showPlatformAd
 
 @Composable
 fun Author(
@@ -129,6 +132,15 @@ private fun AuthorContent(
                 Heading(
                     text = "公開中の作品",
                 )
+            }
+
+            item {
+                if (showPlatformAd) {
+                    BannerAdView(
+                        modifier = Modifier.fillMaxWidth(),
+                        adType = AdType.LEADERBOARD,
+                    )
+                }
             }
 
             items(items = books, key = { item -> item.id }) { card ->

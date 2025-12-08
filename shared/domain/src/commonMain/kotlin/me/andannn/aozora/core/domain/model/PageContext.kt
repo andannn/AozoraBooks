@@ -91,5 +91,5 @@ data class PageContext(
 }
 
 private const val DEFAULT_HORIZONTAL_MARGIN_PERCENT = 0.15f
-private const val DEFAULT_TOP_MARGIN_PERCENT = 0.05f
-private const val DEFAULT_BOTTOM_MARGIN_PERCENT = 0.02f
+private const val DEFAULT_TOP_MARGIN_PERCENT = 0.07f
+private const val DEFAULT_BOTTOM_MARGIN_PERCENT = 0.03f

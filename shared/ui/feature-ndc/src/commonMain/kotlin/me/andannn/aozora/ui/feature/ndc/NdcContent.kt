@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -105,16 +105,24 @@ private fun NdcChildren(
     eventSink: (NdcContentUiEvent) -> Unit,
 ) {
     LazyColumn(modifier) {
-        items(
+        itemsIndexed(
             items = ndcChildren,
-            key = { it.ndcData.ndcClassification.value },
-        ) { item ->
+            key = { index, item -> item.ndcData.ndcClassification.value },
+        ) { index, item ->
             Column {
                 NdcCategoryItem(
                     model = item,
                     onClick = {
                         eventSink(NdcContentUiEvent.OnNdcItemClick(item.ndcData.ndcClassification))
                     },
+                )
+                HorizontalDivider()
+            }
+
+            if (index % 20 == 0 && showPlatformAd) {
+                BannerAdView(
+                    modifier = Modifier.fillMaxWidth(),
+                    adType = AdType.LEADERBOARD,
                 )
                 HorizontalDivider()
             }
@@ -132,7 +140,7 @@ private fun NdcDetail(
     pagingData: LazyPagingItems<AozoraBookCard>,
     eventSink: (NdcContentUiEvent) -> Unit,
 ) {
-    LazyColumn {
+    LazyColumn(modifier) {
         items(pagingData.itemCount) { index ->
             Column {
                 pagingData[index]?.let { card ->
