@@ -359,9 +359,12 @@ private fun CoroutineScope.onJumpTo(
                 }
 
                 is Page.CoverPage,
-                is Page.LayoutPage,
                 -> {
                     blockIndex == READ_PROGRESS_NONE
+                }
+
+                is Page.LayoutPage -> {
+                    blockIndex in page.pageProgress
                 }
             }
         }
