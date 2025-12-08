@@ -4,6 +4,9 @@
  */
 package me.andannn.aozora.app
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -72,6 +75,16 @@ fun AozoraBooksApp() {
                 modifier = Modifier,
                 backStack = backStack,
                 sceneStrategy = DialogSceneStrategy<NavKey>() then SinglePaneSceneStrategy(),
+                transitionSpec = {
+                    // Slide in from right when navigating forward
+                    slideInHorizontally(initialOffsetX = { it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it })
+                },
+                popTransitionSpec = {
+                    // Slide in from left when navigating back
+                    slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+                },
                 entryDecorators =
                     listOf(
                         rememberSaveableStateHolderNavEntryDecorator(),
