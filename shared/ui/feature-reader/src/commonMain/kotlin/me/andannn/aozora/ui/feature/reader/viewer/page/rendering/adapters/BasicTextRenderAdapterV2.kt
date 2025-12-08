@@ -234,9 +234,12 @@ private val TransformMap =
         '―' to listOf(TransForm.Rotate(90f)),
         '『' to listOf(TransForm.Rotate(90f)),
         '』' to listOf(TransForm.Rotate(90f)),
+        '【' to listOf(TransForm.Rotate(90f)),
+        '】' to listOf(TransForm.Rotate(90f)),
+        '［' to listOf(TransForm.Rotate(90f)),
+        '］' to listOf(TransForm.Rotate(90f)),
+        '～' to listOf(TransForm.Rotate(90f)),
     )
-
-private fun isUtf8AlphaBet(char: Char): Boolean = char in 'A'..'Z' || char in 'a'..'z'
 
 private fun DrawScope.withCharTransforms(
     char: String,
