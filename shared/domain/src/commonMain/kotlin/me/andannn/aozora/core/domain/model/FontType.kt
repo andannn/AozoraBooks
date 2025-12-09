@@ -7,6 +7,9 @@ package me.andannn.aozora.core.domain.model
 enum class FontType {
     NOTO_SERIF,
     NOTO_SANS,
+    KAISEI_DECOL_MEDIUM,
+    YUJI_MAI,
+    HACHI_MARU_POP,
     ;
 
     companion object {

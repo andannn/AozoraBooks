@@ -56,6 +56,9 @@ fun FontType.toFontTypeValue() =
     when (this) {
         FontType.NOTO_SANS -> FontTypeValues.FONT_TYPE_NOTO_SANS_VALUE
         FontType.NOTO_SERIF -> FontTypeValues.FONT_TYPE_NOTO_SERIF_VALUE
+        FontType.HACHI_MARU_POP -> FontTypeValues.FONT_TYPE_HACHI_MARU_POP_VALUE
+        FontType.KAISEI_DECOL_MEDIUM -> FontTypeValues.FONT_TYPE_KAISEI_DECOL_MEDIUM_VALUE
+        FontType.YUJI_MAI -> FontTypeValues.FONT_TYPE_YUJI_MAI_VALUE
     }
 
 fun parseTopMargin(value: Int): TopMargin =
@@ -98,5 +101,8 @@ fun parseFontType(value: Int): FontType =
     when (value) {
         FontTypeValues.FONT_TYPE_NOTO_SANS_VALUE -> FontType.NOTO_SANS
         FontTypeValues.FONT_TYPE_NOTO_SERIF_VALUE -> FontType.NOTO_SERIF
+        FontTypeValues.FONT_TYPE_HACHI_MARU_POP_VALUE -> FontType.HACHI_MARU_POP
+        FontTypeValues.FONT_TYPE_KAISEI_DECOL_MEDIUM_VALUE -> FontType.KAISEI_DECOL_MEDIUM
+        FontTypeValues.FONT_TYPE_YUJI_MAI_VALUE -> FontType.YUJI_MAI
         else -> throw IllegalArgumentException("Unknown font type value: $value")
     }

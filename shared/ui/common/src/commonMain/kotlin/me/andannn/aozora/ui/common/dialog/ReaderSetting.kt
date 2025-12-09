@@ -8,6 +8,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -364,23 +367,25 @@ private fun FontSetting(
         modifier = modifier.fillMaxWidth(),
     ) {
         Spacer(modifier = Modifier.height(12.dp))
-        Row(
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 24.dp),
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            FontType.entries.forEach {
+            items(
+                items = FontType.entries,
+                key = { it },
+            ) { item ->
                 FontItem(
-                    fontType = it,
-                    isSelected = it == fontType,
+                    fontType = item,
+                    isSelected = item == fontType,
                     onClick = {
-                        if (it != fontType) {
-                            onSelectedFontType(it)
+                        if (item != fontType) {
+                            onSelectedFontType(item)
                         }
                     },
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -576,7 +581,10 @@ val FontType.label
     get() =
         when (this) {
             FontType.NOTO_SANS -> "システム"
-            FontType.NOTO_SERIF -> "Noto Serif Japanese"
+            FontType.NOTO_SERIF -> "Noto Serif"
+            FontType.HACHI_MARU_POP -> "Hachi Maru Pop"
+            FontType.KAISEI_DECOL_MEDIUM -> "Kaisei Decol"
+            FontType.YUJI_MAI -> "Yuji Mai"
         }
 
 val FontSizeLevel.label

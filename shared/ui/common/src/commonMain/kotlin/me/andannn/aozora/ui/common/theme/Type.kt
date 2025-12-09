@@ -12,7 +12,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import aosora.shared.ui.common.generated.resources.Res
+import aosora.shared.ui.common.generated.resources.hachi_maru_pop_regular
+import aosora.shared.ui.common.generated.resources.kaisei_decol_medium
 import aosora.shared.ui.common.generated.resources.noto_serif_jp_regular
+import aosora.shared.ui.common.generated.resources.yuji_mai_regular
 import me.andannn.aozora.core.domain.model.FontType
 import org.jetbrains.compose.resources.Font
 
@@ -50,6 +53,9 @@ fun getFontFamilyByType(type: FontType): FontFamily =
     when (type) {
         FontType.NOTO_SANS -> FontFamily.Default
         FontType.NOTO_SERIF -> NotoSerifJpFontFamily
+        FontType.HACHI_MARU_POP -> HachiMaruPopFontFamily
+        FontType.KAISEI_DECOL_MEDIUM -> KaiseiDecolMediumFontFamily
+        FontType.YUJI_MAI -> YujiMaiFontFamily
     }
 
 val NotoSerifJpFontFamily
@@ -57,6 +63,36 @@ val NotoSerifJpFontFamily
         FontFamily(
             Font(
                 resource = Res.font.noto_serif_jp_regular,
+                weight = FontWeight.Normal,
+                style = FontStyle.Normal,
+            ),
+        )
+
+val HachiMaruPopFontFamily
+    @Composable get() =
+        FontFamily(
+            Font(
+                resource = Res.font.hachi_maru_pop_regular,
+                weight = FontWeight.Normal,
+                style = FontStyle.Normal,
+            ),
+        )
+
+val KaiseiDecolMediumFontFamily
+    @Composable get() =
+        FontFamily(
+            Font(
+                resource = Res.font.kaisei_decol_medium,
+                weight = FontWeight.Normal,
+                style = FontStyle.Normal,
+            ),
+        )
+
+val YujiMaiFontFamily
+    @Composable get() =
+        FontFamily(
+            Font(
+                resource = Res.font.yuji_mai_regular,
                 weight = FontWeight.Normal,
                 style = FontStyle.Normal,
             ),
