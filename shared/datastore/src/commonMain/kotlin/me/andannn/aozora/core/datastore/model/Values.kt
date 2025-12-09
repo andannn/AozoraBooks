@@ -14,6 +14,21 @@ object FontTypeValues {
      * `FONT_TYPE_NOTO_SERIF = 1;`
      */
     const val FONT_TYPE_NOTO_SERIF_VALUE: Int = 1
+
+    /**
+     * `FONT_TYPE_HACHI_MARU_POP = 2;`
+     */
+    const val FONT_TYPE_HACHI_MARU_POP_VALUE: Int = 2
+
+    /**
+     * `FONT_TYPE_KAISEI_DECOL_MEDIUM = 3;`
+     */
+    const val FONT_TYPE_KAISEI_DECOL_MEDIUM_VALUE: Int = 3
+
+    /**
+     * `FONT_TYPE_YUJI_MAI = 4;`
+     */
+    const val FONT_TYPE_YUJI_MAI_VALUE: Int = 4
 }
 
 object ReaderThemeValues {
