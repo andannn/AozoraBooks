@@ -16,8 +16,8 @@ import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 private const val TAG = "ReaderPageBuilder"
 
 @Suppress("ktlint:standard:function-naming")
-internal fun LayoutPageBuilder(meta: PageMetaData) =
-    LayoutPageBuilder(
+internal fun ContentPageBuilder(meta: PageMetaData) =
+    ContainPageBuilder(
         meta.renderWidth,
         meta.renderHeight,
         scopeBuilder = {
@@ -25,12 +25,12 @@ internal fun LayoutPageBuilder(meta: PageMetaData) =
         },
     )
 
-internal class LayoutPageBuilder(
+internal class ContainPageBuilder(
     private val fullWidth: Dp,
     private val fullHeight: Dp,
     private val forceAddBlock: Boolean = false,
     private val scopeBuilder: (block: AozoraBlock) -> ElementMeasureScope,
-) : PageBuilder<Page.LayoutPage> {
+) : PageBuilder<Page.ContentPage> {
     private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
@@ -38,39 +38,58 @@ internal class LayoutPageBuilder(
 
     private var isPageBreakAdded = false
     private var currentBlockIndex = 0
+    private var addedImageElement: AozoraElement.Illustration? = null
 
     override fun tryAddBlock(block: AozoraBlock): FillResult =
         with(scopeBuilder(block)) {
             Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
             currentBlockIndex = block.blockIndex
-            val remainingElements = block.elements.toMutableList()
 
-            while (remainingElements.isNotEmpty()) {
-                val element = remainingElements.first()
-                val result =
-                    tryAddElement(
-                        element,
-                        lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
-                        maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
-                    )
-
-                when (result) {
-                    is FillResult.FillContinue -> {
-                        remainingElements.removeAt(0)
-                    }
-
-                    is FillResult.Filled -> {
-                        remainingElements.removeAt(0)
-                        result.remainElement?.let { remainingElements.add(0, it) }
-                        break
-                    }
-                }
+            if (addedImageElement != null) {
+                return FillResult.Filled(remainBlock = block)
             }
 
-            return if (remainingElements.isEmpty()) {
-                FillResult.FillContinue
-            } else {
-                FillResult.Filled(remainBlock = block.copyWith(remainingElements))
+            when (block) {
+                is AozoraBlock.Image -> {
+                    if (isEmpty()) {
+                        addedImageElement = block.image
+                        return FillResult.Filled()
+                    } else {
+                        error("illustration can only be added to new page.")
+                    }
+                }
+
+                is AozoraBlock.TextBlock -> {
+                    val remainingElements = block.elements.toMutableList()
+
+                    while (remainingElements.isNotEmpty()) {
+                        val element = remainingElements.first()
+                        val result =
+                            tryAddElement(
+                                element = element,
+                                lineIndent = block.indent,
+                                maxCharacterPerLine = block.maxCharacterPerLine,
+                            )
+
+                        when (result) {
+                            is FillResult.FillContinue -> {
+                                remainingElements.removeAt(0)
+                            }
+
+                            is FillResult.Filled -> {
+                                remainingElements.removeAt(0)
+                                result.remainElement?.let { remainingElements.add(0, it) }
+                                break
+                            }
+                        }
+                    }
+
+                    return if (remainingElements.isEmpty()) {
+                        FillResult.FillContinue
+                    } else {
+                        FillResult.Filled(remainBlock = block.copyWith(remainingElements))
+                    }
+                }
             }
         }
 
@@ -113,7 +132,6 @@ internal class LayoutPageBuilder(
             is AozoraElement.Text,
             is AozoraElement.LineBreak,
             is AozoraElement.Indent,
-            is AozoraElement.Illustration,
             is AozoraElement.Emphasis,
             -> {
                 with(lineBuilder) {
@@ -136,14 +154,25 @@ internal class LayoutPageBuilder(
                 }
             }
 
-            AozoraElement.PageBreak,
-            -> {
+            is AozoraElement.Illustration -> {
+                error("Never")
+            }
+
+            AozoraElement.PageBreak -> {
                 error("Never")
             }
         }
     }
 
-    override fun build(): Page.LayoutPage {
+    override fun build(): Page.ContentPage {
+        if (addedImageElement != null) {
+            return Page.ImagePage(
+                element = addedImageElement!!,
+                contentWidth = fullWidth,
+                elementIndex = currentBlockIndex,
+            )
+        }
+
         if (lineBuilder != null) {
             buildNewLine()
         }
@@ -152,6 +181,8 @@ internal class LayoutPageBuilder(
             lines = lines.toImmutableList(),
         )
     }
+
+    private fun isEmpty() = lines.isEmpty() && (lineBuilder == null || lineBuilder?.isEmpty() == true)
 
     private fun buildNewLine() {
         val line = lineBuilder!!.build()

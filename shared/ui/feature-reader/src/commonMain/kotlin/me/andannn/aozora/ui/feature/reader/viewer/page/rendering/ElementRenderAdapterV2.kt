@@ -66,7 +66,7 @@ interface MeasureHelper {
     ): TextLayoutResult
 }
 
-class DefaultMeasureHelper(
+class DefaultMeasureHelper constructor(
     private val measurer: TextMeasurer,
     private val density: Density,
     private val fontFamily: FontFamily,

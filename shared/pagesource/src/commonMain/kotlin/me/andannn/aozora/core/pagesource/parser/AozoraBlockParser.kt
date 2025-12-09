@@ -41,7 +41,7 @@ internal class DefaultAozoraBlockParser(
                             is AozoraElement.Illustration -> {
                                 AozoraBlock.Image(
                                     blockIndex = blockIndex,
-                                    elements = listOf(matched.element),
+                                    image = matched.element,
                                 )
                             }
 

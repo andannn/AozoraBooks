@@ -30,7 +30,7 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.createAdapters
 @Composable
 fun PageViewV2(
     pageMetaData: PageMetaData,
-    page: Page.LayoutPage,
+    page: Page.ContentPage,
     textColor: Color,
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
@@ -75,12 +75,20 @@ fun PageViewV2(
                                 offsetX,
                                 offsetY,
                             ) {
-                                var currentX = renderWidth
-                                for (line in page.lines) {
-                                    val lineHeightPx = with(density) { line.line.lineHeight.toPx() }
-                                    currentX -= lineHeightPx / 2
-                                    drawAozoraLineV2(currentX, line.line, adapters, density)
-                                    currentX -= lineHeightPx / 2
+                                when (page) {
+                                    is Page.ImagePage -> {
+                                    }
+
+                                    is Page.LayoutPage -> {
+                                        var currentX = renderWidth
+                                        for (line in page.lines) {
+                                            val lineHeightPx =
+                                                with(density) { line.line.lineHeight.toPx() }
+                                            currentX -= lineHeightPx / 2
+                                            drawAozoraLineV2(currentX, line.line, adapters, density)
+                                            currentX -= lineHeightPx / 2
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -89,7 +97,7 @@ fun PageViewV2(
     )
 }
 
-fun DrawScope.drawAozoraLineV2(
+private fun DrawScope.drawAozoraLineV2(
     x: Float,
     line: Line,
     adapters: List<ElementRenderAdapterV2>,

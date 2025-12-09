@@ -12,7 +12,13 @@ import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.Line
 import kotlin.test.assertEquals
 
-internal fun blockOf(
+internal fun imageBlockOf(imageName: String) =
+    AozoraBlock.Image(
+        blockIndex = 0,
+        image = AozoraElement.Illustration(imageName, null, null),
+    )
+
+internal fun textBlockOf(
     vararg textElements: AozoraElement,
     indent: Int = 0,
     maxCharacterPerLine: Int? = null,
@@ -68,6 +74,8 @@ internal fun dummyElementMeasureScope(textSize: Dp) =
 
 internal fun text(text: String) = AozoraElement.Text(text)
 
+internal fun image(name: String) = AozoraElement.Illustration(name, null, null)
+
 internal fun ruby(text: String) = AozoraElement.Ruby(text, "")
 
 internal fun Line.verify(vararg expects: String) {
@@ -82,6 +90,10 @@ internal fun Line.verify(vararg expects: String) {
             }
 
             is AozoraElement.Ruby -> {
+            }
+
+            is AozoraElement.Illustration -> {
+                assertEquals(expects[index], element.filename)
             }
 
             else -> {}

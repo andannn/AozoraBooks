@@ -11,7 +11,7 @@ import me.andannn.aozora.core.domain.model.AozoraTextStyle
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
-import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
+import me.andannn.aozora.core.pagesource.page.ContentPageBuilder
 
 class AozoraPageLayoutHelperFactory : AozoraPageLayoutHelper.Factory {
     override fun create(pageMetaData: PageMetaData): AozoraPageLayoutHelper = AozoraPageLayoutHelperImpl(pageMetaData)
@@ -20,7 +20,7 @@ class AozoraPageLayoutHelperFactory : AozoraPageLayoutHelper.Factory {
 private class AozoraPageLayoutHelperImpl(
     val pageMetaData: PageMetaData,
 ) : AozoraPageLayoutHelper {
-    override fun Page.layout(): Page.LayoutPage =
+    override fun Page.layout(): Page.ContentPage =
         when (this) {
             is Page.CoverPage -> {
                 createCoverPage(
@@ -37,6 +37,10 @@ private class AozoraPageLayoutHelperImpl(
             is Page.LayoutPage -> {
                 this
             }
+
+            is Page.ImagePage -> {
+                this
+            }
         }
 
     private fun createCoverPage(
@@ -44,12 +48,12 @@ private class AozoraPageLayoutHelperImpl(
         subtitle: String?,
         author: String,
     ): Page.LayoutPage {
-        val builder = LayoutPageBuilder(pageMetaData)
+        val builder = ContentPageBuilder(pageMetaData)
         val coverBlockList = coverBlocks(title, subtitle, author)
         for (block in coverBlockList) {
             builder.tryAddBlock(block)
         }
-        return builder.build()
+        return builder.build() as Page.LayoutPage
     }
 
     private fun coverBlocks(

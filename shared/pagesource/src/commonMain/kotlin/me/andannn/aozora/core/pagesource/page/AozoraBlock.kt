@@ -27,10 +27,10 @@ internal sealed class AozoraBlock(
         }
     }
 
-    data class Image(
+    data class Image constructor(
         override val blockIndex: Int,
-        override val elements: List<AozoraElement>,
-    ) : AozoraBlock(blockIndex, elements)
+        val image: AozoraElement.Illustration,
+    ) : AozoraBlock(blockIndex, listOf(image))
 
     val fullText: String by lazy {
         elements.fold("") { acc, element ->
@@ -40,7 +40,7 @@ internal sealed class AozoraBlock(
 
     fun copyWith(elements: List<AozoraElement>): AozoraBlock =
         when (this) {
-            is Image -> this.copy(elements = elements)
+            is Image -> (elements.first() as (AozoraElement.Illustration)).let { this.copy(image = it) }
             is TextBlock -> this.copy(elements = elements)
         }
 }

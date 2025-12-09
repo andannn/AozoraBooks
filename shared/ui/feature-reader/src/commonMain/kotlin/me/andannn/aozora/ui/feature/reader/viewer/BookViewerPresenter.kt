@@ -204,7 +204,7 @@ private class BookViewerPresenter(
                                     ReadProgress.Done
                                 }
 
-                                is Page.LayoutPage -> {
+                                is Page.ContentPage -> {
                                     ReadProgress.Reading(
                                         blockIndex = page.pageProgress.first,
                                         totalBlockCount = totalCount,
@@ -363,7 +363,7 @@ private fun CoroutineScope.onJumpTo(
                     blockIndex == READ_PROGRESS_NONE
                 }
 
-                is Page.LayoutPage -> {
+                is Page.ContentPage -> {
                     blockIndex in page.pageProgress
                 }
             }

@@ -31,7 +31,7 @@ import me.andannn.aozora.core.domain.model.TableOfContentsModel
 import me.andannn.aozora.core.domain.pagesource.BookPageSource
 import me.andannn.aozora.core.domain.pagesource.PagerSnapShot
 import me.andannn.aozora.core.pagesource.page.AozoraBlock
-import me.andannn.aozora.core.pagesource.page.LayoutPageBuilder
+import me.andannn.aozora.core.pagesource.page.ContentPageBuilder
 import me.andannn.aozora.core.pagesource.page.createPageFlowFromSequence
 import me.andannn.aozora.core.pagesource.raw.BookInfo
 import me.andannn.aozora.core.pagesource.raw.BookRawSource
@@ -97,7 +97,7 @@ internal class CachedLinerPageSource(
                                 readingProgress is ReadProgress.Done
                             }
 
-                            is Page.LayoutPage -> {
+                            is Page.ContentPage -> {
                                 readingProgress is ReadProgress.Reading && readingProgress.blockIndex in page.pageProgress
                             }
                         }
@@ -154,7 +154,7 @@ internal class CachedLinerPageSource(
             createPageFlowFromSequence(
                 blockSequenceFlow = coldFlow,
                 builderFactory = {
-                    LayoutPageBuilder(
+                    ContentPageBuilder(
                         meta = pageMetaData,
                     )
                 },
