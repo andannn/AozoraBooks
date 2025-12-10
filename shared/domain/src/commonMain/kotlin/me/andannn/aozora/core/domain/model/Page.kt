@@ -7,6 +7,7 @@ package me.andannn.aozora.core.domain.model
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.io.files.Path
 
 /**
  * Page of reader.
@@ -23,12 +24,15 @@ sealed interface Page {
         val contentWidth: Dp
     }
 
-    data class ImagePage(
+    data class ImagePage constructor(
         val element: AozoraElement.Illustration,
         override val contentWidth: Dp,
         private val elementIndex: Int,
+        private val imageDictionary: Path,
     ) : ContentPage {
         override val pageProgress: IntRange = elementIndex..elementIndex
+
+        fun getImageFile(): String = Path(imageDictionary, element.filename).toString()
     }
 
     data class TextLayoutPage(

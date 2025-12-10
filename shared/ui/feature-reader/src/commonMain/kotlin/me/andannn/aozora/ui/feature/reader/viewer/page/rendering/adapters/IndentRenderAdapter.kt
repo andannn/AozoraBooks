@@ -14,7 +14,7 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class IndentRenderAdapterV2(
+class IndentRenderAdapter(
     private val measureHelper: MeasureHelper,
 ) : ElementRenderAdapterV2<AozoraElement.Indent> {
     override fun DrawScope.draw(

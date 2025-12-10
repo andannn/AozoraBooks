@@ -29,7 +29,7 @@ import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
 import me.andannn.aozora.ui.feature.reader.viewer.page.ImagePageView
-import me.andannn.aozora.ui.feature.reader.viewer.page.TextPageViewV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.TextPageView
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -110,7 +110,7 @@ private fun ReaderContent(
                         }
 
                         is Page.TextLayoutPage -> {
-                            TextPageViewV2(
+                            TextPageView(
                                 modifier = Modifier.fillMaxSize(),
                                 page = contentPage,
                                 textColor = textColor,

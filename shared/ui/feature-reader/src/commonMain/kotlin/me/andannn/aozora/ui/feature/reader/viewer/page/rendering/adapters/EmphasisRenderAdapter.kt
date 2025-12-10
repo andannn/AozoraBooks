@@ -10,9 +10,9 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class EmphasisRenderAdapterV2(
+class EmphasisRenderAdapter(
     private val measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2<AozoraElement.Emphasis>(measureHelper) {
+) : BasicTextRenderAdapter<AozoraElement.Emphasis>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,

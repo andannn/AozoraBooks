@@ -156,6 +156,7 @@ internal class CachedLinerPageSource(
                 builderFactory = {
                     ContentPageBuilder(
                         meta = pageMetaData,
+                        bookCachedDictionary = rawSource.cacheDictionary,
                     )
                 },
             )

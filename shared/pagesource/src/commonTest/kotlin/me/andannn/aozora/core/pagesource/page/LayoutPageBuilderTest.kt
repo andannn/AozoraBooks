@@ -6,6 +6,7 @@ package me.andannn.aozora.core.pagesource.page
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.io.files.Path
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.Page
 import kotlin.test.Test
@@ -173,6 +174,7 @@ private fun createBuilder(
 ) = ContainPageBuilder(
     fullWidth = width,
     fullHeight = height,
+    bookCachedDictionary = Path(""),
     scopeBuilder = {
         dummyElementMeasureScope(textSize)
     },

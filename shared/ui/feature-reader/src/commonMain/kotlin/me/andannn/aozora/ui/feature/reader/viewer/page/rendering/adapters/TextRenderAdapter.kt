@@ -7,6 +7,6 @@ package me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class TextRenderAdapterV2(
+class TextRenderAdapter(
     measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2<AozoraElement.Text>(measureHelper)
+) : BasicTextRenderAdapter<AozoraElement.Text>(measureHelper)

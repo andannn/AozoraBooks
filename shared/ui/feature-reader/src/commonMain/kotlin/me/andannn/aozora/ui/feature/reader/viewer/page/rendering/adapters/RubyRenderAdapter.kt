@@ -13,9 +13,9 @@ import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class RubyRenderAdapterV2(
+class RubyRenderAdapter(
     private val measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2<AozoraElement.Ruby>(measureHelper) {
+) : BasicTextRenderAdapter<AozoraElement.Ruby>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,

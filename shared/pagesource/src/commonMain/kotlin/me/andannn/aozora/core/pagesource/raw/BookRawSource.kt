@@ -13,6 +13,11 @@ import me.andannn.aozora.core.pagesource.page.AozoraBlock
  */
 internal interface BookRawSource {
     /**
+     * Local cache dictionary.
+     */
+    val cacheDictionary: Path
+
+    /**
      * get raw source of book.
      */
     fun getRawSource(): Flow<AozoraBlock>

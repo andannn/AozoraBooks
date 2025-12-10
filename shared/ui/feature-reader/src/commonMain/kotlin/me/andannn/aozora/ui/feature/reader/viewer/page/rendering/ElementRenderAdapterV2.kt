@@ -14,12 +14,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Density
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.LineBreakRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.PageBreakRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.RubyRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.TextRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.LineBreakRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.PageBreakRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.RubyRenderAdapter
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.TextRenderAdapter
 
 internal interface ElementRenderAdapterV2<T : AozoraElement> {
     /**
@@ -63,12 +63,12 @@ internal fun RenderAdapterProvider(
     textColor: Color,
 ): RenderAdapterProvider {
     val measureHelper = DefaultMeasureHelper(measurer, density, fontFamily, textColor)
-    val emphasisRenderAdapter = EmphasisRenderAdapterV2(measureHelper)
-    val rubyRenderAdapter = RubyRenderAdapterV2(measureHelper)
-    val textRenderAdapter = TextRenderAdapterV2(measureHelper)
-    val indentRenderAdapter = IndentRenderAdapterV2(measureHelper)
-    val lineBreakRenderAdapter = LineBreakRenderAdapterV2(measureHelper)
-    val pageBreakRenderAdapter = PageBreakRenderAdapterV2()
+    val emphasisRenderAdapter = EmphasisRenderAdapter(measureHelper)
+    val rubyRenderAdapter = RubyRenderAdapter(measureHelper)
+    val textRenderAdapter = TextRenderAdapter(measureHelper)
+    val indentRenderAdapter = IndentRenderAdapter(measureHelper)
+    val lineBreakRenderAdapter = LineBreakRenderAdapter(measureHelper)
+    val pageBreakRenderAdapter = PageBreakRenderAdapter()
 
     return object : RenderAdapterProvider {
         @Suppress("UNCHECKED_CAST")

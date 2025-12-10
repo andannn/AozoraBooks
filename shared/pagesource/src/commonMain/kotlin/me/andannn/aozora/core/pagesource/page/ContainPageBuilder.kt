@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.io.files.Path
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
@@ -16,18 +17,22 @@ import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 private const val TAG = "ReaderPageBuilder"
 
 @Suppress("ktlint:standard:function-naming")
-internal fun ContentPageBuilder(meta: PageMetaData) =
-    ContainPageBuilder(
-        meta.renderWidth,
-        meta.renderHeight,
-        scopeBuilder = {
-            ElementMeasureScope(it, TextStyleCalculatorImpl(meta))
-        },
-    )
+internal fun ContentPageBuilder(
+    meta: PageMetaData,
+    bookCachedDictionary: Path? = null,
+) = ContainPageBuilder(
+    fullWidth = meta.renderWidth,
+    fullHeight = meta.renderHeight,
+    bookCachedDictionary = bookCachedDictionary,
+    scopeBuilder = {
+        ElementMeasureScope(it, TextStyleCalculatorImpl(meta))
+    },
+)
 
 internal class ContainPageBuilder(
     private val fullWidth: Dp,
     private val fullHeight: Dp,
+    private val bookCachedDictionary: Path?,
     private val forceAddBlock: Boolean = false,
     private val scopeBuilder: (block: AozoraBlock) -> ElementMeasureScope,
 ) : PageBuilder<Page.ContentPage> {
@@ -169,6 +174,7 @@ internal class ContainPageBuilder(
             return Page.ImagePage(
                 element = addedImageElement!!,
                 contentWidth = fullWidth,
+                imageDictionary = bookCachedDictionary ?: error("require dictionary when create image page"),
                 elementIndex = currentBlockIndex,
             )
         }

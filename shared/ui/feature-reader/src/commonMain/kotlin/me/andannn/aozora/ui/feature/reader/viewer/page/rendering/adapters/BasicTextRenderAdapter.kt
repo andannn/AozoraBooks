@@ -18,7 +18,7 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-abstract class BasicTextRenderAdapterV2<T : AozoraElement.BaseText>(
+abstract class BasicTextRenderAdapter<T : AozoraElement.BaseText>(
     private val measureHelper: MeasureHelper,
 ) : ElementRenderAdapterV2<T> {
     override fun DrawScope.draw(

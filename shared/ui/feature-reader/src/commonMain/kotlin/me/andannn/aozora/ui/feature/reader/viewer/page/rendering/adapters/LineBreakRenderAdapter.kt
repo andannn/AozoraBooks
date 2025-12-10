@@ -12,29 +12,37 @@ import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class PageBreakRenderAdapterV2 : ElementRenderAdapterV2<AozoraElement.PageBreak> {
+class LineBreakRenderAdapter(
+    private val measureHelper: MeasureHelper,
+) : ElementRenderAdapterV2<AozoraElement.LineBreak> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement.PageBreak,
+        element: AozoraElement.LineBreak,
         fontStyle: FontStyle?,
     ): Size {
+        if (fontStyle == null) {
+            error("fontStyle must not be null $element")
+        }
+
+        val textSize =
+            measureHelper
+                .measure(
+                    text = "あ",
+                    fontStyle = fontStyle,
+                ).size.width
+                .toFloat()
+
         if (DEBUG_RENDER) {
-            drawLine(
+            drawRect(
+                topLeft = Offset(x - textSize / 2, y),
+                size = Size(textSize, textSize),
                 color = RandomColor,
-                start =
-                    Offset(
-                        x - 20f,
-                        y,
-                    ),
-                end =
-                    Offset(
-                        x + 20f,
-                        y + 40,
-                    ),
             )
         }
-        return Size(0f, 0f)
+
+        return Size(textSize, 0f)
     }
 }

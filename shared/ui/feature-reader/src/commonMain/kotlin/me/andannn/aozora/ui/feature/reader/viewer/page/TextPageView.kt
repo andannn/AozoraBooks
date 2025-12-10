@@ -28,7 +28,7 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.RenderAdapterPr
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.drawWithAdapter
 
 @Composable
-fun TextPageViewV2(
+fun TextPageView(
     pageMetaData: PageMetaData,
     page: Page.TextLayoutPage,
     textColor: Color,
