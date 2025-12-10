@@ -34,7 +34,7 @@ private class AozoraPageLayoutHelperImpl(
                 error("can not be layout")
             }
 
-            is Page.LayoutPage -> {
+            is Page.TextLayoutPage -> {
                 this
             }
 
@@ -47,13 +47,13 @@ private class AozoraPageLayoutHelperImpl(
         title: String,
         subtitle: String?,
         author: String,
-    ): Page.LayoutPage {
+    ): Page.TextLayoutPage {
         val builder = ContentPageBuilder(pageMetaData)
         val coverBlockList = coverBlocks(title, subtitle, author)
         for (block in coverBlockList) {
             builder.tryAddBlock(block)
         }
-        return builder.build() as Page.LayoutPage
+        return builder.build() as Page.TextLayoutPage
     }
 
     private fun coverBlocks(

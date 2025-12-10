@@ -13,14 +13,13 @@ import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 
-class PageBreakRenderAdapterV2 : ElementRenderAdapterV2 {
+class PageBreakRenderAdapterV2 : ElementRenderAdapterV2<AozoraElement.PageBreak> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.PageBreak,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.PageBreak) return null
+    ): Size {
         if (DEBUG_RENDER) {
             drawLine(
                 color = RandomColor,

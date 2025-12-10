@@ -8,6 +8,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:ui:common"))
             implementation(libs.navigationevent.compose)
+            implementation(libs.coil.core)
         }
     }
 }

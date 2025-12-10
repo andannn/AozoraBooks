@@ -12,18 +12,17 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
 class EmphasisRenderAdapterV2(
     private val measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2(measureHelper) {
+) : BasicTextRenderAdapterV2<AozoraElement.Emphasis>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.Emphasis,
         fontStyle: FontStyle?,
     ): Size? {
-        if (element !is AozoraElement.Emphasis) return null
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }
-
+// TODO: Draw emphasis
         return drawWithScope(this, x, y, element, fontStyle)
     }
 }

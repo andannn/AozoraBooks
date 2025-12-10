@@ -4,8 +4,9 @@
  */
 package me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters
 
+import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
 class TextRenderAdapterV2(
     measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2(measureHelper)
+) : BasicTextRenderAdapterV2<AozoraElement.Text>(measureHelper)

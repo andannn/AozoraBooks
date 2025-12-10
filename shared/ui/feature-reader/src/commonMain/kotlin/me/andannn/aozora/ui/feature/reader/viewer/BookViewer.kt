@@ -28,7 +28,8 @@ import me.andannn.aozora.ui.common.theme.getBackgroundColor
 import me.andannn.aozora.ui.common.theme.getFontFamilyByType
 import me.andannn.aozora.ui.common.theme.getTextColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.AozoraBibliographicalPage
-import me.andannn.aozora.ui.feature.reader.viewer.page.PageViewV2
+import me.andannn.aozora.ui.feature.reader.viewer.page.ImagePageView
+import me.andannn.aozora.ui.feature.reader.viewer.page.TextPageViewV2
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
@@ -92,23 +93,34 @@ private fun ReaderContent(
             if (page is Page.BibliographicalPage) {
                 AozoraBibliographicalPage(page = page, textColor = textColor)
             } else {
-                val layoutPage =
+                val contentPage =
                     remember(page) {
                         with(layoutHelper) {
                             page?.layout()
                         }
                     }
-                if (layoutPage != null) {
-                    PageViewV2(
-                        modifier = Modifier.fillMaxSize(),
-                        page = layoutPage,
-                        textColor = textColor,
-                        pageMetaData = metadata,
-                        fontFamily = fontFamily,
-                    )
+                if (contentPage != null) {
+                    when (contentPage) {
+                        is Page.ImagePage -> {
+                            ImagePageView(
+                                modifier = Modifier.fillMaxSize(),
+                                page = contentPage,
+                                pageMetaData = metadata,
+                            )
+                        }
+
+                        is Page.TextLayoutPage -> {
+                            TextPageViewV2(
+                                modifier = Modifier.fillMaxSize(),
+                                page = contentPage,
+                                textColor = textColor,
+                                pageMetaData = metadata,
+                                fontFamily = fontFamily,
+                            )
+                        }
+                    }
                 }
             }
         }
     }
-}
 }

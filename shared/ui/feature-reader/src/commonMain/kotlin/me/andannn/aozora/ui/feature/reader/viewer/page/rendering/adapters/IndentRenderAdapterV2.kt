@@ -16,14 +16,13 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
 class IndentRenderAdapterV2(
     private val measureHelper: MeasureHelper,
-) : ElementRenderAdapterV2 {
+) : ElementRenderAdapterV2<AozoraElement.Indent> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.Indent,
         fontStyle: FontStyle?,
     ): Size? {
-        if (element !is AozoraElement.Indent) return null
         if (fontStyle == null) {
             error("fontStyle must not be null")
         }

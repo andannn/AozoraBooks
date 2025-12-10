@@ -15,14 +15,13 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
 class RubyRenderAdapterV2(
     private val measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2(measureHelper) {
+) : BasicTextRenderAdapterV2<AozoraElement.Ruby>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.Ruby,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.Ruby) return null
+    ): Size {
         if (fontStyle == null) {
             error("Ruby element must have a font style")
         }

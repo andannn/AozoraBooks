@@ -38,6 +38,7 @@ retainedmodel = "1.0.2"
 nav3Runtime = "1.0.0"
 nav3Ui = "1.0.0-alpha06"
 navigationevent = "1.0.0-rc01"
+coil = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -96,6 +97,7 @@ retainedmodel = { group = "io.github.andannn", name = "retainedmodel", version.r
 nav3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Runtime" }
 nav3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "nav3Ui" }
 navigationevent-compose = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version.ref = "navigationevent" }
+coil-core = { group = "io.coil-kt.coil3", name = "coil-core", version.ref = "coil" }
 
 # dependecy in build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

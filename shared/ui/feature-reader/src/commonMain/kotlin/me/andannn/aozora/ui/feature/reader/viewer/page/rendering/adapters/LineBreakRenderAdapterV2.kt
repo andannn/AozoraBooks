@@ -16,14 +16,13 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
 class LineBreakRenderAdapterV2(
     private val measureHelper: MeasureHelper,
-) : ElementRenderAdapterV2 {
+) : ElementRenderAdapterV2<AozoraElement.LineBreak> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.LineBreak,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.LineBreak) return null
+    ): Size {
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }

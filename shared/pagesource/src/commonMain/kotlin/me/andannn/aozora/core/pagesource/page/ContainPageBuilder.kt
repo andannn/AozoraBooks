@@ -31,7 +31,7 @@ internal class ContainPageBuilder(
     private val forceAddBlock: Boolean = false,
     private val scopeBuilder: (block: AozoraBlock) -> ElementMeasureScope,
 ) : PageBuilder<Page.ContentPage> {
-    private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
+    private val lines = mutableListOf<Page.TextLayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
     private var lineBuilder: LineBuilder? = null
@@ -55,7 +55,8 @@ internal class ContainPageBuilder(
                         addedImageElement = block.image
                         return FillResult.Filled()
                     } else {
-                        error("illustration can only be added to new page.")
+                        // illustration can only be added to new page.
+                        return FillResult.Filled(remainBlock = block)
                     }
                 }
 
@@ -98,7 +99,6 @@ internal class ContainPageBuilder(
         lineIndent: Int,
         maxCharacterPerLine: Int? = null,
     ): FillResult {
-        Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
             return FillResult.Filled(element)
         }
@@ -177,7 +177,7 @@ internal class ContainPageBuilder(
             buildNewLine()
         }
 
-        return Page.LayoutPage(
+        return Page.TextLayoutPage(
             lines = lines.toImmutableList(),
         )
     }
@@ -186,7 +186,7 @@ internal class ContainPageBuilder(
 
     private fun buildNewLine() {
         val line = lineBuilder!!.build()
-        lines += Page.LayoutPage.LineWithBlockIndex(line, currentBlockIndex)
+        lines += Page.TextLayoutPage.LineWithBlockIndex(line, currentBlockIndex)
         currentWidth += line.lineHeight
         lineBuilder = null
         Napier.v(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }

@@ -15,14 +15,13 @@ import androidx.compose.ui.unit.Density
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.EmphasisRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.ImageRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.IndentRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.LineBreakRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.PageBreakRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.RubyRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.adapters.TextRenderAdapterV2
 
-interface ElementRenderAdapterV2 {
+internal interface ElementRenderAdapterV2<T : AozoraElement> {
     /**
      * Draws the given element at the given coordinates.
      * @param x The x coordinate to draw the element at.
@@ -35,27 +34,55 @@ interface ElementRenderAdapterV2 {
     fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: T,
         fontStyle: FontStyle? = null,
     ): Size?
 }
 
-fun createAdapters(
+internal interface RenderAdapterProvider {
+    fun <T : AozoraElement> getAdapter(element: T): ElementRenderAdapterV2<T>
+}
+
+internal inline fun <reified T : AozoraElement> DrawScope.drawWithAdapter(
+    renderAdapterProvider: RenderAdapterProvider,
+    x: Float,
+    y: Float,
+    element: T,
+    fontStyle: FontStyle? = null,
+): Size? {
+    val adapter = renderAdapterProvider.getAdapter(element)
+    return with(adapter) {
+        draw(x, y, element, fontStyle)
+    }
+}
+
+internal fun RenderAdapterProvider(
     measurer: TextMeasurer,
     density: Density,
     fontFamily: FontFamily,
     textColor: Color,
-): List<ElementRenderAdapterV2> {
+): RenderAdapterProvider {
     val measureHelper = DefaultMeasureHelper(measurer, density, fontFamily, textColor)
-    return listOf(
-        EmphasisRenderAdapterV2(measureHelper),
-        IndentRenderAdapterV2(measureHelper),
-        LineBreakRenderAdapterV2(measureHelper),
-        PageBreakRenderAdapterV2(),
-        RubyRenderAdapterV2(measureHelper),
-        TextRenderAdapterV2(measureHelper),
-        ImageRenderAdapterV2(measureHelper),
-    )
+    val emphasisRenderAdapter = EmphasisRenderAdapterV2(measureHelper)
+    val rubyRenderAdapter = RubyRenderAdapterV2(measureHelper)
+    val textRenderAdapter = TextRenderAdapterV2(measureHelper)
+    val indentRenderAdapter = IndentRenderAdapterV2(measureHelper)
+    val lineBreakRenderAdapter = LineBreakRenderAdapterV2(measureHelper)
+    val pageBreakRenderAdapter = PageBreakRenderAdapterV2()
+
+    return object : RenderAdapterProvider {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : AozoraElement> getAdapter(element: T): ElementRenderAdapterV2<T> =
+            when (element) {
+                is AozoraElement.Emphasis -> emphasisRenderAdapter
+                is AozoraElement.Ruby -> rubyRenderAdapter
+                is AozoraElement.Text -> textRenderAdapter
+                is AozoraElement.Indent -> indentRenderAdapter
+                AozoraElement.LineBreak -> lineBreakRenderAdapter
+                AozoraElement.PageBreak -> pageBreakRenderAdapter
+                is AozoraElement.Illustration -> error("not support")
+            } as ElementRenderAdapterV2<T>
+    }
 }
 
 interface MeasureHelper {
@@ -66,7 +93,7 @@ interface MeasureHelper {
     ): TextLayoutResult
 }
 
-class DefaultMeasureHelper constructor(
+internal class DefaultMeasureHelper(
     private val measurer: TextMeasurer,
     private val density: Density,
     private val fontFamily: FontFamily,

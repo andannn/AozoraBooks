@@ -31,7 +31,7 @@ sealed interface Page {
         override val pageProgress: IntRange = elementIndex..elementIndex
     }
 
-    data class LayoutPage(
+    data class TextLayoutPage(
         val lines: ImmutableList<LineWithBlockIndex>,
     ) : ContentPage {
         data class LineWithBlockIndex(

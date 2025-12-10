@@ -10,7 +10,6 @@ import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.Page
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertIs
 
 class LayoutPageBuilderTest {
@@ -136,9 +135,12 @@ class LayoutPageBuilderTest {
     fun testPageLayoutBuilder_Image_can_only_be_added_to_new_page() {
         val builder = createBuilder(20.dp, 50.dp, 10.dp)
         addBlockAndVerify(builder, textBlockOf(text("123")), FillResult.FillContinue)
-        assertFails(message = "illustration can only be added to new page.") {
-            builder.tryAddBlock(imageBlockOf("aaa"))
-        }
+        addBlockAndVerify(builder, imageBlockOf("AAA"), FillResult.Filled(remainBlock = imageBlockOf("AAA")))
+        builder.build().verify(
+            arrayOf(
+                arrayOf("123"),
+            ),
+        )
     }
 }
 
@@ -148,7 +150,7 @@ private fun Page.ContentPage.verify(expect: String) {
 }
 
 private fun Page.ContentPage.verify(expect: Array<Array<String>>) {
-    assertIs<Page.LayoutPage>(this)
+    assertIs<Page.TextLayoutPage>(this)
     lines.forEachIndexed { index, line ->
         line.line.verify(*expect[index])
     }
