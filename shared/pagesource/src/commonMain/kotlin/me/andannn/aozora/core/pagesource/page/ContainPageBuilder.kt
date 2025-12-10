@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.io.files.Path
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
@@ -16,61 +17,85 @@ import me.andannn.aozora.core.pagesource.measure.TextStyleCalculatorImpl
 private const val TAG = "ReaderPageBuilder"
 
 @Suppress("ktlint:standard:function-naming")
-internal fun LayoutPageBuilder(meta: PageMetaData) =
-    LayoutPageBuilder(
-        meta.renderWidth,
-        meta.renderHeight,
-        scopeBuilder = {
-            ElementMeasureScope(it, TextStyleCalculatorImpl(meta))
-        },
-    )
+internal fun ContentPageBuilder(
+    meta: PageMetaData,
+    bookCachedDictionary: Path? = null,
+) = ContainPageBuilder(
+    fullWidth = meta.renderWidth,
+    fullHeight = meta.renderHeight,
+    bookCachedDictionary = bookCachedDictionary,
+    scopeBuilder = {
+        ElementMeasureScope(it, TextStyleCalculatorImpl(meta))
+    },
+)
 
-internal class LayoutPageBuilder(
+internal class ContainPageBuilder(
     private val fullWidth: Dp,
     private val fullHeight: Dp,
+    private val bookCachedDictionary: Path?,
     private val forceAddBlock: Boolean = false,
     private val scopeBuilder: (block: AozoraBlock) -> ElementMeasureScope,
-) : PageBuilder<Page.LayoutPage> {
-    private val lines = mutableListOf<Page.LayoutPage.LineWithBlockIndex>()
+) : PageBuilder<Page.ContentPage> {
+    private val lines = mutableListOf<Page.TextLayoutPage.LineWithBlockIndex>()
 
     private var currentWidth = 0.dp
     private var lineBuilder: LineBuilder? = null
 
     private var isPageBreakAdded = false
     private var currentBlockIndex = 0
+    private var addedImageElement: AozoraElement.Illustration? = null
 
     override fun tryAddBlock(block: AozoraBlock): FillResult =
         with(scopeBuilder(block)) {
             Napier.v(tag = TAG) { "tryAddBlock E. block $block" }
             currentBlockIndex = block.blockIndex
-            val remainingElements = block.elements.toMutableList()
 
-            while (remainingElements.isNotEmpty()) {
-                val element = remainingElements.first()
-                val result =
-                    tryAddElement(
-                        element,
-                        lineIndent = (block as? AozoraBlock.TextBlock)?.indent ?: 0,
-                        maxCharacterPerLine = (block as? AozoraBlock.TextBlock)?.maxCharacterPerLine,
-                    )
-
-                when (result) {
-                    is FillResult.FillContinue -> {
-                        remainingElements.removeAt(0)
-                    }
-
-                    is FillResult.Filled -> {
-                        remainingElements.removeAt(0)
-                        result.remainElement?.let { remainingElements.add(0, it) }
-                        break
-                    }
-                }
+            if (addedImageElement != null) {
+                return FillResult.Filled(remainBlock = block)
             }
 
-            return if (remainingElements.isEmpty()) {
-                FillResult.FillContinue
-            } else {
-                FillResult.Filled(remainBlock = block.copyWith(remainingElements))
+            when (block) {
+                is AozoraBlock.Image -> {
+                    if (isEmpty()) {
+                        addedImageElement = block.image
+                        return FillResult.Filled()
+                    } else {
+                        // illustration can only be added to new page.
+                        return FillResult.Filled(remainBlock = block)
+                    }
+                }
+
+                is AozoraBlock.TextBlock -> {
+                    val remainingElements = block.elements.toMutableList()
+
+                    while (remainingElements.isNotEmpty()) {
+                        val element = remainingElements.first()
+                        val result =
+                            tryAddElement(
+                                element = element,
+                                lineIndent = block.indent,
+                                maxCharacterPerLine = block.maxCharacterPerLine,
+                            )
+
+                        when (result) {
+                            is FillResult.FillContinue -> {
+                                remainingElements.removeAt(0)
+                            }
+
+                            is FillResult.Filled -> {
+                                remainingElements.removeAt(0)
+                                result.remainElement?.let { remainingElements.add(0, it) }
+                                break
+                            }
+                        }
+                    }
+
+                    return if (remainingElements.isEmpty()) {
+                        FillResult.FillContinue
+                    } else {
+                        FillResult.Filled(remainBlock = block.copyWith(remainingElements))
+                    }
+                }
             }
         }
 
@@ -79,7 +104,6 @@ internal class LayoutPageBuilder(
         lineIndent: Int,
         maxCharacterPerLine: Int? = null,
     ): FillResult {
-        Napier.v(tag = TAG) { "tryAddElement E. element $element" }
         if (isPageBreakAdded) {
             return FillResult.Filled(element)
         }
@@ -113,7 +137,6 @@ internal class LayoutPageBuilder(
             is AozoraElement.Text,
             is AozoraElement.LineBreak,
             is AozoraElement.Indent,
-            is AozoraElement.Illustration,
             is AozoraElement.Emphasis,
             -> {
                 with(lineBuilder) {
@@ -136,26 +159,40 @@ internal class LayoutPageBuilder(
                 }
             }
 
-            AozoraElement.PageBreak,
-            -> {
+            is AozoraElement.Illustration -> {
+                error("Never")
+            }
+
+            AozoraElement.PageBreak -> {
                 error("Never")
             }
         }
     }
 
-    override fun build(): Page.LayoutPage {
+    override fun build(): Page.ContentPage {
+        if (addedImageElement != null) {
+            return Page.ImagePage(
+                element = addedImageElement!!,
+                contentWidth = fullWidth,
+                imageDictionary = bookCachedDictionary ?: error("require dictionary when create image page"),
+                elementIndex = currentBlockIndex,
+            )
+        }
+
         if (lineBuilder != null) {
             buildNewLine()
         }
 
-        return Page.LayoutPage(
+        return Page.TextLayoutPage(
             lines = lines.toImmutableList(),
         )
     }
 
+    private fun isEmpty() = lines.isEmpty() && (lineBuilder == null || lineBuilder?.isEmpty() == true)
+
     private fun buildNewLine() {
         val line = lineBuilder!!.build()
-        lines += Page.LayoutPage.LineWithBlockIndex(line, currentBlockIndex)
+        lines += Page.TextLayoutPage.LineWithBlockIndex(line, currentBlockIndex)
         currentWidth += line.lineHeight
         lineBuilder = null
         Napier.v(tag = TAG) { "buildNewLine E. newLine $line, lines ${lines.size}, currentWidth $currentWidth" }

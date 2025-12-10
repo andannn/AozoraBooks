@@ -8,19 +8,21 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.andannn.aozora.core.domain.model.AozoraElement
 import me.andannn.aozora.core.domain.model.FontStyle
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class ImageRenderAdapterV2(
+class EmphasisRenderAdapter(
     private val measureHelper: MeasureHelper,
-) : ElementRenderAdapterV2 {
+) : BasicTextRenderAdapter<AozoraElement.Emphasis>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.Emphasis,
         fontStyle: FontStyle?,
     ): Size? {
-        if (element !is AozoraElement.Illustration) return null
-        return Size(0f, 0f)
+        if (fontStyle == null) {
+            error("fontStyle must not be null $element")
+        }
+// TODO: Draw emphasis
+        return drawWithScope(this, x, y, element, fontStyle)
     }
 }

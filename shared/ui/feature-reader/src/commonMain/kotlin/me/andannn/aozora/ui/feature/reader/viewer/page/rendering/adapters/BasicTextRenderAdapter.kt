@@ -18,13 +18,13 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-abstract class BasicTextRenderAdapterV2(
+abstract class BasicTextRenderAdapter<T : AozoraElement.BaseText>(
     private val measureHelper: MeasureHelper,
-) : ElementRenderAdapterV2 {
+) : ElementRenderAdapterV2<T> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: T,
         fontStyle: FontStyle?,
     ): Size? = drawWithScope(scope = this, x, y, element, fontStyle)
 
@@ -32,10 +32,9 @@ abstract class BasicTextRenderAdapterV2(
         scope: DrawScope,
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: T,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.BaseText) return null
+    ): Size {
         if (fontStyle == null) {
             error("fontStyle must not be null $element")
         }

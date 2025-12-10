@@ -14,35 +14,35 @@ import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class IndentRenderAdapterV2(
+class LineBreakRenderAdapter(
     private val measureHelper: MeasureHelper,
-) : ElementRenderAdapterV2 {
+) : ElementRenderAdapterV2<AozoraElement.LineBreak> {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.LineBreak,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.Indent) return null
+    ): Size {
         if (fontStyle == null) {
-            error("fontStyle must not be null")
+            error("fontStyle must not be null $element")
         }
 
-        val result = measureHelper.measure("あ", fontStyle)
-        val textSize = result.size.width.toFloat()
+        val textSize =
+            measureHelper
+                .measure(
+                    text = "あ",
+                    fontStyle = fontStyle,
+                ).size.width
+                .toFloat()
+
         if (DEBUG_RENDER) {
-            repeat(element.count) {
-                drawCircle(
-                    center =
-                        Offset(
-                            x = x,
-                            y = y + textSize / 2 + textSize * it,
-                        ),
-                    radius = textSize / 2,
-                    color = RandomColor,
-                )
-            }
+            drawRect(
+                topLeft = Offset(x - textSize / 2, y),
+                size = Size(textSize, textSize),
+                color = RandomColor,
+            )
         }
-        return Size(0f, textSize * element.count)
+
+        return Size(textSize, 0f)
     }
 }

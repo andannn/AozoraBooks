@@ -13,16 +13,15 @@ import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.MeasureHelper
 
-class RubyRenderAdapterV2(
+class RubyRenderAdapter(
     private val measureHelper: MeasureHelper,
-) : BasicTextRenderAdapterV2(measureHelper) {
+) : BasicTextRenderAdapter<AozoraElement.Ruby>(measureHelper) {
     override fun DrawScope.draw(
         x: Float,
         y: Float,
-        element: AozoraElement,
+        element: AozoraElement.Ruby,
         fontStyle: FontStyle?,
-    ): Size? {
-        if (element !is AozoraElement.Ruby) return null
+    ): Size {
         if (fontStyle == null) {
             error("Ruby element must have a font style")
         }

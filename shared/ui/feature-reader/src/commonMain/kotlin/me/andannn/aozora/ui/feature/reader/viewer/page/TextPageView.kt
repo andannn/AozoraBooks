@@ -24,13 +24,13 @@ import me.andannn.aozora.core.domain.model.Page
 import me.andannn.aozora.core.domain.model.PageMetaData
 import me.andannn.aozora.ui.common.theme.RandomColor
 import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.DEBUG_RENDER
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.ElementRenderAdapterV2
-import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.createAdapters
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.RenderAdapterProvider
+import me.andannn.aozora.ui.feature.reader.viewer.page.rendering.drawWithAdapter
 
 @Composable
-fun PageViewV2(
+fun TextPageView(
     pageMetaData: PageMetaData,
-    page: Page.LayoutPage,
+    page: Page.TextLayoutPage,
     textColor: Color,
     fontFamily: FontFamily,
     modifier: Modifier = Modifier,
@@ -40,9 +40,9 @@ fun PageViewV2(
             cacheSize = 0,
         )
     val density = LocalDensity.current
-    val adapters =
+    val adapterProvider =
         remember(measurer, density, fontFamily, textColor) {
-            createAdapters(measurer, density, fontFamily, textColor)
+            RenderAdapterProvider(measurer, density, fontFamily, textColor)
         }
     Box(
         modifier =
@@ -77,9 +77,10 @@ fun PageViewV2(
                             ) {
                                 var currentX = renderWidth
                                 for (line in page.lines) {
-                                    val lineHeightPx = with(density) { line.line.lineHeight.toPx() }
+                                    val lineHeightPx =
+                                        with(density) { line.line.lineHeight.toPx() }
                                     currentX -= lineHeightPx / 2
-                                    drawAozoraLineV2(currentX, line.line, adapters, density)
+                                    drawAozoraLineV2(currentX, line.line, adapterProvider, density)
                                     currentX -= lineHeightPx / 2
                                 }
                             }
@@ -89,22 +90,19 @@ fun PageViewV2(
     )
 }
 
-fun DrawScope.drawAozoraLineV2(
+private fun DrawScope.drawAozoraLineV2(
     x: Float,
     line: Line,
-    adapters: List<ElementRenderAdapterV2>,
+    adapterProvider: RenderAdapterProvider,
     density: Density,
 ) {
     var currentY = 0f
     line.elements.forEach { item ->
         val fontStyle = item.fontStyle
         var drawSize: Size? = null
-        for (adapter in adapters) {
-            val size = with(adapter) { draw(x, currentY, item.element, fontStyle) }
-            if (size != null) {
-                drawSize = size
-                break
-            }
+        val size = drawWithAdapter(adapterProvider, x, currentY, item.element, fontStyle)
+        if (size != null) {
+            drawSize = size
         }
         if (drawSize == null) {
             error("No adapter can draw element $item")

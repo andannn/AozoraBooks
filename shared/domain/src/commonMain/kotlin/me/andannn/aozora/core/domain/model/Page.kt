@@ -4,8 +4,10 @@
  */
 package me.andannn.aozora.core.domain.model
 
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.io.files.Path
 
 /**
  * Page of reader.
@@ -17,21 +19,37 @@ sealed interface Page {
         val subtitle: String?,
     ) : Page
 
-    data class LayoutPage(
+    sealed interface ContentPage : Page {
+        val pageProgress: IntRange
+        val contentWidth: Dp
+    }
+
+    data class ImagePage constructor(
+        val element: AozoraElement.Illustration,
+        override val contentWidth: Dp,
+        private val elementIndex: Int,
+        private val imageDictionary: Path,
+    ) : ContentPage {
+        override val pageProgress: IntRange = elementIndex..elementIndex
+
+        fun getImageFile(): String = Path(imageDictionary, element.filename).toString()
+    }
+
+    data class TextLayoutPage(
         val lines: ImmutableList<LineWithBlockIndex>,
-    ) : Page {
+    ) : ContentPage {
         data class LineWithBlockIndex(
             val line: Line,
             val blockIndex: Int,
         )
 
-        val contentWidth by lazy {
+        override val contentWidth by lazy {
             lines.fold(0.dp) { acc, line ->
                 acc + line.line.lineHeight
             }
         }
 
-        val pageProgress by lazy {
+        override val pageProgress by lazy {
             lines.first().blockIndex..lines.last().blockIndex
         }
     }

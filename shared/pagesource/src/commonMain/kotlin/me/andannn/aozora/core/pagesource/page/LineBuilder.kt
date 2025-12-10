@@ -88,16 +88,18 @@ internal class LineBuilder(
                 return FillResult.Filled()
             }
 
-            is AozoraElement.Illustration,
-            is AozoraElement.Indent,
-            -> {
+            is AozoraElement.Indent -> {
                 if (elementList.isNotEmpty()) {
-                    error("indent, and image can only be add to new line")
+                    error("indent can only be add to new line")
                 } else {
                     val measureResult = measure(element)
                     updateState(element, measureResult)
                     return FillResult.FillContinue
                 }
+            }
+
+            is AozoraElement.Illustration -> {
+                error("Can not handle illustration in line")
             }
 
             AozoraElement.PageBreak -> {
@@ -111,6 +113,8 @@ internal class LineBuilder(
             lineHeight = maxWidth,
             elements = elementList.toImmutableList(),
         )
+
+    fun isEmpty() = elementList.isEmpty()
 
     private fun updateState(
         element: AozoraElement,

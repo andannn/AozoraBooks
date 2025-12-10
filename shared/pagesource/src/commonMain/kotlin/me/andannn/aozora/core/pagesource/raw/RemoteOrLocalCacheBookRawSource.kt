@@ -54,7 +54,7 @@ internal class RemoteOrLocalCacheBookRawSource(
     card: AozoraBookCard,
     scope: CoroutineScope,
     dispatcher: CoroutineDispatcher,
-    private val cacheDictionary: Path = getCachedPatchById(card.id),
+    override val cacheDictionary: Path = getCachedPatchById(card.id),
 ) : BookRawSource {
     private val bookModelStateFlow = MutableStateFlow<SourceState>(SourceState.Loading)
 
