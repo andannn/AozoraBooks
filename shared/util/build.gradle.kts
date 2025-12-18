@@ -1,10 +1,19 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
     alias(libs.plugins.serialization)
+    alias(libs.plugins.kotlin.compose)
+}
+
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.core.util"
+    }
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.io.core)
@@ -14,8 +23,4 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
-}
-
-android {
-    namespace = "me.andannn.core.util"
 }

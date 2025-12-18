@@ -1,15 +1,24 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
+    alias(libs.plugins.serialization)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
 }
 
-android {
-    namespace = "me.andannn.aozora.core.database"
+kmpExt {
+    withAndroid {
+        enableHostTest = false
+        enableDeviceTest = true
+        includeDeviceTestToCommonTest = true
+    }
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.aozora.core.database"
+    }
     sourceSets {
         commonMain.dependencies {
             implementation(libs.room.runtime)

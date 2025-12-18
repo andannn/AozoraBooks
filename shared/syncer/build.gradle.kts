@@ -1,13 +1,20 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrainsCompose)
 }
 
-android {
-    namespace = "me.andannn.aozora.syncer"
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.aozora.syncer"
+        androidResources.enable = true
+    }
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:domain"))
@@ -23,4 +30,8 @@ kotlin {
             implementation(libs.androidx.work.runtime.ktx)
         }
     }
+}
+
+compose.resources {
+    generateResClass = auto
 }

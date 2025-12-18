@@ -1,10 +1,19 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
     alias(libs.plugins.serialization)
+    alias(libs.plugins.kotlin.compose)
+}
+
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.aozora.core.common"
+    }
     sourceSets {
         commonMain.dependencies {
             implementation(libs.androidx.paging.common)
@@ -12,8 +21,4 @@ kotlin {
             implementation(libs.kotlinx.io.core)
         }
     }
-}
-
-android {
-    namespace = "me.andannn.aozora.core.common"
 }
