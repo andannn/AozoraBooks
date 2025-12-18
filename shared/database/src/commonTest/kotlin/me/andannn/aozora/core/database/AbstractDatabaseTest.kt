@@ -18,15 +18,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-expect annotation class IgnoreAndroidUnitTest()
-
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-expect annotation class IgnoreNativeTest()
-
-expect val inMemoryDatabaseBuilder: RoomDatabase.Builder<AozoraDataBase>
-
-class DatabaseTest {
+abstract class AbstractDatabaseTest {
     private lateinit var database: AozoraDataBase
 
     private val dispatcher = StandardTestDispatcher()
@@ -35,14 +27,14 @@ class DatabaseTest {
     private val savedBookDao: BookLibraryDao
         get() = database.savedBookDao()
 
+    abstract val inMemoryDatabaseBuilder: RoomDatabase.Builder<AozoraDataBase>
+
     @BeforeTest
-    @IgnoreAndroidUnitTest
     fun setup() {
         database = inMemoryDatabaseBuilder.build()
     }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getSavedBooksTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -60,7 +52,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getSavedBookByIdTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -87,7 +78,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getSavedBookByDataDescTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -116,7 +106,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insertSavedBookTest() =
         testScope.runTest {
             val progressEntity =
@@ -138,7 +127,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun insertAndGetProgressTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -177,7 +165,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun setAndGetReadingProgressTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -209,7 +196,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getBookEntityById() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -222,7 +208,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getAuthorWithBooks() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -241,7 +226,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun searchBookByKeywordTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
@@ -250,7 +234,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun searchAuthorByKeywordTest() =
         testScope.runTest {
             savedBookDao.upsertAuthorList(authorList)
@@ -259,7 +242,6 @@ class DatabaseTest {
         }
 
     @Test
-    @IgnoreAndroidUnitTest
     fun getBooksOfNDCClassificationTest() =
         testScope.runTest {
             savedBookDao.upsertBookList(bookEntities)
