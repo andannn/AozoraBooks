@@ -4,4 +4,6 @@
  */
 package me.andannn.aozora.core.domain.exceptions
 
-class DownloadBookFailedException(bookTitle: String) : Exception("Download [$bookTitle] failed.")
+class DownloadBookFailedException(
+    bookTitle: String,
+) : Exception("Download [$bookTitle] failed.")

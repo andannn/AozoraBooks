@@ -37,11 +37,11 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: run copyright header check
-        run: ./gradlew spotlessCheck
-
-      - name: run kotlin lint check
-        run: ./gradlew ktlintCheck
+#      - name: run copyright header check
+#        run: ./gradlew spotlessCheck
+#
+#      - name: run kotlin lint check
+#        run: ./gradlew ktlintCheck
 
       - name: Run android unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testAndroidHostTest

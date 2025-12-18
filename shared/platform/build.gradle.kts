@@ -1,13 +1,19 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.serialization)
 }
 
-android {
-    namespace = "me.andannn.platform"
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.platform"
+    }
     sourceSets.apply {
         androidMain.dependencies {
             implementation(project.dependencies.platform(libs.firebase.bom))

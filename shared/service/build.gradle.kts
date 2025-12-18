@@ -1,9 +1,18 @@
 plugins {
-    id("melodify.kmp.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
     alias(libs.plugins.serialization)
 }
 
+kmpExt {
+    withAndroid()
+    withIOS()
+}
+
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.aozora.core.service"
+    }
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:util"))
@@ -25,8 +34,4 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
     }
-}
-
-android {
-    namespace = "me.andannn.aozora.core.service"
 }

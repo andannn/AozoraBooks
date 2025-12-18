@@ -1,15 +1,19 @@
 plugins {
-    id("melodify.kmp.library")
-    id("melodify.compose.multiplatform.library")
+    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("kmp.ext")
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.serialization)
 }
 
-android {
-    namespace = "me.andannn.aozora.app"
+kmpExt {
+    withAndroid()
+    withIOS()
 }
 
 kotlin {
+    androidLibrary {
+        namespace = "me.andannn.aozora.app"
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:domain"))
@@ -29,7 +33,7 @@ kotlin {
             implementation(project(":shared:ui:feature-search-input"))
             implementation(project(":shared:ui:feature-search-result"))
             implementation(libs.napier)
-            implementation(libs.nav3.ui)
+            implementation(libs.navigation3.ui)
         }
     }
 }

@@ -9,8 +9,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import org.koin.mp.KoinPlatform.getKoin
 
-internal actual fun getCachedCsvPath(): Path {
-    return Path(getKoin().get<Context>().filesDir.toString(), "/csv").also {
+internal actual fun getCachedCsvPath(): Path =
+    Path(getKoin().get<Context>().filesDir.toString(), "/csv").also {
         SystemFileSystem.createDirectories(it)
     }
-}

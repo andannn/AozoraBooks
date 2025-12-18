@@ -9,8 +9,7 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import org.koin.mp.KoinPlatform.getKoin
 
-actual fun getCachedPatchById(id: String): Path {
-    return Path(getKoin().get<Context>().filesDir.toString(), "/book/$id").also {
+actual fun getCachedPatchById(id: String): Path =
+    Path(getKoin().get<Context>().filesDir.toString(), "/book/$id").also {
         SystemFileSystem.createDirectories(it)
     }
-}
