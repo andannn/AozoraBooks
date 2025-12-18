@@ -18,8 +18,8 @@ internal class TextStyleCalculatorImpl(
 ) : TextStyleCalculator {
     private val fontStyleCache = mutableMapOf<AozoraTextStyle, FontStyle>()
 
-    override fun resolve(aozoraStyle: AozoraTextStyle): FontStyle {
-        return fontStyleCache[aozoraStyle]
+    override fun resolve(aozoraStyle: AozoraTextStyle): FontStyle =
+        fontStyleCache[aozoraStyle]
             ?: aozoraStyle
                 .resolveFontStyle(
                     fontSizeLevel = renderSetting.fontSizeLevel,
@@ -28,5 +28,4 @@ internal class TextStyleCalculatorImpl(
                 ).also {
                     fontStyleCache[aozoraStyle] = it
                 }
-    }
 }

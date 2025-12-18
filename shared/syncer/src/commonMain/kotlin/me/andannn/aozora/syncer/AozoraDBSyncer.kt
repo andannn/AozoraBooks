@@ -9,7 +9,9 @@ sealed interface SyncResult {
 
     data object Success : SyncResult
 
-    data class Fail(val e: Exception) : SyncResult
+    data class Fail(
+        val e: Exception,
+    ) : SyncResult
 }
 
 interface AozoraDBSyncer {
