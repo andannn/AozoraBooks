@@ -75,7 +75,6 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
 
-    implementation(libs.play.services.ads)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
 }
