@@ -1,0 +1,30 @@
+<p dir="auto">
+    <strong>AozoraBooks</strong>
+     is a modern, cross-platform reading app built with 
+    <strong>Kotlin Multiplatform</strong>
+    , designed for reading novels in the 
+    <a href="https://www.aozora.gr.jp/" rel="nofollow">Aozora Bunko (青空文庫)</a>
+     format.
+    It supports advanced layout features like ruby annotations and vertical text, and runs on Android, iOS.
+</p>
+
+<h2 tabindex="-1" class="heading-element" dir="auto">Features</h2>
+
+<a id="user-content-features" class="anchor" aria-label="Permalink: Features" href="#features">
+</a>
+
+<ul dir="auto">
+    <li>
+        Support for Aozora Bunko HTML format, including:
+        <ul dir="auto">
+            <li>
+                Ruby text (
+                <code>&lt;ruby&gt;</code>
+                )
+            </li>
+            <li>..</li>
+        </ul>
+    </li>
+    <li>Cross-platform with shared codebase (Android / iOS)</li>
+</ul>
+

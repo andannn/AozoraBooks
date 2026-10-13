@@ -24,7 +24,7 @@ It supports advanced layout features like ruby annotations and vertical text, an
 
 ## Screenshots
 <p float="left">
-  <img src="screenshots/template.png" width="25%" />
+  <img src="metadata/en-US/images/phoneScreenshots/1.png" width="25%" />
 </p>
 
 ## Tech Stack
