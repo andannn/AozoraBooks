@@ -25,10 +25,6 @@ kotlin {
             api(libs.androidx.paging.compose)
             implementation(libs.kotlinx.serialization.json)
         }
-
-        androidMain.dependencies {
-            implementation(libs.play.services.ads)
-        }
     }
 }
 

@@ -8,8 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.ktlint) apply false
-    alias(libs.plugins.google.service) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.licensee) apply false
