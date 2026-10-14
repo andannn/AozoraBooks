@@ -1,1 +1,1 @@
-A Kotlin Multiplatform reading app designed for reading novels in the Aozora Bunko (青空文庫) format
+Kotlin Multiplatform reading app designed for novels in Aozora Bunko format

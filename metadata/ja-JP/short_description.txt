@@ -1,0 +1,1 @@
+青空文庫形式の小説向けKotlin Multiplatform読書アプリ
