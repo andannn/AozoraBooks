@@ -11,6 +11,10 @@ It supports advanced layout features like ruby annotations and vertical text, an
 <img src="https://play.google.com/intl/ja/badges/static/images/badges/ja_badge_web_generic.png" width=240 />
 </a>
 
+<a href="https://f-droid.org/packages/me.andannn.aozora/" target="_blank">
+<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on-ja.png" width=240 />
+</a>
+
 <a href="https://apps.apple.com/us/app/%E9%9D%92%E7%A9%BA%E8%AA%AD%E6%9B%B8-%E9%9D%92%E7%A9%BA%E6%96%87%E5%BA%93%E3%83%93%E3%83%A5%E3%83%BC%E3%82%A2/id6746423917" target="_blank">
 <img src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-app-store/black/ja-jp?size=250x83" width=240 />
 </a>
